@@ -13,7 +13,7 @@ module "nomad_clients" {
   desired_capacity = "${var.nomad_clients_desired}"
 
   ami_id = "${var.nomad_clients_ami_id}"
-  user_data = "${data.template_file.user_data_nomad_client.rendered}"
+  user_data = "${coalesce(var.nomad_clients_user_data, data.template_file.user_data_nomad_client.rendered)}"
 
   vpc_id = "${module.vpc.vpc_id}"
   subnet_ids = "${module.vpc.public_subnets}"
