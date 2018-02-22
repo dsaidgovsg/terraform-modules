@@ -22,7 +22,7 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.consul_cluster_name}"
 
-  user_data = "${data.template_file.user_data_consul_server.rendered}"
+  user_data = "${coalesce(var.consul_user_data, data.template_file.user_data_consul_server.rendered)}"
 
   health_check_type = "ELB"
 }

@@ -166,6 +166,20 @@ variable "nomad_clients_services_inbound_cidr" {
   default     = []
 }
 
+variable "nomad_servers_user_data" {
+  # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+  # The default is at user_data/user-data-nomad-server.sh
+  description = "The user data for the Nomad servers EC2 instances. If set to empty, the default template will be used"
+  default = ""
+}
+
+variable "nomad_clients_user_data" {
+  # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+  # The default is at user_data/user-data-nomad-client.sh
+  description = "The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used"
+  default = ""
+}
+
 variable "consul_cluster_name" {
     description = "Name of the Consul cluster to deploy"
     default = "consul-nomad-prototype"
@@ -184,6 +198,13 @@ variable "cluster_tag_key" {
 variable "consul_instance_type" {
     description = "Type of instances to deploy Consul servers and clients to"
     default = "t2.medium"
+}
+
+variable "consul_user_data" {
+  # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+  # The default is at user_data/user-data-consul-server.sh
+  description = "The user data for the Consul servers EC2 instances. If set to empty, the default template will be used"
+  default = ""
 }
 
 variable "internal_lb_name" {
