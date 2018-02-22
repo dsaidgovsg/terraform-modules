@@ -1,0 +1,10 @@
+#!/bin/sh
+set -xeuo pipefail
+
+main() {
+    cd "$@"
+    terraform get
+    tflint
+}
+
+main "$@"
