@@ -1,0 +1,3 @@
+config {
+    varfile = ["example.tfvars"]
+}

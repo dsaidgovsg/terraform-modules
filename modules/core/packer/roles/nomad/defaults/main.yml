@@ -1,0 +1,4 @@
+---
+  nomad_version: "0.7.1"
+  nomad_module_version: "v0.1.1"
+  docker_version: "18.02.0~ce-0~ubuntu"

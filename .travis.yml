@@ -1,0 +1,15 @@
+services:
+  - docker
+
+install:
+  - docker build -t lint -f Dockerfile-lint .
+
+script:
+  - docker run --rm -ti lint modules/core
+
+branches:
+  only:
+  - master
+
+notifications:
+  email: false

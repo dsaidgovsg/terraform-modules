@@ -1,0 +1,14 @@
+---
+- name: Provision Consul AMI
+  hosts: all
+  vars:
+    consul_module_version: "v0.1.0"
+    consul_version: "1.0.1"
+  pre_tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  roles:
+    - role: "{{ playbook_dir }}/../roles/consul"

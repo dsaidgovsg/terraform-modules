@@ -1,0 +1,57 @@
+{
+    "min_packer_version": "1.1.2",
+    "variables": {
+        "ami_base_name": "nomad-servers",
+        "aws_region": "ap-southeast-1",
+        "subnet_id": "",
+        "temporary_security_group_source_cidr": "0.0.0.0/0",
+        "associate_public_ip_address": "true",
+        "ssh_interface": "",
+        "nomad_version": "0.7.1",
+        "consul_module_version": "v0.1.1",
+        "nomad_module_version": "v0.1.1",
+        "consul_version": "1.0.3",
+        "docker_version": "18.02.0~ce-0~ubuntu"
+    },
+    "builders": [
+        {
+            "name": "ubuntu-1604-nomad-server-ami",
+            "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+            "ami_description": "An Ubuntu 16.04 AMI that has Nomad and Consul installed.",
+            "instance_type": "t2.micro",
+            "region": "{{user `aws_region`}}",
+            "type": "amazon-ebs",
+            "subnet_id": "{{user `subnet_id`}}",
+            "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
+            "ssh_interface": "{{user `ssh_interface`}}",
+            "temporary_security_group_source_cidr": "{{user `temporary_security_group_source_cidr`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "architecture": "x86_64",
+                    "name": "*ubuntu-xenial-16.04-amd64-server-*",
+                    "block-device-mapping.volume-type": "gp2",
+                    "root-device-type": "ebs"
+                },
+                "owners": [
+                    "099720109477"
+                ],
+                "most_recent": true
+            },
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "pause_before": "10s",
+            "playbook_file": "{{ template_dir }}/site.yml",
+            "extra_arguments": [
+                "--extra-vars",
+                "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}} docker_version={{user `docker_version`}}",
+                "-e",
+                "ansible_python_interpreter=/usr/bin/python3"
+            ]
+        }
+    ]
+}
