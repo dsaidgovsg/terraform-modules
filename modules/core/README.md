@@ -43,11 +43,14 @@ Then, configure it a file such as `backend-config.tfvars`. See
 
 ## Building AMIs
 
-We first need to use [packer](https://www.packer.io/) to build three AMIs:
+We first need to use [packer](https://www.packer.io/) to build several AMIs. The list below
+will link to example packer scripts that we have provided. If you have additional requirements, you
+are encouraged to extend from these examples.
 
-- [Consul](package/consul])
-- [Consul and Nomad](packer/nomad)
-- [Consul and Vault](packer/vault)
+- [Consul servers](package/consul)
+- [Nomad servers (with Consul agent)](packer/nomad_servers)
+- [Nomad clients (with Consul agent)](packer/nomad_clients)
+- [Vault (with Consul agent)](packer/vault)
 
 Read [this](https://www.packer.io/docs/builders/amazon.html#specifying-amazon-credentials) on how
 to specify AWS credentials.
@@ -88,61 +91,6 @@ terraform apply --var-file vars.tfvars
 
 See [this post](https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9)
 for a solution.
-
-## TODOs
-
-- Update the terraform modules to create the VPC too.
-- [Transport Encryption](https://github.com/hashicorp/terraform-aws-nomad/tree/master/modules/run-nomad#how-do-you-handle-encryption)
-- [Vault](https://github.com/hashicorp/terraform-aws-vault)
-- Use CloudWatch for ELB/ASG alerts to be published to a SNS topic. Have the SNS topic send invoke
-a lambda to send a message to Telegram/Slack?
-- Consider moving Consul and Nomad servers into private subnet
-- [Store Terraform state on S3](https://www.terraform.io/docs/backends/types/s3.html) and workspaces
-- [Nomad and Consul UI](https://github.com/jrasell/nomadfiles/blob/master/hashi-ui/hashi-ui.nomad)
-- [Automatic Job scaling](https://github.com/elsevier-core-engineering/replicator)
-- Ansible playbooks to manage cluster (e.g. terminate all workers etc.)
-- Internal load balancer for Nomad and Consul APIs
-- AWS Health checks improvements
-- [Monitoring and telemetry](https://blog.takipi.com/graphite-vs-grafana-build-the-best-monitoring-architecture-for-your-application/)
-
-### Nginx Reverse Proxy for Web Applications
-
-Fronted by Elastic Load Balancer (ELB) with a Target group tied to Nomad client's Auto scaling group.
-Then, deploy as many replicas of Nginx as needed for HA and statically bind them to, say, port 80.
-The Nomad client nodes with port 80 accessible will become `healthy` in the eyes of ELB and then
-ELB will route to them as necessary.
-
-The Nginx proxy will have to be powered by `consul-template`.
-[Example](https://github.com/hashicorp/consul-template/blob/063041f05c95a90cacd322dcfc14cd0ab83f5734/examples/nginx.md)
-
-Alternatively, consider some service that will watch consul and update ELB via the AWS API:
-
-- [Python](https://github.com/sebest/docker-elb-consul)
-- [Go](https://github.com/pshima/consul-alb-sync)
-
-Or consider the following products:
-
-- [Traefik](https://traefik.io/)
-- [fabio](https://github.com/fabiolb/fabio)
-
-Or we can skip ELB directly, and use
-[Route 53 with health checks](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
-to the Nginx machines.
-
-### Public facing SSL certificates for ELB or other load balancer
-
-- [AWS Certificatre Manager](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request.html)
-- [Let's Encrypt imported into ACM](https://github.com/alex/letsencrypt-aws)
-(Also needs `route53:ListHostedZonesByName` IAM permission)
-
-### Persistent Storage
-
-- [GlusterFS?](https://github.com/hashicorp/nomad/issues/150#issuecomment-344412873)
-- [`ephemeral_disk`](https://www.nomadproject.io/docs/job-specification/ephemeral_disk.html)
-
-## Resources
-
-- [Awesome Nomad](https://github.com/jippi/awesome-nomad)
 
 ## Upgrading
 
