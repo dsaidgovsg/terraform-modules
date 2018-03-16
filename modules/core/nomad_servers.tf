@@ -28,8 +28,6 @@ module "nomad_servers" {
   associate_public_ip_address = "${var.associate_public_ip_address}"
 
   health_check_type = "ELB"
-
-  tags = "${var.tags}"
 }
 
 # --------------------------------------------------------------------------------------------------

@@ -24,8 +24,6 @@ module "nomad_clients" {
   allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
-
-  tags = "${var.tags}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
