@@ -6,7 +6,8 @@ module "nomad_clients" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.0"
 
   cluster_name  = "${var.nomad_cluster_name}-client"
-  cluster_tag_value = "${var.nomad_cluster_name}-server"
+  cluster_tag_key   = "${var.cluster_tag_key}"
+  cluster_tag_value = "${var.consul_cluster_name}"
   instance_type = "${var.nomad_client_instance_type}"
 
   min_size         = "${var.nomad_clients_min}"
@@ -23,6 +24,8 @@ module "nomad_clients" {
   allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
+
+  tags = "${var.tags}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
