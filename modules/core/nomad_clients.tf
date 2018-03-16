@@ -3,9 +3,10 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/lawliet89/terraform-aws-nomad//modules/nomad-cluster?ref=aws_autoscaling_attachment"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.0"
 
   cluster_name  = "${var.nomad_cluster_name}-client"
+  cluster_tag_value = "${var.nomad_cluster_name}-server"
   instance_type = "${var.nomad_client_instance_type}"
 
   min_size         = "${var.nomad_clients_min}"
