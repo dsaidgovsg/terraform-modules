@@ -8,8 +8,7 @@ module "nomad_servers" {
   ami_id = "${var.nomad_servers_ami_id}"
 
   cluster_name  = "${var.nomad_cluster_name}-server"
-  cluster_tag_key   = "${var.cluster_tag_key}"
-  cluster_tag_value = "${var.consul_cluster_name}"
+  cluster_tag_value = "${var.nomad_cluster_name}-server"
   instance_type = "${var.nomad_server_instance_type}"
 
   # You should typically use a fixed size of 3 or 5 for your Nomad server cluster

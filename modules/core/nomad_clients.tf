@@ -6,8 +6,7 @@ module "nomad_clients" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.0"
 
   cluster_name  = "${var.nomad_cluster_name}-client"
-  cluster_tag_key   = "${var.cluster_tag_key}"
-  cluster_tag_value = "${var.consul_cluster_name}"
+  cluster_tag_value = "${var.nomad_cluster_name}-client"
   instance_type = "${var.nomad_client_instance_type}"
 
   min_size         = "${var.nomad_clients_min}"
