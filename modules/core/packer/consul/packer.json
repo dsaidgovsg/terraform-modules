@@ -7,8 +7,8 @@
         "temporary_security_group_source_cidr": "0.0.0.0/0",
         "associate_public_ip_address": "true",
         "ssh_interface": "",
-        "consul_module_version": "v0.1.1",
-        "consul_version": "1.0.3"
+        "consul_module_version": "v0.1.2",
+        "consul_version": "1.0.6"
     },
     "builders": [
         {
