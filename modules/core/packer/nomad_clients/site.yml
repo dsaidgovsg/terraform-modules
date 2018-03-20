@@ -13,6 +13,10 @@
       upgrade: yes
       update_cache: yes
     become: yes
+  - name: Install pip3
+    apt:
+      name: python3-pip
+    become: yes
   roles:
   - role: "{{ playbook_dir }}/../roles/consul"
   - role: "{{ playbook_dir }}/../roles/nomad"
