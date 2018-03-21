@@ -106,10 +106,33 @@ new instances with the updated launch configurations. You should do this ONE BY 
 1. Terminate the instance that you would like to remove.
 1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
 
+You can use this AWS CLI command:
+
+```bash
+aws autoscaling \
+    terminate-instance-in-auto-scaling-group \
+    --no-should-decrement-desired-capacity \
+    --instance-id "xxx"
+```
+
+Replace `xxx` with the instance ID.
+
 ### Upgrading Nomad Servers
 
 1. Terminate the instance that you would like to remove.
 1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
+
+You can use this AWS CLI command:
+
+```bash
+aws autoscaling \
+    terminate-instance-in-auto-scaling-group \
+    --no-should-decrement-desired-capacity \
+    --instance-id "xxx"
+```
+
+Replace `xxx` with the instance ID.
+
 
 ### Upgrading Nomad Clients
 
@@ -118,3 +141,14 @@ the unhealthy client status.
 
 1. Drain the servers using `nomad node-drain node-id`
 1. After the allocations are drained, terminate the instance and AWS will launch a new instance.
+
+You can use this AWS CLI command:
+
+```bash
+aws autoscaling \
+    terminate-instance-in-auto-scaling-group \
+    --no-should-decrement-desired-capacity \
+    --instance-id "xxx"
+```
+
+Replace `xxx` with the instance ID.
