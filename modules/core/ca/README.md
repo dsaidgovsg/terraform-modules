@@ -22,13 +22,19 @@ docker run \
     -v `pwd`:/data \
     --workdir /data \
     --userns host \
-    cfssl/cfssl:1.2.0 \
+    cfssl/cfssl:1.3.2 \
     bash
 ```
 
 The examples below will make use of the KMS key alias `terraform`.
 
-## Generate a key for the CA and create a cerficiate for the CA
+## cfssl Configuration
+
+The configuration for `cfssl` is, unfortunately, not present. The best we can do, is to reference
+the [Go package documentation](https://godoc.org/github.com/cloudflare/cfssl/config). The included
+configuration `config.json` should be sufficient for most purposes.
+
+## Generate a key for the root CA and create a cerficiate for the root CA
 
 Create a [CSR JSON](https://github.com/cloudflare/cfssl/wiki/Creating-a-new-CSR). An example is
 provided in `csr.json`.
@@ -36,7 +42,7 @@ provided in `csr.json`.
 For example
 
 ```bash
-cfssl gencert -initca csr.json | cfssljson -bare ca
+cfssl gencert -config config.json -profile ca -initca csr.json | cfssljson -bare ca
 ```
 
 *DO NOT CHECK IN `ca-key.pem` unencrypted!* The CSR does not need to be checked in.
@@ -80,11 +86,19 @@ aws kms decrypt \
 
 You can now safely delete `ca-key.pem`.
 
+### Viewing the Certificate
+
+You can use the command below to view details of the certificate.
+
+```bash
+openssl x509 -in ca.pem -text -noout
+```
+
 ## Store the encrypted key
 
 You can store the encrypted key in the repository. The files stored are:
 
-- `ca.key`: Private key for the CA
+- `ca.key`: Encrypted private key for the CA
 - `ca.pem`: The self signed CA cerfificate
 - `csr.json`: The CSR used to generated the CA certificate
 
@@ -108,10 +122,45 @@ Don't forget to delete the decrypted key!
 cfssl gencert -renewca -ca ca.pem -ca-key ca-key.pem
 ```
 
-## Issue a new certificate
-
 ## Issue an intermediate CA
+
+You might want to issue an intermediate CA, for example, to be used with Vault.
+
+1. Generate a new key pair and CSR.
+1. Decrypt the root CA key as described above.
+1. Sign the key.
+
+For example, to define an intermediate CA for Vault, we will prefix all the inputs and outputs with
+`vault`:
+
+```bash
+# Generate a new key pair and CSR
+cfssl genkey -config config.json -profile ca -initca vault-csr.json | cfssljson -bare vault
+# Generate a certificate and sign it with the root CA key
+cfssl sign -ca ca.pem -ca-key ca-key.pem -config config.json -profile ca vault.csr \
+    | cfssljson -bare vault
+```
+
+Don't forget to encrypt the new key.
+
+## Issue a new certificate
 
 ## Resources
 
 [Guide](https://technedigitale.com/archives/639)
+
+
+<!--
+    Generate a new key and cert from CSR:
+        cfssl gencert -initca CSRJSON
+        cfssl gencert -ca cert -ca-key key [-config config] [-profile profile] [-hostname hostname] CSRJSON
+        cfssl gencert -remote remote_host [-config config] [-profile profile] [-label label] [-hostname hostname] CSRJSON
+
+    Re-generate a CA cert with the CA key and CSR:
+        cfssl gencert -initca -ca-key key CSRJSON
+
+    Re-generate a CA cert with the CA key and certificate:
+        cfssl gencert -renewca -ca cert -ca-key key
+
+
+-->

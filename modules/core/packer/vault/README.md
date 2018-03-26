@@ -7,11 +7,9 @@ This is based on this [example](https://github.com/hashicorp/terraform-aws-vault
 
 ## Pre-requisites
 
-### AWS KMS Requirement
+### Generate a CA and intermediate CA
 
 1. Refer to the [`ca`](ca/README.md) for instructions on how to setup a CA with the associated keys.
-1. ???
-
 
 ## Configuration Options
 

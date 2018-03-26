@@ -11,5 +11,8 @@
             "O": "ACME Corporation",
             "OU": "IT Department"
         }
-    ]
+    ],
+    "ca": {
+        "expiry": "43800h"
+    }
 }
