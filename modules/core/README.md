@@ -41,7 +41,13 @@ Then, configure it a file such as `backend-config.tfvars`. See
 - Create an AWS Hosted zone for the domain or subdomain. If the domain is registered with another registrar, it must have its name servers set to AWS.
 - Use AWS Certficate Manager to request certificates for the domain and its wildcard subdomains. For example, you need to request a certificate that contains the names `nomad.some.domain` AND `*.nomad.some.domain`.
 
-### Generating a Certificate Authority
+### Certificates
+
+You will need to generate the following certificates:
+
+- A Root CA
+- Vault Intermediate CA
+- Vault Certificate
 
 Refer to instructions [here](ca/README.md).
 

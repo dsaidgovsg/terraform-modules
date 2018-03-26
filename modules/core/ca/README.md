@@ -37,12 +37,12 @@ configuration `config.json` should be sufficient for most purposes.
 ## Generate a key for the root CA and create a cerficiate for the root CA
 
 Create a [CSR JSON](https://github.com/cloudflare/cfssl/wiki/Creating-a-new-CSR). An example is
-provided in `csr.json`.
+provided in `root/csr.json`.
 
 For example
 
 ```bash
-cfssl gencert -config config.json -profile ca -initca csr.json | cfssljson -bare ca
+cfssl gencert -config config.json -profile ca -initca root/csr.json | cfssljson -bare root/ca
 ```
 
 *DO NOT CHECK IN `ca-key.pem` unencrypted!* The CSR does not need to be checked in.
@@ -128,22 +128,30 @@ You might want to issue an intermediate CA, for example, to be used with Vault.
 
 1. Generate a new key pair and CSR.
 1. Decrypt the root CA key as described above.
-1. Sign the key.
+1. Sign the certificate.
 
-For example, to define an intermediate CA for Vault, we will prefix all the inputs and outputs with
-`vault`:
+We will look at the provided example `vault`.
 
 ```bash
 # Generate a new key pair and CSR
-cfssl genkey -config config.json -profile ca -initca vault-csr.json | cfssljson -bare vault
+cfssl genkey -config config.json -profile ca -initca vault/csr.json | cfssljson -bare vault/ca
 # Generate a certificate and sign it with the root CA key
-cfssl sign -ca ca.pem -ca-key ca-key.pem -config config.json -profile ca vault.csr \
-    | cfssljson -bare vault
+cfssl sign -ca root/ca.pem -ca-key root/ca-key.pem -config config.json -profile ca vault/ca.csr \
+    | cfssljson -bare vault/ca
 ```
 
 Don't forget to encrypt the new key.
 
 ## Issue a new certificate
+
+1. Generate a new key pair and CSR.
+1. Decrypt the key of the CA you want to sign the certificate with.
+1. Sign the certificate.
+
+For example, if we want to generate a new certificate to serve Vault's API:
+
+```bash
+```
 
 ## Resources
 
