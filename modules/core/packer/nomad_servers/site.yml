@@ -12,6 +12,9 @@
       upgrade: yes
       update_cache: yes
     become: yes
-  roles:
-  - role: "{{ playbook_dir }}/../roles/consul"
-  - role: "{{ playbook_dir }}/../roles/nomad"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Nomad
+    include_role:
+      name: "{{ playbook_dir }}/../roles/nomad"
