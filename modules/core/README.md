@@ -53,8 +53,10 @@ Refer to instructions [here](ca/README.md).
 
 ## Building AMIs
 
-We first need to use [packer](https://www.packer.io/) to build several AMIs. The list below
-will link to example packer scripts that we have provided. If you have additional requirements, you
+We first need to use [packer](https://www.packer.io/) to build several AMIs. You will also need to
+have Ansible 2.5 installed.
+
+The list below will link to example packer scripts that we have provided. If you have additional requirements, you
 are encouraged to extend from these examples.
 
 - [Consul servers](package/consul)

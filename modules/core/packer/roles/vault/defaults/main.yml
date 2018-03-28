@@ -1,0 +1,6 @@
+---
+vault_version: "0.9.6"
+vault_module_version: "v0.4.0"
+consul_key: "vault/"
+tls_cert_file: "{{ playbook_dir }}/vault.crt"
+tls_key_file: "{{ playbook_dir }}/vault.key"

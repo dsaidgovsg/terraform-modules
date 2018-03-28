@@ -1,0 +1,32 @@
+---
+- name: Install git
+  apt:
+    name: git
+    state: latest
+  become: yes
+- name: Vault Install Sripts
+  block:
+    - name: Create Temporary Directory
+      tempfile:
+        state: directory
+        suffix: build
+      register: vault_temp
+      delegate_to: localhost
+    - name: Checkout Vault module
+      git:
+        repo: "https://github.com/hashicorp/terraform-aws-vault.git"
+        dest: "{{ vault_temp.path }}/terraform-aws-vault"
+        version: "{{ vault_module_version }}"
+      delegate_to: localhost
+    - name: Copy install scripts
+      copy:
+        src: "{{ vault_temp.path }}/terraform-aws-vault"
+        dest: "/tmp"
+        mode: "preserve"
+- name: Install Vault
+  shell: "/tmp/terraform-aws-vault/modules/install-vault/install-vault --version {{ vault_version }}"
+- name: "Template Vault Configuration"
+  copy:
+    src: "{{ role_path }}/files/config/override.hcl"
+    dest: "/opt/vault/config/override.hcl"
+  become: yes

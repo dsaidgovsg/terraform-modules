@@ -2,7 +2,7 @@
 
 This directory contains instruction on how to setup a CA to issues certificate for Vault, Consul and
 Nomad to perform TLS communication, and finally to import an intermediate CA into Vault to issue
-cerficiates for Nomad and other services.
+certificates for Nomad and other services.
 
 1. [Create a new master key in AWS KMS](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html)
 1. Generate a key for the CA and create a cerficiate for the CA.
@@ -34,7 +34,13 @@ The configuration for `cfssl` is, unfortunately, not present. The best we can do
 the [Go package documentation](https://godoc.org/github.com/cloudflare/cfssl/config). The included
 configuration `config.json` should be sufficient for most purposes.
 
-## Generate a key for the root CA and create a cerficiate for the root CA
+## CSR Configuration
+
+The documentation for this is sparse. The reference for the
+[Go package](https://godoc.org/github.com/cloudflare/cfssl/csr) and this
+[page](https://github.com/cloudflare/cfssl/wiki/Creating-a-new-CSR) is all we have at this moment.
+
+## Generate a key for the root CA and create a certificate for the root CA
 
 Create a [CSR JSON](https://github.com/cloudflare/cfssl/wiki/Creating-a-new-CSR). An example is
 provided in `root/csr.json`.
@@ -99,7 +105,7 @@ openssl x509 -in ca.pem -text -noout
 You can store the encrypted key in the repository. The files stored are:
 
 - `ca.key`: Encrypted private key for the CA
-- `ca.pem`: The self signed CA cerfificate
+- `ca.pem`: The self signed CA certificate
 - `csr.json`: The CSR used to generated the CA certificate
 
 ## Decrypt the private key
@@ -129,6 +135,7 @@ You might want to issue an intermediate CA, for example, to be used with Vault.
 1. Generate a new key pair and CSR.
 1. Decrypt the root CA key as described above.
 1. Sign the certificate.
+1. Encrypt your private key for storage.
 
 We will look at the provided example `vault`.
 
@@ -147,28 +154,21 @@ Don't forget to encrypt the new key.
 1. Generate a new key pair and CSR.
 1. Decrypt the key of the CA you want to sign the certificate with.
 1. Sign the certificate.
+1. Encrypt the private key.
 
 For example, if we want to generate a new certificate to serve Vault's API:
 
 ```bash
+# Generate a new key pair and CSR
+cfssl genkey -config config.json -profile peer vault-cert/csr.json | cfssljson -bare vault-cert/cert
+# Generate a certificate and sign it with the root CA key
+cfssl sign -ca root/ca.pem -ca-key root/ca-key.pem -config config.json -profile peer \
+    vault-cert/cert.csr \
+    | cfssljson -bare vault/cert
 ```
+
+Don't forget to encrypt the new key.
 
 ## Resources
 
 [Guide](https://technedigitale.com/archives/639)
-
-
-<!--
-    Generate a new key and cert from CSR:
-        cfssl gencert -initca CSRJSON
-        cfssl gencert -ca cert -ca-key key [-config config] [-profile profile] [-hostname hostname] CSRJSON
-        cfssl gencert -remote remote_host [-config config] [-profile profile] [-label label] [-hostname hostname] CSRJSON
-
-    Re-generate a CA cert with the CA key and CSR:
-        cfssl gencert -initca -ca-key key CSRJSON
-
-    Re-generate a CA cert with the CA key and certificate:
-        cfssl gencert -renewca -ca cert -ca-key key
-
-
--->

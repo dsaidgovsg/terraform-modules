@@ -1,0 +1,19 @@
+{
+    "CN": "vault.service.consul",
+    "hosts": [
+        "vault.service.consul",
+        "127.0.0.1",
+        "vault.acme.com"
+    ],
+    "key": {
+        "algo": "ecdsa",
+        "size": 256
+    },
+    "names": [
+        {
+            "C": "SG",
+            "O": "ACME Corporation",
+            "OU": "IT Department"
+        }
+    ]
+}
