@@ -7,7 +7,7 @@
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
     docker_version: "17.11.0~ce-0~ubuntu"
-  pre_tasks:
+  tasks:
   - name: Upgrade all packages to the latest version
     apt:
       upgrade: yes
@@ -17,7 +17,12 @@
     apt:
       name: python3-pip
     become: yes
-  roles:
-  - role: "{{ playbook_dir }}/../roles/consul"
-  - role: "{{ playbook_dir }}/../roles/nomad"
-  - role: "{{ playbook_dir }}/../roles/ansible-docker-ubuntu"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Nomad
+    include_role:
+      name: "{{ playbook_dir }}/../roles/nomad"
+  - name: Install Docker and Docker Compose
+    include_role:
+      name: "{{ playbook_dir }}/../roles/ansible-docker-ubuntu"

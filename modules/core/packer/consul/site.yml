@@ -4,11 +4,12 @@
   vars:
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
-  pre_tasks:
+  tasks:
   - name: Upgrade all packages to the latest version
     apt:
       upgrade: yes
       update_cache: yes
     become: yes
-  roles:
-    - role: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../roles/consul"
