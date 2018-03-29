@@ -92,14 +92,6 @@ output "vault_asg_name" {
   value = "${module.vault.asg_name}"
 }
 
-output "vault_cluster_tag_key" {
-  value = "${var.vault_cluster_tag_key}"
-}
-
-output "vault_cluster_tag_value" {
-  value = "${var.vault_cluster_tag_value}"
-}
-
 output "vault_cluster_size" {
   value = "${module.vault.cluster_size}"
 }

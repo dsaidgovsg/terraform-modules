@@ -2,7 +2,7 @@
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "vault_cluster" {
+module "vault" {
     # source = "github.com/hashicorp/terraform-aws-consul.git/modules/vault-cluster?ref=v0.4.0"
     source = "github.com/lawliet89/terraform-aws-vault.git//modules/vault-cluster?ref=aws_autoscaling_attachment"
 
@@ -20,6 +20,7 @@ module "vault_cluster" {
     subnet_ids = "${module.vpc.public_subnets}"
 
     ssh_key_name = "${var.ssh_key_name}"
+    allowed_inbound_security_group_ids = "${var.vault_allowed_inbound_security_group_ids}"
     allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
     allowed_ssh_cidr_blocks = "${var.allowed_ssh_cidr_blocks}"
     associate_public_ip_address = "${var.associate_public_ip_address}"
@@ -37,7 +38,7 @@ module "vault_cluster" {
 module "vault_iam_policies_servers" {
     source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.3.1"
 
-    iam_role_id = "${module.vault_cluster.iam_role_id}"
+    iam_role_id = "${module.vault.iam_role_id}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ data "template_file" "user_data_vault_cluster" {
 
     vars {
         aws_region               = "${data.aws_region.current.name}"
-        consul_cluster_tag_key   = "${var.consul_cluster_tag_key}"
+        consul_cluster_tag_key   = "${var.cluster_tag_key}"
         consul_cluster_tag_value = "${var.consul_cluster_name}"
 
         # These paths are set by default by the Packer template. If you have modified them, you

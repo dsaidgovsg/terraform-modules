@@ -260,6 +260,12 @@ variable "vault_cluster_size" {
   default = 3
 }
 
+variable "vault_allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Vault"
+  type        = "list"
+  default = []
+}
+
 variable "vault_instance_type" {
   description = "The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro)."
   default = "t2.medium"
