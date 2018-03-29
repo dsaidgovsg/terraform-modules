@@ -8,5 +8,5 @@
   pip:
     name: "ansible"
     version: "{{ ansible_install_version }}"
-    state: present
+    state: forcereinstall
   become: yes

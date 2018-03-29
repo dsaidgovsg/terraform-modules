@@ -8,3 +8,4 @@
   pip:
     name: pip
     state: latest
+  become: yes
