@@ -1,7 +1,7 @@
 ---
-- name: Install pip3
+- name: Install OpenSSL headers
   apt:
-    name: python3-pip
+    name: libssl-dev
     state: latest
   become: yes
 - name: Install with Pip

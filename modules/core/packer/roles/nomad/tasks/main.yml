@@ -4,25 +4,11 @@
     name: git
     state: latest
   become: yes
-- name: Nomad Install Sripts
-  block:
-    - name: Create Temporary Directory
-      tempfile:
-        state: directory
-        suffix: build
-      register: nomad_temp
-      delegate_to: localhost
-    - name: Checkout Nomad module
-      git:
-        repo: "https://github.com/hashicorp/terraform-aws-nomad.git"
-        dest: "{{ nomad_temp.path }}/terraform-aws-nomad"
-        version: "{{ nomad_module_version }}"
-      delegate_to: localhost
-    - name: Copy install scripts
-      copy:
-        src: "{{ nomad_temp.path }}/terraform-aws-nomad"
-        dest: "/tmp"
-        mode: "preserve"
+- name: Checkout Nomad module
+  git:
+    repo: "{{ nomad_module_url }}"
+    dest: "/tmp/terraform-aws-nomad"
+    version: "{{ nomad_module_version }}"
 - name: Install Nomad
   shell: "/tmp/terraform-aws-nomad/modules/install-nomad/install-nomad --version {{ nomad_version }}"
 - name: "Copy Nomad Configuration"
