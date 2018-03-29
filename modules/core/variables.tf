@@ -16,6 +16,10 @@ variable "consul_ami_id" {
     description = "AMI ID for Consul servers"
 }
 
+variable "vault_ami_id" {
+    description = "AMI ID for Vault servers"
+}
+
 variable "consul_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage"
   type        = "list"
@@ -29,6 +33,15 @@ variable "nomad_servers_allowed_inbound_cidr_blocks" {
 variable "nomad_clients_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage"
   type        = "list"
+}
+
+variable "vault_allowed_inbound_cidr_blocks" {
+  description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Vault servers for API usage"
+  type        = "list"
+}
+
+variable "vault_tls_key_policy_arn" {
+  description = "ARN of the IAM policy to allow the Vault EC2 instances to decrypt the encrypted TLS private key baked into the AMI. See README for more information."
 }
 
 variable "route53_zone" {
@@ -166,6 +179,26 @@ variable "nomad_clients_services_inbound_cidr" {
   default     = []
 }
 
+variable "nomad_servers_root_volume_type" {
+  description = "The type of volume. Must be one of: standard, gp2, or io1."
+  default     = "gp2"
+}
+
+variable "nomad_servers_root_volume_size" {
+  description = "The size, in GB, of the root EBS volume."
+  default     = 50
+}
+
+variable "nomad_clients_root_volume_type" {
+  description = "The type of volume. Must be one of: standard, gp2, or io1."
+  default     = "gp2"
+}
+
+variable "nomad_clients_root_volume_size" {
+  description = "The size, in GB, of the root EBS volume."
+  default     = 50
+}
+
 variable "nomad_servers_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-nomad-server.sh
@@ -200,6 +233,16 @@ variable "consul_instance_type" {
     default = "t2.medium"
 }
 
+variable "consul_root_volume_type" {
+  description = "The type of volume. Must be one of: standard, gp2, or io1."
+  default     = "gp2"
+}
+
+variable "consul_root_volume_size" {
+  description = "The size, in GB, of the root EBS volume."
+  default     = 50
+}
+
 variable "consul_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-consul-server.sh
@@ -207,9 +250,51 @@ variable "consul_user_data" {
   default = ""
 }
 
+variable "vault_cluster_name" {
+  description = "The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module."
+  default = "vault"
+}
+
+variable "vault_cluster_size" {
+  description = "The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5."
+  default = 3
+}
+
+variable "vault_instance_type" {
+  description = "The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro)."
+  default = "t2.medium"
+}
+
+variable "vault_root_volume_type" {
+  description = "The type of volume. Must be one of: standard, gp2, or io1."
+  default     = "gp2"
+}
+
+variable "vault_root_volume_size" {
+  description = "The size, in GB, of the root EBS volume."
+  default     = 50
+}
+
+variable "vault_enable_s3_backend" {
+  description = "Whether to configure an S3 storage backend for Vault in addition to Consul."
+  default     = false
+}
+
+variable "vault_s3_bucket_name" {
+  description = "The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault_enable_s3_backend' is set to true."
+  default     = ""
+}
+
+variable "vault_user_data" {
+  # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+  # The default is at user_data/user-data-consul-server.sh
+  description = "The user data for the Vault servers EC2 instances. If set to empty, the default template will be used"
+  default = ""
+}
+
 variable "internal_lb_name" {
-  description = "Name of the internal Nomad load balancer"
-  default = "nomad-internal"
+  description = "Name of the internal load balancer"
+  default = "internal"
 }
 
 variable "deregistration_delay" {

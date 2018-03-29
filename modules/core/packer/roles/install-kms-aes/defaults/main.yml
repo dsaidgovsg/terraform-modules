@@ -1,0 +1,4 @@
+---
+kms_aes_module_url: "https://github.com/GovTechSG/kms-aes.git"
+kms_aes_module_version: "v0.0.1"
+kms_aes_module_dest: "/opt/aes-kms"

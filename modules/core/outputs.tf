@@ -88,6 +88,42 @@ output "consul_api_address" {
   value = "${var.consul_api_domain}"
 }
 
+output "vault_asg_name" {
+  value = "${module.vault.asg_name}"
+}
+
+output "vault_cluster_tag_key" {
+  value = "${var.vault_cluster_tag_key}"
+}
+
+output "vault_cluster_tag_value" {
+  value = "${var.vault_cluster_tag_value}"
+}
+
+output "vault_cluster_size" {
+  value = "${module.vault.cluster_size}"
+}
+
+output "vault_launch_config_name" {
+  value = "${module.vault.launch_config_name}"
+}
+
+output "vault_iam_role_arn" {
+  value = "${module.vault.iam_role_arn}"
+}
+
+output "vault_iam_role_id" {
+  value = "${module.vault.iam_role_id}"
+}
+
+output "vault_security_group_id" {
+  value = "${module.vault.security_group_id}"
+}
+
+output "vault_s3_bucket_arn" {
+  value = "${module.vault.s3_bucket_arn}}"
+}
+
 output "vpc_id" {
   description = "The ID of the VPC"
   value       = "${module.vpc.vpc_id}"

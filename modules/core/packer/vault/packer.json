@@ -11,7 +11,11 @@
         "vault_module_version": "v0.3.0",
         "vault_version": "0.9.6",
         "consul_version": "1.0.6",
-        "consul_key": "vault"
+        "consul_key": "vault",
+        "tls_cert_file_src": "{{ template_dir }}/cert/cert.pem",
+        "encrypted_tls_key_file_src": "{{ template_dir }}/cert/cert.key",
+        "encrypted_aes_key_src": "{{ template_dir }}/cert/aes.key",
+        "cli_json_src": "{{ template_dir }}/cert/cli.json"
     },
     "builders": [
         {
@@ -51,6 +55,8 @@
                 "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}}",
                 "-e",
                 "vault_module_version={{user `vault_module_version`}} consul_version={{user `consul_version`}} consul_key={{user `consul_key`}}",
+                "-e",
+                "tls_cert_file_src={{user `tls_cert_file_src`}} encrypted_tls_key_file_src={{user `encrypted_tls_key_file_src`}} encrypted_aes_key_src={{user `encrypted_aes_key_src`}} cli_json_src={{user `cli_json_src`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
             ]

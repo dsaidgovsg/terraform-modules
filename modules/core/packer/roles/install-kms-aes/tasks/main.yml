@@ -1,0 +1,12 @@
+---
+- name: Install git
+  apt:
+    name: git
+    state: latest
+  become: yes
+- name: Check out AES-KMS Module
+  git:
+    repo: "{{ kms_aes_module_url }}"
+    dest: "{{ kms_aes_module_dest }}"
+    version: "{{ kms_aes_module_version }}"
+  become: yes

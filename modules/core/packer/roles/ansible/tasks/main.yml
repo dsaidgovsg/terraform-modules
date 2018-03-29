@@ -1,0 +1,12 @@
+---
+- name: Install pip3
+  apt:
+    name: python3-pip
+    state: latest
+  become: yes
+- name: Install with Pip
+  pip:
+    name: "ansible"
+    version: "{{ ansible_install_version }}"
+    state: present
+  become: yes
