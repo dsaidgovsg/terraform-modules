@@ -34,7 +34,7 @@ module "vault_cluster" {
 # the Consul AWS Module's consul-iam-policies module.
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "consul_iam_policies_servers" {
+module "vault_iam_policies_servers" {
     source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.3.1"
 
     iam_role_id = "${module.vault_cluster.iam_role_id}"
