@@ -1,0 +1,6 @@
+{
+    "EncryptionContext": {
+        "type": "key",
+        "usage": "ca"
+    }
+}

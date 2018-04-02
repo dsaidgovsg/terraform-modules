@@ -1,0 +1,7 @@
+{
+    "EncryptionContext": {
+        "type": "key",
+        "application": "vault",
+        "usage": "certificate"
+    }
+}

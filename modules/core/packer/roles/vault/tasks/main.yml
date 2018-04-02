@@ -1,0 +1,44 @@
+---
+- name: Install git
+  apt:
+    name: git
+    state: latest
+  become: yes
+- name: Checkout Vault module
+  git:
+    repo: "{{ vault_module_url }}"
+    dest: "/tmp/terraform-aws-vault"
+    version: "{{ vault_module_version }}"
+- name: Install Vault
+  shell: "/tmp/terraform-aws-vault/modules/install-vault/install-vault --version {{ vault_version }}"
+- name: "Template Vault Configuration"
+  copy:
+    src: "{{ role_path }}/files/config/override.hcl"
+    dest: "/opt/vault/config/override.hcl"
+  become: yes
+- name: Vault TLS Certificate
+  block:
+  - name: Make directory if not exist
+    file:
+      path: "{{ item | dirname }}"
+      state: directory
+    with_items:
+      - "{{ tls_cert_file_dest }}"
+      - "{{ encrypted_tls_key_file_dest }}"
+      - "{{ encrypted_aes_key_dest }}"
+      - "{{ cli_json_dest }}"
+    become: yes
+  - name: Copy files over
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    with_items:
+      - src: "{{ tls_cert_file_src }}"
+        dest: "{{ tls_cert_file_dest }}"
+      - src: "{{ encrypted_tls_key_file_src }}"
+        dest: "{{ encrypted_tls_key_file_dest }}"
+      - src: "{{ encrypted_aes_key_src }}"
+        dest: "{{ encrypted_aes_key_dest }}"
+      - src: "{{ cli_json_src }}"
+        dest: "{{ cli_json_dest }}"
+    become: yes

@@ -1,0 +1,14 @@
+---
+- name: Update AWS CLI
+  block:
+    - name: Uninstall APT AWS CLI
+      apt:
+        name: "awscli"
+        state: absent
+      become: yes
+    - name: Install with Pip
+      pip:
+        name: "awscli"
+        version: "{{ aws_cli_version }}"
+        state: present
+      become: yes

@@ -3,9 +3,7 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_servers" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.0"
-
-  ami_id = "${var.nomad_servers_ami_id}"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.1"
 
   cluster_name  = "${var.nomad_cluster_name}-server"
   cluster_tag_value = "${var.nomad_cluster_name}-server"
@@ -16,7 +14,11 @@ module "nomad_servers" {
   max_size         = "${var.nomad_servers_num}"
   desired_capacity = "${var.nomad_servers_num}"
 
+  ami_id = "${var.nomad_servers_ami_id}"
   user_data = "${coalesce(var.nomad_servers_user_data, data.template_file.user_data_nomad_server.rendered)}"
+
+  root_volume_type = "${var.nomad_servers_root_volume_type}"
+  root_volume_size = "${var.nomad_servers_root_volume_size}"
 
   vpc_id = "${module.vpc.vpc_id}"
   subnet_ids = "${module.vpc.public_subnets}"
@@ -37,7 +39,7 @@ module "nomad_servers" {
 # --------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.1.0"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.1"
 
   iam_role_id = "${module.nomad_servers.iam_role_id}"
 }

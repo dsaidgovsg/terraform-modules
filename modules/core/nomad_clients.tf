@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.0"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.1"
 
   cluster_name  = "${var.nomad_cluster_name}-client"
   cluster_tag_value = "${var.nomad_cluster_name}-client"
@@ -15,6 +15,9 @@ module "nomad_clients" {
 
   ami_id = "${var.nomad_clients_ami_id}"
   user_data = "${coalesce(var.nomad_clients_user_data, data.template_file.user_data_nomad_client.rendered)}"
+
+  root_volume_type = "${var.nomad_clients_root_volume_type}"
+  root_volume_size = "${var.nomad_clients_root_volume_size}"
 
   vpc_id = "${module.vpc.vpc_id}"
   subnet_ids = "${module.vpc.public_subnets}"
@@ -32,7 +35,7 @@ module "nomad_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.1.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.1"
 
   iam_role_id = "${module.nomad_clients.iam_role_id}"
 }

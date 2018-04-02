@@ -1,0 +1,12 @@
+---
+- name: Install OpenSSL headers
+  apt:
+    name: libssl-dev
+    state: latest
+  become: yes
+- name: Install with Pip
+  pip:
+    name: "ansible"
+    version: "{{ ansible_install_version }}"
+    state: forcereinstall
+  become: yes

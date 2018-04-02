@@ -39,13 +39,25 @@ Then, configure it a file such as `backend-config.tfvars`. See
 - Create a VPC on AWS with at least one subnet per availability zone
 - Have a domain either registered with AWS Route 53 or other registrar.
 - Create an AWS Hosted zone for the domain or subdomain. If the domain is registered with another registrar, it must have its name servers set to AWS.
-- Use AWS Certficate Manager to request certificates for the domain and its wildcard subdomains. For example, you need to request a certificate that contains the names `nomad.gahmen.tech` AND `*.nomad.gahmen.tech`.
+- Use AWS Certficate Manager to request certificates for the domain and its wildcard subdomains. For example, you need to request a certificate that contains the names `nomad.some.domain` AND `*.nomad.some.domain`.
+
+### Certificates
+
+You will need to generate the following certificates:
+
+- A Root CA
+- Vault Intermediate CA
+- Vault Certificate
+
+Refer to instructions [here](ca/README.md).
 
 ## Building AMIs
 
-We first need to use [packer](https://www.packer.io/) to build several AMIs. The list below
-will link to example packer scripts that we have provided. If you have additional requirements, you
-are encouraged to extend from these examples.
+We first need to use [packer](https://www.packer.io/) to build several AMIs. You will also need to
+have Ansible 2.5 installed.
+
+The list below will link to example packer scripts that we have provided. If you have additional
+requirements, you are encouraged to extend from these examples.
 
 - [Consul servers](package/consul)
 - [Nomad servers (with Consul agent)](packer/nomad_servers)
@@ -63,6 +75,77 @@ Take note of the AMI IDs returned from this.
 
 You should refer to `variables.tf` and then create your own
 [variable file](https://www.terraform.io/intro/getting-started/variables.html#from-a-file).
+
+Most of the variables should be pretty straight forward and are documented inline with their
+description. Some of the more complicated variables are described below.
+
+### `vault_tls_key_policy_arn`
+
+The [Vault packer template](packer/vault) and this module expects Vault to be deployed with TLS
+certificate and the key. The key is expected to be encrypted using a Key Management Service (KMS)
+Customer Managed Key (CMK).
+
+In order for the Vault EC2 instances to be able to decrypt the keys on first run, the instances will
+need to be provided with the necessary IAM policy.
+
+You will have to define the appropriate IAM policy, and then provide the ARN of the IAM policy
+using the `vault_tls_key_policy_arn` variable.
+
+Before you can define an IAM policy, you have to define the appropriate key policy for your CMK
+so that the keys policies can be managed by IAM. Refer to
+[this document](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for more
+information.
+
+After that is done, you can following the example below to define the appropriate policy.
+
+```hcl
+# Use this to retrieve the ARN of a KMS CMK with the alias `terraform`
+data "aws_kms_alias" "terraform" {
+    name = "alias/terraform"
+}
+
+# Define the policy using this data source. If you used the example `cli.json`, this should suffice
+# See https://docs.aws.amazon.com/kms/latest/developerguide/iam-policies.html
+data "aws_iam_policy_document" "vault_decrypt" {
+    policy_id = "VaultTlsDecrypt"
+
+    statement {
+        effect = "Allow"
+        actions = [
+            "kms:Decrypt"
+        ]
+
+        resources = [
+            "${data.aws_kms_alias.terraform.target_key_arn}"
+        ],
+
+        condition {
+            test = "StringEquals"
+            variable = "kms:EncryptionContext:type"
+            values = ["key"]
+        }
+
+        condition {
+            test = "StringEquals"
+            variable = "kms:EncryptionContext:usage"
+            values = ["encryption"]
+        }
+    }
+}
+
+resource "aws_iam_policy" "vault_decrypt" {
+    name = "VaultTlsDecrypt"
+    description = "Policy to allow Vault to use the KMS terraform key to decrypt key encrypting keys."
+    policy = "${data.aws_iam_policy_document.vault_decrypt.json}"
+}
+
+module "core" {
+    source = "..."
+
+    vault_tls_key_policy_arn = "${aws_iam_policy.vault_decrypt.arn}"
+}
+
+```
 
 ## Terraform
 
@@ -86,6 +169,13 @@ terraform plan --var-file vars.tfvars
 terraform apply --var-file vars.tfvars
 
 ```
+
+### Post Terraforming Tasks
+
+After you have applied the Terraform plan, we need to perform some manual steps in order to set up
+Vault.
+
+__TODO__
 
 ## Consul, Docker and DNS Gotchas
 

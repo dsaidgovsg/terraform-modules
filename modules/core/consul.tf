@@ -11,7 +11,6 @@ module "consul_servers" {
 
   subnet_ids = "${module.vpc.public_subnets}"
   vpc_id = "${module.vpc.vpc_id}"
-  ami_id = "${var.consul_ami_id}"
 
   ssh_key_name = "${var.ssh_key_name}"
   allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.consul_allowed_inbound_cidr_blocks)}"
@@ -22,7 +21,11 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.consul_cluster_name}"
 
+  ami_id = "${var.consul_ami_id}"
   user_data = "${coalesce(var.consul_user_data, data.template_file.user_data_consul_server.rendered)}"
+
+  root_volume_type = "${var.consul_root_volume_type}"
+  root_volume_size = "${var.consul_root_volume_size}"
 
   health_check_type = "ELB"
 }

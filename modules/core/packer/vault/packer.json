@@ -1,0 +1,65 @@
+{
+    "min_packer_version": "1.1.2",
+    "variables": {
+        "ami_base_name": "vault",
+        "aws_region": "ap-southeast-1",
+        "subnet_id": "",
+        "temporary_security_group_source_cidr": "0.0.0.0/0",
+        "associate_public_ip_address": "true",
+        "ssh_interface": "",
+        "consul_module_version": "v0.1.2",
+        "vault_module_version": "v0.3.0",
+        "vault_version": "0.9.6",
+        "consul_version": "1.0.6",
+        "consul_key": "vault",
+        "tls_cert_file_src": "{{ template_dir }}/cert/cert.pem",
+        "encrypted_tls_key_file_src": "{{ template_dir }}/cert/cert.key",
+        "encrypted_aes_key_src": "{{ template_dir }}/cert/aes.key",
+        "cli_json_src": "{{ template_dir }}/cert/cli.json"
+    },
+    "builders": [
+        {
+            "name": "ubuntu-1604-vault-ami",
+            "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+            "ami_description": "An Ubuntu 16.04 AMI that has Vault and Consul installed.",
+            "instance_type": "t2.micro",
+            "region": "{{user `aws_region`}}",
+            "type": "amazon-ebs",
+            "subnet_id": "{{user `subnet_id`}}",
+            "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
+            "ssh_interface": "{{user `ssh_interface`}}",
+            "temporary_security_group_source_cidr": "{{user `temporary_security_group_source_cidr`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "architecture": "x86_64",
+                    "name": "*ubuntu-xenial-16.04-amd64-server-*",
+                    "block-device-mapping.volume-type": "gp2",
+                    "root-device-type": "ebs"
+                },
+                "owners": [
+                    "099720109477"
+                ],
+                "most_recent": true
+            },
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "pause_before": "10s",
+            "playbook_file": "{{ template_dir }}/site.yml",
+            "extra_arguments": [
+                "--extra-vars",
+                "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}}",
+                "-e",
+                "vault_module_version={{user `vault_module_version`}} consul_version={{user `consul_version`}} consul_key={{user `consul_key`}}",
+                "-e",
+                "tls_cert_file_src={{user `tls_cert_file_src`}} encrypted_tls_key_file_src={{user `encrypted_tls_key_file_src`}} encrypted_aes_key_src={{user `encrypted_aes_key_src`}} cli_json_src={{user `cli_json_src`}}",
+                "-e",
+                "ansible_python_interpreter=/usr/bin/python3"
+            ]
+        }
+    ]
+}

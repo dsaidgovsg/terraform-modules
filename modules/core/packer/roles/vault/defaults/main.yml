@@ -1,0 +1,17 @@
+---
+vault_version: "0.9.6"
+vault_module_version: "v0.4.0"
+vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
+consul_key: "vault/"
+
+tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"
+tls_cert_file_dest: "/opt/vault/tls/vault.crt"
+
+encrypted_tls_key_file_src: "{{ playbook_dir }}/cert/encrypted_vault.key"
+encrypted_tls_key_file_dest: "/opt/vault/tls/vault.encrypted.key"
+
+encrypted_aes_key_src: "{{ playbook_dir }}/cert/aes.key"
+encrypted_aes_key_dest: "/opt/aes-kms/keys/aes.encrypted.key"
+
+cli_json_src: "{{ playbook_dir }}/cert/cli.json"
+cli_json_dest:  "/opt/aes-kms/keys/cli.json"
