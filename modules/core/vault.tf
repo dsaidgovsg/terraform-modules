@@ -3,8 +3,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vault" {
-    # source = "github.com/hashicorp/terraform-aws-consul.git/modules/vault-cluster?ref=v0.4.0"
-    source = "github.com/lawliet89/terraform-aws-vault.git//modules/vault-cluster?ref=aws_autoscaling_attachment"
+    source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.5.0"
 
     cluster_name  = "${var.vault_cluster_name}"
     cluster_size  = "${var.vault_cluster_size}"
