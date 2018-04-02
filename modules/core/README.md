@@ -170,6 +170,13 @@ terraform apply --var-file vars.tfvars
 
 ```
 
+### Post Terraforming Tasks
+
+After you have applied the Terraform plan, we need to perform some manual steps in order to set up
+Vault.
+
+__TODO__
+
 ## Consul, Docker and DNS Gotchas
 
 See [this post](https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9)

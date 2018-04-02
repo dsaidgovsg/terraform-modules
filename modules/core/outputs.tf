@@ -116,6 +116,14 @@ output "vault_s3_bucket_arn" {
   value = "${module.vault.s3_bucket_arn}}"
 }
 
+output "vault_servers_cluster_tag_key" {
+  value = "${module.vault.cluster_tag_key}"
+}
+
+output "vault_servers_cluster_tag_value" {
+  value = "${module.vault.cluster_tag_value}"
+}
+
 output "vpc_id" {
   description = "The ID of the VPC"
   value       = "${module.vpc.vpc_id}"
@@ -169,4 +177,8 @@ output "vpc_azs" {
 output "internal_lb_id" {
   description = "ID of the internal LB that exposes Nomad, Consul and Vault RPC"
   value = "${aws_security_group.internal_lb.id}"
+}
+
+output "ssh_key_name" {
+  value = "${var.ssh_key_name}"
 }
