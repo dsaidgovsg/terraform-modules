@@ -175,7 +175,17 @@ terraform apply --var-file vars.tfvars
 After you have applied the Terraform plan, we need to perform some manual steps in order to set up
 Vault.
 
-__TODO__
+The helper script `vault-helper.sh` will have some instructions on what you need to do to initialise
+and unseal the servers
+
+You can use our [utility Ansible playbooks](https://github.com/GovTechSG/vault-utils) to perform
+the tasks.
+
+To generate an inventory for the playbooks, you can run
+
+```bash
+./vault-helper.sh -i > inventory
+```
 
 ## Consul, Docker and DNS Gotchas
 

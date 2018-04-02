@@ -221,6 +221,8 @@ function print_instructions {
     instructions+=("    vault read -address=https://$vault_elb_domain_name secret/example")
   fi
 
+  instructions+=("\nPass the '-i' flag to this script to only print the private IP Addresses.")
+
   local instructions_str
   instructions_str=$(join "\n" "${instructions[@]}")
 
@@ -228,6 +230,25 @@ function print_instructions {
 }
 
 function run {
+  # Argument parsing: https://stackoverflow.com/a/14203146
+  POSITIONAL=()
+  while [[ $# -gt 0 ]]
+  do
+  key="$1"
+
+  case $key in
+      -i|--inventory)
+      INVENTORY="YES"
+      shift # past argument
+      ;;
+      *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+  done
+  set -- "${POSITIONAL[@]}" # restore positional parameters
+
   assert_is_installed "aws"
   assert_is_installed "jq"
   assert_is_installed "terraform"
@@ -237,7 +258,16 @@ function run {
   server_ips=$(get_all_vault_server_ips)
 
   wait_for_all_vault_servers_to_come_up "$server_ips"
-  print_instructions "$server_ips"
+
+  if [ "${INVENTORY:-}" == "YES" ]; then
+    local joined_ip
+    local ip_list
+    ip_list=($server_ips)
+    joined_ip=$(join "\n" "${ip_list[@]}")
+    echo -e "$joined_ip"
+  else
+    print_instructions "$server_ips"
+  fi
 }
 
-run
+run "$@"
