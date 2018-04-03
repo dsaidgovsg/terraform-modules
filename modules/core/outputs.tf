@@ -179,6 +179,12 @@ output "internal_lb_id" {
   value = "${aws_security_group.internal_lb.id}"
 }
 
+output "internal_lb_https_listener_arn" {
+  description = "ARN of the HTTPS listener for the internal LB"
+  # Use the `aws_lb_listener_certificate` resource to attach additional certificates
+  value = "${aws_lb_listener.internal_https.arn}"
+}
+
 output "ssh_key_name" {
   value = "${var.ssh_key_name}"
 }
