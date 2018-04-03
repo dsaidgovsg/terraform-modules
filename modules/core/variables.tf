@@ -69,6 +69,10 @@ variable "consul_api_domain" {
   description = "Domain to access Consul HTTP API"
 }
 
+variable "vault_api_domain" {
+  description = "Domain to access Vault HTTP API"
+}
+
 # --------------------------------------------------------------------------------------------------
 # VPC PARAMETERS
 # --------------------------------------------------------------------------------------------------
