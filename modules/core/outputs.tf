@@ -88,6 +88,11 @@ output "consul_api_address" {
   value = "${var.consul_api_domain}"
 }
 
+output "vault_api_address" {
+  description = "Address to access Vault API"
+  value = "${var.vault_api_domain}"
+}
+
 output "vault_asg_name" {
   value = "${module.vault.asg_name}"
 }

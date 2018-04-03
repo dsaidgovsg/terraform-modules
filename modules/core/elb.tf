@@ -213,3 +213,79 @@ resource "aws_route53_record" "consul" {
     evaluate_target_health = false
   }
 }
+
+##############################
+# Vault Server Access
+##############################
+
+resource "aws_lb_listener_rule" "vault" {
+  listener_arn = "${aws_lb_listener.internal_https.arn}"
+  priority = "3"
+
+  action {
+    target_group_arn = "${aws_lb_target_group.vault.arn}"
+    type = "forward"
+  }
+
+  condition {
+    field = "host-header"
+    values = ["${var.vault_api_domain}"]
+  }
+}
+
+resource "aws_lb_target_group" "vault" {
+  name = "${var.internal_lb_name}-vault"
+  port = "8200"
+  protocol = "HTTPS"
+  vpc_id = "${module.vpc.vpc_id}"
+  deregistration_delay = "${var.deregistration_delay}"
+
+  health_check {
+    healthy_threshold = "5"
+    matcher = "200"
+    timeout = "5"
+    unhealthy_threshold = "2"
+    protocol = "HTTPS"
+    path = "/v1/sys/health?standbyok=true"
+    port = "8200"
+  }
+
+  tags = "${var.tags}"
+}
+
+# Attach target group to the Vault servers ASG
+resource "aws_autoscaling_attachment" "vault_internal" {
+  autoscaling_group_name = "${module.vault.asg_name}"
+  alb_target_group_arn = "${aws_lb_target_group.vault.arn}"
+}
+
+resource "aws_security_group_rule" "vault_api_outgoing" {
+  type = "egress"
+  security_group_id = "${aws_security_group.internal_lb.id}"
+  from_port   = 8200
+  to_port     = 8200
+  protocol    = "tcp"
+  source_security_group_id = "${module.vault.security_group_id}"
+}
+
+# Security rules for Vault servers to be accessible by the internal LB
+resource "aws_security_group_rule" "vault_https" {
+  type = "ingress"
+  security_group_id = "${module.vault.security_group_id}"
+  from_port   = 8500
+  to_port     = 8500
+  protocol    = "tcp"
+  source_security_group_id = "${aws_security_group.internal_lb.id}"
+}
+
+resource "aws_route53_record" "vault" {
+  zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name = "${var.vault_api_domain}"
+  type    = "A"
+
+  alias {
+    name = "${aws_lb.internal.dns_name}"
+    zone_id = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
