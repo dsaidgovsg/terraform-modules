@@ -203,10 +203,7 @@ function print_instructions {
   done
 
   local vault_elb_domain_name
-  vault_elb_domain_name=$(get_optional_terraform_output "vault_fully_qualified_domain_name" || true)
-  if [[ -z "$vault_elb_domain_name" ]]; then
-    vault_elb_domain_name=$(get_optional_terraform_output "vault_elb_dns_name" || true)
-  fi
+  vault_elb_domain_name=$(get_optional_terraform_output "vault_api_address" || true)
 
   if [[ -z "$vault_elb_domain_name" ]]; then
     instructions+=("\nOnce your cluster is unsealed, you can read and write secrets by SSHing to any of the servers:\n")
