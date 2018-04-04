@@ -12,7 +12,7 @@
 - name: Install Vault
   shell: "/tmp/terraform-aws-vault/modules/install-vault/install-vault --version {{ vault_version }}"
 - name: "Template Vault Configuration"
-  copy:
+  template:
     src: "{{ role_path }}/files/config/override.hcl"
     dest: "/opt/vault/config/override.hcl"
   become: yes

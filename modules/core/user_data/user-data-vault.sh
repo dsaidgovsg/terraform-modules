@@ -32,7 +32,7 @@ readonly VAULT_TLS_KEY_FILE="${cert_key}"
     --cluster-tag-key "${consul_cluster_tag_key}" \
     --cluster-tag-value "${consul_cluster_tag_value}"
 
-if [ "${enable_s3_backend}" = true ] ; then
+if [ "${enable_s3_backend}" = "true" ] ; then
     /opt/vault/bin/run-vault \
         --tls-cert-file "$VAULT_TLS_CERT_FILE"  \
         --tls-key-file "$VAULT_TLS_KEY_FILE" \
