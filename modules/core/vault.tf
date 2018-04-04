@@ -63,7 +63,7 @@ data "template_file" "user_data_vault_cluster" {
         kms_aes_root = "/opt/aes-kms"
 
         # S3 Variables
-        enable_s3_backend = "${var.vault_enable_s3_backend}"
+        enable_s3_backend = "${var.vault_enable_s3_backend ? "true" : "false"}"
         s3_bucket_name = "${var.vault_s3_bucket_name}"
     }
 }

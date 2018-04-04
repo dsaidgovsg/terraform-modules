@@ -261,6 +261,7 @@ function run {
     local ip_list
     ip_list=($server_ips)
     joined_ip=$(join "\n" "${ip_list[@]}")
+    log_info "Printing out server IPs to STDOUT"
     echo -e "$joined_ip"
   else
     print_instructions "$server_ips"
