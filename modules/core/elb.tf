@@ -29,7 +29,7 @@ resource "aws_lb_listener" "internal_https" {
   load_balancer_arn = "${aws_lb.internal.arn}"
   port = "443"
   protocol = "HTTPS"
-  ssl_policy = "ELBSecurityPolicy-2015-05"
+  ssl_policy = "${var.elb_ssl_policy}"
   certificate_arn = "${data.aws_acm_certificate.internal_lb_certificate.arn}"
 
   # Redirect to a sink target group with zero targets
