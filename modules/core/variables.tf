@@ -311,3 +311,8 @@ variable "deregistration_delay" {
   description = "Time before an unhealthy Elastic Load Balancer target becomes removed"
   default = 30
 }
+
+variable "elb_ssl_policy" {
+  description = "ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html"
+  default = "ELBSecurityPolicy-TLS-1-2-2017-01"
+}
