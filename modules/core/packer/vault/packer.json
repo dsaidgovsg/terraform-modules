@@ -8,7 +8,7 @@
         "associate_public_ip_address": "true",
         "ssh_interface": "",
         "consul_module_version": "v0.1.2",
-        "vault_module_version": "v0.3.0",
+        "vault_module_version": "v0.5.1",
         "vault_version": "0.9.6",
         "consul_version": "1.0.6",
         "consul_key": "vault",

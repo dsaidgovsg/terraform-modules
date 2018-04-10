@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_servers" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.3.1"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.0"
 
   cluster_name  = "${var.nomad_cluster_name}-server"
   cluster_tag_value = "${var.nomad_cluster_name}-server"
