@@ -233,7 +233,6 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-
 ### Upgrading Nomad Clients
 
 When draining Nomad client nodes, users will experience momentary downtime as ELB catches up with
@@ -243,6 +242,26 @@ the unhealthy client status.
 1. After the allocations are drained, terminate the instance and AWS will launch a new instance.
 
 You can use this AWS CLI command:
+
+```bash
+aws autoscaling \
+    terminate-instance-in-auto-scaling-group \
+    --no-should-decrement-desired-capacity \
+    --instance-id "xxx"
+```
+
+Replace `xxx` with the instance ID.
+
+### Upgrading Vault
+
+1. (Optional) Seal server.
+1. Terminate the instance and AWS will automatically start a new instance.
+
+You can seal the server by SSH'ing into the server and running `vault operator seal` with the
+required token. You can optionally use our
+[utility Ansible playbooks](https://github.com/GovTechSG/vault-utils) to do so.
+
+You can terminate instances by using this AWS CLI command:
 
 ```bash
 aws autoscaling \
