@@ -10,6 +10,7 @@
         "consul_module_version": "v0.3.1",
         "vault_module_version": "v0.5.1",
         "vault_version": "0.10.0",
+        "vault_ui_enable": "true",
         "consul_version": "1.0.6",
         "consul_key": "vault",
         "tls_cert_file_src": "{{ template_dir }}/cert/cert.pem",
@@ -70,7 +71,7 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
                 "--extra-vars",
-                "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}}",
+                "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}} vault_ui_enable={{user `vault_ui_enable`}}",
                 "-e",
                 "vault_module_version={{user `vault_module_version`}} consul_version={{user `consul_version`}} consul_key={{user `consul_key`}}",
                 "-e",

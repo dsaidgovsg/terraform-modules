@@ -72,6 +72,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `vault_version`: Version of Vault to install
 - `consul_module_version`: Version of the [Terraform Consul](https://github.com/hashicorp/terraform-aws-consul) repository to use
 - `vault_module_version`: Version of the [vault Module](https://github.com/hashicorp/terraform-aws-vault) to use.
+- `vault_ui_enable`: Enable UI for Vault or not. Defaults to `true`.
 - `consul_version`: Version of Consul to install
 - `consul_key`: Key in Consul to store Vault HA information in
 - `tls_cert_file_src`: Path to the certificate file for Vault to use. This defaults to `cert/cert.pem` if you used the instructions above.
