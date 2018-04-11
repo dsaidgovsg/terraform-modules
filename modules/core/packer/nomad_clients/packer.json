@@ -38,7 +38,25 @@
                 ],
                 "most_recent": true
             },
-            "ssh_username": "ubuntu"
+            "ssh_username": "ubuntu",
+            "run_tags": {
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes"
+            },
+            "tags": {
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes"
+            },
+            "snapshot_tags": {
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes"
+            }
         }
     ],
     "provisioners": [
