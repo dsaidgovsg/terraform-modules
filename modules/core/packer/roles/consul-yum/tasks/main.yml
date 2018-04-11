@@ -1,0 +1,51 @@
+---
+# Amazon Linux AMI follows very closely to CentOS 6
+- name: Install dnsmasq
+  yum:
+    name: dnsmasq
+    state: latest
+  become: yes
+- name: Install git
+  yum:
+    name: git
+    state: latest
+  become: yes
+- name: Configure dnsmasq
+  copy:
+    src: "{{ role_path }}/files/10-consul"
+    dest: "/etc/dnsmasq.d/10-consul"
+  become: yes
+# See https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9
+- name: Setup Dummy interface
+  block:
+  - name: Create dummy network interface
+    shell: /sbin/ip link add dummy0 type dummy
+    register: dummy0
+    ignore_errors: true
+    become: yes
+  - name: Check for failure (allow RTNETLINK File exists error code')
+    fail:
+      msg: "Error creating dummy0 dummy network interface!"
+    when: dummy0.rc != 0 and dummy0.rc != 2
+  - name: Copy sysconfig/network-scripts files
+    copy:
+      src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
+      dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
+    become: yes
+  - name: Restart network service
+    service:
+      name: network
+      state: restarted
+    become: yes
+- name: Clone Consul module
+  git:
+    repo: "{{ consul_module_repo }}"
+    dest: "/tmp/terraform-aws-consul"
+    version: "{{ consul_module_version }}"
+- name: Install Consul
+  shell: "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{ consul_version }}"
+- name: "Copy Consul Configuration"
+  copy:
+    src: "{{ role_path }}/files/config/"
+    dest: "/opt/consul/config"
+  become: yes
