@@ -5,6 +5,7 @@
 module "nomad_servers" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.0"
 
+  asg_name = "${var.nomad_cluster_name}-server"
   cluster_name  = "${var.nomad_cluster_name}-server"
   cluster_tag_value = "${var.nomad_cluster_name}-server"
   instance_type = "${var.nomad_server_instance_type}"
