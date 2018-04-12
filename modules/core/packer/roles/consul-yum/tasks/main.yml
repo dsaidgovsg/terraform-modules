@@ -42,6 +42,18 @@
       name: dnsmasq
       enabled: yes
     become: yes
+  - name: Modify eth0 not to have DNS changing /etc/resolv.conf
+    replace:
+      path: /etc/sysconfig/network-scripts/ifcfg-eth0
+      regexp: 'PEERDNS=yes'
+      replace: 'PEERDNS=no'
+      backup: no
+    become: yes
+  - name: Force add the nameserver 127.0.0.1 into /etc/resolv.conf
+    shell: echo -e "nameserver 127.0.0.1\n$(cat {{ item }})" > {{ item }}
+    with_items:
+    - /etc/resolv.conf
+    become: yes
 - name: Clone Consul module
   git:
     repo: "{{ consul_module_repo }}"
@@ -54,7 +66,3 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/consul/config"
   become: yes
-- name: Copy modified /etc/resolv.conf
-  copy:
-    src: "{{ role_path }}/files/resolv.conf"
-    dest: "/tmp/resolv.conf"
