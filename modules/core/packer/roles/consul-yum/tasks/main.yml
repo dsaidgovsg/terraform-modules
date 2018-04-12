@@ -32,16 +32,16 @@
       src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
       dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
     become: yes
-  - name: Restart network service
+  - name: Enable network service on-startup
     service:
       name: network
-      state: restarted
+      enabled: yes
     become: yes
-- name: Start/restart dnsmasq service
-  service:
-    name: dnsmasq
-    state: restarted
-  become: yes
+  - name: Enable dnsmasq service on-startup
+    service:
+      name: dnsmasq
+      enabled: yes
+    become: yes
 - name: Clone Consul module
   git:
     repo: "{{ consul_module_repo }}"
@@ -54,8 +54,7 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/consul/config"
   become: yes
-- name: Overwrite /etc/resolv.conf to use dnsmasq
+- name: Copy modified /etc/resolv.conf
   copy:
     src: "{{ role_path }}/files/resolv.conf"
-    dest: "/etc/resolv.conf"
-  become: yes
+    dest: "/tmp/resolv.conf"
