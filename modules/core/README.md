@@ -7,6 +7,19 @@ by Hashicorp.
 The vault deployment is based off this
 [example](https://github.com/hashicorp/terraform-aws-vault/tree/master/examples/vault-cluster-private).
 
+## Basic Concepts
+
+This Terraform module allows you to bootstrap an initial cluster of Consul servers, Vault servers,
+Nomad servers, and Nomad clients.
+
+After the initial bootstrap, you will need to perform additional configuration for production
+hardening. In particular, you will have to initialise Vault and configure Vault before you can use
+it for anything.
+
+After you have done that, you can tweak your Packer variables accordingly to harden your clusters
+by making use of Vault. This cannot be done at the initial bootstrap because Vault is not
+initialised yet. They are documented in a later section.
+
 ## Requirements
 
 - AWS account with an access key and secret for programmatic access
@@ -36,7 +49,6 @@ Then, configure it a file such as `backend-config.tfvars`. See
 
 ### AWS Pre-requisites
 
-- Create a VPC on AWS with at least one subnet per availability zone
 - Have a domain either registered with AWS Route 53 or other registrar.
 - Create an AWS Hosted zone for the domain or subdomain. If the domain is registered with another registrar, it must have its name servers set to AWS.
 - Use AWS Certficate Manager to request certificates for the domain and its wildcard subdomains. For example, you need to request a certificate that contains the names `nomad.some.domain` AND `*.nomad.some.domain`.
@@ -46,10 +58,29 @@ Then, configure it a file such as `backend-config.tfvars`. See
 You will need to generate the following certificates:
 
 - A Root CA
-- Vault Intermediate CA
+- Vault Intermediate CA (Optional, but recommended)
 - Vault Certificate
+- Consul Certificate
 
 Refer to instructions [here](ca/README.md).
+
+By default, the following paths are assumed while building the AMIs:
+
+- Root CA: `ca/
+
+### Preparing Secrets
+
+#### Consul Gossip Encryption
+
+If you would like to enable
+[gossip encryption](https://www.consul.io/docs/agent/encryption.html#gossip-encryption) on Consul,
+you will have to:
+
+- Generate a new encryption key with `consul keygen`.
+- Refer to [`packer/common/consul_gossip_base.json`](packer/common/consul_gossip_base.json) and fill in the values accordingly. Take care _not_ to check in the file to your source control unencrypted.
+
+You should then use this `consul_gossip_base.json` variable file as a common file to be included
+as part of _all_ your Packer AMI building.
 
 ## Building AMIs
 
@@ -170,7 +201,17 @@ terraform apply --var-file vars.tfvars
 
 ```
 
-### Post Terraforming Tasks
+## Consul, Docker and DNS Gotchas
+
+See [this post](https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9)
+for a solution.
+
+## Post Terraforming Tasks
+
+As indicated above, the initial Terraform apply will bootstrap the cluster in a usable but
+unhardened manner. You will need to perform some tasks to harden it further.
+
+### Vault Initialisation and Configuration
 
 After you have applied the Terraform plan, we need to perform some manual steps in order to set up
 Vault.
@@ -187,21 +228,16 @@ To generate an inventory for the playbooks, you can run
 ./vault-helper.sh -i > inventory
 ```
 
-## Consul, Docker and DNS Gotchas
+### Upgrading
 
-See [this post](https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9)
-for a solution.
-
-## Upgrading
-
-In general, to upgrade the servers, you will have to update the packer template file, build
-a new AMI, the update the terraform variables with the new AMI ID. Then, you can run
+In general, to upgrade or update the servers, you will have to update the packer template file,
+build a new AMI, the update the terraform variables with the new AMI ID. Then, you can run
 `terraform apply` to update the launch configuration.
 
 Then, you will need to terminate the various instances for Auto Scaling Group to start
 new instances with the updated launch configurations. You should do this ONE BY ONE.
 
-### Upgrading Consul
+#### Upgrading Consul
 
 1. Terminate the instance that you would like to remove.
 1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
@@ -217,7 +253,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-### Upgrading Nomad Servers
+#### Upgrading Nomad Servers
 
 1. Terminate the instance that you would like to remove.
 1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
@@ -233,7 +269,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-### Upgrading Nomad Clients
+#### Upgrading Nomad Clients
 
 When draining Nomad client nodes, users will experience momentary downtime as ELB catches up with
 the unhealthy client status.
@@ -252,7 +288,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-### Upgrading Vault
+#### Upgrading Vault
 
 1. (Optional) Seal server.
 1. Terminate the instance and AWS will automatically start a new instance.
