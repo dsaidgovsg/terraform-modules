@@ -37,6 +37,11 @@
       name: network
       state: restarted
     become: yes
+- name: Start/restart dnsmasq service
+  service:
+    name: dnsmasq
+    state: restarted
+  become: yes
 - name: Clone Consul module
   git:
     repo: "{{ consul_module_repo }}"
