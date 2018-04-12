@@ -66,7 +66,7 @@ Refer to instructions [here](ca/README.md).
 
 By default, the following paths are assumed while building the AMIs:
 
-- Root CA: `ca/
+__TODO__: Fill this up!
 
 ### Preparing Secrets
 
@@ -101,6 +101,9 @@ to specify AWS credentials.
 Refer to each of the directories for instruction.
 
 Take note of the AMI IDs returned from this.
+
+__TODO__: Differentiate between initial "bootstrap" variables in Packer templates and post
+"bootstrap" variables. Also, deal with "common" variable files.
 
 ## Defining Variables
 
