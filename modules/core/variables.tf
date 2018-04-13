@@ -87,9 +87,8 @@ variable "vpc_cidr" {
     default = "192.168.0.0/16"
 }
 
-// Convention is for the MSB of the third octet to be zero for public subnet and one for private
-// subnets.
-
+# Convention is for the MSB of the third octet to be zero for public subnet and one for private
+# subnets.
 variable "vpc_public_subnets_cidr" {
   description = "CIDR for each of the subnets in the VPCs we want to create"
   type = "list"
@@ -141,6 +140,11 @@ variable "associate_public_ip_address" {
   description = "If set to true, associate a public IP address with each EC2 Instance in the cluster."
   default     = true
 }
+
+# --------------------------------------------------------------------------------------------------
+# Nomad Cluster optional parameters
+# These parameters have reasonable defaults.
+# --------------------------------------------------------------------------------------------------
 
 variable "nomad_cluster_name" {
   description = "The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module."
@@ -217,6 +221,11 @@ variable "nomad_clients_user_data" {
   default = ""
 }
 
+# --------------------------------------------------------------------------------------------------
+# Consul Cluster optional parameters
+# These parameters have reasonable defaults.
+# --------------------------------------------------------------------------------------------------
+
 variable "consul_cluster_name" {
     description = "Name of the Consul cluster to deploy"
     default = "consul-nomad-prototype"
@@ -253,6 +262,11 @@ variable "consul_user_data" {
   description = "The user data for the Consul servers EC2 instances. If set to empty, the default template will be used"
   default = ""
 }
+
+# --------------------------------------------------------------------------------------------------
+# Vault Cluster optional parameters
+# These parameters have reasonable defaults.
+# --------------------------------------------------------------------------------------------------
 
 variable "vault_cluster_name" {
   description = "The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module."
@@ -302,6 +316,11 @@ variable "vault_user_data" {
   default = ""
 }
 
+# --------------------------------------------------------------------------------------------------
+# Internal Load Balancer optional parameters
+# These parameters have reasonable defaults.
+# --------------------------------------------------------------------------------------------------
+
 variable "internal_lb_name" {
   description = "Name of the internal load balancer"
   default = "internal"
@@ -315,4 +334,19 @@ variable "deregistration_delay" {
 variable "elb_ssl_policy" {
   description = "ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html"
   default = "ELBSecurityPolicy-TLS-1-2-2017-01"
+}
+
+# --------------------------------------------------------------------------------------------------
+# Cloudwatch optional parameters
+# These parameters have reasonable defaults.
+# --------------------------------------------------------------------------------------------------
+
+variable "enable_cloudwatch" {
+  description = <<EOF
+  Enable Cloudwatch metrics gathering from Consul, Nomad and Vault, and log forwarding.
+  Note that you also need to enable to appropriate variables in the Packer AMI templates for this
+  to work too.
+EOF
+
+  default = 1
 }
