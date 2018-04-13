@@ -31,6 +31,12 @@
       src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
       dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
     become: yes
+  - name: Append 127.0.0.1 as nameserver to use dnsmasq on next start-up
+    copy:
+      src: "{{ role_path }}/files/dummy/dhclient.conf"
+      dest: "/etc/dhcp/dhclient.conf"
+      mode: 0644
+    become: yes
   - name: Enable network service on-startup
     service:
       name: network
@@ -40,18 +46,6 @@
     service:
       name: dnsmasq
       enabled: yes
-    become: yes
-  - name: Modify eth0 not to have DNS changing /etc/resolv.conf
-    replace:
-      path: /etc/sysconfig/network-scripts/ifcfg-eth0
-      regexp: 'PEERDNS=yes'
-      replace: 'PEERDNS=no'
-      backup: no
-    become: yes
-  - name: Force add the nameserver 127.0.0.1 into /etc/resolv.conf
-    shell: echo -e "nameserver 127.0.0.1\n$(cat {{ item }})" > {{ item }}
-    with_items:
-    - /etc/resolv.conf
     become: yes
 - name: Clone Consul module
   git:
