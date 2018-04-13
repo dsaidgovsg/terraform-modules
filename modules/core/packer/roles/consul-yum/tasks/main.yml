@@ -18,6 +18,8 @@
 # See https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9
 - name: Setup Dummy interface
   block:
+  # Amazon Linux follows RHEL6 closely
+  # https://jamielinux.com/docs/libvirt-networking-handbook/appendix/dummy-interface-on-rhel.html
   - name: Create dummy network interface
     copy:
       src: "{{ role_path }}/files/dummy/dummy.modules"
