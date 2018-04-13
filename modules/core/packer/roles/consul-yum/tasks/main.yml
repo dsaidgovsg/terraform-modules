@@ -22,6 +22,7 @@
     copy:
       src: "{{ role_path }}/files/dummy/dummy.modules"
       dest: "/etc/sysconfig/modules/dummy.modules"
+      mode: 0755
     become: yes
   - name: Copy sysconfig/network-scripts files
     copy:
