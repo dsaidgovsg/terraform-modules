@@ -19,14 +19,10 @@
 - name: Setup Dummy interface
   block:
   - name: Create dummy network interface
-    shell: /sbin/ip link add dummy0 type dummy
-    register: dummy0
-    ignore_errors: true
+    copy:
+      src: "{{ role_path }}/files/dummy/dummy.modules"
+      dest: "/etc/sysconfig/modules/dummy.modules"
     become: yes
-  - name: Check for failure (allow RTNETLINK File exists error code')
-    fail:
-      msg: "Error creating dummy0 dummy network interface!"
-    when: dummy0.rc != 0 and dummy0.rc != 2
   - name: Copy sysconfig/network-scripts files
     copy:
       src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
