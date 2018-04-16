@@ -1,12 +1,23 @@
 ---
-- name: Install OpenSSL headers
+- name: Get Ubuntu release name
+  shell: lsb_release -cs
+  register: release_name
+- name: Install dependencies
   apt:
-    name: libssl-dev
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - "libssl-dev"
+    - "software-properties-common"
   become: yes
-- name: Install with Pip
-  pip:
-    name: "ansible"
-    version: "{{ ansible_install_version }}"
+- name: Add Ansible PPA
+  apt_repository:
+    repo: "ppa:ansible/ansible"
+    state: present
+    update_cache: yes
+  become: yes
+- name: Install Ansible
+  apt:
+    name: "ansible={{ ansible_install_version }}-1ppa~{{ release_name.stdout }}"
     state: present
   become: yes
