@@ -10,8 +10,7 @@
         "nomad_version": "0.8.0",
         "consul_module_version": "v0.3.1",
         "nomad_module_version": "v0.4.0",
-        "consul_version": "1.0.6",
-        "docker_version": "18.04.0~ce~3-0~ubuntu"
+        "consul_version": "1.0.6"
     },
     "builders": [
         {
@@ -66,7 +65,7 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
                 "--extra-vars",
-                "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}} docker_version={{user `docker_version`}}",
+                "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
             ]
