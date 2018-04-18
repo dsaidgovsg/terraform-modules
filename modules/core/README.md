@@ -195,7 +195,7 @@ for a solution.
 ## Upgrading
 
 In general, to upgrade or update the servers, you will have to update the packer template file,
-build a new AMI, the update the terraform variables with the new AMI ID. Then, you can run
+build a new AMI, then update the terraform variables with the new AMI ID. Then, you can run
 `terraform apply` to update the launch configuration.
 
 Then, you will need to terminate the various instances for Auto Scaling Group to start
