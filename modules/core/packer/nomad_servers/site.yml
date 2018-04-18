@@ -6,6 +6,8 @@
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
+    vault_version: "0.10.0"
+    vault_module_version: "v0.4.0"
   pre_tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -15,6 +17,9 @@
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Vault
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-vault"
   - name: Install Nomad
     include_role:
       name: "{{ playbook_dir }}/../roles/nomad"

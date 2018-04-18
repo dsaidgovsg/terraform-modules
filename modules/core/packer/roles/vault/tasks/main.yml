@@ -1,16 +1,4 @@
 ---
-- name: Install git
-  apt:
-    name: git
-    state: latest
-  become: yes
-- name: Checkout Vault module
-  git:
-    repo: "{{ vault_module_url }}"
-    dest: "/tmp/terraform-aws-vault"
-    version: "{{ vault_module_version }}"
-- name: Install Vault
-  shell: "/tmp/terraform-aws-vault/modules/install-vault/install-vault --version {{ vault_version }}"
 - name: "Template Vault Configuration"
   template:
     src: "{{ role_path }}/files/config/override.hcl"

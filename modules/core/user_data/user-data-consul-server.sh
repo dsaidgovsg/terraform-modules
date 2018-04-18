@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script is meant to be run in the User Data of each EC2 Instance while it's booting. The script uses the
 # run-consul script to configure and start Consul in server mode. Note that this script assumes it's running in an AMI
 # built from the Packer template in examples/consul-ami/consul.json in the Consul AWS Module.
