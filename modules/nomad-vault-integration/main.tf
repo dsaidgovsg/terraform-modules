@@ -40,7 +40,7 @@ data "template_file" "nomad_aws_token_role" {
 resource "vault_generic_secret" "nomad_aws_token_role" {
     depends_on = ["vault_auth_backend.aws"]
 
-    path = "auth/${var.aws_auth_path}/role/${var.nomad_token_role}"
+    path = "auth/${var.aws_auth_path}/role/${var.nomad_aws_token_role}"
     data_json = "${data.template_file.nomad_aws_token_role.rendered}"
 }
 
@@ -61,4 +61,20 @@ resource "vault_generic_secret" "nomad_server_token_role" {
 
     path = "auth/token/roles/${var.nomad_token_role}"
     data_json = "${data.template_file.nomad_server_token_role.rendered}"
+}
+
+################################################
+# Mark in Consul for the `core` module scripts to configure themselves
+################################################
+resource "consul_key_prefix" "core_integration" {
+    count = "${var.core_integration ? 1 : 0}"
+    path_prefix = "${var.consul_key_prefix}"
+
+    subkeys = {
+        "enabled" = "yes"
+        "allow_unauthenticated" = "${var.allow_unauthenticated}"
+        "create_from_role" = "${var.nomad_token_role}"
+        "nomad_server_role" = "${var.nomad_aws_token_role}"
+        "README" = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/nomad-vault-integration"
+    }
 }

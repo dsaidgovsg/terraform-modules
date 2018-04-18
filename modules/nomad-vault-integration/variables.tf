@@ -29,3 +29,21 @@ variable "nomad_token_role" {
     description = "Name for the Token role that is used by the Nomad server to create tokens"
     default = "nomad-cluster"
 }
+
+# --------------------------------------------------------------------------------------------------
+# CORE INTEGRATION SETTINGS
+# --------------------------------------------------------------------------------------------------
+variable "core_integration" {
+    description = "Enable integration with the `core` module by setting some values in Consul so that the user_data scripts in core know that this module has been applied"
+    default = true
+}
+
+variable "consul_key_prefix" {
+    description = "Path prefix to the key in Consul to set for the `core` module to know that this module has been applied."
+    default = "terraform/nomad-vault-integration/"
+}
+
+variable "allow_unauthenticated" {
+    description = "Specifies if users submitting jobs to the Nomad server should be required to provide their own Vault token, proving they have access to the policies listed in the job. This option should be disabled in an untrusted environment."
+    default = "false"
+}
