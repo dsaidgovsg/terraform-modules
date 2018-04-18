@@ -194,8 +194,8 @@ for a solution.
 
 ## Upgrading
 
-In general, to upgrade the servers, you will have to update the packer template file, build
-a new AMI, the update the terraform variables with the new AMI ID. Then, you can run
+In general, to upgrade or update the servers, you will have to update the packer template file,
+build a new AMI, the update the terraform variables with the new AMI ID. Then, you can run
 `terraform apply` to update the launch configuration.
 
 Then, you will need to terminate the various instances for Auto Scaling Group to start
@@ -203,6 +203,12 @@ new instances with the updated launch configurations. You should do this ONE BY 
 
 ### Upgrading Consul
 
+**Important**: It is important that you only terminate Consul instances one by one. Make sure the
+new servers are healthy and have joined the cluster before continuing. If you lose more than a
+quorum of servers, you might have data loss and have to perform
+[outage recovery](https://www.consul.io/docs/guides/outage.html).
+
+1. Build your new AMI, and Terraform apply the new AMI.
 1. Terminate the instance that you would like to remove.
 1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
 
@@ -219,6 +225,12 @@ Replace `xxx` with the instance ID.
 
 ### Upgrading Nomad Servers
 
+**Important**: It is important that you only terminate Nomad server instances one by one.
+ Make sure the new servers are healthy and have joined the cluster before continuing.
+If you lose more than a quorum of servers, you might have data loss and have to perform
+[outage recovery](https://www.nomadproject.io/guides/outage.html).
+
+1. Build your new AMI, and Terraform apply the new AMI.
 1. Terminate the instance that you would like to remove.
 1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
 
@@ -235,22 +247,85 @@ Replace `xxx` with the instance ID.
 
 ### Upgrading Nomad Clients
 
-When draining Nomad client nodes, users will experience momentary downtime as ELB catches up with
-the unhealthy client status.
+**Important**: These steps are recommended to minimise the outage your services might experience. In particular,
+if you service only has one instance of it running, you will definitely encounter outage. Ensure
+that your services have at least two instances running.
 
-1. Drain the servers using `nomad node-drain node-id`
-1. After the allocations are drained, terminate the instance and AWS will launch a new instance.
-
-You can use this AWS CLI command:
+1. Build your new AMI, and Terraform apply the new AMI.
+2. Take note of the old instances ID that you are going to retiring. You can get a list of the instance IDs with the command:
 
 ```bash
-aws autoscaling \
-    terminate-instance-in-auto-scaling-group \
-    --no-should-decrement-desired-capacity \
-    --instance-id "xxx"
+aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-name ASGName \
+    | jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId' \
+    | tee instance-ids.txt
 ```
 
-Replace `xxx` with the instance ID.
+3. Using Terraform or the AWS console, set the `desired` capacity of your auto-scaling group to twice the current desired value. Make sure the `maximum` is set to a high enough value so that you set the appropriate `desired` value. This is spin up new clients that will be prepared to take over from the instances you are retiring. Alternatively, you can use the [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/update-auto-scaling-group.html) too:
+
+```bash
+aws autoscaling update-auto-scaling-group \
+    --auto-scaling-group-name ASGName \
+    --max-size xxx \
+    --desired-capacity xxx
+```
+
+4. Find the Nomad node IDs for each instance. Assuming you have saved the instance IDs to `instance-ids.txt` and that you have kept the default configuration where the node name is the instance ID:
+
+```bash
+nomad node status -json > nodes.json
+echo -n "" > node-ids.txt
+while read p; do
+    jq --raw-output ".[] | select (.Name == \"${p}\") | .ID" nodes.json  >> node-ids.txt
+done < instance-ids.txt
+```
+
+4. Set the instances you are going to retire as
+["ineligible"](https://www.nomadproject.io/docs/commands/node/eligibility.html) in Nomad. For example, assuming you have saved the instance IDs to `node-ids.txt`:
+
+```bash
+while read p; do
+  nomad node eligibility -disable "${p}"
+done < node-ids.txt
+```
+
+5. Detach the instances from the ASG and wait for the ELB connections to drain. **Make sure you wait for the connections to completely drain first before continuing.** For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+
+```bash
+aws autoscaling detach-instances \
+    --instance-ids $(cat instance-ids.txt | tr '\n' ' ') \
+    --should-decrement-desired-capacity
+```
+
+You can monitor the connection draining in the AWS Console or you can use this command repeatedly
+until all the instances are no longer associated with the ASG and the count returns zero:
+
+```bash
+COUNT="999";
+while [[ "${COUNT}" != "0" ]]; do \
+    COUNT=$(aws autoscaling describe-auto-scaling-instances \
+    --instance-ids $(cat instance-ids.txt | tr '\n' ' ') \
+    | jq '.AutoScalingInstances | length'); \
+    echo "Still ${COUNT} instances. Retrying in 5 seconds"; \
+    sleep 5; \
+done; \
+echo "Done"
+```
+
+6. [Drain](https://www.nomadproject.io/docs/commands/node/drain.html) the clients. For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+
+```bash
+while read p; do
+  nomad node drain -enable "${p}"
+done < instance-ids.txt
+```
+
+7. After the allocations are drained, terminate the instances.  For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+
+```bash
+aws ec2 terminate-instances \
+    --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
+```
 
 ### Upgrading Vault
 
