@@ -3,7 +3,7 @@
 #################################################
 resource "vault_auth_backend" "aws" {
     type = "aws"
-    path = "${var.aws_path}"
+    path = "${var.aws_auth_path}"
 }
 
 ################################################
@@ -40,7 +40,7 @@ data "template_file" "nomad_aws_token_role" {
 resource "vault_generic_secret" "nomad_aws_token_role" {
     depends_on = ["vault_auth_backend.aws"]
 
-    path = "auth/${var.aws_path}/role/${var.nomad_token_role}"
+    path = "auth/${var.aws_auth_path}/role/${var.nomad_token_role}"
     data_json = "${data.template_file.nomad_aws_token_role.rendered}"
 }
 

@@ -3,7 +3,7 @@
     "auth_type": "ec2",
     "bound_account_id": [],
     "bound_ami_id": [],
-    "bound_ec2_instance_id": null,
+    "bound_ec2_instance_id": [],
     "bound_iam_instance_profile_arn": [],
     "bound_iam_principal_arn": [],
     "bound_iam_principal_id": [],
