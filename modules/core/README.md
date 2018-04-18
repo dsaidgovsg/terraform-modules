@@ -247,12 +247,12 @@ Replace `xxx` with the instance ID.
 
 ### Upgrading Nomad Clients
 
-**Important**: These steps are recommended to minimise the outage your services might experience. In particular,
-if you service only has one instance of it running, you will definitely encounter outage. Ensure
-that your services have at least two instances running.
+**Important**: These steps are recommended to minimise the outage your services might experience. In
+particular, if your service only has one instance of it running, you will definitely encounter
+outage. Ensure that your services have at least two instances running.
 
 1. Build your new AMI, and Terraform apply the new AMI.
-2. Take note of the old instances ID that you are going to retiring. You can get a list of the instance IDs with the command:
+2. Take note of the old instances ID that you are going to retire. You can get a list of the instance IDs with the command:
 
 ```bash
 aws autoscaling describe-auto-scaling-groups \
@@ -261,7 +261,7 @@ aws autoscaling describe-auto-scaling-groups \
     | tee instance-ids.txt
 ```
 
-3. Using Terraform or the AWS console, set the `desired` capacity of your auto-scaling group to twice the current desired value. Make sure the `maximum` is set to a high enough value so that you set the appropriate `desired` value. This is spin up new clients that will be prepared to take over from the instances you are retiring. Alternatively, you can use the [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/update-auto-scaling-group.html) too:
+3. Using Terraform or the AWS console, set the `desired` capacity of your auto-scaling group to twice the current desired value. Make sure the `maximum` is set to a high enough value so that you set the appropriate `desired` value. This spins up new clients that will take over the allocations from the instances you are retiring. Alternatively, you can use the [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/update-auto-scaling-group.html) too:
 
 ```bash
 aws autoscaling update-auto-scaling-group \
