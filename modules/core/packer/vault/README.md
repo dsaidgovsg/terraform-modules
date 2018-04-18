@@ -79,6 +79,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `encrypted_tls_key_file_src`: Encrypted private key for the certificate. This defaults to `cert/cert.key` if you used the instructions above.
 - `encrypted_aes_key_src`: AES data key used to encrypt the private key, which is in turned encrypted by AWS KMS. Defaults to `cert/aes.key` if you used the instructions above.
 - `cli_json_src`: The AWS CLI JSON file used to encrypt the AES key. This defaults to `cert/cli.json` if you used the instructions above.
+- `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to empty to not install anything.
 
 ## Building Image
 

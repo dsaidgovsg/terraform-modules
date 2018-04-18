@@ -8,6 +8,7 @@
     consul_version: "1.0.1"
     vault_version: "0.10.0"
     vault_module_version: "v0.4.0"
+    ca_certificate: ""
   pre_tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -23,3 +24,11 @@
   - name: Install Nomad
     include_role:
       name: "{{ playbook_dir }}/../roles/nomad"
+  - name: Install CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../roles/ansible-ca-store"
+    vars:
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate

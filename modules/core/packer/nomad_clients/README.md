@@ -5,6 +5,14 @@ Consul agent as its DNS server.
 
 This is based on this [example](https://github.com/hashicorp/terraform-aws-nomad/tree/master/examples/nomad-consul-ami).
 
+## Pre-requisite
+
+### Certificate Authority
+
+As part of the pre-requisites, you should already have generated certificates for a CA and,
+a certificate for Consul. You should install the certificate for Consul by pointing Packer to the
+path of the Certificate and CA.
+
 ## Configuration Options
 
 See [this page](https://www.packer.io/docs/templates/user-variables.html) for more information.
@@ -20,6 +28,9 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `nomad_module_version`: Version of the [Nomad Module](https://github.com/hashicorp/terraform-aws-nomad) to use.
 - `consul_version`: Version of Consul to install
 - `docker_version`: Version of docker to install.
+- `vault_version`: Version of Vault to install
+- `vault_module_version`: Version of the [vault Module](https://github.com/hashicorp/terraform-aws-vault) to use.
+- `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to empty to not install anything.
 
 ## Building Image
 
