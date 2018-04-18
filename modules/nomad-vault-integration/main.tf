@@ -75,6 +75,7 @@ resource "consul_key_prefix" "core_integration" {
         "allow_unauthenticated" = "${var.allow_unauthenticated}"
         "create_from_role" = "${var.nomad_token_role}"
         "nomad_server_role" = "${var.nomad_aws_token_role}"
+        "auth_path" = "${var.aws_auth_path}"
         "README" = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/nomad-vault-integration"
     }
 }

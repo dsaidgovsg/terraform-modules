@@ -10,8 +10,14 @@ set -e
 # From: https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
+# Configure and run Consul
 /opt/consul/bin/run-consul \
     --client \
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
+
+# Configure Vault Integration
+/opt/nomad/bin/configure-vault \
+    --server
+
 /opt/nomad/bin/run-nomad --server --num-servers "${num_servers}"

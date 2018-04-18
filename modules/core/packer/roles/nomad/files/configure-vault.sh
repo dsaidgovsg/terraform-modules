@@ -5,6 +5,7 @@ set -euo pipefail
 # DNSMasq has been setup to query the Consul agent.
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_NAME="$(basename "$0")"
 
 function print_usage {
   echo
@@ -16,13 +17,36 @@ function print_usage {
   echo
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
-  echo -e "  --config-dir\t\tThe path to write the config file to. Optional. Default is the absolute path of '../config/vault.hcl', relative to this script."
+  echo -e "  --config-path\t\tThe path to write the config file to. Optional. Default is the absolute path of '../config/vault.hcl', relative to this script."
   echo -e "  --vault-service\t\tName of Vault service to query in Consul. Optional. Defaults to 'vault'."
-  echo -e "  --vault-port\t\Port of Vault service. Optional. Defaults to '8200'."
+  echo -e "  --vault-port\t\tPort of Vault service. Optional. Defaults to '8200'."
+  echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for Vault configuration status. Optional. Defaults to terraform/nomad-vault-integration/"
   echo
   echo "Example:"
   echo
   echo "  configure-vault --server"
+}
+
+function log {
+  local readonly level="$1"
+  local readonly message="$2"
+  local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
+}
+
+function log_info {
+  local readonly message="$1"
+  log "INFO" "$message"
+}
+
+function log_warn {
+  local readonly message="$1"
+  log "WARN" "$message"
+}
+
+function log_error {
+  local readonly message="$1"
+  log "ERROR" "$message"
 }
 
 function assert_not_empty {
@@ -45,11 +69,83 @@ function assert_is_installed {
   fi
 }
 
+function consul_kv {
+  local readonly path="${1}"
+  local value
+  value=$(consul kv get "${path}")
+  log_info "Consul KV Path ${path} = ${value}"
+  echo -n "${value}"
+}
+
+function get_vault_token {
+  local readonly auth_path="${1}"
+  local readonly token_role="${2}"
+  local readonly address="${3}"
+
+  log_info "Retrieving EC2 Identity Document"
+  local ec2_identity
+  ec2_identity=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/pkcs7 | tr -d '\n')
+
+  log_info "Retrieving Vault token at path ${auth_path} with role ${token_role}"
+
+  local token
+  token=$(
+    curl -Ss -XPOST "${address}/v1/auth/${auth_path}/login" \
+      -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
+  )
+
+  if echo -n "${token}" | jq --raw-output -e .errors > /dev/null; then
+    log_error "Failed to obtain Vault token"
+    log_error "${token}"
+    exit 1
+  else
+    echo -n "${token}" | jq --raw-output .auth.client_token
+  fi
+}
+
 function generate_config {
   local readonly server="${1}"
   local readonly config_path="${2}"
   local readonly vault_address="${3}"
+  local readonly consul_prefix="${4}"
 
+   if [[ "$server" == "true" ]]; then
+    local auth_path
+    auth_path=$(consul_kv "${consul_prefix}auth_path")
+    local token_role
+    token_role=$(consul_kv "${consul_prefix}nomad_server_role")
+
+    local vault_token
+    vault_token=$(get_vault_token "${auth_path}" "${token_role}" "${vault_address}")
+
+    local allow_unauthenticated
+    allow_unauthenticated=$(consul_kv "${consul_prefix}allow_unauthenticated")
+
+    local create_from_role
+    create_from_role=$(consul_kv "${consul_prefix}create_from_role")
+
+    local default_config=$(cat <<EOF
+vault {
+  enabled = true
+  address = "$vault_address"
+  allow_unauthenticated = $allow_unauthenticated
+  create_from_role = "$create_from_role"
+  token = "$vault_token"
+}
+EOF
+)
+  else
+    local default_config=$(cat <<EOF
+vault {
+  enabled = true
+  address = "$vault_address"
+}
+EOF
+)
+  fi
+
+  log_info "Writing Vault configuration to ${config_path}"
+  echo "${default_config}" > "${config_path}"
 }
 
 function main {
@@ -58,6 +154,7 @@ function main {
   local config_path=""
   local vault_service="vault"
   local vault_port="8200"
+  local consul_prefix="terraform/nomad-vault-integration/"
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -85,6 +182,11 @@ function main {
         vault_port="$2"
         shift
         ;;
+      --consul-prefix)
+        assert_not_empty "$key" "$2"
+        consul_prefix="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -105,17 +207,25 @@ function main {
   fi
 
   assert_is_installed "curl"
+  assert_is_installed "tr"
   assert_is_installed "jq"
   assert_is_installed "consul"
-  assert_is_installed "vault"
+
+  local integration_enabled
+  integration_enabled=$(consul_kv "${consul_prefix}enabled")
+  echo "${integration_enabled}"
+  if [[ "${integration_enabled}" != "yes" ]]; then
+    log_info "Nomad Vault integration is not enabled"
+    exit 0
+  fi
 
   if [[ -z "$config_path" ]]; then
-    config_path=$(cd "$SCRIPT_DIR/../config/vault.hcl" && pwd)
+    config_path="$(cd "$SCRIPT_DIR/../config" && pwd)/vault.hcl"
   fi
 
   local readonly vault_address="https://${vault_service}.service.consul:${vault_port}"
 
-  generate_config "${server}" "${config_path}" "${vault_address}"
+  generate_config "${server}" "${config_path}" "${vault_address}" "${consul_prefix}"
 }
 
 main "$@"

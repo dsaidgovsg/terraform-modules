@@ -5,6 +5,15 @@ This module is an example on how you can setup integration between Vault and Nom
 
 This is intended to be used alongside the [core](../core) module.
 
+## Pre-requisites
+
+You must have Terraformed the [core](../core) module first. In addition, you must have at least
+initialised and unsealed the Vault servers.
+
+Your Vault instances must also have the appropriate
+[IAM policy](https://www.vaultproject.io/docs/auth/aws.html#recommended-vault-iam-policy) applied
+to them. Otherwise, the instances cannot perform verification with the AWS API.
+
 ## Vault Provider
 
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the
