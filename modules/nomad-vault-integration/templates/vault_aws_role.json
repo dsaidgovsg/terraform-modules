@@ -1,0 +1,27 @@
+{
+    "allow_instance_migration": false,
+    "auth_type": "ec2",
+    "bound_account_id": [],
+    "bound_ami_id": [],
+    "bound_ec2_instance_id": [],
+    "bound_iam_instance_profile_arn": [],
+    "bound_iam_principal_arn": [],
+    "bound_iam_principal_id": [],
+    "bound_iam_role_arn": [
+        "${nomad_server_iam_role_arn}"
+    ],
+    "bound_region": [],
+    "bound_subnet_id": [],
+    "bound_vpc_id": [],
+    "policies": [
+        "${nomad_server_policy}"
+    ],
+    "inferred_aws_region": "",
+    "inferred_entity_type": "",
+    "max_ttl": 0,
+    "period": 259200,
+    "disallow_reauthentication": true,
+    "resolve_aws_unique_ids": true,
+    "role_tag": "",
+    "ttl": 0
+}

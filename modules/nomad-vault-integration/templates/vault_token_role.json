@@ -1,0 +1,10 @@
+{
+    "allowed_policies": [],
+    "disallowed_policies": ["${nomad_server_policy}"],
+    "explicit_max_ttl": 0,
+    "name": "${nomad_token_role}",
+    "orphan": true,
+    "path_suffix": "",
+    "period": 259200,
+    "renewable": true
+}
