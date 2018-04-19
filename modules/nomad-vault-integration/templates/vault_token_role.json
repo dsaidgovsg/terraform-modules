@@ -4,7 +4,7 @@
     "explicit_max_ttl": 0,
     "name": "${nomad_token_role}",
     "orphan": true,
-    "path_suffix": "",
+    "path_suffix": "${path_suffix}",
     "period": 259200,
     "renewable": true
 }

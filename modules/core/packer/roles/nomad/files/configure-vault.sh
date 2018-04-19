@@ -242,7 +242,6 @@ function main {
 
   local integration_enabled
   integration_enabled=$(consul_kv "${consul_prefix}enabled")
-  echo "${integration_enabled}"
   if [[ "${integration_enabled}" != "yes" ]]; then
     log_info "Nomad Vault integration is not enabled"
     exit 0

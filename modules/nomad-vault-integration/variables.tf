@@ -30,6 +30,11 @@ variable "nomad_token_role" {
     default = "nomad-cluster"
 }
 
+variable "nomad_token_suffix" {
+    description = "Suffix to create tokens with. See https://www.vaultproject.io/api/auth/token/index.html#path_suffix for more information"
+    default = "nomad-cluster"
+}
+
 variable "create_iam_policy" {
     description = "Enable this module to create the appropriate IAM policy for your Vault instances"
     default = false

@@ -53,6 +53,7 @@ data "template_file" "nomad_server_token_role" {
     vars {
         nomad_server_policy = "${var.nomad_server_policy}"
         nomad_token_role = "${var.nomad_token_role}"
+        path_suffix = "${var.nomad_token_suffix}"
     }
 }
 
