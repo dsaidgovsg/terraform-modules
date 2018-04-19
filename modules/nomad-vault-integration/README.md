@@ -14,6 +14,10 @@ Your Vault instances must also have the appropriate
 [IAM policy](https://www.vaultproject.io/docs/auth/aws.html#recommended-vault-iam-policy) applied
 to them. Otherwise, the instances cannot perform verification with the AWS API.
 
+This module includes Terraforming the IAM policy, if you choose to enable it via the
+`create_iam_policy` variable. The policy created by this module does not include the
+`sts:AssumeRole` action, which is only needed if you want to use cross account access.
+
 ## Vault Provider
 
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the

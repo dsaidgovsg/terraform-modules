@@ -30,6 +30,21 @@ variable "nomad_token_role" {
     default = "nomad-cluster"
 }
 
+variable "create_iam_policy" {
+    description = "Enable this module to create the appropriate IAM policy for your Vault instances"
+    default = false
+}
+
+variable "iam_role_name" {
+    description = "If `create_iam_policy` is enabled, this will be the name of the policy created"
+    default = "VaultAwsAuth"
+}
+
+variable "vault_iam_role_id" {
+    description = "If `create_iam_policy` is enabled, this will be the Vault IAM role ID to apply the policy to"
+    default = ""
+}
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
