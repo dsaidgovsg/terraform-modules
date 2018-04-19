@@ -32,7 +32,7 @@ resource "aws_iam_policy" "vault_aws_auth" {
 }
 
 resource "aws_iam_role_policy_attachment" "vault_aws_auth" {
-     count = "${var.create_iam_policy ? 1 : 0}"
+    count = "${var.create_iam_policy ? 1 : 0}"
 
     role = "${var.vault_iam_role_id}"
     policy_arn = "${aws_iam_policy.vault_aws_auth.arn}"

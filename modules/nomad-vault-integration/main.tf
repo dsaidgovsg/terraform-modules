@@ -32,7 +32,6 @@ data "template_file" "nomad_aws_token_role" {
 
     vars {
         nomad_server_policy = "${var.nomad_server_policy}"
-        nomad_token_role = "${var.nomad_token_role}"
         nomad_server_iam_role_arn = "${var.nomad_server_iam_role_arn}"
     }
 }
