@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Note: This script works assumes that there is a Consul agent running on localhost and that
-# DNSMasq has been setup to query the Consul agent.
+# Note: This script works assumes that the non-configurable  defaults setup by the Ansible roles
+# and the `core` and `nomad-vault-integration` modules are not changed. Otherwise, it will fail to
+# find the right values and will not work.
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
