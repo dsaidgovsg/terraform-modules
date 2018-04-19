@@ -15,4 +15,9 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --client \
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
+
+# Configure Vault Integration
+/opt/nomad/bin/configure-vault \
+    --client
+
 /opt/nomad/bin/run-nomad --client
