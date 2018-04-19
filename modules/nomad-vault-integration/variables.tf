@@ -54,16 +54,27 @@ variable "vault_iam_role_id" {
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "core_integration" {
-    description = "Enable integration with the `core` module by setting some values in Consul so that the user_data scripts in core know that this module has been applied"
+    description = <<EOF
+        Enable integration with the `core` module by setting some values in Consul so
+        that the user_data scripts in core know that this module has been applied
+EOF
     default = true
 }
 
 variable "consul_key_prefix" {
-    description = "Path prefix to the key in Consul to set for the `core` module to know that this module has been applied."
+    description = <<EOF
+        Path prefix to the key in Consul to set for the `core` module to know that this module has
+        been applied. If you change this, you have to update the
+        `nomad_vault_integration_consul_prefix` variable in the core module as well.
+EOF
     default = "terraform/nomad-vault-integration/"
 }
 
 variable "allow_unauthenticated" {
-    description = "Specifies if users submitting jobs to the Nomad server should be required to provide their own Vault token, proving they have access to the policies listed in the job. This option should be disabled in an untrusted environment."
+    description = <<EOF
+        Specifies if users submitting jobs to the Nomad server should be required to provide
+        their own Vault token, proving they have access to the policies listed in the job.
+        This option should be disabled in an untrusted environment.
+EOF
     default = "false"
 }

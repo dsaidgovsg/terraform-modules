@@ -18,6 +18,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 # Configure Vault Integration
 /opt/nomad/bin/configure-vault \
-    --server
+    --server \
+    --consul-prefix "${nomad_vault_integration_consul_prefix}"
 
 /opt/nomad/bin/run-nomad --server --num-servers "${num_servers}"
