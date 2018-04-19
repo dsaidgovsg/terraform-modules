@@ -67,6 +67,13 @@ resource "vault_generic_secret" "nomad_server_token_role" {
 # Mark in Consul for the `core` module scripts to configure themselves
 ################################################
 resource "consul_key_prefix" "core_integration" {
+    depends_on = [
+        "vault_auth_backend.aws",
+        "vault_policy.nomad_server_policy",
+        "vault_generic_secret.nomad_aws_token_role",
+        "vault_generic_secret.nomad_server_token_role"
+    ]
+
     count = "${var.core_integration ? 1 : 0}"
     path_prefix = "${var.consul_key_prefix}"
 
