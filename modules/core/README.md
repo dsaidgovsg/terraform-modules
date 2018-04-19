@@ -315,6 +315,8 @@ aws autoscaling update-auto-scaling-group \
     --desired-capacity xxx
 ```
 
+Wait for the new nodes to be ready and first before you continue.
+
 4. Find the Nomad node IDs for each instance. Assuming you have saved the instance IDs to `instance-ids.txt` and that you have kept the default configuration where the node name is the instance ID:
 
 ```bash
