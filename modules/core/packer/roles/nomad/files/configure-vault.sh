@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Note: This script works assumes that the non-configurable  defaults setup by the Ansible roles
+# Note: This script works assumes that the non-configurable defaults setup by the Ansible roles
 # and the `core` and `nomad-vault-integration` modules are not changed. Otherwise, it will fail to
 # find the right values and will not work.
 
