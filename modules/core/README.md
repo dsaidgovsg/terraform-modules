@@ -332,7 +332,7 @@ while read p; do
 done < instance-ids.txt
 ```
 
-4. Set the instances you are going to retire as
+5. Set the instances you are going to retire as
 ["ineligible"](https://www.nomadproject.io/docs/commands/node/eligibility.html) in Nomad. For example, assuming you have saved the instance IDs to `node-ids.txt`:
 
 ```bash
@@ -341,7 +341,7 @@ while read p; do
 done < node-ids.txt
 ```
 
-5. Detach the instances from the ASG and wait for the ELB connections to drain. **Make sure you wait for the connections to completely drain first before continuing.** For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+6. Detach the instances from the ASG and wait for the ELB connections to drain. **Make sure you wait for the connections to completely drain first before continuing.** For example, assuming you have saved the instance IDs to `instance-ids.txt`:
 
 ```bash
 aws autoscaling detach-instances \
@@ -364,7 +364,7 @@ done; \
 echo "Done"
 ```
 
-6. [Drain](https://www.nomadproject.io/docs/commands/node/drain.html) the clients. For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+7. [Drain](https://www.nomadproject.io/docs/commands/node/drain.html) the clients. For example, assuming you have saved the instance IDs to `instance-ids.txt`:
 
 ```bash
 while read p; do
@@ -372,7 +372,7 @@ while read p; do
 done < instance-ids.txt
 ```
 
-7. After the allocations are drained, terminate the instances.  For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+8. After the allocations are drained, terminate the instances.  For example, assuming you have saved the instance IDs to `instance-ids.txt`:
 
 ```bash
 aws ec2 terminate-instances \

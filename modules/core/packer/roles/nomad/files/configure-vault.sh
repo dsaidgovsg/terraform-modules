@@ -7,6 +7,9 @@ set -euo pipefail
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
+readonly MAX_RETRIES=30
+readonly SLEEP_BETWEEN_RETRIES_SEC=10
+
 function print_usage {
   echo
   echo "Usage: configure-vault [OPTIONS]"
@@ -69,10 +72,32 @@ function assert_is_installed {
   fi
 }
 
+function wait_for_consul {
+  local consul_leader
+
+  for (( i=1; i<="$MAX_RETRIES"; i++ )); do
+    consul_leader=$(
+      curl -sS http://localhost:8500/v1/status/leader 2> /dev/null || echo "failed"
+    )
+
+    if [[ "${consul_leader}" = "failed" ]]; then
+      log_warn "Failed to find Consul cluster leader. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC seconds and try again."
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    else
+      log_info "Found Consul leader at ${consul_leader}"
+      return
+    fi
+  done
+
+  log_error "Failed to detect Consul agent after $MAX_RETRIES retries. Did you start a Consul agent before running the script?"
+  exit 1
+}
+
+
 function consul_kv {
   local readonly path="${1}"
   local value
-  value=$(consul kv get "${path}")
+  value=$(consul kv get "${path}") || exit $?
   log_info "Consul KV Path ${path} = ${value}"
   echo -n "${value}"
 }
@@ -84,7 +109,9 @@ function get_vault_token {
 
   log_info "Retrieving EC2 Identity Document"
   local ec2_identity
-  ec2_identity=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/pkcs7 | tr -d '\n')
+  ec2_identity=$(
+    curl -s http://169.254.169.254/latest/dynamic/instance-identity/pkcs7 | tr -d '\n'
+  ) || exit $?
 
   log_info "Retrieving Vault token at path ${auth_path} with role ${token_role}"
 
@@ -92,7 +119,7 @@ function get_vault_token {
   token=$(
     curl -Ss -XPOST "${address}/v1/auth/${auth_path}/login" \
       -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
-  )
+  ) || exit $?
 
   if echo -n "${token}" | jq --raw-output -e .errors > /dev/null; then
     log_error "Failed to obtain Vault token"
@@ -210,6 +237,8 @@ function main {
   assert_is_installed "tr"
   assert_is_installed "jq"
   assert_is_installed "consul"
+
+  wait_for_consul
 
   local integration_enabled
   integration_enabled=$(consul_kv "${consul_prefix}enabled")
