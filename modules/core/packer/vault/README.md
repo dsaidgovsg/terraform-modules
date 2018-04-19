@@ -71,7 +71,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `ssh_interface`: One of `public_ip`, `private_ip`, `public_dns` or `private_dns`. If set, either the public IP address, private IP address, public DNS name or private DNS name will used as the host for SSH. The default behaviour if inside a VPC is to use the public IP address if available, otherwise the private IP address will be used. If not in a VPC the public DNS name will be used.
 - `vault_version`: Version of Vault to install
 - `consul_module_version`: Version of the [Terraform Consul](https://github.com/hashicorp/terraform-aws-consul) repository to use
-- `vault_module_version`: Version of the [vault Module](https://github.com/hashicorp/terraform-aws-vault) to use.
+- `vault_module_version`: Version of the [Vault Module](https://github.com/hashicorp/terraform-aws-vault) to use.
 - `vault_ui_enable`: Enable UI for Vault or not. Defaults to `true`.
 - `consul_version`: Version of Consul to install
 - `consul_key`: Key in Consul to store Vault HA information in
@@ -79,6 +79,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `encrypted_tls_key_file_src`: Encrypted private key for the certificate. This defaults to `cert/cert.key` if you used the instructions above.
 - `encrypted_aes_key_src`: AES data key used to encrypt the private key, which is in turned encrypted by AWS KMS. Defaults to `cert/aes.key` if you used the instructions above.
 - `cli_json_src`: The AWS CLI JSON file used to encrypt the AES key. This defaults to `cert/cli.json` if you used the instructions above.
+- `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to empty to not install anything.
 
 ## Building Image
 

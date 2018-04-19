@@ -30,7 +30,8 @@ The examples below will make use of the KMS key alias `terraform`.
 
 ## cfssl Configuration
 
-The configuration for `cfssl` is, unfortunately, not present. The best we can do, is to reference
+The documentation for configuration for `cfssl` is, unfortunately, not present.
+The best we can do, is to reference
 the [Go package documentation](https://godoc.org/github.com/cloudflare/cfssl/config). The included
 configuration `config.json` should be sufficient for most purposes.
 

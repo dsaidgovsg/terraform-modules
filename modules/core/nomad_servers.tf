@@ -54,8 +54,9 @@ data "template_file" "user_data_nomad_server" {
   template = "${file("${path.module}/user_data/user-data-nomad-server.sh")}"
 
   vars {
-    num_servers       = "${var.nomad_servers_num}"
-    cluster_tag_key   = "${var.cluster_tag_key}"
+    num_servers = "${var.nomad_servers_num}"
+    cluster_tag_key  = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
+    nomad_vault_integration_consul_prefix = "${var.nomad_vault_integration_consul_prefix}"
   }
 }

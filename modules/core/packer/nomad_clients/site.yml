@@ -2,11 +2,14 @@
 - name: Provision AMI
   hosts: all
   vars:
-    nomad_version: "0.8.0"
+    nomad_version: "0.8.1"
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
     docker_version: "17.11.0~ce-0~ubuntu"
+    vault_version: "0.10.0"
+    vault_module_version: "v0.4.0"
+    ca_certificate: ""
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -20,9 +23,20 @@
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Vault
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-vault"
   - name: Install Nomad
     include_role:
       name: "{{ playbook_dir }}/../roles/nomad"
   - name: Install Docker and Docker Compose
     include_role:
       name: "{{ playbook_dir }}/../roles/ansible-docker-ubuntu"
+  - name: Install CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../roles/ansible-ca-store"
+    vars:
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate

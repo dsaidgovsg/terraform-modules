@@ -6,12 +6,13 @@
     vault_ui_enable: "true"
     vault_module_version: "v0.4.0"
     consul_module_version: "v0.1.2"
-    consul_version: "1.0.6"
+    consul_version: "1.0.7"
     consul_key: "vault/"
     tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"
     encrypted_tls_key_file_src: "{{ playbook_dir }}/cert/encrypted_vault.key"
     encrypted_aes_key_src: "{{ playbook_dir }}/cert/aes.key"
     cli_json_src: "{{ playbook_dir }}/cert/cli.json"
+    ca_certificate: ""
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -24,3 +25,11 @@
   - name: Install Vault
     include_role:
       name: "{{ playbook_dir }}/../roles/vault"
+  - name: Install CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../roles/ansible-ca-store"
+    vars:
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate

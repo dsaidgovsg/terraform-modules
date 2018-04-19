@@ -16,3 +16,9 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/nomad/config"
   become: yes
+- name: Install Vault Configuration script
+  copy:
+    src: "{{ role_path }}/files/configure-vault.sh"
+    dest: "/opt/nomad/bin/configure-vault"
+    mode: 0755
+  become: yes

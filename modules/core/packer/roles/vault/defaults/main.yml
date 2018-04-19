@@ -1,8 +1,5 @@
 ---
-vault_version: "0.10.0"
 vault_ui_enable: "true"
-vault_module_version: "v0.4.0"
-vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
 consul_key: "vault/"
 
 tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script is meant to be run in the User Data of each EC2 Instance while it's booting. The script uses the
 # run-consul script to configure and start Consul in client mode and then the run-nomad script to configure and start
 # Nomad in server mode. Note that this script assumes it's running in an AMI built from the Packer template in
@@ -10,8 +10,15 @@ set -e
 # From: https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
+# Configure and run Consul
 /opt/consul/bin/run-consul \
     --client \
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
+
+# Configure Vault Integration
+/opt/nomad/bin/configure-vault \
+    --server \
+    --consul-prefix "${nomad_vault_integration_consul_prefix}"
+
 /opt/nomad/bin/run-nomad --server --num-servers "${num_servers}"
