@@ -328,7 +328,7 @@ done < instance-ids.txt
 ```
 
 5. Set the instances you are going to retire as
-["ineligible"](https://www.nomadproject.io/docs/commands/node/eligibility.html) in Nomad. For example, assuming you have saved the instance IDs to `node-ids.txt`:
+["ineligible"](https://www.nomadproject.io/docs/commands/node/eligibility.html) in Nomad. For example, assuming you have saved the node IDs to `node-ids.txt`:
 
 ```bash
 while read p; do
@@ -336,10 +336,17 @@ while read p; do
 done < node-ids.txt
 ```
 
-6. Detach the instances from the ASG and wait for the ELB connections to drain. **Make sure you wait for the connections to completely drain first before continuing.** For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+6. The following has to be done **one instance at a time**. Detach the instance from the ASG and wait for the ELB connections to drain. **Make sure you wait for the connections to completely drain first before continuing.** Then, [drain](https://www.nomadproject.io/docs/commands/node/drain.html) the clients.
+
+<!-- FIXME: We should not be doing all these on all the instances at one go. Fix this section by
+writing and testing a new script. Previous version left for posterity for now.-->
+
+<!-- For example, assuming you have saved the instance IDs to `instance-ids.txt` and node IDs to
+`node-ids.txt:
 
 ```bash
 aws autoscaling detach-instances \
+    --auto-scaling-group-name ASGName \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ') \
     --should-decrement-desired-capacity
 ```
@@ -359,15 +366,13 @@ done; \
 echo "Done"
 ```
 
-7. [Drain](https://www.nomadproject.io/docs/commands/node/drain.html) the clients. For example, assuming you have saved the instance IDs to `instance-ids.txt`:
-
 ```bash
 while read p; do
   nomad node drain -enable "${p}"
-done < instance-ids.txt
-```
+done < node-ids.txt
+``` -->
 
-8. After the allocations are drained, terminate the instances.  For example, assuming you have saved the instance IDs to `instance-ids.txt`:
+7. After the allocations are drained, terminate the instances.  For example, assuming you have saved the instance IDs to `instance-ids.txt`:
 
 ```bash
 aws ec2 terminate-instances \
