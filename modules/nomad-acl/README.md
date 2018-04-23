@@ -27,7 +27,7 @@ authenticate with Vault to get the necessary tokens and credentials.
 We have to manually [bootstrap](https://www.nomadproject.io/guides/acl.html#bootstrapping-acls) ACLs
 on the Nomad servers first.
 
-Firstly, this requires that the Nomad servers and servers are configured with the
+Firstly, this requires the Nomad clients and servers to be configured with the
 [`acl` stanza](https://www.nomadproject.io/docs/agent/configuration/acl.html#enabled).
 
 This can be automated with the Core module. Assuming that you have not modified the
