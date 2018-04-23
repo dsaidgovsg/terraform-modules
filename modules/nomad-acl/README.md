@@ -76,7 +76,9 @@ After this is done, you can proceed to update the Nomad clients.
 
 ## Nomad Provider
 
-You will need to provide a `secret_id` Nomad ACL token to the provider. Refer to the
+You will need to have a Nomad management ACL token to be able to Terraform this. The initial
+bootstrap will require the bootstrap token. Afterwards, you can use any management token. Provide
+a `secret_id` Nomad ACL token to the provider. Refer to the
 [documentation](https://www.terraform.io/docs/providers/nomad/index.html) for more information.
 
 In general, you should provide this via the `NOMAD_TOKEN` environment variable.
