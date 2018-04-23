@@ -328,3 +328,10 @@ variable "nomad_vault_integration_consul_prefix" {
 EOF
   default = "terraform/nomad-vault-integration/"
 }
+
+variable "nomad_acl_consul_prefix" {
+  description = <<EOF
+  The Consul prefix used by the Nomad ACL integration script during initial instance boot.
+EOF
+  default = "terraform/nomad-acl/"
+}

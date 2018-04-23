@@ -10,6 +10,10 @@ This is intended to be used alongside the [core](../core) module.
 You must have Terraformed the [core](../core) module first. In addition, you must have at least
 initialised and unsealed the Vault servers.
 
+Make sure you have properly configured Vault with the appropriate
+[authentication methods](https://www.vaultproject.io/docs/auth/index.html) so that your users can
+authenticate with Vault to get the necessary tokens and credentials.
+
 Your Vault instances must also have the appropriate
 [IAM policy](https://www.vaultproject.io/docs/auth/aws.html#recommended-vault-iam-policy) applied
 to them. Otherwise, the instances cannot perform verification with the AWS API.
@@ -23,6 +27,11 @@ This module includes Terraforming the IAM policy, if you choose to enable it via
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the
 Terraform Vault provider for details on how you can provide a Vault token for this Terraform
 operation. In general, you might want to do this with a Root token.
+
+## Consul Provider
+
+Refer to the [documentation](https://www.terraform.io/docs/providers/consul/index.html)
+on how to configure the ACL token for the provider if needed.
 
 ## Vault Token
 
