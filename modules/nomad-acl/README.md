@@ -5,6 +5,9 @@ with the necessary tokens can submit jobs. This module only enables to built in 
 provided by the ACL facility in the Open Source version of Nomad. Additional controls provided
 by Sentinel in the Enterprise version is not enabled.
 
+This module __does not__ create the necessary Vault and Nomad policies. These policies are very
+specific to your use case and you should define them yourselves.
+
 ## Integration with `Core` module
 
 This module is integrated with the `core` module to enable you to use both in conjunction
@@ -56,7 +59,20 @@ resource "consul_keys" "bootstrap" {
 ```
 
 After this is done, update the Nomad servers _first_ according to the instructions provided
-in the Core module.
+in the Core module. You might get `permission denied` if you try to use the `nomad server members`
+command to check if the servers are up.
+
+You can use the [status API](https://www.nomadproject.io/api/status.html) instead which does not
+require any ACL.
+
+Secondly, we will need to generate a Nomad Boostrap token. Use the
+[`acl bootstrap`](https://www.nomadproject.io/docs/commands/acl/bootstrap.html) command.
+
+**Important**: Make sure you save the token somewhere safe. If you lose this and all other
+management tokens, you will have to
+[reset](https://www.nomadproject.io/guides/acl.html#resetting-acl-bootstrap) the bootstrap manually.
+
+After this is done, you can proceed to update the Nomad clients.
 
 ## Nomad Provider
 

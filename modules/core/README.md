@@ -313,6 +313,12 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
+You can also use this command to check whether the new instances created have joined the cluster:
+
+```bash
+nomad server members
+```
+
 #### Upgrading Nomad Clients
 
 **Important**: These steps are recommended to minimise the outage your services might experience. In

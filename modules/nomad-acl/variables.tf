@@ -3,6 +3,16 @@
 # These parameters have reasonable defaults.
 # --------------------------------------------------------------------------------------------------
 
+variable "nomad_address" {
+    description = "FQDN of Nomad addresses to access. Include the port and protocol"
+    default = "http://nomad.service.consul:4646"
+}
+
+variable "path" {
+    description = "Path to enable the Nomad secrets engine on Vault"
+    default = "nomad"
+}
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
