@@ -65,7 +65,7 @@ command to check if the servers are up.
 You can use the [status API](https://www.nomadproject.io/api/status.html) instead which does not
 require any ACL.
 
-Secondly, we will need to generate a Nomad Boostrap token. Use the
+Secondly, we will need to generate a Nomad Bootstrap token. Use the
 [`acl bootstrap`](https://www.nomadproject.io/docs/commands/acl/bootstrap.html) command.
 
 **Important**: Make sure you save the token somewhere safe. If you lose this and all other
