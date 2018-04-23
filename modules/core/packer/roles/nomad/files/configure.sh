@@ -21,11 +21,11 @@ function print_usage {
   echo
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
-  echo -e "  --config-dirh\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
+  echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --vault-service\t\tName of Vault service to query in Consul. Optional. Defaults to 'vault'."
   echo -e "  --vault-port\t\tPort of Vault service. Optional. Defaults to '8200'."
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
-  echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dirh."
+  echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
   echo
@@ -287,7 +287,7 @@ function main {
   if [[ "${vault_integration_enabled}" != "yes" ]]; then
     log_info "Nomad Vault integration is not enabled"
   else
-      generate_vault_config "${server}" "${config_dir}" "${vault_address}" "${consul_prefix}nomad-vault-integration/" "${user}"
+    generate_vault_config "${server}" "${config_dir}" "${vault_address}" "${consul_prefix}nomad-vault-integration/" "${user}"
   fi
 
   local acl_integration_enabled
@@ -295,7 +295,7 @@ function main {
   if [[ "${acl_integration_enabled}" != "yes" ]]; then
     log_info "Nomad ACL is not enabled"
   else
-      generate_acl_config "${config_dir}" "${user}"
+    generate_acl_config "${config_dir}" "${user}"
   fi
 
 }
