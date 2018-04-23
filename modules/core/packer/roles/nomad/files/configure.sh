@@ -21,10 +21,11 @@ function print_usage {
   echo
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
-  echo -e "  --config-path\t\tThe path to write the config file to. Optional. Default is the absolute path of '../config/vault.hcl', relative to this script."
+  echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --vault-service\t\tName of Vault service to query in Consul. Optional. Defaults to 'vault'."
   echo -e "  --vault-port\t\tPort of Vault service. Optional. Defaults to '8200'."
-  echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for Vault configuration status. Optional. Defaults to terraform/nomad-vault-integration/"
+  echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
+  echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
   echo
@@ -40,25 +41,25 @@ function log {
 
 function log_info {
   local readonly message="$1"
-  log "INFO" "$message"
+  log "INFO" "${message}"
 }
 
 function log_warn {
   local readonly message="$1"
-  log "WARN" "$message"
+  log "WARN" "${message}"
 }
 
 function log_error {
   local readonly message="$1"
-  log "ERROR" "$message"
+  log "ERROR" "${message}"
 }
 
 function assert_not_empty {
   local readonly arg_name="$1"
   local readonly arg_value="$2"
 
-  if [[ -z "$arg_value" ]]; then
-    log_error "The value for '$arg_name' cannot be empty"
+  if [[ -z "${arg_value}" ]]; then
+    log_error "The value for '${arg_name}' cannot be empty"
     print_usage
     exit 1
   fi
@@ -68,9 +69,15 @@ function assert_is_installed {
   local readonly name="$1"
 
   if [[ ! $(command -v ${name}) ]]; then
-    log_error "The binary '$name' is required by this script but is not installed or in the system's PATH."
+    log_error "The binary '${name}' is required by this script but is not installed or in the system's PATH."
     exit 1
   fi
+}
+
+# Based on: http://unix.stackexchange.com/a/7732/215969
+function get_owner_of_path {
+  local readonly path="$1"
+  ls -ld "$path" | awk '{print $3}'
 }
 
 function wait_for_consul {
@@ -131,11 +138,12 @@ function get_vault_token {
   fi
 }
 
-function generate_config {
+function generate_vault_config {
   local readonly server="${1}"
-  local readonly config_path="${2}"
+  local readonly config_dir="${2}"
   local readonly vault_address="${3}"
   local readonly consul_prefix="${4}"
+  local readonly user="${5}"
 
    if [[ "$server" == "true" ]]; then
     local auth_path
@@ -172,17 +180,35 @@ EOF
 )
   fi
 
-  log_info "Writing Vault configuration to ${config_path}"
-  echo "${default_config}" > "${config_path}"
+  log_info "Writing Vault configuration to ${config_dir}/vault.hcl"
+  echo "${default_config}" > "${config_dir}/vault.hcl"
+  chown "${user}:${user}" "${config_dir}/vault.hcl"
+}
+
+function generate_acl_config {
+  local readonly config_dir="${1}"
+  local readonly user="${2}"
+
+  local default_config=$(cat <<EOF
+acl {
+  enabled = true
+}
+EOF
+)
+
+  log_info "Writing ACL configuration to ${config_dir}/acl.hcl"
+  echo "${default_config}" > "${config_dir}/acl.hcl"
+  chown "${user}:${user}" "${config_dir}/acl.hcl"
 }
 
 function main {
   local server="false"
   local client="false"
-  local config_path=""
+  local config_dir=""
   local vault_service="vault"
   local vault_port="8200"
-  local consul_prefix="terraform/nomad-vault-integration/"
+  local consul_prefix="terraform/"
+  local user=""
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -195,9 +221,9 @@ function main {
       --client)
         client="true"
         ;;
-      --config-path)
+      --config-dir)
         assert_not_empty "$key" "$2"
-        config_path="$2"
+        config_dir="$2"
         shift
       ;;
       --vault-service)
@@ -213,6 +239,11 @@ function main {
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
+        shift
+        ;;
+      --user)
+        assert_not_empty "$key" "$2"
+        user="$2"
         shift
         ;;
       --help)
@@ -241,20 +272,32 @@ function main {
 
   wait_for_consul
 
-  local integration_enabled
-  integration_enabled=$(consul_kv "${consul_prefix}enabled")
-  if [[ "${integration_enabled}" != "yes" ]]; then
-    log_info "Nomad Vault integration is not enabled"
-    exit 0
+  if [[ -z "$config_dir" ]]; then
+    config_dir="$(cd "$SCRIPT_DIR/../config" && pwd)"
   fi
 
-  if [[ -z "$config_path" ]]; then
-    config_path="$(cd "$SCRIPT_DIR/../config" && pwd)/vault.hcl"
+  if [[ -z "$user" ]]; then
+    user=$(get_owner_of_path "$config_dir")
   fi
 
   local readonly vault_address="https://${vault_service}.service.consul:${vault_port}"
 
-  generate_config "${server}" "${config_path}" "${vault_address}" "${consul_prefix}"
+  local vault_integration_enabled
+  vault_integration_enabled=$(consul_kv "${consul_prefix}nomad-vault-integration/enabled")
+  if [[ "${vault_integration_enabled}" != "yes" ]]; then
+    log_info "Nomad Vault integration is not enabled"
+  else
+    generate_vault_config "${server}" "${config_dir}" "${vault_address}" "${consul_prefix}nomad-vault-integration/" "${user}"
+  fi
+
+  local acl_integration_enabled
+  acl_integration_enabled=$(consul_kv "${consul_prefix}nomad-acl/enabled")
+  if [[ "${acl_integration_enabled}" != "yes" ]]; then
+    log_info "Nomad ACL is not enabled"
+  else
+    generate_acl_config "${config_dir}" "${user}"
+  fi
+
 }
 
 main "$@"

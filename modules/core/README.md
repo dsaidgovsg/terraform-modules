@@ -232,9 +232,32 @@ After you have initialised and unsealed Vault, you can use the
 [`nomad-vault-integration`](../nomad-vault-integration) module to Terraform the required policies
 and settings for Vault.
 
+Make sure you have properly configured Vault with the appropriate
+[authentication methods](https://www.vaultproject.io/docs/auth/index.html) so that your users can
+authenticate with Vault to get the necessary tokens and credentials.
+
 The default `user_data` scripts for Nomad servers and clients will automatically detect that the
 policies have been setup and will configure themselves correctly. To update your cluster to use
 the new Vault integration, simply follow the section below to update the Nomad servers first and
+then the clients.
+
+### Nomad ACL
+
+[ACL](https://www.nomadproject.io/guides/acl.html) can be enabled for Nomad so that only users
+with the necessary tokens can submit jobs. This module only enables the built-in access controls
+provided by the ACL facility in the Open Source version of Nomad. Additional controls provided
+by Sentinel in the Enterprise version is not enabled.
+
+After you have initialised and unsealed Vault, you can use the [`nomad-acl`](../nomad-acl) module to
+Terraform the required policies and settings for Vault and Nomad.
+
+Make sure you have properly configured Vault with the appropriate
+[authentication methods](https://www.vaultproject.io/docs/auth/index.html) so that your users can
+authenticate with Vault to get the necessary tokens and credentials.
+
+The default `user_data` scripts for Nomad servers and clients will automatically detect that the
+policies have been setup and will configure themselves correctly. To update your cluster to use
+the new Nomad ACL, simply follow the section below to update the Nomad servers first and
 then the clients.
 
 ### Upgrading and updating
@@ -289,6 +312,12 @@ aws autoscaling \
 ```
 
 Replace `xxx` with the instance ID.
+
+You can also use this command to check whether the new instances created have joined the cluster:
+
+```bash
+nomad server members
+```
 
 #### Upgrading Nomad Clients
 

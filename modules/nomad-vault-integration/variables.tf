@@ -67,7 +67,7 @@ variable "consul_key_prefix" {
         been applied. If you change this, you have to update the
         `nomad_vault_integration_consul_prefix` variable in the core module as well.
 EOF
-    default = "terraform/nomad-vault-integration/"
+    default = "terraform/"
 }
 
 variable "allow_unauthenticated" {

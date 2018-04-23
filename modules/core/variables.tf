@@ -322,9 +322,9 @@ variable "elb_ssl_policy" {
 # These parameters are used in conjunction with the other modules in this repository.
 # If you change the values in the other modules, you have to update them too.
 # --------------------------------------------------------------------------------------------------
-variable "nomad_vault_integration_consul_prefix" {
+variable "integration_consul_prefix" {
   description = <<EOF
-  The Consul prefix used by the Nomad Vault integration script during initial instance boot.
+  The Consul prefix used by the various integration scripts during initial instance boot.
 EOF
-  default = "terraform/nomad-vault-integration/"
+  default = "terraform/"
 }
