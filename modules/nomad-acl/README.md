@@ -1,7 +1,7 @@
 # Nomad ACL
 
 [ACL](https://www.nomadproject.io/guides/acl.html) can be enabled for Nomad so that only users
-with the necessary tokens can submit jobs. This module only enables the built -in access controls
+with the necessary tokens can submit jobs. This module only enables the built-in access controls
 provided by the ACL facility in the Open Source version of Nomad. Additional controls provided
 by Sentinel in the Enterprise version is not enabled.
 
@@ -52,7 +52,7 @@ Alternatively, you can use Terraform too:
 ```hcl
 resource "consul_keys" "bootstrap" {
     key {
-        path = " terraform/nomad-acl/enabled"
+        path = "terraform/nomad-acl/enabled"
         value = "true"
     }
 }
