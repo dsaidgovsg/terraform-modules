@@ -65,6 +65,8 @@ data "template_file" "user_data_vault_cluster" {
         # S3 Variables
         enable_s3_backend = "${var.vault_enable_s3_backend ? "true" : "false"}"
         s3_bucket_name = "${var.vault_s3_bucket_name}"
+
+        consul_prefix = "${var.integration_consul_prefix}"
     }
 }
 
