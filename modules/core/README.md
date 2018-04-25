@@ -57,9 +57,13 @@ Then, configure it a file such as `backend-config.tfvars`. See
 You will need to generate the following certificates:
 
 - A Root CA
-- Vault Intermediate CA (Optional, but recommended)
 - Vault Certificate
-- Consul Certificate
+
+<!-- In addition, if you want to enable some post bootstrap integration, you will need the following
+certificates or CAs:
+
+- Vault Intermediate CA (Optional)
+- Consul Certificate -->
 
 Refer to instructions [here](ca/README.md).
 
@@ -260,6 +264,14 @@ policies have been setup and will configure themselves correctly. To update your
 the new Nomad ACL, simply follow the section below to update the Nomad servers first and
 then the clients.
 
+### SSH access via Vault
+
+We can use Vault's
+[SSH secrets engine](https://www.vaultproject.io/docs/secrets/ssh/signed-ssh-certificates.html) to
+generate signed certificates to access your machines via SSH.
+
+See the [`vault-ssh`](../vault-ssh) module for more information.
+
 ### Upgrading and updating
 
 In general, to upgrade or update the servers, you will have to update the packer template file,
@@ -410,8 +422,11 @@ aws ec2 terminate-instances \
 
 #### Upgrading Vault
 
-1. (Optional) Seal server.
+**Important**: It is important that you update the instances one by one. Make sure the new instance
+is healthy, has joined the cluster and is **unsealed** first before continuing.
+
 1. Terminate the instance and AWS will automatically start a new instance.
+1. **Unseal the new instance.** If you do not do so, new instances will eventually be unable to configure themselves properly. This is especially so if you have performed any post bootstrap configuration.
 
 You can seal the server by SSH'ing into the server and running `vault operator seal` with the
 required token. You can optionally use our

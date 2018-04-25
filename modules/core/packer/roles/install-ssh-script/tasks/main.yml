@@ -1,0 +1,7 @@
+---
+- name: Install Configuration script
+  copy:
+    src: "{{ role_path }}/files/configure.sh"
+    dest: "/opt/vault-ssh"
+    mode: 0755
+  become: yes
