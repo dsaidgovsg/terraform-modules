@@ -24,7 +24,10 @@ After you have applied this module, a key will be set in Consul's KV store. The 
 `user_data` scripts of the Core's servers and clients will check for the presence of this
 key in Consul to configure themselves accordingly.
 
-You can update the servers for Consul and Nomad as you would do usually.
+You can update the servers for Consul and Nomad as you would do usually. Remember to do this
+one by one, especially for Consul because if more servers than the Raft consensus that Consul uses
+goes down, the Consul cluster will become unavailable and new servers will not be able to configure
+themselves.
 
 However, for Vault, you must take care to ensure the following while you are updating them:
 
