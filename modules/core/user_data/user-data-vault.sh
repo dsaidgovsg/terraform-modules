@@ -45,3 +45,7 @@ else
         --tls-cert-file "$VAULT_TLS_CERT_FILE"  \
         --tls-key-file "$VAULT_TLS_KEY_FILE"
 fi
+
+/opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
+    --type "vault"

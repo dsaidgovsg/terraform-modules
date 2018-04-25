@@ -1,0 +1,21 @@
+{
+    "allow_bare_domains": false,
+    "allow_host_certificates": false,
+    "allow_subdomains": false,
+    "allow_user_certificates": true,
+    "allow_user_key_ids": false,
+    "allowed_critical_options": "",
+    "allowed_domains": "",
+    "allowed_extensions": "",
+    "allowed_users": "${ssh_user}",
+    "default_critical_options": {},
+    "default_extensions": {
+        "permit-pty": ""
+    },
+    "default_user": "${ssh_user}",
+    "key_bits": 0,
+    "key_id_format": "",
+    "key_type": "ca",
+    "ttl": ${ttl},
+    "max_ttl": ${max_ttl}
+}

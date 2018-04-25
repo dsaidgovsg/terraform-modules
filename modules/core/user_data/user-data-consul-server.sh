@@ -14,3 +14,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --server \
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
+
+/opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
+    --type "consul"

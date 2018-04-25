@@ -22,3 +22,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --consul-prefix "${consul_prefix}"
 
 /opt/nomad/bin/run-nomad --client
+
+/opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
+    --type "nomad_client"

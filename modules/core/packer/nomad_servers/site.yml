@@ -32,3 +32,6 @@
       certificate_rename: "ca.crt"
     become: yes
     when: ca_certificate
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-ssh-script"
