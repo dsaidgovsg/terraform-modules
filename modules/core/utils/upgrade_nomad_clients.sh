@@ -70,7 +70,7 @@ while read a && read b <&3; do
       --auto-scaling-group-name $ASGName \
       --should-decrement-desired-capacity 2>&1 || echo $? )
     if echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
-        cont=false
+      cont=false
       echo "Detaching instance-ids ${a} completed"
       echo $errorMessage
     fi
