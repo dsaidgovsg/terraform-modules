@@ -420,6 +420,17 @@ aws ec2 terminate-instances \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
 ```
 
+Alternatively you may also use the [upgrade_nomand_clients.sh](https://github.com/GovTechSG/terraform-modules/modules/core/utils) script located in the utils folder to upgrade your nomad clients after you have build and Terraform apply the new AMI.
+
+To use the script, simply run `sh upgrade_nomad_clients.sh` and provide the following information:
+
+```
+AWS_PROFILE: my_aws_profile
+NOMAD_ADDR: my_nomad_address
+NOMAD_TOKEN: my_nomad_token
+ASGName: my_asg_name
+```
+
 #### Upgrading Vault
 
 **Important**: It is important that you update the instances one by one. Make sure the new instance
