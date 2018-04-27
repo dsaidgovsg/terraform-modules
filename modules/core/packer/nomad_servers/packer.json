@@ -12,7 +12,7 @@
         "nomad_module_version": "v0.4.0",
         "consul_version": "1.0.7",
         "vault_module_version": "v0.5.1",
-        "vault_version": "0.10.0",
+        "vault_version": "0.10.1",
         "ca_certificate": ""
     },
     "builders": [

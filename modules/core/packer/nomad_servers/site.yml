@@ -6,7 +6,7 @@
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
-    vault_version: "0.10.0"
+    vault_version: "0.10.1"
     vault_module_version: "v0.4.0"
     ca_certificate: ""
   pre_tasks:

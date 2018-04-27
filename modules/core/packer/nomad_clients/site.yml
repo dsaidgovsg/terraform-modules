@@ -7,7 +7,7 @@
     consul_module_version: "v0.1.0"
     consul_version: "1.0.1"
     docker_version: "17.11.0~ce-0~ubuntu"
-    vault_version: "0.10.0"
+    vault_version: "0.10.1"
     vault_module_version: "v0.4.0"
     ca_certificate: ""
   tasks:
