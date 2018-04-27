@@ -2,7 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
-    vault_version: "0.10.0"
+    vault_version: "0.10.1"
     vault_ui_enable: "true"
     vault_module_version: "v0.4.0"
     consul_module_version: "v0.1.2"
