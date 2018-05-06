@@ -66,7 +66,7 @@ while read instance_id && read node_id <&3; do
   cont=true
   echo "Detaching instance-ids ${instance_id}"
   while [ $cont != false ]; do
-    errorMessage=$( aws autoscaling detach-instances --instance-ids ${p} \
+    errorMessage=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
       --auto-scaling-group-name $ASG_NAME \
       --should-decrement-desired-capacity 2>&1 || echo $? )
     if echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
@@ -90,9 +90,9 @@ while read instance_id && read node_id <&3; do
   done
 
   echo "Terminating instance: $instance_id "
-    aws ec2 terminate-instances \
-        --instance-ids ${instance_id}
-    echo 'Termiation complete'
+  aws ec2 terminate-instances \
+    --instance-ids ${instance_id}
+  echo 'Termiation complete'
 done < instance-ids.txt 3<node-ids.txt
 
 echo 'All operation complete'
