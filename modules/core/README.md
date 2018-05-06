@@ -420,7 +420,7 @@ aws ec2 terminate-instances \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
 ```
 
-Alternatively you may also use the [upgrade_nomand_clients.sh](https://github.com/GovTechSG/terraform-modules/modules/core/utils/upgrade_nomad_clients.sh) script located in the utils folder to upgrade your nomad clients after you have build and Terraform apply the new AMI.
+Alternatively you may also use the [upgrade_nomad_clients.sh](https://github.com/GovTechSG/terraform-modules/modules/core/utils/upgrade_nomad_clients.sh) script located in the utils folder to upgrade your nomad clients after you have build and Terraform apply the new AMI.
 
 To use the script, simply run `sh upgrade_nomad_clients.sh` and provide the following information:
 

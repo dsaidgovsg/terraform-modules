@@ -99,5 +99,3 @@ echo 'All operation complete'
 echo 'Clearing tempt files'
 rm instance-ids.txt nodes.json node-ids.txt
 
-echo 'Clearing exported env variable'
-
