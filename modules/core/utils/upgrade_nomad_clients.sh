@@ -8,58 +8,144 @@ set -euo pipefail
 # node-ids.txt store the node id of those nomad client that will be drain
 
 readonly ASG_NAME="$1"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
+
+function print_usage {
+  echo
+  echo "Usage: ./upgrade_nomad_clients.sh [asgName] [OPTIONS]"
+  echo
+  echo "This script is used to upgrade Nomad clients."
+  echo
+  echo "Options:"
+  echo
+  echo -e "  --output-dir\t\tThe path to write the output files to. Optional. Default is the absolute path of './', relative to this script."
+  echo -e "  --no-increase-asg-size\t\tFlag to prevent the script from increasing the ASG size . Optional. Default will increase the ASG max-size and desired-capacity by two-fold"
+  echo
+  echo "Example:"
+  echo
+  echo "  ./upgrade_nomad_clients.sh my-ASG --output-dir /tmp"
+}
+
+function assert_is_installed {
+  local readonly name="$1"
+
+  if [[ ! $(command -v ${name}) ]]; then
+    echo "The binary '${name}' is required by this script but is not installed or in the system's PATH."
+    exit 1
+  fi
+}
+
+function assert_not_empty {
+  local readonly arg_name="$1"
+  local readonly arg_value="$2"
+
+  if [[ -z "${arg_value}" ]]; then
+    echo "The value for '${arg_name}' cannot be empty"
+    print_usage
+    exit 1
+  fi
+}
+
+function increase_asg_size {
+  echo 'Getting AutoScalingGroups max-size and desired-capacity'
+  local readonly maxSize=$( aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-name $ASG_NAME \
+      | jq --raw-output '.AutoScalingGroups[0].MaxSize' )
+
+  local readonly desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-name $ASG_NAME \
+      | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
+
+  echo 'Increasing AutoScalingGroups max-size and desired-capacity by two-fold'
+  local newMaxSize=$(($maxSize*2))
+  local newDesiredCapacity=$(($desiredCapacity*2))
+
+  echo "MaxSize = $newMaxSize"
+  echo "DesiredCapacity = $newDesiredCapacity"
+
+  echo 'Updating AutoScalingGroups'
+  aws autoscaling update-auto-scaling-group \
+      --auto-scaling-group-name $ASG_NAME \
+      --max-size $newMaxSize \
+      --desired-capacity $newDesiredCapacity
+}
+
+output_dir=""
+no_increase_asg_size="false"
+while [[ $# > 1 ]]; do
+  key="$2"
+
+  case "$key" in
+    --output-dir)
+      assert_not_empty "$key" "$3"
+      output_dir="$3"
+      shift
+    ;;
+    --no-increase-asg-size)
+      no_increase_asg_size="true"
+      shift
+    ;;
+    *)
+      echo "Unrecognized argument: $key"
+      print_usage
+      exit 1
+      ;;
+  esac
+
+  shift
+done
+
+assert_is_installed "tr"
+assert_is_installed "jq"
+
+if [[ -z "$output_dir" ]]; then
+  output_dir="$(cd "$SCRIPT_DIR/" && pwd)"
+fi
+
+echo "Set files output dir to ${output_dir}"
+readonly INSTANCE_IDS_FILE="${output_dir}/instance-ids.txt"
+readonly NODES_JSON_FILE="${output_dir}/nodes.json"
+readonly NODE_IDS_FILE="${output_dir}/node-ids.txt"
 
 echo 'Getting old instance ID'
 aws autoscaling describe-auto-scaling-groups \
     --auto-scaling-group-name $ASG_NAME \
     | jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId' \
-    | tee instance-ids.txt
+    | tee $INSTANCE_IDS_FILE
 
-echo 'Getting AutoScalingGroups max-size and desired-capacity'
-maxSize=$( aws autoscaling describe-auto-scaling-groups \
-    --auto-scaling-group-name $ASG_NAME \
-    | jq --raw-output '.AutoScalingGroups[0].MaxSize' )
+if [[ "$no_increase_asg_size" == "false" ]]; then
+  increase_asg_size
+fi
 
-desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
-    --auto-scaling-group-name $ASG_NAME \
-    | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
-
-echo 'Increasing AutoScalingGroups max-size and desired-capacity by two-fold'
-newMaxSize=$(($maxSize*2))
-newDesiredCapacity=$(($desiredCapacity*2))
-
-echo "MaxSize = $newMaxSize"
-echo "DesiredCapacity = $newDesiredCapacity"
-
-echo 'Updating AutoScalingGroups'
-aws autoscaling update-auto-scaling-group \
-    --auto-scaling-group-name $ASG_NAME \
-    --max-size $newMaxSize \
-    --desired-capacity $newDesiredCapacity
+readonly desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
+  --auto-scaling-group-name $ASG_NAME \
+  | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
 
 echo 'Checking if new nodes are ready'
-nomad node status -json > nodes.json
+nomad node status -json > $nodes_json_file
+
 count=0
-while [[ $count -lt $newDesiredCapacity ]]; do
+while [[ $count -lt $desiredCapacity ]]; do
   echo "Waiting, currently only $count nodes are ready"
   sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-  nomad node status -json > nodes.json
-  count=$( tr ' ' '\n' < nodes.json | grep -c ready )
+  nomad node status -json > $NODES_JSON_FILE
+  count=$( tr ' ' '\n' < $NODES_JSON_FILE | grep -c ready )
 done
 
 echo "All $count nodes are ready"
 nomad node status
 
 echo 'Getting node-ids of the old nodes'
-while read p; do
-    jq --raw-output ".[] | select (.Name == \"${p}\") | .ID" nodes.json  >> node-ids.txt
-done < instance-ids.txt
+while read instance_id; do
+    jq --raw-output ".[] | select (.Name == \"${instance_id}\") | .ID" $NODES_JSON_FILE  >> $NODE_IDS_FILE
+done < $INSTANCE_IDS_FILE
 
 echo 'Setting old instances to retire'
-while read p; do
-  nomad node eligibility -disable "${p}"
-done < node-ids.txt
+while read node_id; do
+  nomad node eligibility -disable "${node_id}"
+done < $NODE_IDS_FILE
 
 echo 'Draining old instances'
 while read instance_id && read node_id <&3; do
@@ -93,9 +179,8 @@ while read instance_id && read node_id <&3; do
   aws ec2 terminate-instances \
     --instance-ids ${instance_id}
   echo 'Termiation complete'
-done < instance-ids.txt 3<node-ids.txt
+done < $INSTANCE_IDS_FILE 3<$NODE_IDS_FILE
 
 echo 'All operation complete'
 echo 'Clearing tempt files'
-rm instance-ids.txt nodes.json node-ids.txt
-
+rm $INSTANCE_IDS_FILE $NODES_JSON_FILE $NODE_IDS_FILE
