@@ -22,10 +22,11 @@ function print_usage {
   echo
   echo -e "  --output-dir\t\tThe path to write the output files to. Optional. Default is the absolute path of './', relative to this script."
   echo -e "  --no-increase-asg-size\t\tFlag to prevent the script from increasing the ASG size . Optional. Default will increase the ASG max-size and desired-capacity by two-fold"
+  echo -e "  --set-instance-ids\t\tTakes in a list of instance-id separated by 'space', instead of discovering them. Optional"
   echo
   echo "Example:"
   echo
-  echo "  ./upgrade_nomad_clients.sh my-ASG --output-dir /tmp"
+  echo "  ./upgrade_nomad_clients.sh my-ASG --output-dir /tmp --set-instance-ids 'instance_id_1 instance_id_2'"
 }
 
 function assert_is_installed {
@@ -72,8 +73,29 @@ function increase_asg_size {
       --desired-capacity $newDesiredCapacity
 }
 
+function auto_get_instance_ids{
+  local readonly instance_ids_file="$1"
+  echo 'Getting old instance ID'
+  aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-name $ASG_NAME \
+    | jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId' \
+    | tee $instance_ids_file
+}
+
+function manually_set_instance_ids{
+  local readonly instance_ids="$1"
+  local readonly instance_ids_file="$2"
+  echo 'Manually setting old instance ID'
+  for id in $instance_ids
+  do
+    echo $id >> $instance_ids_file
+  done
+}
+
 output_dir=""
 no_increase_asg_size="false"
+set_instance_ids="false"
+instance_ids=""
 while [[ $# > 1 ]]; do
   key="$2"
 
@@ -85,6 +107,11 @@ while [[ $# > 1 ]]; do
     ;;
     --no-increase-asg-size)
       no_increase_asg_size="true"
+      shift
+    ;;
+    --set-instance-ids)
+      set_instance_ids="true"
+      instance_ids="$3"
       shift
     ;;
     *)
@@ -109,11 +136,11 @@ readonly INSTANCE_IDS_FILE="${output_dir}/instance-ids.txt"
 readonly NODES_JSON_FILE="${output_dir}/nodes.json"
 readonly NODE_IDS_FILE="${output_dir}/node-ids.txt"
 
-echo 'Getting old instance ID'
-aws autoscaling describe-auto-scaling-groups \
-    --auto-scaling-group-name $ASG_NAME \
-    | jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId' \
-    | tee $INSTANCE_IDS_FILE
+if [ "$set_instance_ids" == "true"]; then
+  manually_set_instance_ids $instance_ids $INSTANCE_IDS_FILE
+else
+  auto_get_instance_ids $INSTANCE_IDS_FILE
+fi
 
 if [[ "$no_increase_asg_size" == "false" ]]; then
   increase_asg_size
