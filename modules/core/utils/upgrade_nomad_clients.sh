@@ -154,14 +154,20 @@ while read instance_id && read node_id <&3; do
   while [ $cont != false ]; do
     errorMessage=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
       --auto-scaling-group-name $ASG_NAME \
-      --should-decrement-desired-capacity 2>&1 || echo $? )
+      --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
+    errorCode=${errorMessage##*.}
     if echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
       cont=false
       echo "Detaching instance-ids ${instance_id} completed"
       echo $errorMessage
+    elif [ "$errorCode" != "0" ]; then
+      echo "Other error encoutered!!!"
+      echo $errorMessage
+      exit 1
+    else
+      echo "Still detaching instance-ids ${instance_id}"
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
-    echo "Still detaching instance-ids ${instance_id}"
-    sleep "$SLEEP_BETWEEN_RETRIES_SEC"
   done
 
   drain=true
@@ -170,9 +176,10 @@ while read instance_id && read node_id <&3; do
     if nomad node drain -enable -yes ${node_id} | grep -q 'drain complete' then
       drain=false
       echo "Node drain complete for node-ids ${node_id}"
+    else
+      echo "Still draining node-ids ${node_id}"
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
-    echo "Still draining node-ids ${node_id}"
-    sleep "$SLEEP_BETWEEN_RETRIES_SEC"
   done
 
   echo "Terminating instance: $instance_id "
