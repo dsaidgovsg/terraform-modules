@@ -8,5 +8,5 @@ data "aws_acm_certificate" "internal_lb_certificate" {
 }
 
 data "aws_region" "current" {
-    current = true
- }
+  current = true
+}

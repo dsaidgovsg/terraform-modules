@@ -80,17 +80,17 @@ output "nomad_servers_cluster_tag_value" {
 
 output "nomad_api_address" {
   description = "Address to access nomad API"
-  value = "${var.nomad_api_domain}"
+  value       = "${var.nomad_api_domain}"
 }
 
 output "consul_api_address" {
   description = "Address to access consul API"
-  value = "${var.consul_api_domain}"
+  value       = "${var.consul_api_domain}"
 }
 
 output "vault_api_address" {
   description = "Address to access Vault API"
-  value = "${var.vault_api_domain}"
+  value       = "${var.vault_api_domain}"
 }
 
 output "vault_asg_name" {
@@ -136,12 +136,12 @@ output "vpc_id" {
 
 output "vpc_public_subnets" {
   description = "Public subnets for the VPC"
-  value = "${module.vpc.public_subnets}"
+  value       = "${module.vpc.public_subnets}"
 }
 
 output "vpc_private_subnets" {
   description = "Public subnets for the VPC"
-  value = "${module.vpc.private_subnets}"
+  value       = "${module.vpc.private_subnets}"
 }
 
 output "vpc_database_subnets" {
@@ -161,31 +161,32 @@ output "vpc_database_subnet_group" {
 
 output "vpc_public_route_tables" {
   description = "The IDs of the public route tables"
-  value = "${module.vpc.public_route_table_ids}"
+  value       = "${module.vpc.public_route_table_ids}"
 }
 
 output "vpc_private_route_table_ids" {
   description = "List of IDs of private route tables"
-  value = "${module.vpc.private_route_table_ids}"
+  value       = "${module.vpc.private_route_table_ids}"
 }
 
 output "vpc_region" {
   description = "The region the VPC belongs to"
-  value = "${data.aws_region.current.name}"
+  value       = "${data.aws_region.current.name}"
 }
 
 output "vpc_azs" {
   description = "The AZs in the region the VPC belongs to"
-  value = "${var.vpc_azs}"
+  value       = "${var.vpc_azs}"
 }
 
 output "internal_lb_id" {
   description = "ID of the internal LB that exposes Nomad, Consul and Vault RPC"
-  value = "${aws_security_group.internal_lb.id}"
+  value       = "${aws_security_group.internal_lb.id}"
 }
 
 output "internal_lb_https_listener_arn" {
   description = "ARN of the HTTPS listener for the internal LB"
+
   # Use the `aws_lb_listener_certificate` resource to attach additional certificates
   value = "${aws_lb_listener.internal_https.arn}"
 }

@@ -7,10 +7,10 @@
         "temporary_security_group_source_cidr": "0.0.0.0/0",
         "associate_public_ip_address": "true",
         "ssh_interface": "",
-        "nomad_version": "0.8.2",
+        "nomad_version": "0.8.3",
         "consul_module_version": "v0.3.1",
         "nomad_module_version": "v0.4.0",
-        "consul_version": "1.0.7",
+        "consul_version": "1.1.0",
         "vault_module_version": "v0.5.1",
         "vault_version": "0.10.1",
         "ca_certificate": ""
@@ -45,19 +45,28 @@
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Nomad Version": "{{user `nomad_version` }}",
+                "Vault Version": "{{user `vault_version` }}"
             },
             "tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Nomad Version": "{{user `nomad_version` }}",
+                "Vault Version": "{{user `vault_version` }}"
             },
             "snapshot_tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Nomad Version": "{{user `nomad_version` }}",
+                "Vault Version": "{{user `vault_version` }}"
             }
         }
     ],

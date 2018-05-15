@@ -6,7 +6,7 @@
     vault_ui_enable: "true"
     vault_module_version: "v0.4.0"
     consul_module_version: "v0.1.2"
-    consul_version: "1.0.7"
+    consul_version: "1.1.0"
     consul_key: "vault/"
     tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"
     encrypted_tls_key_file_src: "{{ playbook_dir }}/cert/encrypted_vault.key"

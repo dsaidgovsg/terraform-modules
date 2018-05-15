@@ -5,8 +5,11 @@ install:
   - docker build -t lint -f Dockerfile-lint .
 
 script:
+  - docker run --rm -ti --entrypoint terraform lint fmt -check=true
   - docker run --rm -ti lint modules/core
+  - docker run --rm -ti lint modules/nomad-acl
   - docker run --rm -ti lint modules/nomad-vault-integration
+  - docker run --rm -ti lint modules/vault-ssh
 
 branches:
   only:

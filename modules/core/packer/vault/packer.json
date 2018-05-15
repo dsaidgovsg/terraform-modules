@@ -11,7 +11,7 @@
         "vault_module_version": "v0.5.1",
         "vault_version": "0.10.1",
         "vault_ui_enable": "true",
-        "consul_version": "1.0.7",
+        "consul_version": "1.1.0",
         "consul_key": "vault",
         "tls_cert_file_src": "{{ template_dir }}/cert/cert.pem",
         "encrypted_tls_key_file_src": "{{ template_dir }}/cert/cert.key",
@@ -49,20 +49,24 @@
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Vault Version": "{{user `vault_version` }}"
             },
             "tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
-            },
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Vault Version": "{{user `vault_version` }}"            },
             "snapshot_tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
-            }
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}",
+                "Vault Version": "{{user `vault_version` }}"            }
         }
     ],
     "provisioners": [

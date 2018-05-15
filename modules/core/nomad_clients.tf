@@ -5,27 +5,27 @@
 module "nomad_clients" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.0"
 
-  asg_name = "${var.nomad_cluster_name}-client"
-  cluster_name  = "${var.nomad_cluster_name}-client"
+  asg_name          = "${var.nomad_cluster_name}-client"
+  cluster_name      = "${var.nomad_cluster_name}-client"
   cluster_tag_value = "${var.nomad_cluster_name}-client"
-  instance_type = "${var.nomad_client_instance_type}"
+  instance_type     = "${var.nomad_client_instance_type}"
 
   min_size         = "${var.nomad_clients_min}"
   max_size         = "${var.nomad_clients_max}"
   desired_capacity = "${var.nomad_clients_desired}"
 
-  ami_id = "${var.nomad_clients_ami_id}"
+  ami_id    = "${var.nomad_clients_ami_id}"
   user_data = "${coalesce(var.nomad_clients_user_data, data.template_file.user_data_nomad_client.rendered)}"
 
   root_volume_type = "${var.nomad_clients_root_volume_type}"
   root_volume_size = "${var.nomad_clients_root_volume_size}"
 
-  vpc_id = "${module.vpc.vpc_id}"
+  vpc_id     = "${module.vpc.vpc_id}"
   subnet_ids = "${module.vpc.public_subnets}"
 
-  ssh_key_name = "${var.ssh_key_name}"
+  ssh_key_name                = "${var.ssh_key_name}"
   allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
-  allowed_ssh_cidr_blocks = "${var.allowed_ssh_cidr_blocks}"
+  allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 }
 
@@ -50,18 +50,18 @@ data "template_file" "user_data_nomad_client" {
   template = "${file("${path.module}/user_data/user-data-nomad-client.sh")}"
 
   vars {
-    cluster_tag_key = "${var.cluster_tag_key}"
+    cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
-    consul_prefix = "${var.integration_consul_prefix}"
+    consul_prefix     = "${var.integration_consul_prefix}"
   }
 }
 
 # Security rules to allow services on Nomad clients to talk to each other
 resource "aws_security_group_rule" "nomad_client_services" {
-  type = "ingress"
+  type              = "ingress"
   security_group_id = "${module.nomad_clients.security_group_id}"
-  from_port   = 20000
-  to_port     = 32000
-  protocol    = "tcp"
-  cidr_blocks = ["${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_services_inbound_cidr)}"]
+  from_port         = 20000
+  to_port           = 32000
+  protocol          = "tcp"
+  cidr_blocks       = ["${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_services_inbound_cidr)}"]
 }
