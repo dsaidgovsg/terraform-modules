@@ -108,163 +108,167 @@ function manually_set_instance_ids {
   done
 }
 
-output_dir=""
-no_increase_asg_size="false"
-instance_ids=""
-asg_name=""
-no_decrease_asg_desired_capacity="false"
-while [[ $# > 0 ]]; do
-  key="$1"
+function main {
+  output_dir=""
+  no_increase_asg_size="false"
+  instance_ids=""
+  asg_name=""
+  no_decrease_asg_desired_capacity="false"
+  while [[ $# > 0 ]]; do
+    key="$1"
 
-  case "$key" in
-    --asg-name)
-      assert_not_empty "$key" "$2"
-      asg_name="$2"
-      shift
-    ;;
-    --output-dir)
-      assert_not_empty "$key" "$2"
-      output_dir="$2"
-      shift
-    ;;
-    --set-instance-ids)
-      assert_not_empty "$key" "$2"
-      instance_ids="$2"
-      shift
-    ;;
-    --no-increase-asg-size)
-      no_increase_asg_size="true"
-    ;;
-    --no-decrease-asg-desired-capacity)
-      no_decrease_asg_desired_capacity="true"
-    ;;
-    *)
-      echo "Unrecognized argument: $key"
-      print_usage
-      exit 1
+    case "$key" in
+      --asg-name)
+        assert_not_empty "$key" "$2"
+        asg_name="$2"
+        shift
       ;;
-  esac
+      --output-dir)
+        assert_not_empty "$key" "$2"
+        output_dir="$2"
+        shift
+      ;;
+      --set-instance-ids)
+        assert_not_empty "$key" "$2"
+        instance_ids="$2"
+        shift
+      ;;
+      --no-increase-asg-size)
+        no_increase_asg_size="true"
+      ;;
+      --no-decrease-asg-desired-capacity)
+        no_decrease_asg_desired_capacity="true"
+      ;;
+      *)
+        echo "Unrecognized argument: $key"
+        print_usage
+        exit 1
+        ;;
+    esac
 
-  shift
-done
+    shift
+  done
 
-assert_is_installed "tr"
-assert_is_installed "jq"
+  assert_is_installed "tr"
+  assert_is_installed "jq"
 
-if [[ -z "$asg_name" ]]; then
-  echo 'Error! AsgName not set!'
-  print_usage
-  exit 1
-fi
+  if [[ -z "$asg_name" ]]; then
+    echo 'Error! AsgName not set!'
+    print_usage
+    exit 1
+  fi
 
-if [[ -z "$output_dir" ]]; then
-  output_dir="$(cd "$SCRIPT_DIR/" && pwd)"
-fi
+  if [[ -z "$output_dir" ]]; then
+    output_dir="$(cd "$SCRIPT_DIR/" && pwd)"
+  fi
 
-echo "Set files output dir to ${output_dir}"
-readonly INSTANCE_IDS_FILE="${output_dir}/instance-ids.txt"
-readonly NODES_JSON_FILE="${output_dir}/nodes.json"
-readonly NODE_IDS_FILE="${output_dir}/node-ids.txt"
+  echo "Set files output dir to ${output_dir}"
+  readonly INSTANCE_IDS_FILE="${output_dir}/instance-ids.txt"
+  readonly NODES_JSON_FILE="${output_dir}/nodes.json"
+  readonly NODE_IDS_FILE="${output_dir}/node-ids.txt"
 
-echo "INSTANCE_IDS_FILE: $INSTANCE_IDS_FILE"
-echo "NODES_JSON_FILE: $NODES_JSON_FILE"
-echo "NODE_IDS_FILE: $NODE_IDS_FILE"
+  echo "INSTANCE_IDS_FILE: $INSTANCE_IDS_FILE"
+  echo "NODES_JSON_FILE: $NODES_JSON_FILE"
+  echo "NODE_IDS_FILE: $NODE_IDS_FILE"
 
-if [[ -z "$instance_ids" ]]; then
-  echo "Auto decovery of the instance ids"
-  auto_get_instance_ids $INSTANCE_IDS_FILE
-else
-  echo "Manually set instance ids: $instance_ids"
-  manually_set_instance_ids "$instance_ids" "$INSTANCE_IDS_FILE"
-fi
+  if [[ -z "$instance_ids" ]]; then
+    echo "Auto decovery of the instance ids"
+    auto_get_instance_ids $INSTANCE_IDS_FILE
+  else
+    echo "Manually set instance ids: $instance_ids"
+    manually_set_instance_ids "$instance_ids" "$INSTANCE_IDS_FILE"
+  fi
 
-if [ "$no_increase_asg_size" == "false" ]; then
-  increase_asg_size $asg_name
-fi
+  if [ "$no_increase_asg_size" == "false" ]; then
+    increase_asg_size $asg_name
+  fi
 
-readonly desired_capacity=$( aws autoscaling describe-auto-scaling-groups \
-  --auto-scaling-group-name $asg_name \
-  | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
+  readonly desired_capacity=$( aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-name $asg_name \
+    | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
 
-echo 'Checking if new nodes are ready'
-nomad node status -json > $NODES_JSON_FILE
-
-count=0
-while [[ $count -lt $desired_capacity ]]; do
-  echo "Waiting, currently only $count nodes are ready"
-  sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+  echo 'Checking if new nodes are ready'
   nomad node status -json > $NODES_JSON_FILE
-  count=$( tr ' ' '\n' < $NODES_JSON_FILE | grep -c ready )
-done
 
-echo "All $count nodes are ready"
-nomad node status
-
-echo 'Getting node-ids of the old nodes'
-while read instance_id; do
-    jq --raw-output ".[] | select (.Name == \"${instance_id}\") | .ID" $NODES_JSON_FILE  >> $NODE_IDS_FILE
-done < $INSTANCE_IDS_FILE
-
-echo 'Setting old instances to retire'
-while read node_id; do
-  nomad node eligibility -disable "${node_id}"
-done < $NODE_IDS_FILE
-
-echo 'Draining old instances'
-while read instance_id && read node_id <&3; do
-  cont=true
-  echo "Detaching instance-ids ${instance_id}"
-  while [ $cont != false ]; do
-    if [ $no_decrease_asg_desired_capacity == "false" ]; then
-      error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
-        --auto-scaling-group-name $asg_name \
-        --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
-    else
-      error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
-        --auto-scaling-group-name $asg_name \
-        --no-should-decrement-desired-capacity 2>&1 || printf -- "$?" )
-    fi
-
-    if jq -e . >/dev/null 2>&1 <<<"$error_message"; then
-      echo "Still detaching instance-ids ${instance_id}"
-      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-    elif echo $error_message | grep -q 'is not in InService or Standby'; then
-      echo "Still detaching instance-ids ${instance_id}"
-      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-    elif echo $error_message | grep -q 'is not part of Auto Scaling group'; then
-      cont=false
-      echo "Detaching instance-ids ${instance_id} completed"
-      echo $error_message
-    else
-      echo "Other error encoutered!!!"
-      echo $error_message
-      exit 1
-    fi
+  count=0
+  while [[ $count -lt $desired_capacity ]]; do
+    echo "Waiting, currently only $count nodes are ready"
+    sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    nomad node status -json > $NODES_JSON_FILE
+    count=$( tr ' ' '\n' < $NODES_JSON_FILE | grep -c ready )
   done
 
-  drain=true
-  echo "Node drain for node-ids ${node_id}"
-  while [ $drain != false ]; do
-    if nomad node drain -enable -yes ${node_id} | grep -q "All allocations on node \"${node_id}\" have stopped"; then
-      drain=false
-      echo "Node drain complete for node-ids ${node_id}"
-    else
-      echo "Still draining node-ids ${node_id}"
-      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-    fi
-  done
+  echo "All $count nodes are ready"
+  nomad node status
 
-  echo "Terminating instance: $instance_id "
-  aws ec2 terminate-instances \
-    --instance-ids ${instance_id}
-  echo 'Termiation complete'
-done < $INSTANCE_IDS_FILE 3<$NODE_IDS_FILE
+  echo 'Getting node-ids of the old nodes'
+  while read instance_id; do
+      jq --raw-output ".[] | select (.Name == \"${instance_id}\") | .ID" $NODES_JSON_FILE  >> $NODE_IDS_FILE
+  done < $INSTANCE_IDS_FILE
 
-echo 'All operation complete'
+  echo 'Setting old instances to retire'
+  while read node_id; do
+    nomad node eligibility -disable "${node_id}"
+  done < $NODE_IDS_FILE
 
-if [ "$no_increase_asg_size" == "false" ]; then
-  decrease_asg_max_size $asg_name
-fi
+  echo 'Draining old instances'
+  while read instance_id && read node_id <&3; do
+    cont=true
+    echo "Detaching instance-ids ${instance_id}"
+    while [ $cont != false ]; do
+      if [ $no_decrease_asg_desired_capacity == "false" ]; then
+        error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
+          --auto-scaling-group-name $asg_name \
+          --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
+      else
+        error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
+          --auto-scaling-group-name $asg_name \
+          --no-should-decrement-desired-capacity 2>&1 || printf -- "$?" )
+      fi
 
-echo 'Clearing tempt files'
-rm $INSTANCE_IDS_FILE $NODES_JSON_FILE $NODE_IDS_FILE
+      if jq -e . >/dev/null 2>&1 <<<"$error_message"; then
+        echo "Still detaching instance-ids ${instance_id}"
+        sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+      elif echo $error_message | grep -q 'is not in InService or Standby'; then
+        echo "Still detaching instance-ids ${instance_id}"
+        sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+      elif echo $error_message | grep -q 'is not part of Auto Scaling group'; then
+        cont=false
+        echo "Detaching instance-ids ${instance_id} completed"
+        echo $error_message
+      else
+        echo "Other error encoutered!!!"
+        echo $error_message
+        exit 1
+      fi
+    done
+
+    drain=true
+    echo "Node drain for node-ids ${node_id}"
+    while [ $drain != false ]; do
+      if nomad node drain -enable -yes ${node_id} | grep -q "All allocations on node \"${node_id}\" have stopped"; then
+        drain=false
+        echo "Node drain complete for node-ids ${node_id}"
+      else
+        echo "Still draining node-ids ${node_id}"
+        sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+      fi
+    done
+
+    echo "Terminating instance: $instance_id "
+    aws ec2 terminate-instances \
+      --instance-ids ${instance_id}
+    echo 'Termiation complete'
+  done < $INSTANCE_IDS_FILE 3<$NODE_IDS_FILE
+
+  echo 'All operation complete'
+
+  if [ "$no_increase_asg_size" == "false" ]; then
+    decrease_asg_max_size $asg_name
+  fi
+
+  echo 'Clearing tempt files'
+  rm $INSTANCE_IDS_FILE $NODES_JSON_FILE $NODE_IDS_FILE
+}
+
+main "$@"
