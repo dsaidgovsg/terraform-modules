@@ -1,23 +1,22 @@
-
 # --------------------------------------------------------------------------------------------------
 # REQUIRED PARAMETERS
 # You must provide a value for each of these parameters.
 # --------------------------------------------------------------------------------------------------
 
 variable "nomad_clients_ami_id" {
-    description = "AMI ID for Nomad clients"
+  description = "AMI ID for Nomad clients"
 }
 
 variable "nomad_servers_ami_id" {
-    description = "AMI ID for Nomad servers"
+  description = "AMI ID for Nomad servers"
 }
 
 variable "consul_ami_id" {
-    description = "AMI ID for Consul servers"
+  description = "AMI ID for Consul servers"
 }
 
 variable "vault_ami_id" {
-    description = "AMI ID for Vault servers"
+  description = "AMI ID for Vault servers"
 }
 
 variable "consul_allowed_inbound_cidr_blocks" {
@@ -50,7 +49,7 @@ variable "route53_zone" {
 
 variable "internal_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to"
-  type = "list"
+  type        = "list"
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -79,12 +78,12 @@ variable "vault_api_domain" {
 
 variable "vpc_name" {
   description = "Name of the all the VPC resources"
-  default = "My VPC"
+  default     = "My VPC"
 }
 
 variable "vpc_cidr" {
-    description = "CIDR for the VPC we will create"
-    default = "192.168.0.0/16"
+  description = "CIDR for the VPC we will create"
+  default     = "192.168.0.0/16"
 }
 
 // Convention is for the MSB of the third octet to be zero for public subnet and one for private
@@ -92,26 +91,26 @@ variable "vpc_cidr" {
 
 variable "vpc_public_subnets_cidr" {
   description = "CIDR for each of the subnets in the VPCs we want to create"
-  type = "list"
-  default = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24"]
+  type        = "list"
+  default     = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24"]
 }
 
 variable "vpc_private_subnets_cidr" {
   description = "CIDR for each of the private subnets in the VPCs we want to create"
-  type = "list"
-  default = ["192.168.240.0/24", "192.168.241.0/24", "192.168.242.0/24"]
+  type        = "list"
+  default     = ["192.168.240.0/24", "192.168.241.0/24", "192.168.242.0/24"]
 }
 
 variable "vpc_database_subnets_cidr" {
   description = "A list of database subnets"
-  type = "list"
-  default = ["192.168.128.0/24", "192.168.129.0/24", "192.168.130.0/24"]
+  type        = "list"
+  default     = ["192.168.128.0/24", "192.168.129.0/24", "192.168.130.0/24"]
 }
 
 variable "vpc_azs" {
   description = "Run the EC2 Instances in these Availability Zones"
-  type = "list"
-  default = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
+  type        = "list"
+  default     = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -120,8 +119,9 @@ variable "vpc_azs" {
 # --------------------------------------------------------------------------------------------------
 variable "tags" {
   description = "A map of tags to add to all resources"
-  default     = {
-    Terraform = "true"
+
+  default = {
+    Terraform   = "true"
     Environment = "development"
   }
 }
@@ -144,17 +144,17 @@ variable "associate_public_ip_address" {
 
 variable "nomad_cluster_name" {
   description = "The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module."
-  default = "consul-nomad-prototype"
+  default     = "consul-nomad-prototype"
 }
 
 variable "nomad_server_instance_type" {
-    description = "Type of instances to deploy Nomad servers to"
-    default = "t2.medium"
+  description = "Type of instances to deploy Nomad servers to"
+  default     = "t2.medium"
 }
 
 variable "nomad_client_instance_type" {
-    description = "Type of instances to deploy Nomad servers to"
-    default = "t2.medium"
+  description = "Type of instances to deploy Nomad servers to"
+  default     = "t2.medium"
 }
 
 variable "nomad_servers_num" {
@@ -207,6 +207,7 @@ variable "nomad_servers_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-nomad-server.sh
   description = "The user data for the Nomad servers EC2 instances. If set to empty, the default template will be used"
+
   default = ""
 }
 
@@ -214,12 +215,13 @@ variable "nomad_clients_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-nomad-client.sh
   description = "The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used"
+
   default = ""
 }
 
 variable "consul_cluster_name" {
-    description = "Name of the Consul cluster to deploy"
-    default = "consul-nomad-prototype"
+  description = "Name of the Consul cluster to deploy"
+  default     = "consul-nomad-prototype"
 }
 
 variable "consul_cluster_size" {
@@ -233,8 +235,8 @@ variable "cluster_tag_key" {
 }
 
 variable "consul_instance_type" {
-    description = "Type of instances to deploy Consul servers and clients to"
-    default = "t2.medium"
+  description = "Type of instances to deploy Consul servers and clients to"
+  default     = "t2.medium"
 }
 
 variable "consul_root_volume_type" {
@@ -251,28 +253,29 @@ variable "consul_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-consul-server.sh
   description = "The user data for the Consul servers EC2 instances. If set to empty, the default template will be used"
+
   default = ""
 }
 
 variable "vault_cluster_name" {
   description = "The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module."
-  default = "vault"
+  default     = "vault"
 }
 
 variable "vault_cluster_size" {
   description = "The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5."
-  default = 3
+  default     = 3
 }
 
 variable "vault_allowed_inbound_security_group_ids" {
   description = "A list of security group IDs that will be allowed to connect to Vault"
   type        = "list"
-  default = []
+  default     = []
 }
 
 variable "vault_instance_type" {
   description = "The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro)."
-  default = "t2.medium"
+  default     = "t2.medium"
 }
 
 variable "vault_root_volume_type" {
@@ -299,22 +302,23 @@ variable "vault_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-consul-server.sh
   description = "The user data for the Vault servers EC2 instances. If set to empty, the default template will be used"
+
   default = ""
 }
 
 variable "internal_lb_name" {
   description = "Name of the internal load balancer"
-  default = "internal"
+  default     = "internal"
 }
 
 variable "deregistration_delay" {
   description = "Time before an unhealthy Elastic Load Balancer target becomes removed"
-  default = 30
+  default     = 30
 }
 
 variable "elb_ssl_policy" {
   description = "ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html"
-  default = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -326,5 +330,6 @@ variable "integration_consul_prefix" {
   description = <<EOF
   The Consul prefix used by the various integration scripts during initial instance boot.
 EOF
+
   default = "terraform/"
 }
