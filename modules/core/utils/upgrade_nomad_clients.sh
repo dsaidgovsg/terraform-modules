@@ -7,7 +7,6 @@ set -euo pipefail
 # nodes.json store the node infomation of all the nomad node, is use to get the node id of the nomad client
 # node-ids.txt store the node id of those nomad client that will be drain
 
-readonly ASG_NAME="$1"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
@@ -20,13 +19,15 @@ function print_usage {
   echo
   echo "Options:"
   echo
+  echo -e "  --asg-name\t\tSet the name of the AutoScalingGroups. Required!"
   echo -e "  --output-dir\t\tThe path to write the output files to. Optional. Default is the absolute path of './', relative to this script."
-  echo -e "  --no-increase-asg-size\t\tFlag to prevent the script from increasing the ASG size . Optional. Default will increase the ASG max-size and desired-capacity by two-fold"
-  echo -e "  --set-instance-ids\t\tTakes in a list of instance-id separated by 'space', instead of discovering them. Optional"
+  echo -e "  --set-instance-ids\t\tTakes in a list of instance-id separated by 'space', instead of discovering them. Optional."
+  echo -e "  --no-increase-asg-size\t\tFlag to prevent the script from increasing the ASG size. Optional. Default will increase the ASG max-size and desired-capacity by two-fold."
+  echo -e "  --no-decrease-asg-desired-capacity\t\tFlag to prevent the script from decreasing the ASG size after detaching the instance from the ASG. Optional. Default will decrease the ASG desired-capacity everytime an instance has been detached."
   echo
   echo "Example:"
   echo
-  echo "  ./upgrade_nomad_clients.sh my-ASG --output-dir /tmp --set-instance-ids 'instance_id_1 instance_id_2'"
+  echo "  ./upgrade_nomad_clients.sh --asg-name my-ASG --output-dir /tmp --set-instance-ids 'instance_id_1 instance_id_2'"
 }
 
 function assert_is_installed {
@@ -50,34 +51,49 @@ function assert_not_empty {
 }
 
 function increase_asg_size {
+  local readonly asg_name="$1"
   echo 'Getting AutoScalingGroups max-size and desired-capacity'
-  local readonly maxSize=$( aws autoscaling describe-auto-scaling-groups \
-      --auto-scaling-group-name $ASG_NAME \
+  local readonly max_size=$( aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-name $asg_name \
       | jq --raw-output '.AutoScalingGroups[0].MaxSize' )
 
-  local readonly desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
-      --auto-scaling-group-name $ASG_NAME \
+  local readonly desired_capacity=$( aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-name $asg_name \
       | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
 
   echo 'Increasing AutoScalingGroups max-size and desired-capacity by two-fold'
-  local newMaxSize=$(($maxSize*2))
-  local newDesiredCapacity=$(($desiredCapacity*2))
+  local new_max_size=$(($max_size*2))
+  local new_desired_capacity=$(($desired_capacity*2))
 
-  echo "MaxSize = $newMaxSize"
-  echo "DesiredCapacity = $newDesiredCapacity"
+  echo "MaxSize = $new_max_size"
+  echo "DesiredCapacity = $new_desired_capacity"
 
   echo 'Updating AutoScalingGroups'
   aws autoscaling update-auto-scaling-group \
-      --auto-scaling-group-name $ASG_NAME \
-      --max-size $newMaxSize \
-      --desired-capacity $newDesiredCapacity
+      --auto-scaling-group-name $asg_name \
+      --max-size $new_max_size \
+      --desired-capacity $new_desired_capacity
+}
+
+function decrease_asg_max_size {
+  local readonly asg_name="$1"
+  echo 'Setting ASG_MAX_SIZE back to original value'
+  readonly max_size=$( aws autoscaling describe-auto-scaling-groups \
+  --auto-scaling-group-name $asg_name \
+  | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
+
+  local new_max_size=$(($max_size/2))
+
+  aws autoscaling update-auto-scaling-group \
+    --auto-scaling-group-name $asg_name \
+    --max-size $new_max_size
 }
 
 function auto_get_instance_ids {
   local readonly instance_ids_file="$1"
   echo 'Getting old instance ID'
   aws autoscaling describe-auto-scaling-groups \
-    --auto-scaling-group-name $ASG_NAME \
+    --auto-scaling-group-name $asg_name \
     | jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId' \
     | tee $instance_ids_file
 }
@@ -85,7 +101,7 @@ function auto_get_instance_ids {
 function manually_set_instance_ids {
   local readonly instance_ids="$1"
   local readonly instance_file="$2"
-  echo "Manually setting old instance ID to $instance_file"
+  echo "Manually set old instance ID to $instance_file"
   for id in $instance_ids
   do
     echo $id >> $instance_file
@@ -94,25 +110,33 @@ function manually_set_instance_ids {
 
 output_dir=""
 no_increase_asg_size="false"
-set_instance_ids="false"
 instance_ids=""
-while [[ $# > 1 ]]; do
-  key="$2"
+asg_name=""
+no_decrease_asg_desired_capacity="false"
+while [[ $# > 0 ]]; do
+  key="$1"
 
   case "$key" in
+    --asg-name)
+      assert_not_empty "$key" "$2"
+      asg_name="$2"
+      shift
+    ;;
     --output-dir)
-      assert_not_empty "$key" "$3"
-      output_dir="$3"
+      assert_not_empty "$key" "$2"
+      output_dir="$2"
+      shift
+    ;;
+    --set-instance-ids)
+      assert_not_empty "$key" "$2"
+      instance_ids="$2"
       shift
     ;;
     --no-increase-asg-size)
       no_increase_asg_size="true"
-      shift
     ;;
-    --set-instance-ids)
-      set_instance_ids="true"
-      instance_ids="$3"
-      shift
+    --no-decrease-asg-desired-capacity)
+      no_decrease_asg_desired_capacity="true"
     ;;
     *)
       echo "Unrecognized argument: $key"
@@ -127,6 +151,12 @@ done
 assert_is_installed "tr"
 assert_is_installed "jq"
 
+if [[ -z "$asg_name" ]]; then
+  echo 'Error! AsgName not set!'
+  print_usage
+  exit 1
+fi
+
 if [[ -z "$output_dir" ]]; then
   output_dir="$(cd "$SCRIPT_DIR/" && pwd)"
 fi
@@ -140,27 +170,27 @@ echo "INSTANCE_IDS_FILE: $INSTANCE_IDS_FILE"
 echo "NODES_JSON_FILE: $NODES_JSON_FILE"
 echo "NODE_IDS_FILE: $NODE_IDS_FILE"
 
-if [ "$set_instance_ids" == "true" ]; then
-  echo "manually set instance ids: $instance_ids"
-  manually_set_instance_ids "$instance_ids" "$INSTANCE_IDS_FILE"
-else
+if [[ -z "$instance_ids" ]]; then
   echo "Auto decovery of the instance ids"
   auto_get_instance_ids $INSTANCE_IDS_FILE
+else
+  echo "Manually set instance ids: $instance_ids"
+  manually_set_instance_ids "$instance_ids" "$INSTANCE_IDS_FILE"
 fi
 
-if [[ "$no_increase_asg_size" == "false" ]]; then
-  increase_asg_size
+if [ "$no_increase_asg_size" == "false" ]; then
+  increase_asg_size $asg_name
 fi
 
-readonly desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
-  --auto-scaling-group-name $ASG_NAME \
+readonly desired_capacity=$( aws autoscaling describe-auto-scaling-groups \
+  --auto-scaling-group-name $asg_name \
   | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
 
 echo 'Checking if new nodes are ready'
 nomad node status -json > $NODES_JSON_FILE
 
 count=0
-while [[ $count -lt $desiredCapacity ]]; do
+while [[ $count -lt $desired_capacity ]]; do
   echo "Waiting, currently only $count nodes are ready"
   sleep "$SLEEP_BETWEEN_RETRIES_SEC"
   nomad node status -json > $NODES_JSON_FILE
@@ -185,23 +215,29 @@ while read instance_id && read node_id <&3; do
   cont=true
   echo "Detaching instance-ids ${instance_id}"
   while [ $cont != false ]; do
-    errorMessage=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
-      --auto-scaling-group-name $ASG_NAME \
-      --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
-    errorCode=${errorMessage##*.}
-    if jq -e . >/dev/null 2>&1 <<<"$errorMessage"; then
+    if [ $no_decrease_asg_desired_capacity == "false" ]; then
+      error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
+        --auto-scaling-group-name $asg_name \
+        --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
+    else
+      error_message=$( aws autoscaling detach-instances --instance-ids ${instance_id} \
+        --auto-scaling-group-name $asg_name \
+        --no-should-decrement-desired-capacity 2>&1 || printf -- "$?" )
+    fi
+
+    if jq -e . >/dev/null 2>&1 <<<"$error_message"; then
       echo "Still detaching instance-ids ${instance_id}"
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-    elif echo $errorMessage | grep -q 'is not in InService or Standby'; then
+    elif echo $error_message | grep -q 'is not in InService or Standby'; then
       echo "Still detaching instance-ids ${instance_id}"
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
-    elif echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
+    elif echo $error_message | grep -q 'is not part of Auto Scaling group'; then
       cont=false
       echo "Detaching instance-ids ${instance_id} completed"
-      echo $errorMessage
+      echo $error_message
     else
       echo "Other error encoutered!!!"
-      echo $errorMessage
+      echo $error_message
       exit 1
     fi
   done
@@ -225,5 +261,10 @@ while read instance_id && read node_id <&3; do
 done < $INSTANCE_IDS_FILE 3<$NODE_IDS_FILE
 
 echo 'All operation complete'
+
+if [ "$no_increase_asg_size" == "false" ]; then
+  decrease_asg_max_size $asg_name
+fi
+
 echo 'Clearing tempt files'
 rm $INSTANCE_IDS_FILE $NODES_JSON_FILE $NODE_IDS_FILE
