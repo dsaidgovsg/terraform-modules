@@ -7,7 +7,8 @@
         "temporary_security_group_source_cidr": "0.0.0.0/0",
         "associate_public_ip_address": "true",
         "ssh_interface": "",
-        "consul_module_version": "v0.3.1",
+        "consul_module_repo": "https://github.com/lawliet89/terraform-aws-consul.git",
+        "consul_module_version": "env-vars",
         "consul_version": "1.1.0",
         "ca_certificate": ""
     },
@@ -67,7 +68,7 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
                 "--extra-vars",
-                "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}}",
+                "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
                 "--extra-vars",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",

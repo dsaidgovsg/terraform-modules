@@ -13,7 +13,8 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 /opt/consul/bin/run-consul \
     --server \
     --cluster-tag-key "${cluster_tag_key}" \
-    --cluster-tag-value "${cluster_tag_value}"
+    --cluster-tag-value "${cluster_tag_value}" \
+    --environment "CONSUL_UI_BETA=\"true\""
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \

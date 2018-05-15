@@ -291,8 +291,9 @@ quorum of servers, you might have data loss and have to perform
 1. Build your new AMI, and Terraform apply the new AMI.
 1. Terminate the instance that you would like to remove.
 1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
+1. Make sure the new instance started by AWS is healthy before continuing. For example, use `consul operator raft list-peers`.
 
-You can use this AWS CLI command:
+You can use this AWS CLI command to terminate the instance:
 
 ```bash
 aws autoscaling \
