@@ -8,7 +8,7 @@
         "associate_public_ip_address": "true",
         "ssh_interface": "",
         "consul_module_version": "v0.3.1",
-        "consul_version": "1.0.7",
+        "consul_version": "1.1.0",
         "ca_certificate": ""
     },
     "builders": [
@@ -41,19 +41,22 @@
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
             },
             "tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
             },
             "snapshot_tags": {
                 "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-                "Packer": "yes"
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
             }
         }
     ],
