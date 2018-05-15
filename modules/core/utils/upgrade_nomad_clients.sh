@@ -73,7 +73,7 @@ function increase_asg_size {
       --desired-capacity $newDesiredCapacity
 }
 
-function auto_get_instance_ids{
+function auto_get_instance_ids {
   local readonly instance_ids_file="$1"
   echo 'Getting old instance ID'
   aws autoscaling describe-auto-scaling-groups \
@@ -82,13 +82,13 @@ function auto_get_instance_ids{
     | tee $instance_ids_file
 }
 
-function manually_set_instance_ids{
+function manually_set_instance_ids {
   local readonly instance_ids="$1"
-  local readonly instance_ids_file="$2"
-  echo 'Manually setting old instance ID'
+  local readonly instance_file="$2"
+  echo "Manually setting old instance ID to $instance_file"
   for id in $instance_ids
   do
-    echo $id >> $instance_ids_file
+    echo $id >> $instance_file
   done
 }
 
@@ -136,9 +136,15 @@ readonly INSTANCE_IDS_FILE="${output_dir}/instance-ids.txt"
 readonly NODES_JSON_FILE="${output_dir}/nodes.json"
 readonly NODE_IDS_FILE="${output_dir}/node-ids.txt"
 
-if [ "$set_instance_ids" == "true"]; then
-  manually_set_instance_ids $instance_ids $INSTANCE_IDS_FILE
+echo "INSTANCE_IDS_FILE: $INSTANCE_IDS_FILE"
+echo "NODES_JSON_FILE: $NODES_JSON_FILE"
+echo "NODE_IDS_FILE: $NODE_IDS_FILE"
+
+if [ "$set_instance_ids" == "true" ]; then
+  echo "manually set instance ids: $instance_ids"
+  manually_set_instance_ids "$instance_ids" "$INSTANCE_IDS_FILE"
 else
+  echo "Auto decovery of the instance ids"
   auto_get_instance_ids $INSTANCE_IDS_FILE
 fi
 
@@ -151,7 +157,7 @@ readonly desiredCapacity=$( aws autoscaling describe-auto-scaling-groups \
   | jq --raw-output '.AutoScalingGroups[0].DesiredCapacity' )
 
 echo 'Checking if new nodes are ready'
-nomad node status -json > $nodes_json_file
+nomad node status -json > $NODES_JSON_FILE
 
 count=0
 while [[ $count -lt $desiredCapacity ]]; do
@@ -183,24 +189,27 @@ while read instance_id && read node_id <&3; do
       --auto-scaling-group-name $ASG_NAME \
       --should-decrement-desired-capacity 2>&1 || printf -- "$?" )
     errorCode=${errorMessage##*.}
-    if echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
+    if jq -e . >/dev/null 2>&1 <<<"$errorMessage"; then
+      echo "Still detaching instance-ids ${instance_id}"
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    elif echo $errorMessage | grep -q 'is not in InService or Standby'; then
+      echo "Still detaching instance-ids ${instance_id}"
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    elif echo $errorMessage | grep -q 'is not part of Auto Scaling group'; then
       cont=false
       echo "Detaching instance-ids ${instance_id} completed"
       echo $errorMessage
-    elif [ "$errorCode" != "0" ]; then
+    else
       echo "Other error encoutered!!!"
       echo $errorMessage
       exit 1
-    else
-      echo "Still detaching instance-ids ${instance_id}"
-      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
 
   drain=true
   echo "Node drain for node-ids ${node_id}"
   while [ $drain != false ]; do
-    if nomad node drain -enable -yes ${node_id} | grep -q 'drain complete' then
+    if nomad node drain -enable -yes ${node_id} | grep -q "All allocations on node \"${node_id}\" have stopped"; then
       drain=false
       echo "Node drain complete for node-ids ${node_id}"
     else
