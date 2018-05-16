@@ -101,6 +101,15 @@ function consul_kv {
   echo -n "${value}"
 }
 
+function consul_kv_with_default {
+  local readonly path="${1}"
+  local readonly default="${2}"
+  local value
+  value=$(consul kv get "${path}" || echo -n "${default}") || exit $?
+  log_info "Consul KV Path ${path} = ${value}"
+  echo -n "${value}"
+}
+
 function generate_config {
   local readonly vault_address="${1}"
   local readonly path="${2}"
@@ -177,7 +186,7 @@ function main {
   local readonly vault_address="https://${vault_service}.service.consul:${vault_port}"
 
   local ssh_enabled
-  ssh_enabled=$(consul_kv "${consul_prefix}vault-ssh/${type}/enabled")
+  ssh_enabled=$(consul_kv_with_default "${consul_prefix}vault-ssh/${type}/enabled" "no")
   if [[ "${ssh_enabled}" != "yes" ]]; then
     log_info "Vault SSH is not enabled"
   else

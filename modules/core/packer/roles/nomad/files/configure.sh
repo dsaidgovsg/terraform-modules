@@ -110,6 +110,15 @@ function consul_kv {
   echo -n "${value}"
 }
 
+function consul_kv_with_default {
+  local readonly path="${1}"
+  local readonly default="${2}"
+  local value
+  value=$(consul kv get "${path}" || echo -n "${default}") || exit $?
+  log_info "Consul KV Path ${path} = ${value}"
+  echo -n "${value}"
+}
+
 function get_vault_token {
   local readonly auth_path="${1}"
   local readonly token_role="${2}"
@@ -283,7 +292,7 @@ function main {
   local readonly vault_address="https://${vault_service}.service.consul:${vault_port}"
 
   local vault_integration_enabled
-  vault_integration_enabled=$(consul_kv "${consul_prefix}nomad-vault-integration/enabled")
+  vault_integration_enabled=$(consul_kv_with_default "${consul_prefix}nomad-vault-integration/enabled" "no")
   if [[ "${vault_integration_enabled}" != "yes" ]]; then
     log_info "Nomad Vault integration is not enabled"
   else
@@ -291,7 +300,7 @@ function main {
   fi
 
   local acl_integration_enabled
-  acl_integration_enabled=$(consul_kv "${consul_prefix}nomad-acl/enabled")
+  acl_integration_enabled=$(consul_kv_with_default "${consul_prefix}nomad-acl/enabled" "no")
   if [[ "${acl_integration_enabled}" != "yes" ]]; then
     log_info "Nomad ACL is not enabled"
   else
