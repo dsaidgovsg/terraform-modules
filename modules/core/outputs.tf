@@ -129,6 +129,16 @@ output "vault_servers_cluster_tag_value" {
   value = "${module.vault.cluster_tag_value}"
 }
 
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = "${var.vpc_id}"
+}
+
+output "vpc_public_subnets" {
+  description = "Public subnets for the VPC"
+  value       = "${var.vpc_public_subnets}"
+}
+
 output "vpc_region" {
   description = "The region the infra belongs to"
   value       = "${var.vpc_region}"
