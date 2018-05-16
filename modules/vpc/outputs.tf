@@ -3,6 +3,11 @@ output "vpc_id" {
   value       = "${module.vpc.vpc_id}"
 }
 
+output "vpc_cidr_block" {
+  description = "The CIDR block of the VPC"
+  value       = "${module.vpc.vpc_cidr_block}"
+}
+
 output "vpc_public_subnets" {
   description = "Public subnets for the VPC"
   value       = "${module.vpc.public_subnets}"
@@ -40,7 +45,7 @@ output "vpc_private_route_table_ids" {
 
 output "vpc_azs" {
   description = "The AZs in the region the VPC belongs to"
-  value       = "${module.vpc.azs}"
+  value       = "${var.vpc_azs}"
 }
 
 output "region" {

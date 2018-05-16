@@ -13,7 +13,7 @@ module "consul_servers" {
   vpc_id     = "${var.vpc_id}"
 
   ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.consul_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = "${concat(list(var.vpc_cidr_block), var.consul_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 

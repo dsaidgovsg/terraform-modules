@@ -15,12 +15,12 @@ module "vault" {
   root_volume_type = "${var.vault_root_volume_type}"
   root_volume_size = "${var.vault_root_volume_size}"
 
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.public_subnets}"
+  vpc_id     = "${var.vpc_id}"
+  subnet_ids = "${var.vpc_public_subnets}"
 
   ssh_key_name                       = "${var.ssh_key_name}"
   allowed_inbound_security_group_ids = "${var.vault_allowed_inbound_security_group_ids}"
-  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks        = "${concat(list(var.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks            = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address        = "${var.associate_public_ip_address}"
 
@@ -49,7 +49,7 @@ data "template_file" "user_data_vault_cluster" {
   template = "${file("${path.module}/user_data/user-data-vault.sh")}"
 
   vars {
-    aws_region               = "${data.aws_region.current.name}"
+    aws_region               = "${var.vpc_region}"
     consul_cluster_tag_key   = "${var.cluster_tag_key}"
     consul_cluster_tag_value = "${var.consul_cluster_name}"
 

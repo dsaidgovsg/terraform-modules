@@ -280,6 +280,21 @@ variable "elb_ssl_policy" {
   default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
+variable "vpc_id" {
+  description = "The ID of the VPC"
+  default     = ""
+}
+
+variable "vpc_cidr_block" {
+  description = "The CIDR block of the VPC"
+  default     = ""
+}
+
+variable "vpc_public_subnets" {
+  description = "List of IDs of public subnets"
+  default     = ""
+}
+
 variable "vpc_region" {
   description = "The region the VPC belongs to"
   default     = ""
