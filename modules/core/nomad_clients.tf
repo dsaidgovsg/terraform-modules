@@ -20,11 +20,11 @@ module "nomad_clients" {
   root_volume_type = "${var.nomad_clients_root_volume_type}"
   root_volume_size = "${var.nomad_clients_root_volume_size}"
 
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.public_subnets}"
+  vpc_id     = "${var.vpc_id}"
+  subnet_ids = "${var.vpc_public_subnets}"
 
   ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = "${concat(list(var.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 }
@@ -63,5 +63,5 @@ resource "aws_security_group_rule" "nomad_client_services" {
   from_port         = 20000
   to_port           = 32000
   protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_services_inbound_cidr)}"]
+  cidr_blocks       = ["${concat(list(var.vpc_cidr_block), var.nomad_clients_services_inbound_cidr)}"]
 }

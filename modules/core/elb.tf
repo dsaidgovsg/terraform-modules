@@ -6,7 +6,7 @@
 resource "aws_lb" "internal" {
   name            = "${var.internal_lb_name}"
   security_groups = ["${aws_security_group.internal_lb.id}"]
-  subnets         = ["${module.vpc.public_subnets}"]
+  subnets         = ["${var.vpc_public_subnets}"]
   internal        = true
 
   tags = "${var.tags}"
@@ -43,7 +43,7 @@ resource "aws_lb_target_group" "sink" {
   name                 = "${var.internal_lb_name}-sink"
   port                 = "80"
   protocol             = "HTTP"
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
 
   tags = "${var.tags}"
@@ -53,7 +53,7 @@ resource "aws_lb_target_group" "sink" {
 resource "aws_security_group" "internal_lb" {
   name        = "${var.internal_lb_name}"
   description = "Security group for Internal Load balancer for Nomad"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = "${var.vpc_id}"
 
   tags = "${merge(var.tags, map("Name", format("%s", var.internal_lb_name)))}"
 }
@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "internal_http_incoming" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(module.vpc.vpc_cidr_block), var.internal_lb_incoming_cidr)}"]
+  cidr_blocks       = ["${concat(list(var.vpc_cidr_block), var.internal_lb_incoming_cidr)}"]
 }
 
 resource "aws_security_group_rule" "internal_https_incoming" {
@@ -73,7 +73,7 @@ resource "aws_security_group_rule" "internal_https_incoming" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(module.vpc.vpc_cidr_block), var.internal_lb_incoming_cidr)}"]
+  cidr_blocks       = ["${concat(list(var.vpc_cidr_block), var.internal_lb_incoming_cidr)}"]
 }
 
 ##############################
@@ -99,7 +99,7 @@ resource "aws_lb_target_group" "nomad_server" {
   name                 = "${var.internal_lb_name}-nomad-server"
   port                 = "4646"
   protocol             = "HTTP"
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
 
   health_check {
@@ -162,7 +162,7 @@ resource "aws_lb_target_group" "consul_servers" {
   name                 = "${var.internal_lb_name}-consul-server"
   port                 = "8500"
   protocol             = "HTTP"
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
 
   health_check {
@@ -237,7 +237,7 @@ resource "aws_lb_target_group" "vault" {
   name                 = "${var.internal_lb_name}-vault"
   port                 = "8200"
   protocol             = "HTTPS"
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
 
   health_check {
