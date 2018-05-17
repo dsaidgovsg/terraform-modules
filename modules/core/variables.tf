@@ -300,7 +300,6 @@ variable "vpc_region" {
   default     = ""
 }
 
-
 # --------------------------------------------------------------------------------------------------
 # Post Bootstrap Integration Parameters
 # These parameters are used in conjunction with the other modules in this repository.
