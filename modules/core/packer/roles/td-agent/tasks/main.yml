@@ -1,0 +1,16 @@
+---
+- name: Get Ubuntu release name
+  shell: lsb_release -cs
+  register: release_name
+- name: Get the install script
+  get_url:
+    url: "https://toolbelt.treasuredata.com/sh/install-ubuntu-{{ release_name.stdout }}-td-agent3.sh"
+    dest: "{{ td_agent_tmp_file }}"
+    mode: 0400
+- name: Run the install script
+  command: "sh {{ td_agent_tmp_file }}"
+  become: yes
+- name: Remove install script
+  file:
+    path: "{{ td_agent_tmp_file }}"
+    state: absent
