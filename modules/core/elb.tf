@@ -30,7 +30,7 @@ resource "aws_lb_listener" "internal_https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "${var.elb_ssl_policy}"
-  certificate_arn   = "${data.aws_acm_certificate.internal_lb_certificate.arn}"
+  certificate_arn   = "${var.internal_lb_certificate_arn}"
 
   # Redirect to a sink target group with zero targets
   default_action {
