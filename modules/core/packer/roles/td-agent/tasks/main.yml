@@ -10,6 +10,12 @@
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
+- name: Enable the service
+  service:
+    name: td-agent
+    state: started
+    enabled: yes
+  become: yes
 - name: Remove install script
   file:
     path: "{{ td_agent_tmp_file }}"
