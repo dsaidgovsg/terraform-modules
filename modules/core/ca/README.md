@@ -93,6 +93,8 @@ aws kms encrypt \
 > root/ca.key
 ```
 
+## Decrypt the encrypted CA private key with AWS KMS for verification
+
 Verify that the encrypted file can be decrypted successfully and equally to the original key file
 (be sure not to print the key):
 
