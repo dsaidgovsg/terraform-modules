@@ -1,2 +1,3 @@
 ---
+fluent_plugin_systemd_version: 1.0.0
 td_agent_tmp_file: /tmp/td-agent-install.sh

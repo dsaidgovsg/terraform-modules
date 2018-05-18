@@ -10,11 +10,14 @@
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
-- name: Enable the service
+- name: Disable and stop the td-agent service
   service:
     name: td-agent
-    state: started
-    enabled: yes
+    state: stopped
+    enabled: no
+  become: yes
+- name: Install fluent-plugin-systemd
+  command: "td-agent-gem install fluent-plugin-systemd -v {{ fluent_plugin_systemd_version }}"
   become: yes
 - name: Remove install script
   file:
