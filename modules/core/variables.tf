@@ -56,8 +56,8 @@ variable "internal_lb_incoming_cidr" {
 # Domain name variables
 # --------------------------------------------------------------------------------------------------
 
-variable "internal_lb_certificate" {
-  description = "Domain name where certificate for the internal LB is issued under"
+variable "internal_lb_certificate_arn" {
+  description = "ARN of the certificate to use for the internal LB"
 }
 
 variable "nomad_api_domain" {
