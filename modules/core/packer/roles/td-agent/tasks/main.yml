@@ -7,6 +7,13 @@
     url: "https://toolbelt.treasuredata.com/sh/install-ubuntu-{{ release_name.stdout }}-td-agent3.sh"
     dest: "{{ td_agent_tmp_file }}"
     mode: 0400
+- name: Install dependencies for td-agent
+  apt:
+    name: "{{ item }}"
+  with_items:
+  - gcc
+  - make
+  become: yes
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
