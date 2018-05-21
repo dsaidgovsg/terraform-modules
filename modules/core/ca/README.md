@@ -22,8 +22,8 @@ repository:
 apt install golang-cfssl
 ```
 
-Alternatively you can run this in an interactive `bash` shell in Docker container to simplify
-operations:
+Alternatively you can run this in an interactive `bash` shell in Docker container to any commands
+that require the `cfssl` command:
 
 ```bash
 docker run \
@@ -37,12 +37,12 @@ docker run \
     cfssl/cfssl:1.3.2
 ```
 
-Ignore the `I have no name!` user name display in the interactive shell.
+Ignore the `I have no name!` user name display in the interactive shell. This is only for `cfssl`
+command, and other commands such as `aws` and `openssl` should be run on the native set-up, so make
+sure that these other commands exist.
 
-Make sure that all commands (including the above ones) are run in `ca/`. The commands below will be
-be compatible with either of the above methods used.
-
-Also note that below will make use of the KMS key alias `terraform`.
+All commands (including the above ones) are to be run in `ca/`. Also note that all commands below
+will make use of the KMS key alias `terraform`.
 
 ## cfssl Configuration
 
