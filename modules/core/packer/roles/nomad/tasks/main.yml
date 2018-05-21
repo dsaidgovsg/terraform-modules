@@ -16,6 +16,13 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/nomad/config"
   become: yes
+- name: "Copy Nomad Configurables"
+  template:
+    src: "{{ role_path }}/files/templates/"
+    dest: "/opt/nomad/config"
+  vars:
+    enable_syslog: "{{ nomad_enable_syslog }}"
+  become: yes
 - name: Install Configuration script
   copy:
     src: "{{ role_path }}/files/configure.sh"
