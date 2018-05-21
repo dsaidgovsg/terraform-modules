@@ -10,11 +10,8 @@
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
-- name: Change td-agent configuration
-  template:
-    src: "{{ config_file }}"
-    dest: "/etc/td-agent/td-agent.conf"
-    mode: 0644
+- name: Install fluent-plugin-systemd
+  command: "td-agent-gem install fluent-plugin-systemd -v {{ fluent_plugin_systemd_version }}"
   become: yes
 - name: Add td-agent user to systemd-journal group for allow reading
   user:
@@ -22,9 +19,12 @@
     groups: systemd-journal
     append: yes
   become: yes
-- name: Install fluent-plugin-systemd
-  command: "td-agent-gem install fluent-plugin-systemd -v {{ fluent_plugin_systemd_version }}"
-  become: yes  
+- name: Change td-agent configuration
+  template:
+    src: "{{ config_file }}"
+    dest: "/etc/td-agent/td-agent.conf"
+    mode: 0644
+  become: yes
 - name: Enable and restart the td-agent service
   service:
     name: td-agent
