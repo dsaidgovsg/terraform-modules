@@ -28,10 +28,16 @@ cfssl genkey -config "../../ca/config.json" \
 At this point, you must have decrypted the AWS-KMS encrypted CA private key (i.e. `ca.key` to
 `ca-key.pem`) so that the CA private key can be used to sign the CSR.
 
-Copy the true `ca.pem` and `ca.key` into `../../ca/root/` first, and perform the decryption step as
-shown in the
-[guide](../../ca/README.md#Decrypt-the-private-key). If the above two files are present, simply run
-the below adapted command to get back the original CA private key:
+Ensure that the files below:
+
+- `ca.key`
+- `ca.pem`
+- `cli.json`
+- `csr.json`
+
+are of correct values and placed in `../../ca/root/`. Then perform the decryption step as shown in
+the [guide](../../ca/README.md#Decrypt-the-private-key), whose adapted command is shown below to get
+back the original CA private key:
 
 ```bash
 aws kms decrypt \
