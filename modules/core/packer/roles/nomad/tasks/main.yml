@@ -18,8 +18,8 @@
   become: yes
 - name: "Copy Nomad Configurables"
   template:
-    src: "{{ role_path }}/files/templates/"
-    dest: "/opt/nomad/config"
+    src: "{{ role_path }}/files/templates/configurable.hcl"
+    dest: "/opt/nomad/config/configurable.hcl"
   vars:
     enable_syslog: "{{ nomad_enable_syslog }}"
   become: yes
