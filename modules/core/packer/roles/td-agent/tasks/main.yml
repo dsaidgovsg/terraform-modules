@@ -32,10 +32,9 @@
     dest: "/etc/td-agent/td-agent.conf"
     mode: 0644
   become: yes
-- name: Enable and restart the td-agent service
+- name: Enable the td-agent service for next boot-up
   service:
     name: td-agent
-    state: restarted
     enabled: yes
   become: yes
 - name: Remove install script
