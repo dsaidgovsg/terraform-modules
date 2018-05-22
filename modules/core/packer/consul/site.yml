@@ -5,7 +5,6 @@
     consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
     consul_module_version: "v0.1.0"
     consul_version: "1.1.0"
-    install_td_agent: no
     td_agent_config_file: ""
     ca_certificate: ""
   tasks:
@@ -19,7 +18,7 @@
       name: "{{ playbook_dir }}/../roles/td-agent"
     vars:
       config_file: "{{ td_agent_config_file }}"
-    when: install_td_agent
+    when: td_agent_config_file
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"

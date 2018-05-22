@@ -9,7 +9,6 @@
     docker_version: "17.11.0~ce-0~ubuntu"
     vault_version: "0.10.1"
     vault_module_version: "v0.4.0"
-    install_td_agent: no
     td_agent_config_file: ""
     ca_certificate: ""
   tasks:
@@ -23,7 +22,7 @@
       name: "{{ playbook_dir }}/../roles/td-agent"
     vars:
       config_file: "{{ td_agent_config_file }}"
-    when: install_td_agent
+    when: td_agent_config_file
   - name: Install pip3
     apt:
       name: python3-pip

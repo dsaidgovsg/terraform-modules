@@ -36,9 +36,8 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 - `consul_module_version`: Version of the
   [Terraform Consul](https://github.com/hashicorp/terraform-aws-consul) repository to use
 - `consul_version`: Version of Consul to install
-- `install_td_agent`: Flag to indicate if `td-agent` should be installed. Default to `no`.
-- `td_agent_config_file`: Path to `td-agent` config file to template copy from. Required if
-  `install_td_agent` is set to `yes`.
+- `td_agent_config_file`: Path to `td-agent` config file to template copy from. Install `td-agent`
+  if path is non-empty.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
 
