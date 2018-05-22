@@ -42,7 +42,8 @@ list of options that Traefik recognises on the
 
 The example Nomad jobspec below shows how one might want to deploy
 [hashi-ui](https://github.com/jippi/hashi-ui) on the internal entrypoint for your internal users
-only. Most importantly, take note of the `tags` key of the `service` stanza.
+only. Most importantly, take note of the `tags` key of the `service` stanza. You must also
+remember to create DNS records to point to the ELB provisioned by this module.
 
 ```hcl
 job "hashi-ui" {
@@ -84,7 +85,7 @@ job "hashi-ui" {
 
         tags = [
           "traefik.enable=true",
-          "traefik.frontend.rule=Host:hashi-ui.locus.rocks",
+          "traefik.frontend.rule=Host:hashi-ui.example.com",
           "traefik.frontend.entryPoints=internal",
           "traefik.frontend.headers.SSLRedirect=true",
           "traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https",
