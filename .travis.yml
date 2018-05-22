@@ -9,6 +9,7 @@ script:
   - docker run --rm -ti lint modules/core
   - docker run --rm -ti lint modules/nomad-acl
   - docker run --rm -ti lint modules/nomad-vault-integration
+  - docker run --rm -ti lint modules/traefik
   - docker run --rm -ti lint modules/vault-ssh
 
 branches:
