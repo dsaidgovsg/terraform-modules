@@ -128,6 +128,16 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
 
 ## Building Image
 
+If you have a `vars.json` variable file containing changes to the above variables, you may run:
+
+```bash
+packer build \
+    -var-file=vars.json \
+    packer.json
+```
+
+Otherwise if you wish to use the default variable values, simply run:
+
 ```bash
 packer build packer.json
 ```
