@@ -29,6 +29,7 @@ data "template_file" "traefik_jobspec" {
     az                    = "${jsonencode(data.aws_availability_zones.available.names)}"
     version               = "${var.traefik_version}"
     consul_port           = "${local.consul_port}"
+    traefik_count         = "${var.traefik_count}"
     traefik_consul_prefix = "${var.traefik_consul_prefix}"
   }
 }

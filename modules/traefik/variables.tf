@@ -106,3 +106,8 @@ variable "traefik_consul_catalog_prefix" {
   description = "Prefix for Consul catalog tags for Traefik"
   default     = "traefik"
 }
+
+variable "traefik_count" {
+  description = "Number of copies of Traefik to run"
+  default     = 3
+}
