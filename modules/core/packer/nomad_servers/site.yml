@@ -8,6 +8,8 @@
     consul_version: "1.1.0"
     vault_version: "0.10.1"
     vault_module_version: "v0.4.0"
+    install_td_agent: no
+    td_agent_config_file: ""
     ca_certificate: ""
   pre_tasks:
   - name: Upgrade all packages to the latest version
@@ -15,6 +17,12 @@
       upgrade: yes
       update_cache: yes
     become: yes
+  - name: Install td-agent with custom configuration
+    include_role:
+      name: "{{ playbook_dir }}/../roles/td-agent"
+    vars:
+      config_file: "{{ td_agent_config_file }}"
+    when: install_td_agent
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"

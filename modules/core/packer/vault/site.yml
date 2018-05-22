@@ -13,6 +13,8 @@
     encrypted_tls_key_file_src: "{{ playbook_dir }}/cert/encrypted_vault.key"
     encrypted_aes_key_src: "{{ playbook_dir }}/cert/aes.key"
     cli_json_src: "{{ playbook_dir }}/cert/cli.json"
+    install_td_agent: no
+    td_agent_config_file: ""
     ca_certificate: ""
   tasks:
   - name: Upgrade all packages to the latest version
@@ -20,6 +22,12 @@
       upgrade: yes
       update_cache: yes
     become: yes
+  - name: Install td-agent with custom configuration
+    include_role:
+      name: "{{ playbook_dir }}/../roles/td-agent"
+    vars:
+      config_file: "{{ td_agent_config_file }}"
+    when: install_td_agent
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"
