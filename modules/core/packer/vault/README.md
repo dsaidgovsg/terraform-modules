@@ -121,10 +121,22 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   encrypted by AWS KMS. Defaults to `cert/aes.key` if you used the instructions above.
 - `cli_json_src`: The AWS CLI JSON file used to encrypt the AES key. This defaults to
   `cert/cli.json` if you used the instructions above.
+- `td_agent_config_file`: Path to `td-agent` config file to template copy from. Install `td-agent`
+  if path is non-empty.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
 
 ## Building Image
+
+If you have a `vars.json` variable file containing changes to the above variables, you may run:
+
+```bash
+packer build \
+    -var-file=vars.json \
+    packer.json
+```
+
+Otherwise if you wish to use the default variable values, simply run:
 
 ```bash
 packer build packer.json

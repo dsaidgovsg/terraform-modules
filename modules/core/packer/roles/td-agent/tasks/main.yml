@@ -1,0 +1,45 @@
+---
+- name: Get Ubuntu release name
+  shell: lsb_release -cs
+  register: release_name
+- name: Get the install script
+  get_url:
+    url: "https://toolbelt.treasuredata.com/sh/install-ubuntu-{{ release_name.stdout }}-td-agent3.sh"
+    dest: "{{ td_agent_tmp_file }}"
+    mode: 0400
+- name: Install dependencies for td-agent
+  apt:
+    name: "{{ item }}"
+  with_items:
+  - gcc
+  - make
+  become: yes
+- name: Run the install script
+  command: "sh {{ td_agent_tmp_file }}"
+  become: yes
+- name: Install fluent-plugin-systemd
+  command: "td-agent-gem install fluent-plugin-systemd -v {{ fluent_plugin_systemd_version }}"
+  become: yes
+- name: Add td-agent user to systemd-journal group for allow reading
+  user:
+    name: td-agent
+    groups: systemd-journal
+    append: yes
+  become: yes
+- name: Change td-agent configuration
+  template:
+    src: "{{ config_file }}"
+    dest: "/etc/td-agent/td-agent.conf"
+    mode: 0644
+  become: yes
+# See `use: service` issue: https://github.com/ansible/ansible-modules-core/issues/3764#issuecomment-284331673
+- name: Enable the td-agent service for next boot-up
+  service:
+    name: td-agent
+    enabled: yes
+    use: service
+  become: yes
+- name: Remove install script
+  file:
+    path: "{{ td_agent_tmp_file }}"
+    state: absent

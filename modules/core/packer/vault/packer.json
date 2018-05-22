@@ -18,6 +18,7 @@
         "encrypted_tls_key_file_src": "{{ template_dir }}/cert/cert.key",
         "encrypted_aes_key_src": "{{ template_dir }}/cert/aes.key",
         "cli_json_src": "{{ template_dir }}/cert/cli.json",
+        "td_agent_config_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -76,13 +77,15 @@
             "pause_before": "10s",
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
-                "--extra-vars",
+                "-e",
                 "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}} vault_ui_enable={{user `vault_ui_enable`}}",
                 "-e",
                 "vault_module_url={{user `vault_module_url`}} vault_module_version={{user `vault_module_version`}} consul_version={{user `consul_version`}} consul_key={{user `consul_key`}}",
                 "-e",
                 "tls_cert_file_src={{user `tls_cert_file_src`}} encrypted_tls_key_file_src={{user `encrypted_tls_key_file_src`}} encrypted_aes_key_src={{user `encrypted_aes_key_src`}} cli_json_src={{user `cli_json_src`}}",
-                "--extra-vars",
+                "-e",
+                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"

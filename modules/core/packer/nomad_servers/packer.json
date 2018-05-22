@@ -13,6 +13,7 @@
         "consul_version": "1.1.0",
         "vault_module_version": "v0.5.1",
         "vault_version": "0.10.1",
+        "td_agent_config_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -76,11 +77,13 @@
             "pause_before": "10s",
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
-                "--extra-vars",
+                "-e",
                 "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}}",
-                "--extra-vars",
+                "-e",
                 "vault_version={{user `vault_version`}} vault_module_version={{user `vault_module_version`}}",
-                "--extra-vars",
+                "-e",
+                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"

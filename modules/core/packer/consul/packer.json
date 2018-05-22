@@ -10,6 +10,7 @@
         "consul_module_repo": "https://github.com/lawliet89/terraform-aws-consul.git",
         "consul_module_version": "env-vars",
         "consul_version": "1.1.0",
+        "td_agent_config_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -67,9 +68,11 @@
             "pause_before": "10s",
             "playbook_file": "{{ template_dir }}/site.yml",
             "extra_arguments": [
-                "--extra-vars",
+                "-e",
                 "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
-                "--extra-vars",
+                "-e",
+                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
