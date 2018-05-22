@@ -11,7 +11,7 @@ job "traefik" {
   }
 
   group "traefik" {
-    count = 4
+    count = "${traefik_count}"
 
     task "traefik" {
       driver = "docker"
