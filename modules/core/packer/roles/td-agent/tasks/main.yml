@@ -32,10 +32,12 @@
     dest: "/etc/td-agent/td-agent.conf"
     mode: 0644
   become: yes
+# See `use: service` issue: https://github.com/ansible/ansible-modules-core/issues/3764#issuecomment-284331673
 - name: Enable the td-agent service for next boot-up
   service:
     name: td-agent
     enabled: yes
+    use: service
   become: yes
 - name: Remove install script
   file:
