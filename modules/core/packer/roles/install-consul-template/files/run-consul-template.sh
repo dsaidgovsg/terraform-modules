@@ -25,6 +25,11 @@ function print_usage {
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
   echo -e "  --bin-dir\t\tThe path to the folder with Consul binary. Optional. Default is the absolute path of the parent folder of this script."
   echo -e "  --user\t\tThe user to run Consul as. Optional. Default is to use the owner of --config-dir."
+  echo -e "  --agent-address\t\tThe address of the Consul agent to access. Optional. Defaults to 127.0.0.1:8500"
+  echo -e "  --dedup-enable\t\tEnable deduplication mode. Optional. Defaults to false"
+  echo -e "  --dedup-prefix\t\tPrefix to use for deduplication mode. Optional. Defaults to \"consul-template/dedup/\""
+  echo -e "  --syslog-enable\t\tEnable logging to syslog. Optional. Defaults to false"
+  echo -e "  --syslog-facility\t\tThe syslog facility to log to. Optional. Defaults to \"LOCAL5\""
   echo -e "  --skip-config\tIf this flag is set, don't generate a Consul-template configuration file. Optional. Default is false."
   echo
   echo "Example:"
@@ -84,14 +89,46 @@ function assert_is_installed {
 function generate_consul_template_config {
   local readonly config_dir="${1}"
   local readonly user="${2}"
+  local readonly agent_address="${3}"
+  local readonly dedup_enable="${4}"
+  local readonly dedup_prefix="${5}"
+  local readonly syslog_enable="${6}"
+  local readonly syslog_facility="${7}"
   local readonly config_path="$config_dir/$DEFAULT_CONFIG_FILE"
+
+
+  local dedup_config=""
+  if [[ "$dedup_enable" == true && ! -z "$dedup_prefix" ]]; then
+    dedup_config=$(cat <<EOF
+deduplicate {
+  enabled = true
+  prefix = "${dedup_prefix}"
+}
+EOF
+)
+  fi
+
+  local syslog_config=""
+  if [[ "$syslog_enable" == "true" && ! -z "$syslog_facility" ]]; then
+    syslog_config=$(cat <<EOF
+syslog_config {
+  enabled = true
+  facility = "${syslog_facility}"
+}
+EOF
+)
+  fi
 
   log_info "Creating default Consul Template configuration"
   local default_config_hcl=$(cat <<EOF
 consul {
-    address = "127.0.0.1:8500"
-
+    address = "${agent_address}"
 }
+
+reload_signal = "SIGHUP"
+kill_signal = "SIGINT"
+${dedup_config}
+${syslog_config}
 EOF
 )
   log_info "Installing Consul config file in $config_path"
@@ -138,6 +175,11 @@ function run {
   local log_dir=""
   local bin_dir=""
   local user=""
+  local agent_address="127.0.0.1:8500"
+  local dedup_enable="false"
+  local dedup_prefix="consul-template/dedup/"
+  local syslog_enable="false"
+  local syslog_facility="LOCAL5"
   local skip_config="false"
   local all_args=()
 
@@ -163,6 +205,27 @@ function run {
       --user)
         assert_not_empty "$key" "$2"
         user="$2"
+        shift
+        ;;
+      --agent-address)
+        assert_not_empty "$key" "$2"
+        agent_address="$2"
+        shift
+        ;;
+      --dedup-enable)
+        dedup_enable="true"
+        ;;
+      --dedup-prefix)
+        assert_not_empty "$key" "$2"
+        dedup_prefix="$2"
+        shift
+        ;;
+      --syslog-enable)
+        syslog_enable="true"
+        ;;
+      --syslog-facility)
+        assert_not_empty "$key" "$2"
+        syslog_facility="$2"
         shift
         ;;
       --skip-config)
@@ -204,7 +267,7 @@ function run {
   if [[ "$skip_config" == "true" ]]; then
     log_info "The --skip-config flag is set, so will not generate a default Consul Template config file."
   else
-    generate_consul_template_config "$config_dir" "$user"
+    generate_consul_template_config "$config_dir" "$user" "$agent_address" "$dedup_enable" "$dedup_prefix" "$syslog_enable" "$syslog_facility"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user"
