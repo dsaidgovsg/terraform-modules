@@ -26,11 +26,13 @@
   become: yes
 - name: Download Consul Template Binary
   get_url:
+    force: yes
     dest: /tmp/consul-template.zip
     url: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_amd64.zip"
 - name: Unzip to destination
   unarchive:
     src: /tmp/consul-template.zip
+    remote_src: yes
     dest: "{{ base_path }}/bin"
     group: "{{ consul_template_user }}"
     owner: "{{ consul_template_user }}"
@@ -49,8 +51,17 @@
 - name: Install run-consul-template
   copy:
     src: "{{ role_path }}/files/run-consul-template.sh"
-    dest: "{{ base_path }}/bin/consul-template/run-consul-template"
+    dest: "{{ base_path }}/bin/run-consul-template"
     group: "{{ consul_template_user }}"
     owner: "{{ consul_template_user }}"
     mode: 0755
+  become: yes
+# Allows Consul template to send signals to tasks or restart tasks
+- name: "Allow {{ consul_template_user }} to use sudo with supervisorctl"
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ consul_template_user }}'
+    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
+    validate: 'visudo -cf %s'
   become: yes

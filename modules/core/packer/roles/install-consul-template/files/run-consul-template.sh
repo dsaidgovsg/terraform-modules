@@ -9,6 +9,8 @@ readonly DEFAULT_CONFIG_FILE="default.hcl"
 readonly VAULT_CONFIG_FILE="vault.hcl"
 readonly VAULT_TOKEN_TEMPLATE="template_vault_token.hcl"
 
+readonly SUPERVISOR_CONFIG_PATH="/etc/supervisor/conf.d/run-consul-template.conf"
+
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
@@ -154,7 +156,7 @@ function get_vault_token {
 
   local token
   token=$(
-    curl -Ss -XPOST "${address}/v1/auth/${auth_path}/login" \
+    curl -Ss -XPOST "${address}/v1/auth/${auth_path}login" \
       -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
   ) || exit $?
 
@@ -206,6 +208,7 @@ consul {
     address = "${agent_address}"
 }
 
+log_level = "info"
 reload_signal = "SIGHUP"
 kill_signal = "SIGINT"
 ${dedup_config}
@@ -213,7 +216,7 @@ ${syslog_config}
 EOF
 )
   log_info "Installing base config file in $config_path"
-  echo "$default_config_hcl" "$config_path"
+  echo "$default_config_hcl" > "$config_path"
   chown "$user:$user" "$config_path"
 }
 
@@ -269,7 +272,7 @@ vault {
 EOF
 )
   log_info "Installing Vault config file in $config_path"
-  echo "$vault_config_hcl" "$config_path"
+  echo "$vault_config_hcl" > "$config_path"
   chown "$user:$user" "$config_path"
 }
 
@@ -285,7 +288,7 @@ function render_self_template {
 
   local vault_token_template=$(cat <<EOF
 template {
-  contents = "{{ with secret 'auth/token/lookup-self' }}{{ .Data.id }}{{ end }}"
+  contents = "{{ with secret \\"auth/token/lookup-self\\" }}{{ .Data.id }}{{ end }}"
   destination = "${template_destination}"
   create_dest_dirs = true
   error_on_missing_key = true
@@ -294,7 +297,7 @@ template {
 EOF
 )
   log_info "Installing Vault token template configuration file in $config_path"
-  echo "$vault_token_template" "$config_path"
+  echo "$vault_token_template" > "$config_path"
   chown "$user:$user" "$config_path"
 }
 

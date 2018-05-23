@@ -5,3 +5,5 @@ consul_template_version: "0.19.4"
 consul_template_user: consul-template
 # Base path to install
 base_path: "/opt/consul-template"
+# Path to supervisorctl binary
+supervisorctl: "/usr/bin/supervisorctl"

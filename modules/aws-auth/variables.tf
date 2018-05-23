@@ -28,7 +28,7 @@ variable "vault_iam_role_arn" {
 # --------------------------------------------------------------------------------------------------
 variable "aws_auth_path" {
   description = "Path to enable the AWS authentication method on"
-  default     = "aws"
+  default     = "aws/"
 }
 
 variable "iam_policy_name" {
