@@ -6,6 +6,11 @@ Some reusable Terraform modules.
 
 This module sets up a VPC, and a Consul and Nomad cluster to allow you to run applications on.
 
+## [AWS Authentication](modules/aws-auth)
+
+This module configures Vault to accept authentication via EC2 instance metadata. This is recommended
+for use with some of the Vault integration modules.
+
 ## [Nomad Vault Integration](modules/nomad-vault-integration)
 
 This module serves as a post-bootstrap addon for the Core Module. It integrates Vault into Nomad

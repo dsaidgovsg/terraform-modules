@@ -10,18 +10,8 @@ variable "nomad_server_iam_role_arn" {
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
 # --------------------------------------------------------------------------------------------------
-variable "aws_auth_path" {
-  description = "Path to enable the AWS authentication method on"
-  default     = "aws"
-}
-
 variable "nomad_server_policy" {
   description = "Name of the policy for Nomad servers"
-  default     = "nomad-server"
-}
-
-variable "nomad_aws_token_role" {
-  description = "Name of the token role that is used to authenticate Nomad servers with the AWS authentication"
   default     = "nomad-server"
 }
 
@@ -35,19 +25,9 @@ variable "nomad_token_suffix" {
   default     = "nomad-cluster"
 }
 
-variable "create_iam_policy" {
-  description = "Enable this module to create the appropriate IAM policy for your Vault instances"
-  default     = false
-}
-
-variable "iam_role_name" {
-  description = "If `create_iam_policy` is enabled, this will be the name of the policy created"
-  default     = "VaultAwsAuth"
-}
-
-variable "vault_iam_role_id" {
-  description = "If `create_iam_policy` is enabled, this will be the Vault IAM role ID to apply the policy to"
-  default     = ""
+variable "disallowed_policies" {
+  description = "Additional policies that tokens created by Nomad servers are not allowed to have"
+  default     = []
 }
 
 # --------------------------------------------------------------------------------------------------

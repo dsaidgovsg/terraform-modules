@@ -1,6 +1,6 @@
 {
     "allowed_policies": [],
-    "disallowed_policies": ["${nomad_server_policy}"],
+    "disallowed_policies": [${disallowed_policies}],
     "explicit_max_ttl": 0,
     "name": "${nomad_token_role}",
     "orphan": true,
