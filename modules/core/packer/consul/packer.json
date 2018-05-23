@@ -11,6 +11,7 @@
         "consul_module_version": "env-vars",
         "consul_version": "1.1.0",
         "td_agent_config_file": "",
+        "td_agent_config_vars_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -71,7 +72,7 @@
                 "-e",
                 "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
                 "-e",
-                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",

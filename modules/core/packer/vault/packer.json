@@ -19,6 +19,7 @@
         "encrypted_aes_key_src": "{{ template_dir }}/cert/aes.key",
         "cli_json_src": "{{ template_dir }}/cert/cli.json",
         "td_agent_config_file": "",
+        "td_agent_config_vars_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -84,7 +85,7 @@
                 "-e",
                 "tls_cert_file_src={{user `tls_cert_file_src`}} encrypted_tls_key_file_src={{user `encrypted_tls_key_file_src`}} encrypted_aes_key_src={{user `encrypted_aes_key_src`}} cli_json_src={{user `cli_json_src`}}",
                 "-e",
-                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",

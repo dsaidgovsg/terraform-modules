@@ -123,12 +123,16 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   `cert/cli.json` if you used the instructions above.
 - `td_agent_config_file`: Path to `td-agent` config file to template copy from. Install `td-agent`
   if path is non-empty.
+- `td_agent_config_vars_file`: Path to variables file to include for value interpolation for
+  `td-agent` config file. Only included if the value is not empty. `include_vars` includes the
+  variables into `config_vars` variable, i.e. if `xxx` value is defined in the variables file, you
+  will need to do `{{ config_vars.xxx }}` to get the interpolation working.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
 
 ## Building Image
 
-If you have a `vars.json` variable file containing changes to the above variables, you may run:
+If you have a `vars.json` variables file containing changes to the above variables, you may run:
 
 ```bash
 packer build \

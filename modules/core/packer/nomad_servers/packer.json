@@ -14,6 +14,7 @@
         "vault_module_version": "v0.5.1",
         "vault_version": "0.10.1",
         "td_agent_config_file": "",
+        "td_agent_config_vars_file": "",
         "ca_certificate": ""
     },
     "builders": [
@@ -82,7 +83,7 @@
                 "-e",
                 "vault_version={{user `vault_version`}} vault_module_version={{user `vault_module_version`}}",
                 "-e",
-                "td_agent_config_file={{user `td_agent_config_file`}}",
+                "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
