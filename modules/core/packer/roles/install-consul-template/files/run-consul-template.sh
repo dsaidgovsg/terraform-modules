@@ -479,13 +479,13 @@ function run {
       environment+=("VAULT_TOKEN=\"${vault_token}\"")
 
       generate_vault_config "${vault_address}" "$config_dir" "$user"
+
+      if [[ "$skip_render_self_template" == "false" ]]; then
+        log_info "Configuring consul-template to render its Vault token to the home directory."
+
+        render_self_template "${config_dir}" "${user}"
+      fi
     fi
-  fi
-
-  if [[ "$skip_render_self_template" == "false" ]]; then
-    log_info "Configuring consul-template to render its Vault token to the home directory."
-
-    render_self_template "${config_dir}" "${user}"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
