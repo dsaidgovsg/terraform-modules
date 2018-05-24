@@ -2,7 +2,7 @@
     "allowed_policies": [],
     "disallowed_policies": [${disallowed_policies}],
     "explicit_max_ttl": 0,
-    "name": "${nomad_token_role}",
+    "name": "${nomad_cluster_role}",
     "orphan": true,
     "path_suffix": "${path_suffix}",
     "period": 259200,

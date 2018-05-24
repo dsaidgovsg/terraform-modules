@@ -5,7 +5,7 @@
     vault_version: "0.10.1"
     vault_ui_enable: "true"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
-    vault_module_version: "v0.4.0"
+    vault_module_version: "v0.4.1"
     consul_module_version: "v0.1.2"
     consul_version: "1.1.0"
     consul_key: "vault/"

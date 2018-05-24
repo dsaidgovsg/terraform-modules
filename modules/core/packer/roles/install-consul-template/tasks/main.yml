@@ -11,6 +11,7 @@
     name: "{{ consul_template_user }}"
     state: present
   become: yes
+  when: consul_template_user != "root"
 - name: Create install directories
   file:
     path: "{{ item }}"
@@ -65,3 +66,4 @@
     line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
     validate: 'visudo -cf %s'
   become: yes
+  when: consul_template_user != "root"

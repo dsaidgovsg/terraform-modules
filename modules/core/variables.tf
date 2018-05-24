@@ -273,6 +273,17 @@ variable "vault_allowed_inbound_security_group_ids" {
   default     = []
 }
 
+variable "vault_allowed_inbound_security_group_count" {
+  description = <<EOF
+  The number of entries in var.allowed_inbound_security_group_ids.
+  Ideally, this value could be computed dynamically,
+  but we pass this variable to a Terraform resource's 'count' property and
+  Terraform requires that 'count' be computed with literals or data sources only.
+EOF
+
+  default = 0
+}
+
 variable "vault_instance_type" {
   description = "The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro)."
   default     = "t2.medium"

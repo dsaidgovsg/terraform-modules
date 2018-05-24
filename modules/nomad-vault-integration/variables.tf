@@ -1,31 +1,33 @@
 # --------------------------------------------------------------------------------------------------
-# REQUIRED PARAMETERS
-# You must provide a value for each of these parameters.
-# --------------------------------------------------------------------------------------------------
-variable "nomad_server_iam_role_arn" {
-  description = "IAM Role ARN for Nomad servers"
-}
-
-# --------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
 # --------------------------------------------------------------------------------------------------
 variable "nomad_server_policy" {
-  description = "Name of the policy for Nomad servers"
+  description = "Name of the policy to allow for the creation of the token to pass to Nomad servers"
   default     = "nomad-server"
 }
 
-variable "nomad_token_role" {
+variable "nomad_cluster_policy" {
+  description = "Name of the policy for tokens passed to Nomad servers"
+  default     = "nomad-cluster"
+}
+
+variable "nomad_server_role" {
+  description = "Name of the token role that is used to create Tokens to pass to Nomad"
+  default     = "nomad-server"
+}
+
+variable "nomad_cluster_role" {
   description = "Name for the Token role that is used by the Nomad server to create tokens"
   default     = "nomad-cluster"
 }
 
-variable "nomad_token_suffix" {
+variable "nomad_cluster_suffix" {
   description = "Suffix to create tokens with. See https://www.vaultproject.io/api/auth/token/index.html#path_suffix for more information"
   default     = "nomad-cluster"
 }
 
-variable "disallowed_policies" {
+variable "nomad_cluster_disallowed_policies" {
   description = "Additional policies that tokens created by Nomad servers are not allowed to have"
   default     = []
 }

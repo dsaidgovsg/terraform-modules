@@ -7,7 +7,7 @@
     consul_module_version: "v0.1.0"
     consul_version: "1.1.0"
     vault_version: "0.10.1"
-    vault_module_version: "v0.4.0"
+    vault_module_version: "v0.4.1"
     td_agent_config_file: ""
     ca_certificate: ""
   pre_tasks:

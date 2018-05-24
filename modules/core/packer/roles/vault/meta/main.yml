@@ -1,6 +1,6 @@
 ---
 dependencies:
+  - { role: "install-vault" }
   - { role: "aws-cli" }
   - { role: "ansible" }
   - { role: "install-kms-aes" }
-  - { role: "install-vault" }

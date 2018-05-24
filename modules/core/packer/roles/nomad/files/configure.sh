@@ -22,8 +22,7 @@ function print_usage {
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
-  echo -e "  --vault-service\t\tName of Vault service to query in Consul. Optional. Defaults to 'vault'."
-  echo -e "  --vault-port\t\tPort of Vault service. Optional. Defaults to '8200'."
+  echo -e "  --vault-address\t\tAddress of Vault server. Optional. Defaults to \"https://vault.service.consul:8200\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
@@ -120,22 +119,14 @@ function consul_kv_with_default {
 }
 
 function get_vault_token {
-  local readonly auth_path="${1}"
-  local readonly token_role="${2}"
-  local readonly address="${3}"
+  local readonly token_role="${1}"
+  local readonly address="${2}"
 
-  log_info "Retrieving EC2 Identity Document"
-  local ec2_identity
-  ec2_identity=$(
-    curl -s http://169.254.169.254/latest/dynamic/instance-identity/pkcs7 | tr -d '\n'
-  ) || exit $?
-
-  log_info "Retrieving Vault token at path ${auth_path} with role ${token_role}"
+  log_info "Retrieving Vault token with role ${token_role}"
 
   local token
   token=$(
-    curl -Ss -XPOST "${address}/v1/auth/${auth_path}/login" \
-      -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
+    vault token create -address "${address}" -role "${token_role}" -format json
   ) || exit $?
 
   if echo -n "${token}" | jq --raw-output -e .errors > /dev/null; then
@@ -154,32 +145,33 @@ function generate_vault_config {
   local readonly consul_prefix="${4}"
   local readonly user="${5}"
 
-   if [[ "$server" == "true" ]]; then
-    local auth_path
-    auth_path=$(consul_kv "${consul_prefix}auth_path")
-    local token_role
-    token_role=$(consul_kv "${consul_prefix}nomad_server_role")
-
-    local vault_token
-    vault_token=$(get_vault_token "${auth_path}" "${token_role}" "${vault_address}")
-
+  if [[ "$server" == "true" ]]; then
+    log_info "Generating Vault configuration for Nomad server"
     local allow_unauthenticated
     allow_unauthenticated=$(consul_kv "${consul_prefix}allow_unauthenticated")
 
-    local create_from_role
-    create_from_role=$(consul_kv "${consul_prefix}create_from_role")
+    local nomad_cluster_role
+    nomad_cluster_role=$(consul_kv "${consul_prefix}nomad_cluster_role")
+
+    local nomad_server_role
+    nomad_server_role=$(consul_kv "${consul_prefix}nomad_server_role")
+
+    local vault_token
+    vault_token=$(get_vault_token "${nomad_server_role}" "${vault_address}")
 
     local default_config=$(cat <<EOF
 vault {
   enabled = true
   address = "$vault_address"
-  allow_unauthenticated = $allow_unauthenticated
-  create_from_role = "$create_from_role"
   token = "$vault_token"
+  allow_unauthenticated = $allow_unauthenticated
+  create_from_role = "$nomad_cluster_role"
 }
 EOF
 )
   else
+    log_info "Generating Vault configuration for Nomad client"
+
     local default_config=$(cat <<EOF
 vault {
   enabled = true
@@ -214,8 +206,7 @@ function main {
   local server="false"
   local client="false"
   local config_dir=""
-  local vault_service="vault"
-  local vault_port="8200"
+  local vault_address="https://vault.service.consul:8200"
   local consul_prefix="terraform/"
   local user=""
   local all_args=()
@@ -235,14 +226,9 @@ function main {
         config_dir="$2"
         shift
       ;;
-      --vault-service)
+      --vault-address)
         assert_not_empty "$key" "$2"
-        vault_service="$2"
-        shift
-        ;;
-      --vault-port)
-        assert_not_empty "$key" "$2"
-        vault_port="$2"
+        vault_address="$2"
         shift
         ;;
       --consul-prefix)
@@ -289,13 +275,12 @@ function main {
     user=$(get_owner_of_path "$config_dir")
   fi
 
-  local readonly vault_address="https://${vault_service}.service.consul:${vault_port}"
-
   local vault_integration_enabled
   vault_integration_enabled=$(consul_kv_with_default "${consul_prefix}nomad-vault-integration/enabled" "no")
   if [[ "${vault_integration_enabled}" != "yes" ]]; then
     log_info "Nomad Vault integration is not enabled"
   else
+    assert_is_installed "vault"
     generate_vault_config "${server}" "${config_dir}" "${vault_address}" "${consul_prefix}nomad-vault-integration/" "${user}"
   fi
 

@@ -16,6 +16,13 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
 
+# Configure and run consul-template
+/opt/consul-template/bin/run-consul-template \
+    --server-type nomad_server \
+    --dedup-enable \
+    --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
 # Additional Configuration
 /opt/nomad/bin/configure \
     --server \

@@ -23,14 +23,14 @@ AWS_DEFAULT_REGION="${aws_region}" \
     -e "decrypted_vault_file=${cert_key}" \
     "${kms_aes_root}/vault.yml"
 
-# The Packer template puts the TLS certs in these file paths
-readonly VAULT_TLS_CERT_FILE="${cert_file}"
-readonly VAULT_TLS_KEY_FILE="${cert_key}"
-
 # The variables below are filled in via Terraform interpolation
 /opt/consul/bin/run-consul --client \
     --cluster-tag-key "${consul_cluster_tag_key}" \
     --cluster-tag-value "${consul_cluster_tag_value}"
+
+# The Packer template puts the TLS certs in these file paths
+readonly VAULT_TLS_CERT_FILE="${cert_file}"
+readonly VAULT_TLS_KEY_FILE="${cert_key}"
 
 if [ "${enable_s3_backend}" = "true" ] ; then
     /opt/vault/bin/run-vault \

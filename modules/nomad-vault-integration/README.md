@@ -10,9 +10,30 @@ This is intended to be used alongside the [core](../core).
 You must have Terraformed the [core](../core) module first. In addition, you must have at least
 initialised and unsealed the Vault servers.
 
-You must also have created the appropriate authentication methods for your Nomad servers to obtain
-an appropriate Vault Token. As an example, you can use this with the [aws-auth](../aws-auth) module.
-See below for more details.
+You **must** also provision this with the [aws-auth](../aws-auth) module. You **must** give the
+`nomad_server` token role in `aws-auth` the `nomad_server` policy.
+
+You can use both modules in the same Terraform module to provision to satisfy the requirements.
+For example:
+
+```hcl
+
+module "nomad_vault_integration" {
+    source = "..."
+
+    # ...
+}
+
+module "aws_auth" {
+    source = "..."
+
+    # ...
+
+    # Attach policy to allow creation of tokens for Nomad servers
+    nomad_server_policies = ["...", "${module.nomad_vault_integration.nomad_server_policy_name}"]
+}
+
+```
 
 ## Vault Provider
 
@@ -32,38 +53,32 @@ Vault to enable the [AWS authentication method](https://www.vaultproject.io/docs
 that Nomad servers instance will be able to retrieve a token on first boot purely by authenticating
 with Vault via their Instance Profile.
 
-## Post Bootstrap Tasks
+## What this module does
 
-### Integration with `Core` module
+This module first provisions two policies and
+[token roles](https://www.vaultproject.io/api/auth/token/index.html#create-update-token-role)
+in Vault.
+
+### Policies
+
+- `nomad_server_policy`: This policy allows the token holder to create a periodic token with the `nomad_cluster_policy` using the `nomad_server` token role.
+- `nomad_cluster_policy`: This policy allows Nomad to create child tokens for jobs that require it.
+
+### Roles
+
+- `nomad_server`: This allows the creation of a token that is passed to Nomad for Nomad to create child tokens for use with jobs using the `nomad_cluster` role.
+- `nomad_cluster`: This role is used by Nomad servers to create child tokens for use with jobs.
+
+### Tokens
+
+Using a source token obtained from the `aws-auth` module that has the `nomad_server_policy` can create a attached, we  new `nomad_cluster` token using the `nomad_cluster` role.
+
+The `nomad_cluster` token will then be passed to Nomad for Nomad to manage. This token will be
+used by Nomad servers to create child tokens for use with jobs.
+
+## Integration with `Core` module
 
 After you have applied this module, a key will be set in Consul's KV store. The default
 `user_data` scripts of the Core's Nomad servers and clients will check for the presence of this
 key in Consul to configure themselves accordingly. Refer to the Core module's documentation on how
 to update your Nomad cluster.
-
-### Instance Authentication Method
-
-You must have a method for your instances to obtain a Vault token. The recommended way is to
-use the [aws-auth](../aws-auth) module in this repository. The token must have the
-`nomad_server_policy` policy attached to it.
-
-You can use both modules in the same Terraform module to provision. For example:
-
-```hcl
-
-module "nomad_vault_integration" {
-    source = "..."
-
-    # ...
-}
-
-module "aws_auth" {
-    source = "..."
-
-    # ...
-
-    # Attach policy to Nomad servers role
-    nomad_server_policies = ["...", "${module.nomad_vault_integration.nomad_server_policy_name}"]
-}
-
-```

@@ -37,7 +37,7 @@ function print_usage {
   echo -e "  --syslog-facility\t\tThe syslog facility to log to. Optional. Defaults to \"LOCAL5\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --vault-address\t\tAddress of the Vault server.  Optional. Defaults to \"https://vault.service.consul:8200\""
-  echo -e "  --render-self-template\t\tRender the Vault token passed to Consul Template to the \"~/.vault-token\" of the user provided above. Optional. Default is false"
+  echo -e "  --skip-render-self-template\t\tSkip render the Vault token passed to Consul Template to the \"~/.vault-token\" of the user provided above. Optional. Default is false"
   echo -e "  --skip-config\tIf this flag is set, don't generate a Consul-template configuration file. Optional. Default is false."
   echo -e "  --skip-vault\t\tIf this flag is set, don't attempt to obtain a Vault token using the aws-auth integration. Optional. Default is false."
   echo
@@ -66,6 +66,13 @@ function log_warn {
 function log_error {
   local readonly message="$1"
   log "ERROR" "$message"
+}
+
+# Based on https://stackoverflow.com/a/17841619
+function join_by {
+  local IFS="$1"
+  shift
+  echo "$*"
 }
 
 # Based on code from: http://stackoverflow.com/a/16623897/483528
@@ -141,7 +148,7 @@ function consul_kv_with_default {
   echo -n "${value}"
 }
 
-function get_vault_token {
+function request_vault_token {
   local readonly auth_path="${1}"
   local readonly token_role="${2}"
   local readonly address="${3}"
@@ -194,7 +201,7 @@ EOF
   local syslog_config=""
   if [[ "$syslog_enable" == "true" && ! -z "$syslog_facility" ]]; then
     syslog_config=$(cat <<EOF
-syslog_config {
+syslog {
   enabled = true
   facility = "${syslog_facility}"
 }
@@ -226,6 +233,7 @@ function generate_supervisor_config {
   local readonly consul_template_log_dir="$3"
   local readonly consul_template_bin_dir="$4"
   local readonly consul_template_user="$5"
+  local readonly consul_template_environment="$6"
 
   log_info "Creating Supervisor config file to run Consul Template in $supervisor_config_path"
   cat > "$supervisor_config_path" <<EOF
@@ -238,16 +246,35 @@ autostart=true
 autorestart=true
 stopsignal=INT
 user=$consul_template_user
+environment=$consul_template_environment
 EOF
 }
 
 function generate_vault_config {
   local readonly vault_address="${1}"
+  local readonly config_dir="${2}"
+  local readonly user="${3}"
+  local readonly config_path="$config_dir/$VAULT_CONFIG_FILE"
+
+  log_info "Generating Vault configuration for Consul Template"
+
+  local vault_config_hcl=$(cat <<EOF
+vault {
+  address = "${vault_address}"
+  unwrap_token = false
+  renew_token = true
+}
+EOF
+)
+  log_info "Installing Vault config file in $config_path"
+  echo "$vault_config_hcl" > "$config_path"
+  chown "$user:$user" "$config_path"
+}
+
+function get_vault_token {
+  local readonly vault_address="${1}"
   local readonly consul_prefix="${2}"
   local readonly server_type="${3}"
-  local readonly config_dir="${4}"
-  local readonly user="${5}"
-  local readonly config_path="$config_dir/$VAULT_CONFIG_FILE"
 
   # Get the authentication path
   local auth_path
@@ -258,22 +285,9 @@ function generate_vault_config {
   token_role=$(consul_kv "${consul_prefix}roles/${server_type}")
 
   local vault_token
-  vault_token=$(get_vault_token "${auth_path}" "${token_role}" "${vault_address}")
+  vault_token=$(request_vault_token "${auth_path}" "${token_role}" "${vault_address}")
 
-  log_info "Generating Vault configuration for Consul Template"
-
-  local vault_config_hcl=$(cat <<EOF
-vault {
-  address = "${vault_address}"
-  token = "${vault_token}"
-  unwrap_token = false
-  renew_token = true
-}
-EOF
-)
-  log_info "Installing Vault config file in $config_path"
-  echo "$vault_config_hcl" > "$config_path"
-  chown "$user:$user" "$config_path"
+  echo -n "${vault_token}"
 }
 
 function render_self_template {
@@ -329,7 +343,8 @@ function run {
   local vault_address="https://vault.service.consul:8200"
   local skip_config="false"
   local skip_vault="false"
-  local render_self_template="false"
+  local skip_render_self_template="false"
+  local environment=()
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -398,8 +413,8 @@ function run {
       --skip-vault)
         skip_vault="true"
         ;;
-      --render-self-template)
-        render_self_template="true"
+      --skip-render-self-template)
+        skip_render_self_template="true"
         ;;
       --help)
         print_usage
@@ -458,17 +473,22 @@ function run {
     if [[ "${aws_auth_enabled}" != "yes" ]]; then
       log_info "AWS Authentication is not enabled"
     else
-      generate_vault_config "${vault_address}" "${consul_prefix}aws-auth/" "${server_type}" "$config_dir" "$user"
+
+      local vault_token
+      vault_token=$(get_vault_token "${vault_address}" "${consul_prefix}aws-auth/" "${server_type}")
+      environment+=("VAULT_TOKEN=\"${vault_token}\"")
+
+      generate_vault_config "${vault_address}" "$config_dir" "$user"
     fi
   fi
 
-  if [[ "$render_self_template" == "true" ]]; then
+  if [[ "$skip_render_self_template" == "false" ]]; then
     log_info "Configuring consul-template to render its Vault token to the home directory."
 
     render_self_template "${config_dir}" "${user}"
   fi
 
-  generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user"
+  generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
   start_consul_template
 }
 
