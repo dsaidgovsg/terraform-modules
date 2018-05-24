@@ -22,10 +22,3 @@
     dest: "/opt/nomad/bin/configure"
     mode: 0755
   become: yes
-- name: "Add {{ nomad_user }} to group {{ consul_template_user }}"
-  user:
-    name: "{{ nomad_user }}"
-    append: yes
-    groups:
-      - "{{ consul_template_user }}"
-  become: yes
