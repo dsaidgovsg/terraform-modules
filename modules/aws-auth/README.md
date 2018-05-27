@@ -16,7 +16,7 @@ This module will create roles for each type of servers that is provisioned by th
 This module is required for use with many other Vault integration modules. Refer to each
 module's documentation on how they can be used together.
 
-In particular, when provisiond, the `user_data` scripts of the Core modules will attempt to
+In particular, when provisioned, the `user_data` scripts of the Core modules will attempt to
 retrieve a Vault token for use with [consul-template](https://github.com/hashicorp/consul-template)
 and consul-template will attempt to renew the token.
 

@@ -52,7 +52,7 @@ module "consul_iam_policies_servers" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "nomad_server_consul_gossip" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-client-security-group-rules?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
 
   security_group_id                  = "${module.nomad_servers.security_group_id}"
   allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"

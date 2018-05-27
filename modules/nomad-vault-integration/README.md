@@ -71,10 +71,11 @@ in Vault.
 
 ### Tokens
 
-Using a source token obtained from the `aws-auth` module that has the `nomad_server_policy` can create a attached, we  new `nomad_cluster` token using the `nomad_cluster` role.
+Using a source token obtained from the `aws-auth` module that has the `nomad_server_policy`, we
+can create a new `nomad_cluster` token using the `nomad_cluster` role.
 
-The `nomad_cluster` token will then be passed to Nomad for Nomad to manage. This token will be
-used by Nomad servers to create child tokens for use with jobs.
+The `nomad_cluster` token will then be passed to Nomad servers for Nomad to manage. This token will
+be used by Nomad servers to create child tokens for use with jobs.
 
 ## Integration with `Core` module
 

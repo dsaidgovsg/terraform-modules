@@ -21,7 +21,7 @@ path "auth/token/lookup-self" {
   capabilities = ["read"]
 }
 
-# Allow looking up incoming tokens to validate they have permissions to access
+# Allow looking up incoming tokens to validate if they have permissions to access
 # the tokens they are requesting. This is only required if
 # `allow_unauthenticated` is set to false.
 path "auth/token/lookup" {

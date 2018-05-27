@@ -1,10 +1,11 @@
-# Basaed on https://www.nomadproject.io/docs/vault-integration/index.html
+# Based on https://www.nomadproject.io/docs/vault-integration/index.html
 
 ################################################
 # Nomad Server Policy
 # This policy allows creation of a periodic token to pass to Nomad servers using the
 # `nomad_server_role`.
-# This policy has to be attached to the token that your instance has
+#
+# The token your EC2 instances are given should have this policy attached.
 ################################################
 data "template_file" "nomad_server_policy" {
   template = "${file("${path.module}/templates/nomad_server_policy.hcl")}"

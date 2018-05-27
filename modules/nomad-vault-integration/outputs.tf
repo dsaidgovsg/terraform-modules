@@ -14,12 +14,12 @@ output "nomad_server_token_role" {
 }
 
 output "nomad_cluster_policy_name" {
-  description = "Name of policy allows Nomad servers to create child tokens for jobs"
+  description = "Name of policy that allows Nomad servers to create child tokens for jobs"
   value       = "${var.nomad_cluster_policy}"
 }
 
 output "nomad_cluster_policy" {
-  description = "Policy allows Nomad servers to create child tokens for jobs"
+  description = "Policy that allows Nomad servers to create child tokens for jobs"
   value       = "${data.template_file.nomad_cluster_policy.rendered}"
 }
 
