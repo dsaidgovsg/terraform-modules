@@ -35,15 +35,15 @@
     version: "{{ consul_module_version }}"
 - name: Install Consul
   shell: "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{ consul_version }}"
-- name: "Copy Consul Configuration"
+- name: "Copy Consul configuration"
   copy:
     src: "{{ role_path }}/files/config/"
     dest: "/opt/consul/config"
   become: yes
-- name: "Copy Consul Configurables"
+- name: "Copy Consul syslog sub-configuration"
   template:
-    src: "{{ role_path }}/files/templates/configurable.json"
-    dest: "/opt/consul/config/configurable.json"
+    src: "{{ role_path }}/files/templates/syslog.json"
+    dest: "/opt/consul/config/syslog.json"
   vars:
     enable_syslog: "{{ consul_enable_syslog }}"
   become: yes
