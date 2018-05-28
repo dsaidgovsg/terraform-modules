@@ -290,8 +290,10 @@ quorum of servers, you might have data loss and have to perform
 
 1. Build your new AMI, and Terraform apply the new AMI.
 1. Terminate the instance that you would like to remove.
-1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
-1. Make sure the new instance started by AWS is healthy before continuing. For example, use `consul operator raft list-peers`.
+1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will
+   automatically start a new instance.
+1. Make sure the new instance started by AWS is healthy before continuing. For example, use
+   `consul operator raft list-peers`.
 
 You can use this AWS CLI command to terminate the instance:
 
@@ -307,13 +309,16 @@ Replace `xxx` with the instance ID.
 #### Upgrading Nomad Servers
 
 **Important**: It is important that you only terminate Nomad server instances one by one.
- Make sure the new servers are healthy and have joined the cluster before continuing.
+Make sure the new servers are healthy and have joined the cluster before continuing.
 If you lose more than a quorum of servers, you might have data loss and have to perform
 [outage recovery](https://www.nomadproject.io/guides/outage.html).
 
 1. Build your new AMI, and Terraform apply the new AMI.
 1. Terminate the instance that you would like to remove.
-1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will automatically start a new instance.
+1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will
+   automatically start a new instance.
+1. Make sure the new instance started by AWS is healthy before continuing. For example, use
+   `nomad server members` to check whether the new instances created have joined the cluster.
 
 You can use this AWS CLI command:
 
@@ -325,12 +330,6 @@ aws autoscaling \
 ```
 
 Replace `xxx` with the instance ID.
-
-You can also use this command to check whether the new instances created have joined the cluster:
-
-```bash
-nomad server members
-```
 
 #### Upgrading Nomad Clients
 
