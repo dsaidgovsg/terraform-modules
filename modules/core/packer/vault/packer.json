@@ -19,7 +19,6 @@
         "encrypted_aes_key_src": "{{ template_dir }}/cert/aes.key",
         "cli_json_src": "{{ template_dir }}/cert/cli.json",
         "consul_enable_syslog": "true",
-        "nomad_enable_syslog": "true",
         "td_agent_config_file": "",
         "td_agent_config_vars_file": "",
         "ca_certificate": ""
@@ -85,7 +84,7 @@
                 "-e",
                 "vault_module_url={{user `vault_module_url`}} vault_module_version={{user `vault_module_version`}} consul_version={{user `consul_version`}} consul_key={{user `consul_key`}}",
                 "-e",
-                "consul_enable_syslog={{user `consul_enable_syslog`}} nomad_enable_syslog={{user `nomad_enable_syslog`}}",
+                "consul_enable_syslog={{user `consul_enable_syslog`}}",
                 "-e",
                 "tls_cert_file_src={{user `tls_cert_file_src`}} encrypted_tls_key_file_src={{user `encrypted_tls_key_file_src`}} encrypted_aes_key_src={{user `encrypted_aes_key_src`}} cli_json_src={{user `cli_json_src`}}",
                 "-e",
