@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vault" {
-  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.5.1"
+  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.7.1"
 
   cluster_name  = "${var.vault_cluster_name}"
   cluster_size  = "${var.vault_cluster_size}"
@@ -18,11 +18,12 @@ module "vault" {
   vpc_id     = "${module.vpc.vpc_id}"
   subnet_ids = "${module.vpc.public_subnets}"
 
-  ssh_key_name                       = "${var.ssh_key_name}"
-  allowed_inbound_security_group_ids = "${var.vault_allowed_inbound_security_group_ids}"
-  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
-  allowed_ssh_cidr_blocks            = "${var.allowed_ssh_cidr_blocks}"
-  associate_public_ip_address        = "${var.associate_public_ip_address}"
+  ssh_key_name                         = "${var.ssh_key_name}"
+  allowed_inbound_security_group_count = "${var.vault_allowed_inbound_security_group_count}"
+  allowed_inbound_security_group_ids   = "${var.vault_allowed_inbound_security_group_ids}"
+  allowed_inbound_cidr_blocks          = "${concat(list(module.vpc.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
+  allowed_ssh_cidr_blocks              = "${var.allowed_ssh_cidr_blocks}"
+  associate_public_ip_address          = "${var.associate_public_ip_address}"
 
   enable_s3_backend = "${var.vault_enable_s3_backend}"
   s3_bucket_name    = "${var.vault_s3_bucket_name}"
@@ -35,9 +36,23 @@ module "vault" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vault_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.3.1"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.3.5"
 
   iam_role_id = "${module.vault.iam_role_id}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# PERMIT CONSUL SPECIFIC TRAFFIC IN VAULT CLUSTER
+# To allow our Vault servers consul agents to communicate with other consul agents and participate in the LAN gossip,
+# we open up the consul specific protocols and ports for consul traffic
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "vault_consul_gossip" {
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-client-security-group-rules?ref=v0.3.5"
+
+  security_group_id                  = "${module.vault.security_group_id}"
+  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,9 @@
+---
+# Version of Consul template to install
+consul_template_version: "0.19.4"
+# User to run consul_template under
+consul_template_user: root
+# Base path to install
+base_path: "/opt/consul-template"
+# Path to supervisorctl binary
+supervisorctl: "/usr/bin/supervisorctl"

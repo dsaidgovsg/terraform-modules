@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.0"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
 
   asg_name          = "${var.nomad_cluster_name}-client"
   cluster_name      = "${var.nomad_cluster_name}-client"
@@ -36,9 +36,23 @@ module "nomad_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.5"
 
   iam_role_id = "${module.nomad_clients.iam_role_id}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# PERMIT CONSUL SPECIFIC TRAFFIC IN NOMAD CLUSTER
+# To allow our Nomad clients consul agents to communicate with other consul agents and participate in the LAN gossip,
+# we open up the consul specific protocols and ports for consul traffic
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "nomad_client_consul_gossip" {
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
+
+  security_group_id                  = "${module.nomad_clients.security_group_id}"
+  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

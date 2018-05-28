@@ -10,7 +10,7 @@
     dest: "/tmp/terraform-aws-nomad"
     version: "{{ nomad_module_version }}"
 - name: Install Nomad
-  shell: "/tmp/terraform-aws-nomad/modules/install-nomad/install-nomad --version {{ nomad_version }}"
+  shell: "/tmp/terraform-aws-nomad/modules/install-nomad/install-nomad --version {{ nomad_version }} --user {{ nomad_user }}"
 - name: "Copy Nomad Configuration"
   copy:
     src: "{{ role_path }}/files/config/"
