@@ -225,7 +225,7 @@ EOF
   chown "${user}:${user}" "${config_dir}/docker.hcl"
 
   local vault_path
-  vault_path=$(consul_kv "${consul_prefix}/docker-auth/path")
+  vault_path=$(consul_kv "${consul_prefix}docker-auth/path")
 
   local docker_template=$(cat <<EOF
 template {
@@ -259,20 +259,20 @@ template {
   contents = <<EOH
 {{- define "keys" -}}
   {{- with secret "${vault_path}" }}
-      {{- range $key, $value := .Data -}}
-        {{ $key }}{{ " " }}
+      {{- range \$key, \$value := .Data -}}
+        {{ \$key }}{{ " " }}
       {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- $keys := (executeTemplate "keys" | trimSpace | split " ") -}}
+{{- \$keys := (executeTemplate "keys" | trimSpace | split " ") -}}
 {
     "auths": {
     {{- with secret "${vault_path}" -}}
-    {{ $auths := .Data }}
-      {{- range $i, $key := $keys }}
-        {{- if $i }},{{ end }}
-        "{{ $key }}": {
-          "auth": "{{ index $auths $key }}"
+    {{ \$auths := .Data }}
+      {{- range \$i, \$key := \$keys }}
+        {{- if \$i }},{{ end }}
+        "{{ \$key }}": {
+          "auth": "{{ index \$auths \$key }}"
         }
       {{- end }}
     {{- end }}
