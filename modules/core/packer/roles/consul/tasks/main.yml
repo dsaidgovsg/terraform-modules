@@ -40,10 +40,12 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/consul/config"
   become: yes
-- name: "Copy Consul syslog sub-configuration"
+- name: "Copy Consul template sub-configurations"
   template:
-    src: "{{ role_path }}/files/templates/syslog.json"
-    dest: "/opt/consul/config/syslog.json"
+    src: "{{ role_path }}/files/templates/{{ item }}"
+    dest: "/opt/consul/config/{{ item }}"
   vars:
     enable_syslog: "{{ consul_enable_syslog }}"
+  with_items:
+  - syslog.json
   become: yes

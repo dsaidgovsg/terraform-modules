@@ -16,12 +16,14 @@
     src: "{{ role_path }}/files/config/"
     dest: "/opt/nomad/config"
   become: yes
-- name: "Copy Nomad syslog sub-configuration"
+- name: "Copy Nomad template sub-configurations"
   template:
-    src: "{{ role_path }}/files/templates/syslog.hcl"
-    dest: "/opt/nomad/config/syslog.hcl"
+    src: "{{ role_path }}/files/templates/{{ item }}"
+    dest: "/opt/nomad/config/{{ item }}"
   vars:
     enable_syslog: "{{ nomad_enable_syslog }}"
+  with_items:
+  - syslog.hcl
   become: yes
 - name: Install Configuration script
   copy:
