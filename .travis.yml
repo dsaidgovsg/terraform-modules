@@ -8,6 +8,7 @@ script:
   - docker run --rm -ti --entrypoint terraform lint fmt -check=true
   - docker run --rm -ti lint modules/aws-auth
   - docker run --rm -ti lint modules/core
+  - docker run --rm -ti lint modules/docker-auth
   - docker run --rm -ti lint modules/nomad-acl
   - docker run --rm -ti lint modules/nomad-vault-integration
   - docker run --rm -ti lint modules/traefik

@@ -34,7 +34,7 @@ resource "vault_mount" "kv" {
 ################################################
 
 resource "vault_generic_secret" "registries" {
-  path  = "${local.kv_path}"
+  path      = "${local.kv_path}"
   data_json = "${jsonencode(var.registries)}"
 }
 
