@@ -9,6 +9,7 @@
     consul_module_version: "v0.1.2"
     consul_version: "1.1.0"
     consul_key: "vault/"
+    consul_enable_syslog: true
     tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"
     encrypted_tls_key_file_src: "{{ playbook_dir }}/cert/encrypted_vault.key"
     encrypted_aes_key_src: "{{ playbook_dir }}/cert/aes.key"

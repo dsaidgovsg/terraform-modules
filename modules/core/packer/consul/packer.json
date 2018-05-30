@@ -10,6 +10,7 @@
         "consul_module_repo": "https://github.com/lawliet89/terraform-aws-consul.git",
         "consul_module_version": "env-vars",
         "consul_version": "1.1.0",
+        "consul_enable_syslog": "true",
         "td_agent_config_file": "",
         "td_agent_config_vars_file": "",
         "ca_certificate": ""
@@ -71,6 +72,8 @@
             "extra_arguments": [
                 "-e",
                 "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
+                "-e",
+                "{ \"consul_enable_syslog\": {{user `consul_enable_syslog`}} }",
                 "-e",
                 "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",

@@ -11,10 +11,19 @@
     version: "{{ nomad_module_version }}"
 - name: Install Nomad
   shell: "/tmp/terraform-aws-nomad/modules/install-nomad/install-nomad --version {{ nomad_version }} --user {{ nomad_user }}"
-- name: "Copy Nomad Configuration"
+- name: "Copy Nomad configuration"
   copy:
     src: "{{ role_path }}/files/config/"
     dest: "/opt/nomad/config"
+  become: yes
+- name: "Copy Nomad template sub-configurations"
+  template:
+    src: "{{ role_path }}/files/templates/{{ item }}"
+    dest: "/opt/nomad/config/{{ item }}"
+  vars:
+    enable_syslog: "{{ nomad_enable_syslog }}"
+  with_items:
+  - syslog.hcl
   become: yes
 - name: Install Configuration script
   copy:
