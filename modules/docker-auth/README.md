@@ -1,8 +1,7 @@
-# Nomad Vault Integration
+# Docker Authentication
 
 This module serves as a post-bootstrap addon for the Core Module. It allows you to configure Nomad
 clients to authenticate with private Docker registries.
-ore information.
 
 This is intended to be used alongside the [core](../core).
 
@@ -12,14 +11,14 @@ You must have Terraformed the [core](../core) module first. In addition, you mus
 initialised and unsealed the Vault servers.
 
 You **must** also provision this with the [aws-auth](../aws-auth) module. You **must** give the
-`nomad_server` token role in `aws-auth` the `nomad_server` policy.
+`nomad_client` token role in `aws-auth` the `docker_auth` policy.
 
 You can use both modules in the same Terraform module to provision to satisfy the requirements.
 For example:
 
 ```hcl
 
-module "nomad_vault_integration" {
+module "docker_auth" {
     source = "..."
 
     # ...
@@ -31,7 +30,7 @@ module "aws_auth" {
     # ...
 
     # Attach policy to allow creation of tokens for Nomad servers
-    nomad_server_policies = ["...", "${module.nomad_vault_integration.nomad_server_policy_name}"]
+    nomad_client_policies = ["...", "${module.docker_auth.policy_name}"]
 }
 
 ```
