@@ -8,7 +8,7 @@ This module sets up a VPC, and a Consul and Nomad cluster to allow you to run ap
 
 ## [AWS Authentication](modules/aws-auth)
 
-This module configures Vault to accept authentication via EC2 instance metadata. This is recommended
+This module configures Vault to accept authentication via EC2 instance metadata. This is required
 for use with some of the Vault integration modules.
 
 ## [Nomad Vault Integration](modules/nomad-vault-integration)
@@ -33,3 +33,8 @@ generate signed certificates to access your machines via SSH.
 This module serves as a post-bootstrap addon for the Core Module. This module provisions
 load balancers on top of a Traefik reverse proxy to expose your applications running on your
 Nomad cluster to the internet.
+
+## [Docker Authentication](modules/docker-auth)
+
+This module serves as a post-bootstrap addon for the Core Module. It allows you to configure Nomad
+clients to authenticate with private Docker registries.

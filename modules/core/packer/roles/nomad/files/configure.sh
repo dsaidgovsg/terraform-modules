@@ -24,6 +24,8 @@ function print_usage {
   echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --vault-address\t\tAddress of Vault server. Optional. Defaults to \"https://vault.service.consul:8200\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
+  echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
+  echo -e "  --docker-auth\t\tPath to store Docker authentication information. Optional. Default is the absolute path of '../docker.json', relative to this script."
   echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
@@ -202,6 +204,88 @@ EOF
   chown "${user}:${user}" "${config_dir}/acl.hcl"
 }
 
+function generate_docker_config {
+  local readonly consul_prefix="${1}"
+  local readonly config_dir="${2}"
+  local readonly user="${3}"
+  local readonly consul_template_config="${4}"
+  local readonly docker_auth_path="${5}"
+
+  local docker_config=$(cat <<EOF
+client {
+  options {
+    "docker.auth.config" = "${docker_auth_path}"
+  }
+}
+EOF
+)
+
+  log_info "Writing Docker configuration to ${config_dir}/docker.hcl"
+  echo "${docker_config}" > "${config_dir}/docker.hcl"
+  chown "${user}:${user}" "${config_dir}/docker.hcl"
+
+  local vault_path
+  vault_path=$(consul_kv "${consul_prefix}docker-auth/path")
+
+  local docker_template=$(cat <<EOF
+template {
+  destination = "${docker_auth_path}"
+  create_dest_dirs = true
+
+  # consul-template does not deal with ownership properly
+  # See https://github.com/hashicorp/consul-template/issues/1061
+  command = "bash -c 'chown ${user}:${user} ${docker_auth_path}'"
+
+  perms = 0600
+  error_on_missing_key = true
+
+  # The goal is to produce something like
+  # {
+  #     "auths": {
+  #         "registry.a.b": {
+  #           "auth": "aaaaa="
+  #         },
+  #         "foo.bar.xyz": {
+  #           "auth": "bbbb="
+  #         }
+  #     }
+  # }
+  #
+  # But two things make it difficult:
+  # 1. JSON doesn't do dangling commas
+  # 2. Go Template has really basic logic handling
+  #
+  # Thus this template is more complicated than needed.
+  contents = <<EOH
+{{- define "keys" -}}
+  {{- with secret "${vault_path}" }}
+      {{- range \$key, \$value := .Data -}}
+        {{ \$key }}{{ " " }}
+      {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- \$keys := (executeTemplate "keys" | trimSpace | split " ") -}}
+{
+    "auths": {
+    {{- with secret "${vault_path}" -}}
+    {{ \$auths := .Data }}
+      {{- range \$i, \$key := \$keys }}
+        {{- if \$i }},{{ end }}
+        "{{ \$key }}": {
+          "auth": "{{ index \$auths \$key }}"
+        }
+      {{- end }}
+    {{- end }}
+    }
+}
+EOH
+}
+EOF
+)
+  log_info "Writing Consul Template configuration to ${consul_template_config}/template_nomad_docker.hcl"
+  echo "${docker_template}" > "${consul_template_config}/template_nomad_docker.hcl"
+}
+
 function main {
   local server="false"
   local client="false"
@@ -209,6 +293,8 @@ function main {
   local vault_address="https://vault.service.consul:8200"
   local consul_prefix="terraform/"
   local user=""
+  local consul_template_config="/opt/consul-template/config"
+  local docker_auth=""
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -241,6 +327,16 @@ function main {
         user="$2"
         shift
         ;;
+      --consul-template-config)
+        assert_not_empty "$key" "$2"
+        consul_template_config="$2"
+        shift
+        ;;
+      --docker-auth)
+        assert_not_empty "$key" "$2"
+        docker_auth="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -271,6 +367,11 @@ function main {
     config_dir="$(cd "$SCRIPT_DIR/../config" && pwd)"
   fi
 
+  if [[ -z "$docker_auth" ]]; then
+    docker_auth="$(cd "$SCRIPT_DIR/.." && pwd)/docker.json"
+  fi
+
+
   if [[ -z "$user" ]]; then
     user=$(get_owner_of_path "$config_dir")
   fi
@@ -292,6 +393,13 @@ function main {
     generate_acl_config "${config_dir}" "${user}"
   fi
 
+  local docker_auth_enabled
+  docker_auth_enabled=$(consul_kv_with_default "${consul_prefix}docker-auth/enabled" "no")
+  if [[ "${docker_auth_enabled}" != "yes" || "$server" == "true" ]]; then
+    log_info "Docker authentication is not enabled or this is a Nomad server."
+  else
+    generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}"
+  fi
 }
 
 main "$@"
