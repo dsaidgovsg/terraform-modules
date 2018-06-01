@@ -1,8 +1,7 @@
 # Nomad Vault Integration
 
-This module serves as a post-bootstrap addon for the Core Module. It allows you to configure Nomad
-clients to authenticate with private Docker registries.
-ore information.
+This module is an example on how you can setup integration between Vault and Nomad. Refer to
+[this page](https://www.nomadproject.io/docs/vault-integration/index.html) for more information.
 
 This is intended to be used alongside the [core](../core).
 

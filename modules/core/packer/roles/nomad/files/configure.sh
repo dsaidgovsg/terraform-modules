@@ -211,7 +211,7 @@ function generate_docker_config {
   local readonly consul_template_config="${4}"
   local readonly docker_auth_path="${5}"
 
-    local docker_config=$(cat <<EOF
+  local docker_config=$(cat <<EOF
 client {
   options {
     "docker.auth.config" = "${docker_auth_path}"
