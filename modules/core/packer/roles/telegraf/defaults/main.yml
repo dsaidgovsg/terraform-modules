@@ -1,0 +1,4 @@
+---
+telegraf_version: 1.6.4
+config_file: ""
+config_vars_file: ""

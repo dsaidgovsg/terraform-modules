@@ -1,0 +1,22 @@
+---
+- name: Install telegraf deb file
+  apt:
+    deb: "https://dl.influxdata.com/telegraf/releases/telegraf_{{ telegraf_version }}-1_amd64.deb"
+  become: yes
+- name: Include configuration variables
+  include_vars:
+    file: "{{ config_vars_file }}"
+    name: config_vars
+  when: config_vars_file != ""
+- name: Change telegraf configuration
+  template:
+    src: "{{ config_file }}"
+    dest: "/etc/telegraf/telegraf.conf"
+    mode: 0644
+  become: yes
+- name: Enable the telegraf service for next boot-up
+  service:
+    name: telegraf
+    enabled: yes
+    use: service
+  become: yes
