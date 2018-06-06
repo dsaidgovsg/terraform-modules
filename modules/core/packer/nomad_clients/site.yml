@@ -13,6 +13,8 @@
     nomad_enable_syslog: true
     td_agent_config_file: ""
     td_agent_config_vars_file: ""
+    telegraf_config_file: ""
+    telegraf_config_file_vars_file: ""
     ca_certificate: ""
   tasks:
   - name: Upgrade all packages to the latest version
@@ -27,6 +29,13 @@
       config_file: "{{ td_agent_config_file }}"
       config_vars_file: "{{ td_agent_config_vars_file }}"
     when: td_agent_config_file
+  - name: Install telegraf with custom configuration
+    include_role:
+      name: "{{ playbook_dir }}/../roles/telegraf"
+    vars:
+      config_file: "{{ telegraf_config_file }}"
+      config_vars_file: "{{ telegraf_config_vars_file }}"
+    when: telegraf_config_file
   - name: Install pip3
     apt:
       name: python3-pip
