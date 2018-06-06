@@ -14,7 +14,7 @@
     td_agent_config_file: ""
     td_agent_config_vars_file: ""
     telegraf_config_file: ""
-    telegraf_config_file_vars_file: ""
+    telegraf_config_vars_file: ""
     ca_certificate: ""
   tasks:
   - name: Upgrade all packages to the latest version
