@@ -49,3 +49,9 @@ fi
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
     --type "vault"
+
+# To fix up the Elasticsearch DNS at runtime for Telegraf config
+consul-template -template \
+    "/etc/telegraf/telegraf.conf.template:/etc/telegraf/telegraf.conf" -once
+
+sudo systemctl restart telegraf.service

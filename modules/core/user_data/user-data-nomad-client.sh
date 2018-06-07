@@ -37,3 +37,5 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 # To fix up the Elasticsearch DNS at runtime for Telegraf config
 consul-template -template \
     "/etc/telegraf/telegraf.conf.template:/etc/telegraf/telegraf.conf" -once
+
+sudo systemctl restart telegraf.service
