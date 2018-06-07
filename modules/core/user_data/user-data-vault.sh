@@ -28,6 +28,13 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --cluster-tag-key "${consul_cluster_tag_key}" \
     --cluster-tag-value "${consul_cluster_tag_value}"
 
+# Configure and run consul-template
+/opt/consul-template/bin/run-consul-template \
+    --server-type nomad_client \
+    --dedup-enable \
+    --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
 # The Packer template puts the TLS certs in these file paths
 readonly VAULT_TLS_CERT_FILE="${cert_file}"
 readonly VAULT_TLS_KEY_FILE="${cert_key}"
