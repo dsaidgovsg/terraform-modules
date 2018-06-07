@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: "install-consul-template" }
