@@ -10,7 +10,7 @@ output "traefik_external_cname" {
 
 output "traefik_external_lb_zone" {
   description = "The canonical hosted zone ID of the external load balancer (to be used in a Route 53 Alias record). "
-  value = "${aws_lb.external.zone_id}"
+  value       = "${aws_lb.external.zone_id}"
 }
 
 output "traefik_internal_zone" {
@@ -25,7 +25,7 @@ output "traefik_internal_cname" {
 
 output "traefik_internal_lb_zone" {
   description = "The canonical hosted zone ID of the internal load balancer (to be used in a Route 53 Alias record). "
-  value = "${aws_lb.internal.zone_id}"
+  value       = "${aws_lb.internal.zone_id}"
 }
 
 output "traefik_jobspec" {
