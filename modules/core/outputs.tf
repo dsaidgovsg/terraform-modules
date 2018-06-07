@@ -191,6 +191,11 @@ output "internal_lb_https_listener_arn" {
   value = "${aws_lb_listener.internal_https.arn}"
 }
 
+output "internal_lb_zone" {
+  description = "The canonical hosted zone ID of the internal load balancer (to be used in a Route 53 Alias record). "
+  value = "${aws_lb.internal_lb.zone_id}"
+}
+
 output "ssh_key_name" {
   value = "${var.ssh_key_name}"
 }
