@@ -23,7 +23,7 @@ output "traefik_internal_cname" {
   value       = "${var.traefik_internal_base_domain}"
 }
 
-output "traefik_external_lb_zone" {
+output "traefik_internal_lb_zone" {
   description = "The canonical hosted zone ID of the internal load balancer (to be used in a Route 53 Alias record). "
   value = "${aws_lb.internal.zone_id}"
 }
