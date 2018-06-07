@@ -44,6 +44,9 @@
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Consul-Template
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-consul-template"
   - name: Install Vault
     include_role:
       name: "{{ playbook_dir }}/../roles/vault"
