@@ -5,7 +5,7 @@ output "traefik_external_zone" {
 
 output "traefik_external_cname" {
   description = "URL that applications should set a CNAME record to for Traefik reverse proxy"
-  value       = "${var.traefik_external_base_domain}"
+  value       = "${aws_lb.external.dns_name}"
 }
 
 output "traefik_external_lb_zone" {
@@ -20,7 +20,7 @@ output "traefik_internal_zone" {
 
 output "traefik_internal_cname" {
   description = "URL that applications should set a CNAME record to for Traefik reverse proxy"
-  value       = "${var.traefik_internal_base_domain}"
+  value       = "${aws_lb.internal.dns_name}"
 }
 
 output "traefik_internal_lb_zone" {
