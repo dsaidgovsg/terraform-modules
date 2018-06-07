@@ -20,6 +20,7 @@
         "td_agent_config_vars_file": "",
         "telegraf_config_file": "",
         "telegraf_config_vars_file": "",
+        "telegraf_config_dest_file": "/etc/telegraf/telegraf.conf",
         "ca_certificate": ""
     },
     "builders": [
@@ -95,7 +96,7 @@
                 "-e",
                 "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",
-                "telegraf_config_file={{user `telegraf_config_file`}} telegraf_config_vars_file={{user `telegraf_config_vars_file`}}",
+                "telegraf_config_file={{user `telegraf_config_file`}} telegraf_config_vars_file={{user `telegraf_config_vars_file`}} telegraf_config_dest_file={{user `telegraf_config_dest_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
