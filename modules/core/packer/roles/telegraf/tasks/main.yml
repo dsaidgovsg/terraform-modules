@@ -8,7 +8,7 @@
     file: "{{ config_vars_file }}"
     name: config_vars
   when: config_vars_file != ""
-- name: Change telegraf configuration
+- name: Copy Telegraf configuration
   template:
     src: "{{ config_file }}"
     dest: "{{ config_dest_file }}"
