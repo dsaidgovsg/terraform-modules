@@ -191,9 +191,9 @@ output "internal_lb_https_listener_arn" {
   value = "${aws_lb_listener.internal_https.arn}"
 }
 
-output "consul_default_user_data" {
-  description = "Default launch configuration user data for Consul"
-  value       = "${data.template_file.user_data_consul.rendered}"
+output "consul_server_default_user_data" {
+  description = "Default launch configuration user data for Consul Server"
+  value       = "${data.template_file.user_data_consul_server.rendered}"
 }
 
 output "nomad_client_default_user_data" {
@@ -206,9 +206,9 @@ output "nomad_server_default_user_data" {
   value       = "${data.template_file.user_data_nomad_server.rendered}"
 }
 
-output "vault_default_user_data" {
-  description = "Default launch configuration user data for Vault"
-  value       = "${data.template_file.user_data_vault.rendered}"
+output "vault_cluster_default_user_data" {
+  description = "Default launch configuration user data for Vault Cluster"
+  value       = "${data.template_file.user_data_vault_cluster.rendered}"
 }
 
 output "ssh_key_name" {
