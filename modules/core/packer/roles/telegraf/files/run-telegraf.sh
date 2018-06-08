@@ -176,7 +176,7 @@ function main {
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf is not enabled"
   else
-    if [[ "$skip_template" == "false" && -f "$conf_template" ]]
+    if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       consul-template -template "$conf_template:$conf_out" -once
     fi
 
