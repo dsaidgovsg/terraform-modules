@@ -181,7 +181,7 @@ function main {
     fi
 
     mkdir -p "$service_override_dir"
-    echo -e "[Service]\nEnvironment=SERVICE=$type" > "$service_override_dir/override.conf"
+    echo -e "[Service]\nEnvironment=SERVICE_NAME=$type" > "$service_override_dir/override.conf"
 
     systemctl enable telegraf
     systemctl start telegraf
