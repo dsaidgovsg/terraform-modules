@@ -56,3 +56,6 @@ fi
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
     --type "vault"
+
+/opt/run-telegraf \
+    --type "vault"

@@ -3,8 +3,7 @@ resource "consul_key_prefix" "core_integration" {
   path_prefix = "${var.consul_key_prefix}telegraf/"
 
   subkeys {
-    "enabled"     = "yes"
-    "README"      = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/telegraf"
-    "init_script" = "${var.init_script}"
+    "enabled" = "yes"
+    "README"  = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/telegraf"
   }
 }

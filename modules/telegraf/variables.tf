@@ -1,16 +1,4 @@
 # --------------------------------------------------------------------------------------------------
-# OPTIONAL PARAMETERS
-# These parameters have reasonable defaults.
-# --------------------------------------------------------------------------------------------------
-variable "init_script" {
-  description = <<EOF
-        Initialisation script command(s) to run. Assumes no additional script required to set-up.
-EOF
-
-  default = ""
-}
-
-# --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "core_integration" {

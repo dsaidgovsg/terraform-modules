@@ -135,9 +135,7 @@ function main {
         shift
         ;;
       --skip-template)
-        assert_not_empty "$key" "$2"
-        skip_template="$2"
-        shift
+        skip_template="false"
         ;;
       --conf-template)
         assert_not_empty "$key" "$2"
@@ -178,7 +176,7 @@ function main {
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf is not enabled"
   else
-    if [[ "$skip_template" != "true" ]]
+    if [[ "$skip_template" == "false" && -f "$conf_template" ]]
       consul-template -template "$conf_template:$conf_out" -once
     fi
 
