@@ -13,10 +13,11 @@
     src: "{{ config_file }}"
     dest: "{{ config_dest_file }}"
     mode: 0644
+  when: config_file != ""
   become: yes
-- name: Enable the telegraf service for next boot-up
+- name: Disable the telegraf service for next configuration set-up
   service:
     name: telegraf
-    enabled: yes
+    enabled: no
     use: service
   become: yes
