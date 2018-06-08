@@ -18,7 +18,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
-    --server-type nomad_client \
+    --server-type consul \
     --dedup-enable \
     --syslog-enable \
     --consul-prefix "${consul_prefix}"

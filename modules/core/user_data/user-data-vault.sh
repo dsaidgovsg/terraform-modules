@@ -30,7 +30,7 @@ AWS_DEFAULT_REGION="${aws_region}" \
 
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
-    --server-type nomad_client \
+    --server-type vault \
     --dedup-enable \
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
