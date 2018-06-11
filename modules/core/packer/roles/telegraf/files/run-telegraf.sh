@@ -114,16 +114,28 @@ function enable_telegraf {
   local readonly type="${1}"
   local readonly service_override_dir="${2}"
 
+  log_info "Enabling and starting service telegraf for type $type..."
+
   mkdir -p "$service_override_dir"
   echo -e "[Service]\nEnvironment=SERVICE_NAME=$type" > "$service_override_dir/override.conf"
 
   systemctl enable telegraf
   systemctl start telegraf
+
+  log_info "Service telegraf enabled and started!"
 }
 
 function generate_statsd_conf {
   local readonly conf_file="${1}"
   echo -e 'telemetry {\n  statsd_address = "127.0.0.1:8125"\n}' > $conf_file
+}
+
+function restart_service {
+  local readonly service="${1}"
+
+  log_info "Restarting service $service..."
+  supervisorctl restart $service
+  log_info "Service $service restarted!"
 }
 
 function add_statsd_conf {
@@ -134,26 +146,26 @@ function add_statsd_conf {
 
   case "$type" in
     consul)
-      $generate_statsd_conf $consul_conf
-      supervisorctl restart consul
+      generate_statsd_conf $consul_conf
+      restart_service "consul"
       ;;
     nomad_client)
-      $generate_statsd_conf $consul_conf
-      supervisorctl restart consul
-      $generate_statsd_conf $nomad_conf
-      supervisorctl restart nomad
+      generate_statsd_conf $consul_conf
+      restart_service "consul"
+      generate_statsd_conf $nomad_conf
+      restart_service "nomad"
       ;;
     nomad_server)
-      $generate_statsd_conf $consul_conf
-      supervisorctl restart consul
-      $generate_statsd_conf $nomad_conf
-      supervisorctl restart nomad
+      generate_statsd_conf $consul_conf
+      restart_service "consul"
+      generate_statsd_conf $nomad_conf
+      restart_service "nomad"
       ;;
     vault)
-      $generate_statsd_conf $consul_conf
-      supervisorctl restart consul
-      $generate_statsd_conf $vault_conf
-      supervisorctl restart vault
+      generate_statsd_conf $consul_conf
+      restart_service "consul"
+      generate_statsd_conf $vault_conf
+      restart_service "vault"
       ;;
   esac
 }
@@ -242,7 +254,9 @@ function main {
     log_info "Telegraf is not enabled"
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
+      log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
       consul-template -template "$conf_template:$conf_out" -once
+      log_info "consul-template applied successfully!"
     fi
 
     enable_telegraf "$type" "$service_override_dir"
