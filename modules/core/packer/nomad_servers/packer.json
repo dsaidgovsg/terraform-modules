@@ -97,9 +97,9 @@
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
-                "nomad_additional_config={{user `nomad_additional_config` }}",
+                "ansible_python_interpreter=/usr/bin/python3",
                 "-e",
-                "ansible_python_interpreter=/usr/bin/python3"
+                "{{user `extra_vars` }}"
             ]
         }
     ]
