@@ -93,7 +93,6 @@ function wait_for_consul {
   exit 1
 }
 
-
 function consul_kv {
   local readonly path="${1}"
   local value
@@ -111,12 +110,63 @@ function consul_kv_with_default {
   echo -n "${value}"
 }
 
+function enable_telegraf {
+  local readonly type="${1}"
+  local readonly service_override_dir="${2}"
+
+  mkdir -p "$service_override_dir"
+  echo -e "[Service]\nEnvironment=SERVICE_NAME=$type" > "$service_override_dir/override.conf"
+
+  systemctl enable telegraf
+  systemctl start telegraf
+}
+
+function generate_statsd_conf {
+  local readonly conf_file="${1}"
+  echo -e 'telemetry {\n  statsd_address = "127.0.0.1:8125"\n}' > $conf_file
+}
+
+function add_statsd_conf {
+  local readonly type="${1}"
+  local readonly consul_conf="${2}"
+  local readonly nomad_conf="${3}"
+  local readonly vault_conf="${4}"
+
+  case "$type" in
+    consul)
+      $generate_statsd_conf $consul_conf
+      supervisorctl restart consul
+      ;;
+    nomad_client)
+      $generate_statsd_conf $consul_conf
+      supervisorctl restart consul
+      $generate_statsd_conf $nomad_conf
+      supervisorctl restart nomad
+      ;;
+    nomad_server)
+      $generate_statsd_conf $consul_conf
+      supervisorctl restart consul
+      $generate_statsd_conf $nomad_conf
+      supervisorctl restart nomad
+      ;;
+    vault)
+      $generate_statsd_conf $consul_conf
+      supervisorctl restart consul
+      $generate_statsd_conf $vault_conf
+      supervisorctl restart vault
+      ;;
+  esac
+}
+
 function main {
   local type=""
   local consul_prefix="terraform/"
   local skip_template="false"
   local conf_template="/etc/telegraf/telegraf.conf.template"
   local conf_out="/etc/telegraf/telegraf.conf"
+  local consul_conf="/opt/consul/config/statsd.hcl"
+  local nomad_conf="/opt/nomad/config/statsd.hcl"
+  local vault_conf="/opt/vault/config/statsd.hcl"
 
   local readonly service_override_dir="/etc/systemd/system/telegraf.service.d"
 
@@ -145,6 +195,21 @@ function main {
       --conf-out)
         assert_not_empty "$key" "$2"
         conf_out="$2"
+        shift
+        ;;
+      --consul-conf)
+        assert_not_empty "$key" "$2"
+        consul_conf="$2"
+        shift
+        ;;
+      --nomad-conf)
+        assert_not_empty "$key" "$2"
+        nomad_conf="$2"
+        shift
+        ;;
+      --vault-conf)
+        assert_not_empty "$key" "$2"
+        vault_conf="$2"
         shift
         ;;
       --help)
@@ -180,11 +245,8 @@ function main {
       consul-template -template "$conf_template:$conf_out" -once
     fi
 
-    mkdir -p "$service_override_dir"
-    echo -e "[Service]\nEnvironment=SERVICE_NAME=$type" > "$service_override_dir/override.conf"
-
-    systemctl enable telegraf
-    systemctl start telegraf
+    enable_telegraf "$type" "$service_override_dir"
+    add_statsd_conf "$type" "$consul_conf" "$nomad_conf" "$vault_conf"
   fi
 }
 
