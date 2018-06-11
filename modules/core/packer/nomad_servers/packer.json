@@ -20,7 +20,8 @@
         "telegraf_config_file": "",
         "telegraf_config_vars_file": "",
         "telegraf_config_dest_file": "/etc/telegraf/telegraf.conf",
-        "ca_certificate": ""
+        "ca_certificate": "",
+        "nomad_additional_config": ""
     },
     "builders": [
         {
@@ -95,6 +96,8 @@
                 "telegraf_config_file={{user `telegraf_config_file`}} telegraf_config_vars_file={{user `telegraf_config_vars_file`}} telegraf_config_dest_file={{user `telegraf_config_dest_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
+                "-e",
+                "nomad_additional_config={{user `nomad_additional_config` }}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
             ]

@@ -37,7 +37,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   will need to do `{{ config_vars.xxx }}` to get the interpolation working.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
-- `nomad_additional_config`: List of path to additional configuration files to copy over to Nomad's configuration directory. The file names will be kept as-is.
+- `nomad_additional_config`: List of path to additional configuration files to copy over to Nomad's configuration directory. The file names will be kept as-is. Define the list as a single comma-separated string and Packer will automatically [turn it into an array](https://www.packer.io/docs/templates/user-variables.html#using-array-values).
 
 ## Building Image
 
