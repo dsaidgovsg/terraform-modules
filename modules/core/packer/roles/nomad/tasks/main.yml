@@ -15,15 +15,24 @@
   copy:
     src: "{{ role_path }}/files/config/"
     dest: "/opt/nomad/config"
+    owner: "{{ nomad_user }}"
   become: yes
 - name: "Copy Nomad template sub-configurations"
   template:
     src: "{{ role_path }}/files/templates/{{ item }}"
     dest: "/opt/nomad/config/{{ item }}"
+    owner: "{{ nomad_user }}"
   vars:
     enable_syslog: "{{ nomad_enable_syslog }}"
   with_items:
   - syslog.hcl
+  become: yes
+- name: Copy additional Nomad configuration files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/nomad/config//{{ item | basename }}"
+    owner: "{{ nomad_user }}"
+  with_items: "{{ nomad_additional_config }}"
   become: yes
 - name: Install Configuration script
   copy:

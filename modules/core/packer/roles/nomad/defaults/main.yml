@@ -6,3 +6,4 @@
   nomad_user: "nomad"
   consul_template_user: "root"
   nomad_enable_syslog: true
+  nomad_additional_config: []
