@@ -1,0 +1,29 @@
+---
+- name: Install telegraf deb file
+  apt:
+    deb: "https://dl.influxdata.com/telegraf/releases/telegraf_{{ telegraf_version }}-1_amd64.deb"
+  become: yes
+- name: Include configuration variables
+  include_vars:
+    file: "{{ config_vars_file }}"
+    name: config_vars
+  when: config_vars_file != ""
+- name: Copy Telegraf configuration
+  template:
+    src: "{{ config_file }}"
+    dest: "{{ config_dest_file }}"
+    mode: 0644
+  when: config_file != ""
+  become: yes
+- name: Install configuration script
+  copy:
+    src: "{{ role_path }}/files/run-telegraf.sh"
+    dest: "/opt/run-telegraf"
+    mode: 0755
+  become: yes
+- name: Disable the telegraf service for next configuration set-up
+  service:
+    name: telegraf
+    enabled: no
+    use: service
+  become: yes

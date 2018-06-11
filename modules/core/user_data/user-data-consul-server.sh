@@ -16,6 +16,16 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-value "${cluster_tag_value}" \
     --environment "CONSUL_UI_BETA=\"true\""
 
+# Configure and run consul-template
+/opt/consul-template/bin/run-consul-template \
+    --server-type consul \
+    --dedup-enable \
+    --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
+    --type "consul"
+
+/opt/run-telegraf \
     --type "consul"

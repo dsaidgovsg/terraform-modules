@@ -18,7 +18,7 @@
     group: "{{ consul_template_user }}"
     owner: "{{ consul_template_user }}"
     state: directory
-  loop:
+  with_items:
     - "{{ base_path }}"
     - "{{ base_path }}/bin"
     - "{{ base_path }}/config"

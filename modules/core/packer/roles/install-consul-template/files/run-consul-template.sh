@@ -188,7 +188,7 @@ function generate_base_config {
 
 
   local dedup_config=""
-  if [[ "$dedup_enable" == true && ! -z "$dedup_prefix" ]]; then
+  if [[ "$dedup_enable" == "true" && ! -z "$dedup_prefix" ]]; then
     dedup_config=$(cat <<EOF
 deduplicate {
   enabled = true
