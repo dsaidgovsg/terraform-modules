@@ -47,5 +47,5 @@
   vars:
     enable_syslog: "{{ consul_enable_syslog }}"
   with_items:
-  - syslog.json
+  - syslog.hcl
   become: yes
