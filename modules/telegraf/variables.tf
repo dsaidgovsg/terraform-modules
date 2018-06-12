@@ -9,7 +9,7 @@ variable "nomad_server_enabled" {
 }
 
 variable "nomad_client_enabled" {
-  description = "Enable Telegraf for Nomad Clients"
+  description = "Enable Telegraf for Nomad clients"
   default     = true
 }
 
