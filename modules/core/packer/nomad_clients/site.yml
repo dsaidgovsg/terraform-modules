@@ -17,6 +17,7 @@
     telegraf_config_vars_file: ""
     telegraf_config_dest_file: "/etc/telegraf/telegraf.conf"
     ca_certificate: ""
+    nomad_additional_config: []
   tasks:
   - name: Upgrade all packages to the latest version
     apt:

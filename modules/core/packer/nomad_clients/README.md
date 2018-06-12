@@ -46,6 +46,7 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   will need to do `{{ config_vars.xxx }}` to get the interpolation working.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
+- `extra_vars`: Additional variables to pass to Ansible via the [`-e`](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html#cmdoption-ansible-playbook-e) flag. This is useful for additional variables that are available in the Ansible playbooks used to provision the packer images.
 
 ## Building Image
 

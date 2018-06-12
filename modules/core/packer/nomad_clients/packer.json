@@ -21,7 +21,8 @@
         "telegraf_config_file": "",
         "telegraf_config_vars_file": "",
         "telegraf_config_dest_file": "/etc/telegraf/telegraf.conf",
-        "ca_certificate": ""
+        "ca_certificate": "",
+        "extra_vars": "{}"
     },
     "builders": [
         {
@@ -100,7 +101,9 @@
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
-                "ansible_python_interpreter=/usr/bin/python3"
+                "ansible_python_interpreter=/usr/bin/python3",
+                "-e",
+                "{{user `extra_vars` }}"
             ]
         }
     ]
