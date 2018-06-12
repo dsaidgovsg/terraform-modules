@@ -16,7 +16,7 @@ resource "consul_keys" "consul" {
 
   key {
     path  = "${var.consul_key_prefix}telegraf/consul/enabled"
-    value = "true"
+    value = "yes"
   }
 }
 
@@ -25,7 +25,7 @@ resource "consul_keys" "nomad_server" {
 
   key {
     path  = "${var.consul_key_prefix}telegraf/nomad_server/enabled"
-    value = "true"
+    value = "yes"
   }
 }
 
@@ -34,7 +34,7 @@ resource "consul_keys" "nomad_client" {
 
   key {
     path  = "${var.consul_key_prefix}telegraf/nomad_client/enabled"
-    value = "true"
+    value = "yes"
   }
 }
 
@@ -43,6 +43,6 @@ resource "consul_keys" "vault" {
 
   key {
     path  = "${var.consul_key_prefix}telegraf/vault/enabled"
-    value = "true"
+    value = "yes"
   }
 }
