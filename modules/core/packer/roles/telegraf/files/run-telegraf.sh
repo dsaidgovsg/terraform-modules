@@ -19,7 +19,7 @@ function print_usage {
   echo
   echo "Options:"
   echo
-  echo -e "  --type\t\tThe type of instance being configured. Required. Can be 'consul', 'vault', 'nomad_client' or 'nomad_server'."
+  echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type"
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --skip-template\t\tEnable consul-template apply on configuration file. Optional. Defaults to false."
   echo -e "  --conf-template\t\tFile path to configuration consul-template file. Optional. Defaults to /etc/telegraf/telegraf.conf.template"
@@ -161,8 +161,8 @@ function main {
     shift
   done
 
-  if [[ "$type" != "vault" && "$type" != "consul" && "$type" != "nomad_server" && "$type" != "nomad_client" ]]; then
-    log_error "Invalid type set."
+  if [[ -z "${type}" ]]; then
+    log_error "You must specify the --type"
     exit 1
   fi
 
@@ -171,10 +171,10 @@ function main {
 
   wait_for_consul
 
-  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/enabled" "no")
+  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
 
   if [[ "$enabled" != "yes" ]]; then
-    log_info "Telegraf is not enabled"
+    log_info "Telegraf is not enabled for ${type}"
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       consul-template -template "$conf_template:$conf_out" -once

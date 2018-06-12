@@ -19,7 +19,7 @@ function print_usage {
   echo
   echo "Options:"
   echo
-  echo -e "  --type\t\tThe type of instance being configured. Required. Can be 'consul', 'vault', 'nomad_client' or 'nomad_server'."
+  echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type."
   echo -e "  --vault-service\t\tName of Vault service to query in Consul. Optional. Defaults to 'vault'."
   echo -e "  --vault-port\t\tPort of Vault service. Optional. Defaults to '8200'."
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
@@ -172,8 +172,8 @@ function main {
     shift
   done
 
-  if [[ "${type}" != "vault" && "${type}" != "consul" && "${type}" != "nomad_server" && "${type}" != "nomad_client" ]]; then
-    log_error "Invalid type set."
+  if [[ -z "${type}" ]]; then
+    log_error "You must specify the --type"
     exit 1
   fi
 

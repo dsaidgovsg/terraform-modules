@@ -1,3 +1,23 @@
+variable "consul_enabled" {
+  description = "Enable Telegraf for Consul servers"
+  default     = true
+}
+
+variable "nomad_server_enabled" {
+  description = "Enable Telegraf for Nomad servers"
+  default     = true
+}
+
+variable "nomad_client_enabled" {
+  description = "Enable Telegraf for Nomad clients"
+  default     = true
+}
+
+variable "vault_enabled" {
+  description = "Enable Telegraf for Vault servers"
+  default     = true
+}
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
