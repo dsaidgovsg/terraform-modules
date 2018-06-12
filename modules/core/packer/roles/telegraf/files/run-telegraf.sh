@@ -134,25 +134,25 @@ function add_statsd_conf {
 
   case "$type" in
     consul)
-      $generate_statsd_conf $consul_conf
+      generate_statsd_conf $consul_conf
       supervisorctl restart consul
       ;;
     nomad_client)
-      $generate_statsd_conf $consul_conf
+      generate_statsd_conf $consul_conf
       supervisorctl restart consul
-      $generate_statsd_conf $nomad_conf
+      generate_statsd_conf $nomad_conf
       supervisorctl restart nomad
       ;;
     nomad_server)
-      $generate_statsd_conf $consul_conf
+      generate_statsd_conf $consul_conf
       supervisorctl restart consul
-      $generate_statsd_conf $nomad_conf
+      generate_statsd_conf $nomad_conf
       supervisorctl restart nomad
       ;;
     vault)
-      $generate_statsd_conf $consul_conf
+      generate_statsd_conf $consul_conf
       supervisorctl restart consul
-      $generate_statsd_conf $vault_conf
+      generate_statsd_conf $vault_conf
       supervisorctl restart vault
       ;;
   esac
