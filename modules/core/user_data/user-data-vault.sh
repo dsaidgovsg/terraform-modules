@@ -6,6 +6,7 @@
 
 set -e
 
+# Do not use curly brackets when using the env var since it conflicts with Terraform template
 local readonly service_type="vault"
 
 # Send the log output from this script to user-data.log, syslog, and the console
@@ -57,12 +58,12 @@ fi
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
-    --type "${service_type}"
+    --type "$service_type"
 
 /opt/run-td-agent \
     --consul-prefix "${consul_prefix}" \
-    --type "${service_type}"
+    --type "$service_type"
 
 /opt/run-telegraf \
     --consul-prefix "${consul_prefix}" \
-    --type "${service_type}"
+    --type "$service_type"
