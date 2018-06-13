@@ -1,6 +1,6 @@
-# Telegraf module
+# `td-agent` module
 
-This module allows enabling of `telegraf` service for metrics reporting. Meant to be used in
+This module allows enabling of `td-agent` service for metrics reporting. Meant to be used in
 instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
 
 ## Integration with `Core` module
@@ -13,8 +13,8 @@ seamlessly.
 ```hcl
 ...
 
-module "telegraf" {
-  source = "../../../vendor/terraform-modules/modules/telegraf"
+module "td-agent" {
+  source = "../../../vendor/terraform-modules/modules/td-agent"
 
   # Optional, default is true
   core_integration = true
@@ -38,10 +38,10 @@ module "telegraf" {
 ...
 ```
 
-You should copy your Telegraf configuration file into `/etc/telegraf/telegraf.conf`, and run
-`/opt/run-telegraf --type <service_type>` in the user data to start the service with the custom
+You should copy your `td-agent` configuration file into `/etc/td-agent/td-agent.conf`, and run
+`/opt/run-td-agent --type <service_type>` in the user data to start the service with the custom
 configuration.
 
 If you wish to apply interpolation from `consul-template`, you may instead copy the configuration
-file to `/etc/telegraf/telegraf.conf.template`. `run-telegraf` will automatically detect this file
-and apply template interpolation, unless `--skip-template` is explicitly set for `run-telegraf`.
+file to `/etc/td-agent/td-agent.conf.template`. `run-td-agent` will automatically detect this file
+and apply template interpolation, unless `--skip-template` is explicitly set for `run-td-agent`.
