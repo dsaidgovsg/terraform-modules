@@ -6,6 +6,8 @@
 
 set -e
 
+local readonly service_type="nomad_server"
+
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
@@ -32,7 +34,12 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
-    --type "nomad_server"
+    --type "${service_type}"
+
+/opt/run-td-agent \
+    --consul-prefix "${consul_prefix}" \
+    --type "${service_type}"
 
 /opt/run-telegraf \
-    --type "nomad_server"
+    --consul-prefix "${consul_prefix}" \
+    --type "${service_type}"
