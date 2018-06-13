@@ -197,6 +197,7 @@ function main {
     fi
 
     enable_td_agent "$type" "$service_override_dir"
+  fi
 }
 
 main "$@"
