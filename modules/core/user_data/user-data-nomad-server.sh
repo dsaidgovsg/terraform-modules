@@ -7,7 +7,7 @@
 set -e
 
 # Do not use curly brackets when using the env var since it conflicts with Terraform template
-local readonly service_type="nomad_server"
+readonly service_type="nomad_server"
 
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/
