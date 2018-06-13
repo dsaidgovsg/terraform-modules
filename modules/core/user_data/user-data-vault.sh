@@ -35,6 +35,10 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
 
+/opt/run-telegraf \
+    --consul-prefix "${consul_prefix}" \
+    --type "vault"
+
 # The Packer template puts the TLS certs in these file paths
 readonly VAULT_TLS_CERT_FILE="${cert_file}"
 readonly VAULT_TLS_KEY_FILE="${cert_key}"
@@ -55,7 +59,4 @@ fi
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
-    --type "vault"
-
-/opt/run-telegraf \
     --type "vault"

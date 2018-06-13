@@ -23,6 +23,10 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
 
+/opt/run-telegraf \
+    --consul-prefix "${consul_prefix}" \
+    --type "nomad_server"
+
 # Additional Configuration
 /opt/nomad/bin/configure \
     --server \
@@ -32,7 +36,4 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
-    --type "nomad_server"
-
-/opt/run-telegraf \
     --type "nomad_server"

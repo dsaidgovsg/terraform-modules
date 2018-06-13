@@ -147,25 +147,18 @@ function add_statsd_conf {
   case "$type" in
     consul)
       generate_statsd_conf $consul_conf
-      restart_service "consul"
       ;;
     nomad_client)
       generate_statsd_conf $consul_conf
-      restart_service "consul"
       generate_statsd_conf $nomad_conf
-      restart_service "nomad"
       ;;
     nomad_server)
       generate_statsd_conf $consul_conf
-      restart_service "consul"
       generate_statsd_conf $nomad_conf
-      restart_service "nomad"
       ;;
     vault)
       generate_statsd_conf $consul_conf
-      restart_service "consul"
       generate_statsd_conf $vault_conf
-      restart_service "vault"
       ;;
   esac
 }
@@ -261,6 +254,10 @@ function main {
 
     enable_telegraf "$type" "$service_override_dir"
     add_statsd_conf "$type" "$consul_conf" "$nomad_conf" "$vault_conf"
+
+    # consul must be restarted since we need it to be up first before we can use consul-template
+    # and now we are adding in new configuration
+    restart_service "consul"
   fi
 }
 
