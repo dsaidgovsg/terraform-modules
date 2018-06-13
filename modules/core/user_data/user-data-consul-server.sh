@@ -23,9 +23,10 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
 
-/opt/vault-ssh \
+/opt/run-telegraf \
     --consul-prefix "${consul_prefix}" \
     --type "consul"
 
-/opt/run-telegraf \
+/opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
     --type "consul"
