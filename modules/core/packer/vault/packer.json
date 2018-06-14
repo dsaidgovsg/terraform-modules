@@ -81,6 +81,7 @@
             "type": "ansible",
             "pause_before": "10s",
             "playbook_file": "{{ template_dir }}/site.yml",
+            "user": "ubuntu",
             "extra_arguments": [
                 "-e",
                 "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}} vault_ui_enable={{user `vault_ui_enable`}}",
