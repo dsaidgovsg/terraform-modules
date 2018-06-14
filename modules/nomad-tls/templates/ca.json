@@ -1,0 +1,17 @@
+{
+  "common_name": ${ca},
+  "alt_names": ${ca_san},
+  "ip_sans": ${ca_ip_san},
+  "ttl": "${ttl}s",
+  "format": "pem",
+  "key_type": "ec",
+  "key_bits": 384,
+  "exclude_cn_from_sans": ${exclude_cn_from_sans},
+  "ou": ${ou},
+  "organization": ${organization},
+  "country": ${country},
+  "locality": ${locality},
+  "province": ${province},
+  "street_address": ${street_address},
+  "postal_code": ${postal_code}
+}
