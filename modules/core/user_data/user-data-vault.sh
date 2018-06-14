@@ -6,7 +6,7 @@
 
 set -e
 
-# Do not use curly brackets when using the env var since it conflicts with Terraform template
+# Avoid Terraform template by either using double dollar signs, or not using curly braces
 readonly service_type="vault"
 
 # Send the log output from this script to user-data.log, syslog, and the console
