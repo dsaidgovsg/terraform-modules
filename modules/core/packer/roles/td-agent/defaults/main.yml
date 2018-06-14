@@ -3,3 +3,4 @@ fluent_plugin_systemd_version: 1.0.0
 td_agent_tmp_file: /tmp/td-agent-install.sh
 config_file: ""
 config_vars_file: ""
+config_dest_file: "/etc/td-agent/td-agent.conf"

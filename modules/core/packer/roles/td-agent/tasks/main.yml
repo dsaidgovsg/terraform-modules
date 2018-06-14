@@ -34,11 +34,18 @@
 - name: Change td-agent configuration
   template:
     src: "{{ config_file }}"
-    dest: "/etc/td-agent/td-agent.conf"
+    dest: "{{ config_dest_file }}"
     mode: 0644
+  when: config_file != ""
+  become: yes
+- name: Install configuration script
+  copy:
+    src: "{{ role_path }}/files/run-td-agent.sh"
+    dest: "/opt/run-td-agent"
+    mode: 0755
   become: yes
 # See `use: service` issue: https://github.com/ansible/ansible-modules-core/issues/3764#issuecomment-284331673
-- name: Enable the td-agent service for next boot-up
+- name: Disable the td-agent service for next configuration set-up
   service:
     name: td-agent
     enabled: yes
