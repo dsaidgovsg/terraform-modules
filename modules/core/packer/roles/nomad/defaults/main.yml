@@ -1,5 +1,5 @@
 ---
-  nomad_version: "0.8.3"
+  nomad_version: "0.8.4"
   nomad_module_url: "https://github.com/hashicorp/terraform-aws-nomad.git"
   nomad_module_version: "v0.1.1"
   docker_version: "18.05.0~ce~3-0~ubuntu"
