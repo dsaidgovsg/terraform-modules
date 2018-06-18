@@ -491,8 +491,8 @@ function run {
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
   start_consul_template
 
-  # Wait to ensure that the generation of Vault token after the config reboot
-  sleep 10
+  # Wait to ensure that the generation of Vault token after the config reboot (takes around 2 seconds)
+  sleep 5
 }
 
 run "$@"
