@@ -8,12 +8,15 @@ set -euo pipefail
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
+readonly EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+readonly EC2_INSTANCE_DYNAMIC_DATA_URL="http://169.254.169.254/latest/dynamic"
+
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
 function print_usage {
   echo
-  echo "Usage: configure-vault [OPTIONS]"
+  echo "Usage: configure [OPTIONS]"
   echo
   echo "This script is used to configure Nomad for Vault integration on an AWS server."
   echo
@@ -26,11 +29,12 @@ function print_usage {
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
   echo -e "  --docker-auth\t\tPath to store Docker authentication information. Optional. Default is the absolute path of '../docker.json', relative to this script."
+  echo -e "  --cert-path\t\tPath to store certificates for nomad TLS. Optional. Default is the absolute path of '../certs', relative to this script."
   echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
   echo
-  echo "  configure-vault --server"
+  echo "  configure --server"
 }
 
 function log {
@@ -102,6 +106,23 @@ function wait_for_consul {
   exit 1
 }
 
+function lookup_path_in_instance_metadata {
+  local readonly path="$1"
+  curl --silent --location "$EC2_INSTANCE_METADATA_URL/$path/"
+}
+
+function lookup_path_in_instance_dynamic_data {
+  local readonly path="$1"
+  curl --silent --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
+}
+
+function get_instance_ip_address {
+  lookup_path_in_instance_metadata "local-ipv4"
+}
+
+function get_instance_region {
+  lookup_path_in_instance_dynamic_data "instance-identity/document" | jq -r ".region"
+}
 
 function consul_kv {
   local readonly path="${1}"
@@ -286,6 +307,177 @@ EOF
   echo "${docker_template}" > "${consul_template_config}/template_nomad_docker.hcl"
 }
 
+function generate_tls_config {
+  local readonly server="${1}"
+  local readonly consul_prefix="${2}"
+  local readonly config_dir="${3}"
+  local readonly user="${4}"
+  local readonly consul_template_config="${5}"
+  local readonly cert_path="${6}"
+
+  # TLS configuration
+  local tls_server_config=""
+  local bootstrap=$(consul_kv "${consul_prefix}nomad-tls/bootstrap")
+  if [[ "$server" == "true" && "$bootstrap" == "yes" ]]; then
+    tls_server_config=$(cat <<EOF
+server {
+  heartbeat_grace = "1h"
+}
+EOF
+)
+  fi
+
+  # TLS Configuration
+  local tls_config=$(cat <<EOF
+tls {
+  http = true
+  rpcs = true
+
+  ca_file = "${cert_path}/ca.pem"
+  cert_file = "${cert_path}/cert.pem"
+  key_file = "${cert_path}/key.pem"
+
+  verify_server_hostname = true
+  verify_https_client = false
+}
+
+${tls_server_config}
+EOF
+)
+
+  log_info "Writing TLS configuration to ${config_dir}/tls.hcl"
+  echo "${tls_config}" > "${config_dir}/tls.hcl"
+  chown "${user}:${user}" "${config_dir}/tls.hcl"
+
+  # Consul Templates
+  # Based off https://github.com/hashicorp/consul-template/blob/master/examples/vault-pki.md
+  local role
+  if [[ "$server" == "true" ]]; then
+    role=$(consul_kv "${consul_prefix}nomad-tls/server_role")
+  else
+    role=$(consul_kv "${consul_prefix}nomad-tls/client_role")
+  fi
+
+  local pki_path
+  pki_path=$(consul_kv "${consul_prefix}nomad-tls/pki_path")
+
+  local instance_ip_address=""
+  local instance_region=""
+
+  instance_ip_address=$(get_instance_ip_address)
+  instance_region=$(get_instance_region)
+
+  local pki_param
+  if [[ "$server" == "true" ]]; then
+    pki_param="\"common_name=server.${instance_region}.nomad\" \"ip_sans=${instance_ip_address}\""
+  else
+    pki_param="\"common_name=client.${instance_region}.nomad\" ip_sans=\"${instance_ip_address}\""
+  fi
+
+  local ca_template=$(cat <<EOF
+template {
+  destination = "${cert_path}/ca.pem"
+  create_dest_dirs = true
+
+  # consul-template does not deal with ownership properly
+  # See https://github.com/hashicorp/consul-template/issues/1061
+  command = "bash -c 'chown ${user}:${user} ${cert_path}/ca.pem && (supervisorctl signal SIGHUP nomad || true)'"
+
+  perms = 0600
+  error_on_missing_key = true
+
+  contents = <<EOH
+{{- with secret "${pki_path}/issue/${role}" ${pki_param} -}}
+  {{- .Data.issuing_ca -}}
+{{- end -}}
+EOH
+}
+EOF
+)
+
+  log_info "Writing TLS CA Consul Template configuration to ${consul_template_config}/template_nomad_tls_ca.hcl"
+  echo "${ca_template}" > "${consul_template_config}/template_nomad_tls_ca.hcl"
+
+  local cert_template=$(cat <<EOF
+template {
+  destination = "${cert_path}/cert.pem"
+  create_dest_dirs = true
+
+  # consul-template does not deal with ownership properly
+  # See https://github.com/hashicorp/consul-template/issues/1061
+  command = "bash -c 'chown ${user}:${user} ${cert_path}/cert.pem && (supervisorctl signal SIGHUP nomad || true)'"
+
+  perms = 0600
+  error_on_missing_key = true
+
+  contents = <<EOH
+{{- with secret "${pki_path}/issue/${role}" ${pki_param} -}}
+  {{- .Data.certificate -}}
+{{- end -}}
+EOH
+}
+EOF
+)
+
+  log_info "Writing TLS Certificate Consul Template configuration to ${consul_template_config}/template_nomad_tls_cert.hcl"
+  echo "${cert_template}" > "${consul_template_config}/template_nomad_tls_cert.hcl"
+
+  local key_template=$(cat <<EOF
+template {
+  destination = "${cert_path}/key.pem"
+  create_dest_dirs = true
+
+  # consul-template does not deal with ownership properly
+  # See https://github.com/hashicorp/consul-template/issues/1061
+  command = "bash -c 'chown ${user}:${user} ${cert_path}/key.pem && (supervisorctl signal SIGHUP nomad || true)'"
+
+  perms = 0600
+  error_on_missing_key = true
+
+  contents = <<EOH
+{{- with secret "${pki_path}/issue/${role}" ${pki_param} -}}
+  {{- .Data.private_key -}}
+{{- end -}}
+EOH
+}
+EOF
+)
+
+  log_info "Writing TLS Key Consul Template configuration to ${consul_template_config}/template_nomad_tls_key.hcl"
+  echo "${key_template}" > "${consul_template_config}/template_nomad_tls_key.hcl"
+
+  # Server Gossip encryption
+  if [[ "$server" == "true" ]]; then
+
+  local gossip_path
+  gossip_path=$(consul_kv "${consul_prefix}nomad-tls/gossip_path")
+  local gossip_template=$(cat <<EOF
+template {
+  destination = "${config_dir}/gossip.hcl"
+
+  # consul-template does not deal with ownership properly
+  # See https://github.com/hashicorp/consul-template/issues/1061
+  command = "bash -c 'chown ${user}:${user} ${config_dir}/gossip.hcl && (supervisorctl signal SIGHUP nomad || true)'"
+
+  perms = 0600
+  error_on_missing_key = true
+
+  contents = <<EOH
+server {
+  encrypt = "{{- with secret "${gossip_path}" -}}{{- .Data.key -}}{{- end -}}"
+}
+EOH
+}
+EOF
+)
+
+  log_info "Writing Gossip Consul Template configuration to ${consul_template_config}/template_nomad_gossip.hcl"
+  echo "${gossip_template}" > "${consul_template_config}/template_nomad_gossip.hcl"
+  fi
+
+  supervisorctl signal SIGHUP consul-template
+}
+
 function main {
   local server="false"
   local client="false"
@@ -295,6 +487,7 @@ function main {
   local user=""
   local consul_template_config="/opt/consul-template/config"
   local docker_auth=""
+  local cert_path=""
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -334,6 +527,11 @@ function main {
         ;;
       --docker-auth)
         assert_not_empty "$key" "$2"
+        cert_path="$2"
+        shift
+        ;;
+      --cert-path)
+        assert_not_empty "$key" "$2"
         docker_auth="$2"
         shift
         ;;
@@ -360,6 +558,7 @@ function main {
   assert_is_installed "tr"
   assert_is_installed "jq"
   assert_is_installed "consul"
+  assert_is_installed "consul-template"
 
   wait_for_consul
 
@@ -371,6 +570,10 @@ function main {
     docker_auth="$(cd "$SCRIPT_DIR/.." && pwd)/docker.json"
   fi
 
+  if [[ -z "$cert_path" ]]; then
+    mkdir -p "$SCRIPT_DIR/../certs"
+    cert_path="$(cd "$SCRIPT_DIR/../certs" && pwd)"
+  fi
 
   if [[ -z "$user" ]]; then
     user=$(get_owner_of_path "$config_dir")
@@ -399,6 +602,14 @@ function main {
     log_info "Docker authentication is not enabled or this is a Nomad server."
   else
     generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}"
+  fi
+
+  local tls_enabled
+  tls_enabled=$(consul_kv_with_default "${consul_prefix}nomad-tls/enabled" "no")
+  if [[ "${tls_enabled}" != "yes" ]]; then
+    log_info "Nomad TLS is not enabled"
+  else
+    generate_tls_config "${server}" "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${cert_path}"
   fi
 }
 

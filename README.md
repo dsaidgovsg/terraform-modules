@@ -38,3 +38,8 @@ Nomad cluster to the internet.
 
 This module serves as a post-bootstrap addon for the Core Module. It allows you to configure Nomad
 clients to authenticate with private Docker registries.
+
+## [Nomad TLS](modules/nomad-tls)
+
+This module enabled [TLS](https://www.nomadproject.io/guides/securing-nomad.html) for Nomad
+clusters.
