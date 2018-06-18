@@ -130,14 +130,6 @@ function generate_statsd_conf {
   echo -e 'telemetry {\n  statsd_address = "127.0.0.1:8125"\n}' > $conf_file
 }
 
-function restart_service {
-  local readonly service="${1}"
-
-  log_info "Restarting service $service..."
-  supervisorctl restart $service
-  log_info "Service $service restarted!"
-}
-
 function add_statsd_conf {
   local readonly type="${1}"
   local readonly consul_conf="${2}"
@@ -254,7 +246,6 @@ function main {
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      log_info "Current HOME: $HOME"
       HOME=/root consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -once
       log_info "consul-template applied successfully!"
     fi
@@ -262,9 +253,10 @@ function main {
     enable_telegraf "$type" "$service_override_dir"
     add_statsd_conf "$type" "$consul_conf" "$nomad_conf" "$vault_conf"
 
-    # consul must be restarted since we need it to be up first before we can use consul-template
-    # and now we are adding in new configuration
-    restart_service "consul"
+    # Added new config to consul, so reload
+    log_info "Reloading consul..."
+    consul reload
+    log_info "consul reloaded!"
   fi
 }
 

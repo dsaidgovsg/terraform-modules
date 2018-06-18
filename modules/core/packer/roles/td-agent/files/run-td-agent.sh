@@ -198,7 +198,6 @@ function main {
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      log_info "Current HOME: $HOME"
       HOME=/root consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -once
       log_info "consul-template applied successfully!"
     fi
