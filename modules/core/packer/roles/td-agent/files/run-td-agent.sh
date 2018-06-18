@@ -129,7 +129,6 @@ function main {
   local type=""
   local consul_prefix="terraform/"
   local consul_template_conf_dir="/opt/consul-template/config"
-  local vault_token_file="/root/.vault-token"
   local skip_template="false"
   local conf_template="/etc/td-agent/td-agent.conf.template"
   local conf_out="/etc/td-agent/td-agent.conf"
@@ -153,11 +152,6 @@ function main {
       --consul-template-conf-dir)
         assert_not_empty "$key" "$2"
         consul_template_conf_dir="$2"
-        shift
-        ;;
-      --vault-token-file)
-        assert_not_empty "$key" "$2"
-        vault_token_file="$2"
         shift
         ;;
       --skip-template)
@@ -204,7 +198,8 @@ function main {
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -vault-token $(cat "$vault_token_file") -once
+      log_info "Current HOME: $HOME"
+      HOME=/root consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -once
       log_info "consul-template applied successfully!"
     fi
 
