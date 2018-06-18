@@ -166,8 +166,9 @@ function add_statsd_conf {
 function main {
   local type=""
   local consul_prefix="terraform/"
-  local skip_template="false"
   local consul_template_conf_dir="/opt/consul-template/config"
+  local vault_token_file="/root/.vault-token"
+  local skip_template="false"
   local conf_template="/etc/telegraf/telegraf.conf.template"
   local conf_out="/etc/telegraf/telegraf.conf"
   local consul_conf="/opt/consul/config/statsd.hcl"
@@ -188,6 +189,16 @@ function main {
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
+        shift
+        ;;
+      --consul-template-conf-dir)
+        assert_not_empty "$key" "$2"
+        consul_template_conf_dir="$2"
+        shift
+        ;;
+      --vault-token-file)
+        assert_not_empty "$key" "$2"
+        vault_token_file="$2"
         shift
         ;;
       --skip-template)
@@ -249,7 +260,7 @@ function main {
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -once
+      consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -vault-token $(cat "$vault_token_file") -once
       log_info "consul-template applied successfully!"
     fi
 
