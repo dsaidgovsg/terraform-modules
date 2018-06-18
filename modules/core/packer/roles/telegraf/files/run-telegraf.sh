@@ -246,7 +246,7 @@ function main {
   else
     if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
       log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      HOME=/root consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -once
+      consul-template -config "$consul_template_conf_dir" -template "$conf_template:$conf_out" -vault-token $(cat "/root/.vault-token") -once
       log_info "consul-template applied successfully!"
     fi
 
