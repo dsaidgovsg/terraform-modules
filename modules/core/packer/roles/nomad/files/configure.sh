@@ -141,6 +141,14 @@ function consul_kv_with_default {
   echo -n "${value}"
 }
 
+# Signal service if it exists
+function signal_service {
+  local readonly service="${1}"
+  local readonly signal="${2}"
+
+  supervisorctl status "${service}" && supervisorctl signal "${signal}" "${service}"
+}
+
 function get_vault_token {
   local readonly token_role="${1}"
   local readonly address="${2}"
@@ -331,7 +339,7 @@ EOF
   local tls_config=$(cat <<EOF
 tls {
   http = true
-  rpcs = true
+  rpc  = true
 
   ca_file = "${cert_path}/ca.pem"
   cert_file = "${cert_path}/cert.pem"
@@ -371,7 +379,7 @@ EOF
   if [[ "$server" == "true" ]]; then
     pki_param="\"common_name=server.${instance_region}.nomad\" \"ip_sans=${instance_ip_address}\""
   else
-    pki_param="\"common_name=client.${instance_region}.nomad\" ip_sans=\"${instance_ip_address}\""
+    pki_param="\"common_name=client.${instance_region}.nomad\" \"ip_sans=${instance_ip_address}\""
   fi
 
   local ca_template=$(cat <<EOF
@@ -475,7 +483,7 @@ EOF
   echo "${gossip_template}" > "${consul_template_config}/template_nomad_gossip.hcl"
   fi
 
-  supervisorctl signal SIGHUP consul-template
+  signal_service "consul-template" "SIGHUP"
 }
 
 function main {
