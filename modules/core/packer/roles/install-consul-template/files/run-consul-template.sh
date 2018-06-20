@@ -285,7 +285,7 @@ function get_vault_token {
   token_role=$(consul_kv "${consul_prefix}roles/${server_type}")
 
   local vault_token
-  vault_token=$(request_vault_token "${auth_path}" "${token_role}" "${vault_address}")
+  vault_token=$(request_vault_token "${auth_path}" "${token_role}" "${vault_address}") || exit $?
 
   echo -n "${vault_token}"
 }
@@ -475,7 +475,7 @@ function run {
     else
 
       local vault_token
-      vault_token=$(get_vault_token "${vault_address}" "${consul_prefix}aws-auth/" "${server_type}")
+      vault_token=$(get_vault_token "${vault_address}" "${consul_prefix}aws-auth/" "${server_type}") || exit $?
       environment+=("VAULT_TOKEN=\"${vault_token}\"")
 
       generate_vault_config "${vault_address}" "$config_dir" "$user"
