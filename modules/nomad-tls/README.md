@@ -79,11 +79,43 @@ Nomad documentation
 [suggests](https://www.nomadproject.io/guides/securing-nomad.html#switching-an-existing-cluster-to-tls)
 some steps to turn on TLS for an existing cluster. This module will help facilitate this process.
 
+We will be taking the unusual step of updating the Nomad servers and clients in place in order to
+reduce downtime. You might want to review all the steps in this section first before proceeding.
+
 Before the initial application of this module, you **must** set the required variable `bootstrap`
 to `yes`. This will set the `heartbeat_grace` setting in Nomad to `1h` so that your jobs will not
 be "lost".
 
 You can now proceed to `terraform apply`.
 
-After applying, you should replace your Nomad servers one by one. You will now need to change the
-variable ``
+#### Nomad Servers
+
+After applying, you should replace your Nomad servers one by one. You can do this by terminating the
+Nomad servers one by one as described in the Core module's instructions. Alternatively, you can run
+the [configuration script](../core/packer/roles/nomad/files/configure.sh) that is included in the
+AMI by default. Assuming you have not changed any of the default core integration variables, you can
+simply run:
+
+```bash
+# Assuming no defaults are changed
+sudo /opt/nomad/bin/configure --server
+
+# Otherwise, you can find more information on the flags using
+/opt/nomad/bin/configure --help
+```
+
+Once a quorum of Nomad servers are TLS enabled, your clients will now be unable to heartbeat and
+you will have one hour before the jobs are declared "lost".
+
+
+
+To prevent any "lost" jobs, we will now update the configuration on the Nomad Clients by running the
+commands:
+
+```bash
+# Assuming no defaults are changed
+sudo /opt/nomad/bin/configure --client
+
+# Otherwise, you can find more information on the flags using
+/opt/nomad/bin/configure --help
+```
