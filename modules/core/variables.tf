@@ -344,3 +344,13 @@ EOF
 
   default = "terraform/"
 }
+
+variable "nomad_server_protocol" {
+  description = <<EOF
+  Protocol for the ELB to point to Nomad servers. On initial bootstrap, this
+  should be "HTTP". After you have integrated the `nomad-tls` module, you should change this to
+  HTTPS
+EOF
+
+  default = "HTTP"
+}

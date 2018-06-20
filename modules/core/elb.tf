@@ -98,7 +98,7 @@ resource "aws_lb_listener_rule" "nomad_server" {
 resource "aws_lb_target_group" "nomad_server" {
   name                 = "${var.internal_lb_name}-nomad-server"
   port                 = "4646"
-  protocol             = "HTTP"
+  protocol             = "${var.nomad_server_protocol}"
   vpc_id               = "${module.vpc.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
 
@@ -109,6 +109,7 @@ resource "aws_lb_target_group" "nomad_server" {
     unhealthy_threshold = "2"
     path                = "/v1/status/leader"
     port                = "4646"
+    protocol            = "${var.nomad_server_protocol}"
   }
 
   tags = "${var.tags}"
