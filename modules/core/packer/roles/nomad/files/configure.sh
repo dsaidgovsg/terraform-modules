@@ -377,9 +377,9 @@ EOF
 
   local pki_param
   if [[ "$server" == "true" ]]; then
-    pki_param="\"common_name=server.${instance_region}.nomad\" \"ip_sans=${instance_ip_address}\""
+    pki_param="\"common_name=server.${instance_region}.nomad\" \"alt_names=nomad.service.consul\" \"ip_sans=${instance_ip_address},127.0.0.1\""
   else
-    pki_param="\"common_name=client.${instance_region}.nomad\" \"ip_sans=${instance_ip_address}\""
+    pki_param="\"common_name=client.${instance_region}.nomad\" \"ip_sans=${instance_ip_address},127.0.0.1\""
   fi
 
   local ca_template=$(cat <<EOF

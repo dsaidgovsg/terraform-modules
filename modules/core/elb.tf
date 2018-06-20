@@ -109,6 +109,7 @@ resource "aws_lb_target_group" "nomad_server" {
     unhealthy_threshold = "2"
     path                = "/v1/status/leader"
     port                = "4646"
+    protocol            = "${var.nomad_server_protocol}"
   }
 
   tags = "${var.tags}"

@@ -351,5 +351,6 @@ variable "nomad_server_protocol" {
   should be "HTTP". After you have integrated the `nomad-tls` module, you should change this to
   HTTPS
 EOF
+
   default = "HTTP"
 }

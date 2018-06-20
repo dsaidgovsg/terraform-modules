@@ -73,13 +73,37 @@ on how to configure the ACL token for the provider if needed.
 
 You will need to perform several steps to bootstrap and configure this endpoint.
 
-### Bootstrapping an existing cluster
+
+
+### Bootstrapping an existing cluster with downtime
+
+This method is easier and *will* result in jobs being down momentarily. Before the initial
+application of this module, you **must** set the required variable `bootstrap` to `no`.
+
+You can now proceed to `terraform apply`.
+
+#### Nomad Servers
+
+After applying, you should replace your Nomad servers one by one. You can do this by terminating the
+Nomad servers one by one as described in the Core module's instructions.
+
+Once a quorum of Nomad servers are TLS enabled, TLS will be enabled on the entire cluster:
+
+- The ELB provisioned by the Core module will stop to work (as will the endpoint you have configured) and we will have to update the `nomad_server_protocol` variable in the Core module and applying the changes to the ELB.
+- Your clients will now be unable to heartbeat and your jobs will be "lost".
+
+#### Nomad Clients
+
+You can now replace your Nomad clients all at once by terminating all of them for ASG to replace.
+Nomad server should then reschedule the jobs on the new nodes coming online.
+
+### Bootstrapping an existing cluster without downtime
 
 Nomad documentation
 [suggests](https://www.nomadproject.io/guides/securing-nomad.html#switching-an-existing-cluster-to-tls)
 some steps to turn on TLS for an existing cluster. This module will help facilitate this process.
 
-We will be taking the unusual step of updating the Nomad servers and clients in place in order to
+We will be taking the unusual step of updating the Nomad clients in place in order to
 reduce downtime. You might want to review all the steps in this section first before proceeding.
 
 Before the initial application of this module, you **must** set the required variable `bootstrap`
@@ -90,32 +114,67 @@ You can now proceed to `terraform apply`.
 
 #### Nomad Servers
 
-After applying, you should replace your Nomad servers one by one. You can do this by terminating the
-Nomad servers one by one as described in the Core module's instructions. Alternatively, you can run
-the [configuration script](../core/packer/roles/nomad/files/configure.sh) that is included in the
-AMI by default. Assuming you have not changed any of the default core integration variables, you can
-simply run:
+
 
 ```bash
-# Assuming no defaults are changed
+sudo /opt/consul-template/bin/run-consul-template \
+    --server-type nomad_server \
+    --dedup-enable \
+    --syslog-enable
+
 sudo /opt/nomad/bin/configure --server
 
-# Otherwise, you can find more information on the flags using
-/opt/nomad/bin/configure --help
+sudo supervisorctl restart nomad
 ```
 
-Once a quorum of Nomad servers are TLS enabled, your clients will now be unable to heartbeat and
-you will have one hour before the jobs are declared "lost".
 
+Once a quorum of Nomad servers are TLS enabled, TLS will be enabled on the entire cluster:
 
+- The ELB provisioned by the Core module will stop to work (as will the endpoint you have configured) and we will have to update the `nomad_server_protocol` variable in the Core module and applying the changes to the ELB.
+- Your clients will now be unable to heartbeat and you will have one hour before the jobs are declared "lost".
 
-To prevent any "lost" jobs, we will now update the configuration on the Nomad Clients by running the
-commands:
+#### Nomad Clients
+
+To prevent any "lost" jobs, we will have to update the configuration on the Nomad Clients in place
+first.
+
+The clients retrieve Vault tokens using the [aws-auth](../aws-auth) authentication method.
+Re-authentication of the clients is
+[disabled](https://www.vaultproject.io/docs/auth/aws.html#client-nonce) by default. Because we have
+now added a new policy to the token issued to Nomad clients, we will have to retrieve a new Vault
+Token for the clients to update them in place. Before we can do that, however, we will have to
+[delete](https://www.vaultproject.io/api/auth/aws/index.html#delete-identity-whitelist-entries)
+the instance whitelist in Vault.
+
+For each Instance ID (`i-xxxxxx`) for your client, you will have to run the following (assuming the
+AWS authentication is mounted at `aws`):
 
 ```bash
+VAULT_TOKEN="..." vault delete auth/aws/identity-whitelist/i-xxxxxx
+
+```
+
+Then, you will have to SSH into the Nomad clients and assuming no changes to the core integration
+variables, we can simply run:
+
+```bash
+# Retrieve new Vault token and reconfigure Consul-Template
+sudo /opt/consul-template/bin/run-consul-template \
+    --server-type nomad_client \
+    --dedup-enable \
+    --syslog-enable
+
 # Assuming no defaults are changed
 sudo /opt/nomad/bin/configure --client
 
+# Might have to do this several times
+sudo supervisorctl restart nomad
+
 # Otherwise, you can find more information on the flags using
 /opt/nomad/bin/configure --help
 ```
+
+You should see your Nomad clients come online.
+
+
+bootstrap off
