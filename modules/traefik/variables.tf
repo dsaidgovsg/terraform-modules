@@ -97,6 +97,11 @@ variable "traefik_version" {
   default     = "v1.6-alpine"
 }
 
+variable "traefik_priority" {
+  description = "Priority of the Nomad job for Traefik. See https://www.nomadproject.io/docs/job-specification/job.html#priority"
+  default     = 50
+}
+
 variable "traefik_consul_prefix" {
   description = "Prefix on Consul to store Traefik configuration to"
   default     = "traefik"

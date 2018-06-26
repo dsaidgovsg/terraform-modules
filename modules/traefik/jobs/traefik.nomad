@@ -2,11 +2,10 @@ job "traefik" {
   datacenters = ${az}
   region      = "${region}"
   type        = "service"
+  priority    = ${traefik_priority}
 
   update {
     max_parallel = 1
-    min_healthy_time = "30s"
-    healthy_deadline = "10m"
     auto_revert = true
   }
 
