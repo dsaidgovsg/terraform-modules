@@ -5,7 +5,7 @@
     nomad_version: "0.8.4"
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.1.0"
-    consul_version: "1.1.0"
+    consul_version: "1.2.0"
     docker_version: "17.11.0~ce-0~ubuntu"
     vault_version: "0.10.2"
     vault_module_version: "v0.4.1"
