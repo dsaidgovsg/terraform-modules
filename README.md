@@ -38,3 +38,12 @@ Nomad cluster to the internet.
 
 This module serves as a post-bootstrap addon for the Core Module. It allows you to configure Nomad
 clients to authenticate with private Docker registries.
+
+## [Vault PKI](modules/vault-pki)
+
+This module serves as a bootstrap addon for the Core module. It provisions the
+[PKI secrets engine](https://www.vaultproject.io/docs/secrets/pki/index.html) in Vault. This PKI
+secrets engine allows you to maintain an internal CA and allows Vault users to request for
+certificates.
+
+This module is required for some of the other Vault integration.
