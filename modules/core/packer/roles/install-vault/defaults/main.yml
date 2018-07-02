@@ -1,4 +1,4 @@
 ---
-vault_version: "0.10.2"
+vault_version: "0.10.3"
 vault_module_version: "v0.4.1"
 vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
