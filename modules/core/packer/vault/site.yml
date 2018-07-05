@@ -27,45 +27,45 @@
     consul_token: ""
     consul_integration_prefix: "terraform/"
   tasks:
-  # - name: Upgrade all packages to the latest version
-  #   apt:
-  #     upgrade: yes
-  #     update_cache: yes
-  #   become: yes
-  # - name: Install CA Certificate
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/ansible-ca-store"
-  #   vars:
-  #     certificate: "{{ ca_certificate }}"
-  #     certificate_rename: "ca.crt"
-  #   become: yes
-  #   when: ca_certificate
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../roles/ansible-ca-store"
+    vars:
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate
   - name: Install Vault PKI CA Certificate
     include_role:
       name: "{{ playbook_dir }}/../roles/vault-pki"
-  # - name: Install td-agent
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/td-agent"
-  #   vars:
-  #     config_file: "{{ td_agent_config_file }}"
-  #     config_vars_file: "{{ td_agent_config_vars_file }}"
-  #     config_dest_file: "{{ td_agent_config_dest_file }}"
-  # - name: Install Telegraf
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/telegraf"
-  #   vars:
-  #     config_file: "{{ telegraf_config_file }}"
-  #     config_vars_file: "{{ telegraf_config_vars_file }}"
-  #     config_dest_file: "{{ telegraf_config_dest_file }}"
-  # - name: Install Consul
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/consul"
-  # - name: Install Consul-Template
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/install-consul-template"
-  # - name: Install Vault
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/vault"
-  # - name: Install Vault SSH Configuration Script
-  #   include_role:
-  #     name: "{{ playbook_dir }}/../roles/install-ssh-script"
+  - name: Install td-agent
+    include_role:
+      name: "{{ playbook_dir }}/../roles/td-agent"
+    vars:
+      config_file: "{{ td_agent_config_file }}"
+      config_vars_file: "{{ td_agent_config_vars_file }}"
+      config_dest_file: "{{ td_agent_config_dest_file }}"
+  - name: Install Telegraf
+    include_role:
+      name: "{{ playbook_dir }}/../roles/telegraf"
+    vars:
+      config_file: "{{ telegraf_config_file }}"
+      config_vars_file: "{{ telegraf_config_vars_file }}"
+      config_dest_file: "{{ telegraf_config_dest_file }}"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../roles/consul"
+  - name: Install Consul-Template
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-consul-template"
+  - name: Install Vault
+    include_role:
+      name: "{{ playbook_dir }}/../roles/vault"
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../roles/install-ssh-script"
