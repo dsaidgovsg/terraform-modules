@@ -25,3 +25,6 @@ the default Packer templates for Consul, Nomad Servers, Nomad Clients, or Vault,
 ask the template to install the CA certificate from the provisioned PKI secrets engine. The template
 will then reference Consul for the URLs to obtain the CA certificate. See the individual Packer
 template documentation for more details.
+
+You might want to rebuild and update all the AMIs for your server so that your CA is installed onto
+the AMI. This is necessary if you want to enable TLS for Nomad and Consul.
