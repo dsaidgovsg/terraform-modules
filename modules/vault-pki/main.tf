@@ -8,10 +8,8 @@ resource "vault_mount" "pki" {
 }
 
 locals {
-  ca_endpoints       = "${jsonencode(sort(formatlist("%s/%s/ca", var.vault_base_url, vault_mount.pki.path)))}"
-  ca_chain_endpoints = "${jsonencode(sort(formatlist("%s/%s/ca_chain", var.vault_base_url, vault_mount.pki.path)))}"
-
-  crl_distribution_points = "${jsonencode(sort(formatlist("%s/%s/crl", var.vault_base_url, vault_mount.pki.path)))}"
+  ca_endpoints            = "${sort(formatlist("%s/v1/%s/ca", var.vault_base_url, vault_mount.pki.path))}"
+  crl_distribution_points = "${sort(formatlist("%s/v1/%s/crl", var.vault_base_url, vault_mount.pki.path))}"
 }
 
 resource "vault_generic_secret" "pki_config" {
@@ -19,8 +17,8 @@ resource "vault_generic_secret" "pki_config" {
 
   data_json = <<EOF
 {
-  "issuing_certificates": ${local.ca_endpoints},
-  "crl_distribution_points": ${local.crl_distribution_points},
+  "issuing_certificates": ${jsonencode(local.ca_endpoints)},
+  "crl_distribution_points": ${jsonencode(local.crl_distribution_points)},
   "ocsp_servers": []
 }
 EOF
@@ -54,5 +52,19 @@ resource "vault_generic_secret" "pki_ca" {
   lifecycle {
     # This is a hack. Reconfiguring this will overwrite the CA
     ignore_changes = ["*"]
+  }
+}
+
+################################################
+# Mark in Consul for the `core` packer templates
+################################################
+resource "consul_key_prefix" "core_integration" {
+  count       = "${var.core_integration ? 1 : 0}"
+  path_prefix = "${var.consul_key_prefix}vault-pki/"
+
+  subkeys {
+    "enabled" = "yes"
+    "ca"      = "${jsonencode(formatlist("%s/pem", local.ca_endpoints))}"
+    "README"  = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/vault-pki"
   }
 }

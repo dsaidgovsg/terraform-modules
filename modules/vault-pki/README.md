@@ -17,3 +17,11 @@ initialised and unsealed the Vault servers.
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the
 Terraform Vault provider for details on how you can provide a Vault token for this Terraform
 operation. In general, you might want to do this with a Root token.
+
+## Core Module Integration
+
+After you have applied this module, a key will be set in Consul's KV store. When you are building
+the default Packer templates for Consul, Nomad Servers, Nomad Clients, or Vault, you can optionally
+ask the template to install the CA certificate from the provisioned PKI secrets engine. The template
+will then reference Consul for the URLs to obtain the CA certificate. See the individual Packer
+template documentation for more details.

@@ -1,0 +1,7 @@
+---
+consul_host: ""
+consul_port: 443
+consul_scheme: https
+# ACL Token for Consul
+consul_token: ""
+consul_integration_prefix: "terraform/"
