@@ -21,6 +21,10 @@
         "telegraf_config_vars_file": "",
         "telegraf_config_dest_file": "/etc/telegraf/telegraf.conf",
         "ca_certificate": "",
+        "consul_host": "",
+        "consul_port": "443",
+        "consul_scheme": "https",
+        "consul_token": "",
         "nomad_additional_config": ""
     },
     "builders": [
@@ -97,6 +101,8 @@
                 "telegraf_config_file={{user `telegraf_config_file`}} telegraf_config_vars_file={{user `telegraf_config_vars_file`}} telegraf_config_dest_file={{user `telegraf_config_dest_file`}}",
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
+                "-e",
+                "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3",
                 "-e",

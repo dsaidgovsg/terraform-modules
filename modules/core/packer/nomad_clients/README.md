@@ -8,6 +8,10 @@ This is based on this
 
 ## Pre-requisite
 
+In addition to Ansible and Packer, you will need to install the following on your machine:
+
+- [`python_consul`](https://github.com/cablehead/python-consul)
+
 ### Certificate Authority
 
 As part of the pre-requisites, you should already have generated certificates for a CA and,
@@ -48,6 +52,21 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   empty to not install anything.
 - `extra_vars`: Additional variables to pass to Ansible via the [`-e`](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html#cmdoption-ansible-playbook-e) flag. This is useful for additional variables that are available in the Ansible playbooks used to provision the packer images.
 
+### Post Bootstrap Configuration
+
+After the initial bootstrap, if you have applied one of the following post bootstrap modules,
+you should set the following options to install whatever pre-requisite is required in the AMI:
+
+- Vault PKI
+
+The following options are common to all of the integrations:
+
+- `consul_host`: The host for which Consul is accessible. Defaults to empty. If set to empty, all post bootstrap integration will be disabled.
+- `consul_port`: Port where Consul is accessible. Defaults to 443
+- `consul_scheme`: Scheme to access Consul. Defaults to "https"
+- `consul_token`: ACL token to access Consul
+- `consul_integration_prefix`: Prefix to look for Consul integration values. Do not change this unless you have also modified the values in the appropriate modules. Defaults to "terraform/"
+
 ## Building Image
 
 If you have a `vars.json` variables file containing changes to the above variables, you may run:
@@ -62,4 +81,15 @@ Otherwise if you wish to use the default variable values, simply run:
 
 ```bash
 packer build packer.json
+```
+
+If you have enabled the post-bootstrap integration, you can use `terraform output` to get the URL
+of your Consul servers. In this way, you can use the same command for pre and post bootstrap builds
+of your AMI.
+
+```bash
+packer build \
+    -var-file=vars.json \
+    -var consul_host="$(terraform output consul_api_address || echo -n '')" \
+    packer.json
 ```

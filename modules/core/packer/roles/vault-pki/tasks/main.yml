@@ -1,0 +1,58 @@
+---
+- name: Check for Consul Integration Enabled
+  consul_kv:
+    key: "{{ consul_integration_prefix }}vault-pki/enabled"
+    host: "{{ consul_host }}"
+    port: "{{ consul_port }}"
+    scheme: "{{ consul_scheme }}"
+    token: "{{ consul_token }}"
+  register: integration_enabled
+  when: consul_host != ""
+  delegate_to: localhost
+- name: Install CA Certificate from Vault
+  block:
+    - name: Get URLs
+      consul_kv:
+        key: "{{ consul_integration_prefix }}vault-pki/ca"
+        host: "{{ consul_host }}"
+        port: "{{ consul_port }}"
+        scheme: "{{ consul_scheme }}"
+        token: "{{ consul_token }}"
+      register: urls
+      delegate_to: localhost
+    - name: Parse URLs
+      set_fact:
+        urls_list: "{{ urls.data.Value | from_json }}"
+    - name: Get tempfile to download to
+      tempfile:
+        state: file
+      register: download_temp
+      delegate_to: localhost
+    # Break on first success: https://stackoverflow.com/a/42646598
+    - name: Attempt to download from URLs
+      get_url:
+        url: "{{ item }}"
+        dest: "{{ download_temp.path }}"
+        force: yes
+      with_items: "{{ urls_list }}"
+      register: download_result
+      ignore_errors: yes
+      when: download_result is not defined or download_result.failed
+      delegate_to: localhost
+    - name: Find first success
+      set_fact:
+        first_working: "{{ item }}"
+      loop: "{{ download_result.results }}"
+      when: "'failed' in item and not item.failed"
+    - name: Check if all URLs failed
+      fail:
+        msg: "Failed to download the CA from all the URLs. Make sure they are accessible from your machine."
+      when: first_working is not defined
+    - name: Install certificate to OS store
+      include_role:
+        name: "{{ role_path }}/../ansible-ca-store"
+      vars:
+        certificate: "{{ download_temp.path }}"
+        certificate_rename: "vault.crt"
+      become: yes
+  when: consul_host != "" and integration_enabled and integration_enabled.data.Value == "yes"

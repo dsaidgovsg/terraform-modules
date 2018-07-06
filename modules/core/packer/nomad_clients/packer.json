@@ -22,6 +22,11 @@
         "telegraf_config_vars_file": "",
         "telegraf_config_dest_file": "/etc/telegraf/telegraf.conf",
         "ca_certificate": "",
+        "consul_host": "",
+        "consul_port": "443",
+        "consul_scheme": "https",
+        "consul_token": "",
+        "consul_integration_prefix": "terraform/",
         "extra_vars": "{}"
     },
     "builders": [
@@ -103,6 +108,8 @@
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3",
+                "-e",
+                "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
                 "{{user `extra_vars` }}"
             ]
