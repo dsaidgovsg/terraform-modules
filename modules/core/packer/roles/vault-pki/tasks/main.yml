@@ -48,7 +48,7 @@
       fail:
         msg: "Failed to download the CA from all the URLs. Make sure they are accessible from your machine."
       when: first_working is not defined
-    - name: Install
+    - name: Install certificate to OS store
       include_role:
         name: "{{ role_path }}/../ansible-ca-store"
       vars:
