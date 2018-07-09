@@ -45,17 +45,77 @@ resource "vault_aws_auth_backend_role" "vault" {
 ################################################
 # Mark in Consul for the `core` module scripts to configure themselves
 ################################################
-resource "consul_key_prefix" "core_integration" {
-  count       = "${var.core_integration ? 1 : 0}"
-  path_prefix = "${var.consul_key_prefix}aws-auth/"
+resource "consul_keys" "enabled" {
+  count = "${var.core_integration ? 1 : 0}"
 
-  subkeys {
-    "enabled"            = "yes"
-    "path"               = "${vault_auth_backend.aws.path}"
-    "roles/consul"       = "${var.consul_role}"
-    "roles/nomad_server" = "${var.nomad_server_role}"
-    "roles/nomad_client" = "${var.nomad_client_role}"
-    "roles/vault"        = "${var.vault_role}"
-    "README"             = "This is used for integration with the `core` module. See https://github.com/GovTechSG/terraform-modules/tree/master/modules/aws-auth"
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/enabled"
+    value  = "yes"
+    delete = true
+  }
+}
+
+resource "consul_keys" "path" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/path"
+    value  = "${vault_auth_backend.aws.path}"
+    delete = true
+  }
+}
+
+resource "consul_keys" "readme" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path = "${var.consul_key_prefix}aws-auth/README"
+
+    value = <<EOF
+This is used for integration with the `core` module.
+See https://github.com/GovTechSG/terraform-modules/tree/master/modules/aws-auth
+EOF
+
+    delete = true
+  }
+}
+
+resource "consul_keys" "consul" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/roles/consul"
+    value  = "${var.consul_role}"
+    delete = true
+  }
+}
+
+resource "consul_keys" "nomad_server" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/roles/nomad_server"
+    value  = "${var.nomad_server_role}"
+    delete = true
+  }
+}
+
+resource "consul_keys" "nomad_client" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/roles/nomad_client"
+    value  = "${var.nomad_client_role}"
+    delete = true
+  }
+}
+
+resource "consul_keys" "vault" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/roles/vault"
+    value  = "${var.vault_role}"
+    delete = true
   }
 }
