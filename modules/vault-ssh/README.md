@@ -50,6 +50,21 @@ You can use the mount paths for each secret engine to control access.
 
 For each mount point, the role `default` is created.
 
+### Additional things you need to provision
+
+This module does not create the policies that allow you users to access the SSH secrets engine.
+Thus, by default, no user except for root token holders will be able to access the key signing
+facility.
+
+For example, to allow a user to access Nomad clients mounted at `ssh_nomad_client` with the
+`default` role, the following policy would work:
+
+```hcl
+path "ssh_nomad_client/sign/default" {
+  capabilities = ["create", "update"]
+}
+```
+
 ## How to SSH
 
 The [`vault ssh`](https://www.vaultproject.io/docs/commands/ssh.html) command is a helper script
@@ -70,4 +85,70 @@ vault ssh \
     -mount-point "ssh_nomad_client" \
     -role default \
     ubuntu@x.x.x.x
+```
+
+## Additional Server Types
+
+If you have a new "server type" or a different category of servers to control access to, you can
+make use of the automated bootstrap and configuration that this repository. You can always configure
+`sshd` manually if you elect not to do so.
+
+For example, you might want to add a separate cluster of [Nomad clients](../nomad-clients)
+and have their SSH access control be done separately.
+
+The following pre-requisites must be met when you want to make use of the automation:
+
+- You should install the bootstrap script using the [Ansible role](../core/packer/roles/install-ssh-script/) that is included by default using the default Packer images for the Core AMIs.
+- Your AMI must have Consul installed and configured to run Consul agent. Installation of Consul agent can be done using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and Consul Agent can be started and run using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul).- You need to mount a new instance of the Vault SSH secrets engine.
+- You need to create the appropriate keys in Consul KV store so that the bootstrap script will have the necessary information to bootstrap.
+- You will need to run the [bootstrap script](../core/packer/roles/install-ssh-script//files/configure.sh) in the instance at least once **after Consul Agent** is configured and running. By default, the script is installed to `/opt/vault-ssh` by the Ansible role. You can then run `/opt/vault-ssh --type ${server_type}`. Use the `--help` flag for more information.
+- You will need to write the appropriate policies for your users to access the new secrets engine and its role.
+
+For more information and examples, refer to the Packer templates and `user_data` scripts for
+the various types of servers in the [core module](../core).
+
+### Mounting a new instance of the SSH Secrets Engine
+
+This module has a [sub-module](ssh-engine) that can facilitate this process.
+
+### Consul KV Values
+
+The default [bootstrap script](../core/packer/roles/install-ssh-script//files/configure.sh) looks
+under the path `${prefix}vault-ssh/${server_type}`. The default prefix is `terraform/`.
+
+First, it looks to see if `${prefix}vault-ssh/${server_type}/enabled` is set to `yes`.
+
+Next, it looks for the path where the SSH secrets engine is mounted at the key
+`${prefix}vault-ssh/${server_type}/path`.
+
+### Terraform example
+
+The example below will show how you can configure the SSH secrets engine and values needed in
+Consul:
+
+```hcl
+module "additional_nomad_clients" {
+  source = "./ssh-engine"
+
+  enabled     = "yes"
+  path        = "additional_nomad_clients"
+  description = "Additional Nomad Client"
+
+  ssh_user  = "..."
+  ttl       = "..."
+  max_ttl   = "..."
+  role_name = "additional_nomad_clients"
+}
+
+resource "consul_key_prefix" "nomad_client" {
+  depends_on = ["module.additional_nomad_clients"]
+
+  path_prefix = "${var.consul_key_prefix}vault-ssh/additional_nomad_clients/"
+
+  subkeys {
+    enabled = "yes"
+    path    = "additional_nomad_clients"
+  }
+}
+
 ```

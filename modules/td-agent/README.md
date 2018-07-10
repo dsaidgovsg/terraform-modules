@@ -53,15 +53,14 @@ use of the automated bootstrap and configuration that this repository. You can a
 `td-agent` manually if you elect not to do so.
 
 For example, you might want to add a separate cluster of [Nomad clients](../nomad-clients)
-and have their metrics reported separately.
+and have their logs forwarded separately.
 
 The following pre-requisites must be met when you want to make use of the automation:
 
 - You should have installed `td-agent` and the bootstrap using the [Ansible role](../core/packer/roles/td-agent) that is included by default using the default Packer images for the Core AMIs.
-- Your AMI must have Consul installed and configured to run Consul agent.
-- You will also need to provide the appropriate `td-agent` configuration file while using the Ansible role.
+- Your AMI must have Consul installed and configured to run Consul agent. Installation of Consul agent can be done using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and Consul Agent can be started and run using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul).- You will also need to provide the appropriate `td-agent` configuration file while using the Ansible role.
 - Define the key under the path `${prefix}td-agent/${server_type}/enabled` in Consul KV store with value `yes`. The default `prefix` is `terraform/`.
-- Run the bootstrap script to initialise `td-agent` **after Consul agent has been started**. By default, the Ansible role installs the script to `/opt/run-td-agent`. For example, you can run `/opt/run-td-agent --type "${server_type}"`. Use the `--help` flag for more options.
+- Run the [bootstrap script](../core/packer/roles/td-agent/files/run-td-agent) to initialise `td-agent` **after Consul agent has been started**. By default, the Ansible role installs the script to `/opt/run-td-agent`. For example, you can run `/opt/run-td-agent --type "${server_type}"`. Use the `--help` flag for more options.
 
 For more information and examples, refer to the Packer templates and `user_data` scripts for
 the various types of servers in the [core module](../core).
