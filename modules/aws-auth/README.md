@@ -54,7 +54,7 @@ You can read about how EC2 instances can be authenticated with Vault
 
 ### Integrating with Consul Template
 
-The [`install-consul-template`](../core/packerroles/install-consul-template) Ansible role that is
+The [`install-consul-template`](../core/packer/roles/install-consul-template) Ansible role that is
 included by default in the Packer templates for the AMIs in the core module can help automate
 the process of acquiring a token with Vault and the continued renewal of the token. During the
 initial startup of an instance, a bootstrap script is invoked to acquire the Vault Token and then
@@ -64,7 +64,7 @@ In order to use the bootstrap script and role in your AMIs, you must make sure t
 requirements are met:
 
 - Install [supervisord](http://supervisord.org/).
-- Provision the AMI using the [`install-consul-template`](../core/packerroles/install-consul-template) Ansible role.
+- Provision the AMI using the [`install-consul-template`](../core/packer/roles/install-consul-template) Ansible role.
 - Run the `run-consul-template` script to bootstrap the instance.
 - Define the key under the path `${prefix}aws-auth/roles/${server_type}` in Consul KV store with the name of the role for the server type (see below).
 
