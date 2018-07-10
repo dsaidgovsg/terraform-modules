@@ -199,7 +199,7 @@ locals {
 }
 
 
-# Current AWS PRovider
+# Current AWS provider
 provider "aws" {
   # ...
 }
