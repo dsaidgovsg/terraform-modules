@@ -52,7 +52,7 @@ For each mount point, the role `default` is created.
 
 ### Additional things you need to provision
 
-This module does not create the policies that allow you users to access the SSH secrets engine.
+This module does not create the policies that allow users to access the SSH secrets engine.
 Thus, by default, no user except for root token holders will be able to access the key signing
 facility.
 
@@ -102,7 +102,7 @@ The following pre-requisites must be met when you want to make use of the automa
 - Your AMI must have Consul installed and configured to run Consul agent. Installation of Consul agent can be done using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and Consul Agent can be started and run using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul).
 - You need to mount a new instance of the Vault SSH secrets engine.
 - You need to create the appropriate keys in Consul KV store so that the bootstrap script will have the necessary information to bootstrap.
-- You will need to run the [bootstrap script](../core/packer/roles/install-ssh-script//files/configure.sh) in the instance at least once **after Consul Agent** is configured and running. By default, the script is installed to `/opt/vault-ssh` by the Ansible role. You can then run `/opt/vault-ssh --type ${server_type}`. Use the `--help` flag for more information.
+- You will need to run the [bootstrap script](../core/packer/roles/install-ssh-script/files/configure.sh) in the instance at least once **after Consul Agent** is configured and running. By default, the script is installed to `/opt/vault-ssh` by the Ansible role. You can then run `/opt/vault-ssh --type ${server_type}`. Use the `--help` flag for more information.
 - You will need to write the appropriate policies for your users to access the new secrets engine and its role.
 
 For more information and examples, refer to the Packer templates and `user_data` scripts for
@@ -114,7 +114,7 @@ This module has a [sub-module](ssh-engine) that can facilitate this process.
 
 ### Consul KV Values
 
-The default [bootstrap script](../core/packer/roles/install-ssh-script//files/configure.sh) looks
+The default [bootstrap script](../core/packer/roles/install-ssh-script/files/configure.sh) looks
 under the path `${prefix}vault-ssh/${server_type}`. The default prefix is `terraform/`.
 
 First, it looks to see if `${prefix}vault-ssh/${server_type}/enabled` is set to `yes`.
