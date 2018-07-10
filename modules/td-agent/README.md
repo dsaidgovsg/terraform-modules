@@ -1,6 +1,6 @@
 # `td-agent` module
 
-This module allows enabling of `td-agent` service for metrics reporting. Meant to be used in
+This module allows enabling of `td-agent` service for log forwarding. Meant to be used in
 instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
 
 ## Integration with `Core` module
@@ -45,3 +45,23 @@ configuration.
 If you wish to apply interpolation from `consul-template`, you may instead copy the configuration
 file to `/etc/td-agent/td-agent.conf.template`. `run-td-agent` will automatically detect this file
 and apply template interpolation, unless `--skip-template` is explicitly set for `run-td-agent`.
+
+## Additional Server Types
+
+If you have a new "server type" or a different category of servers to forward logs, you can make
+use of the automated bootstrap and configuration that this repository. You can always configure
+`td-agent` manually if you elect not to do so.
+
+For example, you might want to add a separate cluster of [Nomad clients](../nomad-clients)
+and have their metrics reported separately.
+
+The following pre-requisites must be met when you want to make use of the automation:
+
+- You should have installed `td-agent` and the bootstrap using the [Ansible role](../core/packer/roles/td-agent) that is included by default using the default Packer images for the Core AMIs.
+- Your AMI must have Consul installed and configured to run Consul agent.
+- You will also need to provide the appropriate `td-agent` configuration file while using the Ansible role.
+- Define the key under the path `${prefix}td-agent/${server_type}/enabled` in Consul KV store with value `yes`. The default `prefix` is `terraform/`.
+- Run the bootstrap script to initialise `td-agent` **after Consul agent has been started**. By default, the Ansible role installs the script to `/opt/run-td-agent`. For example, you can run `/opt/run-td-agent --type "${server_type}"`. Use the `--help` flag for more options.
+
+For more information and examples, refer to the Packer templates and `user_data` scripts for
+the various types of servers in the [core module](../core).
