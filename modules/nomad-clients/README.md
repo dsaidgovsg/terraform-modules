@@ -17,3 +17,4 @@ the integration. Refer to the documentation for additional information.
 - [AWS Authentication](../aws-auth): This integration is required for many other integration.
 - [`td-agent`](../td-agent)
 - [Telegraf](../telegraf)
+- [Vault SSH](../vault-ssh)
