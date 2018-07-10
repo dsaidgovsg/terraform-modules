@@ -65,7 +65,7 @@ module "nomad_client_consul_gossip" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_nomad_client" {
-  template = "${file("${path.module}/../core/user_data/user-data-nomad-client.sh")}"
+  template = "${file("${path.module}/user_data.sh")}"
 
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
