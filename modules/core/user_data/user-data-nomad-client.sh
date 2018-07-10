@@ -7,7 +7,7 @@
 set -e
 
 # Avoid Terraform template by either using double dollar signs, or not using curly braces
-readonly service_type="nomad_client"
+readonly service_type="${service_type}"
 
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/
@@ -26,7 +26,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
-    --server-type nomad_client \
+    --server-type "$service_type" \
     --dedup-enable \
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
