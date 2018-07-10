@@ -46,6 +46,8 @@
     dest: "/opt/consul/config/{{ item }}"
   vars:
     enable_syslog: "{{ consul_enable_syslog }}"
+    client_addr: "{{ consul_client_address }}"
   with_items:
   - syslog.hcl
+  - override.hcl
   become: yes

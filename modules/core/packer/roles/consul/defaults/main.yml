@@ -3,3 +3,4 @@ consul_module_version: "v0.1.0"
 consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
 consul_version: "1.2.0"
 consul_enable_syslog: true
+consul_client_address: "0.0.0.0"
