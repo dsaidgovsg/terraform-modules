@@ -99,7 +99,8 @@ and have their SSH access control be done separately.
 The following pre-requisites must be met when you want to make use of the automation:
 
 - You should install the bootstrap script using the [Ansible role](../core/packer/roles/install-ssh-script/) that is included by default using the default Packer images for the Core AMIs.
-- Your AMI must have Consul installed and configured to run Consul agent. Installation of Consul agent can be done using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and Consul Agent can be started and run using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul).- You need to mount a new instance of the Vault SSH secrets engine.
+- Your AMI must have Consul installed and configured to run Consul agent. Installation of Consul agent can be done using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and Consul Agent can be started and run using this [module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul).
+- You need to mount a new instance of the Vault SSH secrets engine.
 - You need to create the appropriate keys in Consul KV store so that the bootstrap script will have the necessary information to bootstrap.
 - You will need to run the [bootstrap script](../core/packer/roles/install-ssh-script//files/configure.sh) in the instance at least once **after Consul Agent** is configured and running. By default, the script is installed to `/opt/vault-ssh` by the Ansible role. You can then run `/opt/vault-ssh --type ${server_type}`. Use the `--help` flag for more information.
 - You will need to write the appropriate policies for your users to access the new secrets engine and its role.
