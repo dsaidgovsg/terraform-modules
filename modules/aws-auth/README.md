@@ -157,7 +157,7 @@ to assume the role. For example, the following policy would work:
 [account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 of the `current` account.
 
-You can acheive something similar using the
+You can achieve something similar using the
 [`aws_iam_role`](https://www.terraform.io/docs/providers/aws/r/iam_role.html) resource in Terraform.
 
 ### IAM policy for role in `other` account
@@ -167,7 +167,7 @@ scenario, we will have to give the role the
 [recommended IAM policy](https://www.vaultproject.io/docs/auth/aws.html#recommended-vault-iam-policy)
 so that Vault can verify the instances.
 
-We do this by using the AWs Console, CLI or Terraform to create a new policy and then
+We do this by using the AWS Console, CLI or Terraform to create a new policy and then
 [attach](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html) the policy
 to the IAM role.
 
