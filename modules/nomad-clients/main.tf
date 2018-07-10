@@ -1,3 +1,7 @@
+data "aws_vpc" "selected" {
+  id = "${var.vpc_id}"
+}
+
 # --------------------------------------------------------------------------------------------------
 # DEPLOY THE NOMAD CLIENT NODES
 # --------------------------------------------------------------------------------------------------
@@ -5,9 +9,9 @@
 module "nomad_clients" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
 
-  asg_name          = "${var.nomad_cluster_name}-client"
-  cluster_name      = "${var.nomad_cluster_name}-client"
-  cluster_tag_value = "${var.nomad_cluster_name}-client"
+  asg_name          = "${var.nomad_cluster_name}"
+  cluster_name      = "${var.nomad_cluster_name}"
+  cluster_tag_value = "${var.nomad_cluster_name}"
   instance_type     = "${var.nomad_client_instance_type}"
 
   min_size         = "${var.nomad_clients_min}"
@@ -20,11 +24,11 @@ module "nomad_clients" {
   root_volume_type = "${var.nomad_clients_root_volume_type}"
   root_volume_size = "${var.nomad_clients_root_volume_size}"
 
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.public_subnets}"
+  vpc_id     = "${var.vpc_id}"
+  subnet_ids = "${var.vpc_subnets}"
 
   ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 }
@@ -51,8 +55,8 @@ module "nomad_client_consul_gossip" {
   source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
 
   security_group_id                  = "${module.nomad_clients.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
-  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
+  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_security_group_ids = ["${var.consul_servers_security_group_id}"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -61,13 +65,13 @@ module "nomad_client_consul_gossip" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_nomad_client" {
-  template = "${file("${path.module}/user_data/user-data-nomad-client.sh")}"
+  template = "${file("${path.module}/user_data.sh")}"
 
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
     consul_prefix     = "${var.integration_consul_prefix}"
-    service_type      = "nomad_client"
+    service_type      = "${coalesce(var.integration_service_type, var.nomad_cluster_name)}"
   }
 }
 
@@ -78,5 +82,5 @@ resource "aws_security_group_rule" "nomad_client_services" {
   from_port         = 20000
   to_port           = 32000
   protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(module.vpc.vpc_cidr_block), var.nomad_clients_services_inbound_cidr)}"]
+  cidr_blocks       = ["${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"]
 }
