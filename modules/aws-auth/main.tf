@@ -42,6 +42,15 @@ resource "vault_aws_auth_backend_role" "vault" {
   period             = "${var.period_minutes}"
 }
 
+resource "vault_aws_auth_backend_role" "emr_instance" {
+  backend            = "${vault_auth_backend.aws.path}"
+  role               = "${var.emr_instance_role}"
+  auth_type          = "ec2"
+  bound_iam_role_arn = "${var.emr_instance_iam_role_arn}"
+  policies           = ["${sort(concat(var.base_policies, var.emr_instance_policies))}"]
+  period             = "${var.period_minutes}"
+}
+
 ################################################
 # Mark in Consul for the `core` module scripts to configure themselves
 ################################################
@@ -116,6 +125,16 @@ resource "consul_keys" "vault" {
   key {
     path   = "${var.consul_key_prefix}aws-auth/roles/vault"
     value  = "${var.vault_role}"
+    delete = true
+  }
+}
+
+resource "consul_keys" "emr_instance" {
+  count = "${var.core_integration ? 1 : 0}"
+
+  key {
+    path   = "${var.consul_key_prefix}aws-auth/roles/emr_instance"
+    value  = "${var.emr_instance_role}"
     delete = true
   }
 }

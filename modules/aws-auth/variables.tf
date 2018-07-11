@@ -22,6 +22,10 @@ variable "vault_iam_role_arn" {
   description = "ARN of the IAM role for Vault servers"
 }
 
+variable "emr_instance_iam_role_arn" {
+  description = "ARN of the IAM role for EMR instances"
+}
+
 # --------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
@@ -78,6 +82,16 @@ variable "vault_role" {
 
 variable "vault_policies" {
   description = "Policies to attach to Vault servers role"
+  default     = []
+}
+
+variable "emr_instance_role" {
+  description = "Name of the AWS authentication role for EMR instances"
+  default     = "emr-instance"
+}
+
+variable "emr_instance_policies" {
+  description = "Policies to attach to EMR instance role"
   default     = []
 }
 
