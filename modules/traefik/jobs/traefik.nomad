@@ -28,7 +28,7 @@ job "traefik" {
         args = [
           "--consul",
           "--consul.watch",
-          "--consul.endpoint=$${attr.unique.network.ip-address}:${consul_port}",
+          "--consul.endpoint=169.254.1.1:${consul_port}",
           "--consul.prefix=${traefik_consul_prefix}",
         ]
       }
