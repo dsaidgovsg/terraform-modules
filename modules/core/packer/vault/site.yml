@@ -60,6 +60,8 @@
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../roles/consul"
+    vars:
+      consul_client_address: "127.0.0.1 169.254.1.1"
   - name: Install Consul-Template
     include_role:
       name: "{{ playbook_dir }}/../roles/install-consul-template"
