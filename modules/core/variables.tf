@@ -3,6 +3,10 @@
 # You must provide a value for each of these parameters.
 # --------------------------------------------------------------------------------------------------
 
+variable "vpc_id" {
+  description = "ID of the VPC to launch the module in"
+}
+
 variable "nomad_clients_ami_id" {
   description = "AMI ID for Nomad clients"
 }
@@ -17,6 +21,31 @@ variable "consul_ami_id" {
 
 variable "vault_ami_id" {
   description = "AMI ID for Vault servers"
+}
+
+variable "consul_subnets" {
+  description = "List of subnets to launch Connsul servers in"
+  type        = "list"
+}
+
+variable "nomad_server_subnets" {
+  description = "List of subnets to launch Nomad servers in"
+  type        = "list"
+}
+
+variable "nomad_client_subnets" {
+  description = "List of subnets to launch Nomad clients in"
+  type        = "list"
+}
+
+variable "vault_subnets" {
+  description = "List of subnets to launch Vault servers in"
+  type        = "list"
+}
+
+variable "internal_lb_subnets" {
+  description = "List of subnets to deploy the internal LB to"
+  type        = "list"
 }
 
 variable "consul_allowed_inbound_cidr_blocks" {
@@ -70,47 +99,6 @@ variable "consul_api_domain" {
 
 variable "vault_api_domain" {
   description = "Domain to access Vault HTTP API"
-}
-
-# --------------------------------------------------------------------------------------------------
-# VPC PARAMETERS
-# --------------------------------------------------------------------------------------------------
-
-variable "vpc_name" {
-  description = "Name of the all the VPC resources"
-  default     = "My VPC"
-}
-
-variable "vpc_cidr" {
-  description = "CIDR for the VPC we will create"
-  default     = "192.168.0.0/16"
-}
-
-// Convention is for the MSB of the third octet to be zero for public subnet and one for private
-// subnets.
-
-variable "vpc_public_subnets_cidr" {
-  description = "CIDR for each of the subnets in the VPCs we want to create"
-  type        = "list"
-  default     = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24"]
-}
-
-variable "vpc_private_subnets_cidr" {
-  description = "CIDR for each of the private subnets in the VPCs we want to create"
-  type        = "list"
-  default     = ["192.168.240.0/24", "192.168.241.0/24", "192.168.242.0/24"]
-}
-
-variable "vpc_database_subnets_cidr" {
-  description = "A list of database subnets"
-  type        = "list"
-  default     = ["192.168.128.0/24", "192.168.129.0/24", "192.168.130.0/24"]
-}
-
-variable "vpc_azs" {
-  description = "Run the EC2 Instances in these Availability Zones"
-  type        = "list"
-  default     = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
 }
 
 # --------------------------------------------------------------------------------------------------
