@@ -21,11 +21,11 @@ module "nomad_servers" {
   root_volume_type = "${var.nomad_servers_root_volume_type}"
   root_volume_size = "${var.nomad_servers_root_volume_size}"
 
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.public_subnets}"
+  vpc_id     = "${var.vpc_id}"
+  subnet_ids = "${var.nomad_server_subnets}"
 
   ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 
@@ -55,7 +55,7 @@ module "nomad_server_consul_gossip" {
   source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
 
   security_group_id                  = "${module.nomad_servers.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(module.vpc.vpc_cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
   allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
 }
 

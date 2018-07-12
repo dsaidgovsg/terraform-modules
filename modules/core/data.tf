@@ -5,3 +5,7 @@ data "aws_route53_zone" "default" {
 data "aws_region" "current" {
   current = true
 }
+
+data "aws_vpc" "this" {
+  id = "${var.vpc_id}"
+}
