@@ -48,7 +48,7 @@ Then, configure it a file such as `backend-config.tfvars`. See
 
 ### AWS Pre-requisites
 
-- Create a VPC with the necessary subnets (public, private, database etc.) to deploy this to.
+- Create a VPC with the necessary subnets (public, private, database etc.) to deploy this to. For example, you can try [this module](https://github.com/terraform-aws-modules/terraform-aws-vpc).
 - Have a domain either registered with AWS Route 53 or other registrar.
 - Create an AWS Hosted zone for the domain or subdomain. If the domain is registered with another registrar, it must have its name servers set to AWS.
 - Use AWS Certficate Manager to request certificates for the domain and its wildcard subdomains. For example, you need to request a certificate that contains the names `nomad.some.domain` AND `*.nomad.some.domain`.
