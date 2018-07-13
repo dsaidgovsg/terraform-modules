@@ -42,6 +42,11 @@ job "traefik" {
           interval = "10s"
           timeout  = "2s"
           port     = "api"
+
+          check_restart {
+            limit = 3
+            grace = "60s"
+          }
         }
       }
 
