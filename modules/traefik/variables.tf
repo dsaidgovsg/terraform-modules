@@ -94,7 +94,7 @@ variable "elb_ssl_policy" {
 
 variable "traefik_version" {
   description = "Docker image tag of the version of Traefik to run"
-  default     = "v1.6-alpine"
+  default     = "v1.6.5-alpine"
 }
 
 variable "traefik_priority" {
