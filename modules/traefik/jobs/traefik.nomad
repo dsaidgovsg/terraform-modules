@@ -34,6 +34,7 @@ job "traefik" {
       }
 
       service {
+        name = "$${JOB}"
         port = "http"
 
         check {
