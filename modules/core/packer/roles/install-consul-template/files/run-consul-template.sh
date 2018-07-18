@@ -307,6 +307,12 @@ template {
   create_dest_dirs = true
   error_on_missing_key = true
   perms = 0600
+
+  # Vault Tokens should not change often. We can set this to something pretty long.
+  # If somehow you need to update the token, send a SIGHUP to consul-template.
+  wait {
+    min = "86400s"
+  }
 }
 EOF
 )
