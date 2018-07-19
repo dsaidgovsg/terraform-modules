@@ -1,4 +1,10 @@
 ---
+- name: Check for appropriate Ansible version
+  assert:
+    that:
+      - ansible_version.major == 2
+      - ansible_version.minor >= 6
+    msg: Ansible version must be at least 2.6 to use consul_kv. Also ensure you have python-consul installed.
 - name: Check for Consul Integration Enabled
   consul_kv:
     key: "{{ consul_integration_prefix }}vault-pki/enabled"

@@ -2,7 +2,7 @@
   nomad_version: "0.8.4"
   nomad_module_url: "https://github.com/hashicorp/terraform-aws-nomad.git"
   nomad_module_version: "v0.1.1"
-  docker_version: "18.05.0~ce~3-0~ubuntu"
+  docker_version: "18.06.0~ce~3-0~ubuntu"
   nomad_user: "nomad"
   consul_template_user: "root"
   nomad_enable_syslog: true
