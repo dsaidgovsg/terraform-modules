@@ -126,7 +126,7 @@ Environment=SERVICE_NAME=${type}
 ExecStart=/opt/td-agent/embedded/bin/fluentd --log /var/log/td-agent/td-agent.log --log-rotate-age ${rotate_age} --log-rotate-size ${rotate_size} --daemon /var/run/td-agent/td-agent.pid \$TD_AGENT_OPTIONS
 EOF
 )
-  echo ${override_conf} > "${service_override_dir}/override.conf"
+  echo "${override_conf}" > "${service_override_dir}/override.conf"
 
   systemctl enable td-agent
   systemctl start td-agent
