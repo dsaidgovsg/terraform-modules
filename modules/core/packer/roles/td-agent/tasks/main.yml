@@ -48,7 +48,7 @@
 - name: Disable the td-agent service for next configuration set-up
   service:
     name: td-agent
-    enabled: yes
+    enabled: no
     use: service
   become: yes
 - name: Remove install script
