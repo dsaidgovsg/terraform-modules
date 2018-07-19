@@ -113,11 +113,22 @@ function consul_kv_with_default {
 function enable_td_agent {
   local readonly type="${1}"
   local readonly service_override_dir="${2}"
+  local readonly rotate_age="${3}"
+  local readonly rotate_size="${4}"
 
-  log_info "Enabling and starting service td-agent for type $type..."
+  log_info "Enabling and starting service td-agent for type ${type}..."
 
-  mkdir -p "$service_override_dir"
-  echo -e "[Service]\nEnvironment=SERVICE_NAME=$type" > "$service_override_dir/override.conf"
+  mkdir -p "${service_override_dir}"
+
+  # To override an existing value ExecStart, the value must be set to empty first
+  local readonly override_conf=$(cat <<EOF
+[Service]
+Environment=SERVICE_NAME=${type}
+ExecStart=
+ExecStart=/opt/td-agent/embedded/bin/fluentd --log /var/log/td-agent/td-agent.log --log-rotate-age ${rotate_age} --log-rotate-size ${rotate_size} --daemon /var/run/td-agent/td-agent.pid \$TD_AGENT_OPTIONS
+EOF
+)
+  echo "${override_conf}" > "${service_override_dir}/override.conf"
 
   systemctl enable td-agent
   systemctl start td-agent
@@ -131,6 +142,8 @@ function main {
   local skip_template="false"
   local conf_template="/etc/td-agent/td-agent.conf.template"
   local conf_out="/etc/td-agent/td-agent.conf"
+  local rotate_age="5"
+  local rotate_size="104857600"
 
   local readonly service_override_dir="/etc/systemd/system/td-agent.service.d"
 
@@ -159,6 +172,16 @@ function main {
       --conf-out)
         assert_not_empty "$key" "$2"
         conf_out="$2"
+        shift
+        ;;
+      --rotate-age)
+        assert_not_empty "$key" "$2"
+        rotate_age="$2"
+        shift
+        ;;
+      --rotate-size)
+        assert_not_empty "$key" "$2"
+        rotate_size="$2"
         shift
         ;;
       --help)
@@ -196,7 +219,7 @@ function main {
       log_info "consul-template applied successfully!"
     fi
 
-    enable_td_agent "$type" "$service_override_dir"
+    enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
   fi
 }
 
