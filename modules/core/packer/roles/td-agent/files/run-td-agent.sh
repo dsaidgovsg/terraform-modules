@@ -120,9 +120,11 @@ function enable_td_agent {
 
   mkdir -p "${service_override_dir}"
 
+  # To override an existing value ExecStart, the value must be set to empty first
   local readonly override_conf=$(cat <<EOF
 [Service]
 Environment=SERVICE_NAME=${type}
+ExecStart=
 ExecStart=/opt/td-agent/embedded/bin/fluentd --log /var/log/td-agent/td-agent.log --log-rotate-age ${rotate_age} --log-rotate-size ${rotate_size} --daemon /var/run/td-agent/td-agent.pid \$TD_AGENT_OPTIONS
 EOF
 )
