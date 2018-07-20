@@ -6,6 +6,11 @@ Some reusable Terraform modules.
 
 This module sets up a VPC, and a Consul and Nomad cluster to allow you to run applications on.
 
+## [Amazon Linux](modules/amazon-linux)
+
+This module provides Amazon Linux specific Ansible roles for installation of some of the services
+from Core on Amazon Linux AMI.
+
 ## [AWS Authentication](modules/aws-auth)
 
 This module configures Vault to accept authentication via EC2 instance metadata. This is required
