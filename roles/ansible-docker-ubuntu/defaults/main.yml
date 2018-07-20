@@ -1,0 +1,4 @@
+---
+docker_version: "18.02.0~ce-0~ubuntu"
+docker_compose_version: "1.19.0"
+docker_py_version: "3.1.1"

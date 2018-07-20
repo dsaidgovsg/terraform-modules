@@ -1,0 +1,107 @@
+---
+# apt / yum install essential packages
+- name: Set and check OS family
+  block:
+  - set_fact:
+      is_debian: ansible_os_family == "Debian"
+      is_redhat: ansible_os_family == "RedHat"
+  - assert:
+      that: is_debian or is_redhat
+      msg: "Only Debian and Redhat OS families are supported"
+
+- name: Install dnsmasq and git
+  block:
+  - apt:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - dnsmasq
+    - git
+    become: yes
+    when: is_debian
+  - yum:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - dnsmasq
+    - git
+    become: yes
+    when: is_redhat
+  
+- name: Configure dnsmasq
+  copy:
+    src: "{{ role_path }}/files/10-consul"
+    dest: "/etc/dnsmasq.d/10-consul"
+  become: yes
+
+# See https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9
+- name: Setup Dummy interface (Debian)
+  block:
+  - name: Copy systemd files
+    copy:
+      src: "{{ role_path }}/files/dummy/{{ item }}"
+      dest: "/etc/systemd/network/{{ item }}"
+    with_items:
+      - dummy0.netdev
+      - dummy0.network
+    become: yes
+  - name: Enable systemd-networkd.service
+    shell: "systemctl enable systemd-networkd.service"
+    become: yes
+  when: is_debian
+- name: Setup Dummy interface (RedHat)
+  block:
+  # Amazon Linux follows RHEL6 closely
+  # https://jamielinux.com/docs/libvirt-networking-handbook/appendix/dummy-interface-on-rhel.html
+  - name: Create dummy network interface
+    copy:
+      src: "{{ role_path }}/files/dummy/dummy.modules"
+      dest: "/etc/sysconfig/modules/dummy.modules"
+      mode: 0755
+    become: yes
+  - name: Copy sysconfig/network-scripts files
+    copy:
+      src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
+      dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
+    become: yes
+  - name: Append 127.0.0.1 as nameserver to use dnsmasq on next start-up
+    copy:
+      src: "{{ role_path }}/files/dummy/dhclient.conf"
+      dest: "/etc/dhcp/dhclient.conf"
+      mode: 0644
+    become: yes
+  - name: Enable network service on-startup
+    service:
+      name: network
+      enabled: yes
+    become: yes
+  - name: Enable dnsmasq service on-startup
+    service:
+      name: dnsmasq
+      enabled: yes
+    become: yes
+  when: is_redhat
+
+- name: Clone Consul module
+  git:
+    repo: "{{ consul_module_repo }}"
+    dest: "/tmp/terraform-aws-consul"
+    version: "{{ consul_module_version }}"
+- name: Install Consul
+  shell: "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{ consul_version }}"
+- name: "Copy Consul configuration"
+  copy:
+    src: "{{ role_path }}/files/config/"
+    dest: "/opt/consul/config"
+  become: yes
+- name: "Copy Consul template sub-configurations"
+  template:
+    src: "{{ role_path }}/files/templates/{{ item }}"
+    dest: "/opt/consul/config/{{ item }}"
+  vars:
+    enable_syslog: "{{ consul_enable_syslog }}"
+    client_addr: "{{ consul_client_address }}"
+  with_items:
+  - syslog.hcl
+  - override.hcl
+  become: yes
