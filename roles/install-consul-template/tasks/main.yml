@@ -14,9 +14,6 @@
     state: present
   become: yes
   when: is_debian
-- name: Check upstart is installed
-  shell: command -v initctl
-  when: is_redhat
 
 - name: Check Consul is installed
   shell: "consul version"
