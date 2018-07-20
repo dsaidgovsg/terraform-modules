@@ -39,7 +39,7 @@
   block:
   - name: Copy systemd files
     copy:
-      src: "{{ role_path }}/files/dummy/{{ item }}"
+      src: "{{ role_path }}/files/dummy-debian/{{ item }}"
       dest: "/etc/systemd/network/{{ item }}"
     with_items:
       - dummy0.netdev
@@ -55,18 +55,18 @@
   # https://jamielinux.com/docs/libvirt-networking-handbook/appendix/dummy-interface-on-rhel.html
   - name: Create dummy network interface
     copy:
-      src: "{{ role_path }}/files/dummy/dummy.modules"
+      src: "{{ role_path }}/files/dummy-redhat/dummy.modules"
       dest: "/etc/sysconfig/modules/dummy.modules"
       mode: 0755
     become: yes
   - name: Copy sysconfig/network-scripts files
     copy:
-      src: "{{ role_path }}/files/dummy/ifcfg-dummy0"
+      src: "{{ role_path }}/files/dummy-redhat/ifcfg-dummy0"
       dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
     become: yes
   - name: Append 127.0.0.1 as nameserver to use dnsmasq on next start-up
     copy:
-      src: "{{ role_path }}/files/dummy/dhclient.conf"
+      src: "{{ role_path }}/files/dummy-redhat/dhclient.conf"
       dest: "/etc/dhcp/dhclient.conf"
       mode: 0644
     become: yes
