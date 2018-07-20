@@ -1,5 +1,4 @@
 ---
-# apt / yum install essential packages
 - name: Set and check OS family
   block:
   - set_fact:
