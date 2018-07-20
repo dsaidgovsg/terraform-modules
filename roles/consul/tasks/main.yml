@@ -1,31 +1,31 @@
 ---
-- name: Set and check OS family
-  block:
-  - set_fact:
-      is_debian: ansible_os_family == "Debian"
-      is_redhat: ansible_os_family == "RedHat"
-  - assert:
-      that: is_debian or is_redhat
-      msg: "Only Debian and Redhat OS families are supported"
+- name: Set OS family flag
+  set_fact:
+    is_debian: ansible_os_family == "Debian"
+    is_redhat: ansible_os_family == "RedHat"
+- name: And check OS family flag
+  assert:
+    that: is_debian or is_redhat
+    msg: "Only Debian and Redhat OS families are supported"
 
-- name: Install dnsmasq and git
-  block:
-  - apt:
-      name: "{{ item }}"
-      state: latest
-    with_items:
-    - dnsmasq
-    - git
-    become: yes
-    when: is_debian
-  - yum:
-      name: "{{ item }}"
-      state: latest
-    with_items:
-    - dnsmasq
-    - git
-    become: yes
-    when: is_redhat
+- name: Install dnsmasq and git via apt
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - dnsmasq
+  - git
+  become: yes
+  when: is_debian
+- name: Install dnsmasq and git via yum
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - dnsmasq
+  - git
+  become: yes
+  when: is_redhat
   
 - name: Configure dnsmasq
   copy:
@@ -34,52 +34,52 @@
   become: yes
 
 # See https://medium.com/zendesk-engineering/making-docker-and-consul-get-along-5fceda1d52b9
-- name: Setup Dummy interface
+- name: Setup Dummy interface via system set-up
   block:
-  - block:
-    - name: Copy systemd files
-      copy:
-        src: "{{ role_path }}/files/dummy-debian/{{ item }}"
-        dest: "/etc/systemd/network/{{ item }}"
-      with_items:
-        - dummy0.netdev
-        - dummy0.network
-      become: yes
-    - name: Enable systemd-networkd.service
-      shell: "systemctl enable systemd-networkd.service"
-      become: yes
-    when: is_debian
-  - block:
-    # Amazon Linux follows RHEL6 closely
-    # https://jamielinux.com/docs/libvirt-networking-handbook/appendix/dummy-interface-on-rhel.html
-    - name: Create dummy network interface
-      copy:
-        src: "{{ role_path }}/files/dummy-redhat/dummy.modules"
-        dest: "/etc/sysconfig/modules/dummy.modules"
-        mode: 0755
-      become: yes
-    - name: Copy sysconfig/network-scripts files
-      copy:
-        src: "{{ role_path }}/files/dummy-redhat/ifcfg-dummy0"
-        dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
-      become: yes
-    - name: Append 127.0.0.1 as nameserver to use dnsmasq on next start-up
-      copy:
-        src: "{{ role_path }}/files/dummy-redhat/dhclient.conf"
-        dest: "/etc/dhcp/dhclient.conf"
-        mode: 0644
-      become: yes
-    - name: Enable network service on-startup
-      service:
-        name: network
-        enabled: yes
-      become: yes
-    - name: Enable dnsmasq service on-startup
-      service:
-        name: dnsmasq
-        enabled: yes
-      become: yes
-    when: is_redhat
+  - name: Copy systemd files
+    copy:
+      src: "{{ role_path }}/files/dummy-debian/{{ item }}"
+      dest: "/etc/systemd/network/{{ item }}"
+    with_items:
+      - dummy0.netdev
+      - dummy0.network
+    become: yes
+  - name: Enable systemd-networkd.service
+    shell: "systemctl enable systemd-networkd.service"
+    become: yes
+  when: is_debian
+- name: Setup Dummy interface via sysconfig set-up
+  block:
+  # Amazon Linux follows RHEL6 closely
+  # https://jamielinux.com/docs/libvirt-networking-handbook/appendix/dummy-interface-on-rhel.html
+  - name: Create dummy network interface
+    copy:
+      src: "{{ role_path }}/files/dummy-redhat/dummy.modules"
+      dest: "/etc/sysconfig/modules/dummy.modules"
+      mode: 0755
+    become: yes
+  - name: Copy sysconfig/network-scripts files
+    copy:
+      src: "{{ role_path }}/files/dummy-redhat/ifcfg-dummy0"
+      dest: "/etc/sysconfig/network-scripts/ifcfg-dummy0"
+    become: yes
+  - name: Append 127.0.0.1 as nameserver to use dnsmasq on next start-up
+    copy:
+      src: "{{ role_path }}/files/dummy-redhat/dhclient.conf"
+      dest: "/etc/dhcp/dhclient.conf"
+      mode: 0644
+    become: yes
+  - name: Enable network service on-startup
+    service:
+      name: network
+      enabled: yes
+    become: yes
+  - name: Enable dnsmasq service on-startup
+    service:
+      name: dnsmasq
+      enabled: yes
+    become: yes
+  when: is_redhat
 
 - name: Clone Consul module
   git:

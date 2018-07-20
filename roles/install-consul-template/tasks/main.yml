@@ -1,23 +1,22 @@
 ---
-- name: Set and check OS family
-  block:
-  - set_fact:
-      is_debian: ansible_os_family == "Debian"
-      is_redhat: ansible_os_family == "RedHat"
-  - assert:
-      that: is_debian or is_redhat
-      msg: "Only Debian and Redhat OS families are supported"
+- name: Set OS family flag
+  set_fact:
+    is_debian: ansible_os_family == "Debian"
+    is_redhat: ansible_os_family == "RedHat"
+- name: And check OS family flag
+  assert:
+    that: is_debian or is_redhat
+    msg: "Only Debian and Redhat OS families are supported"
 
-- block:
-  - name: Check supervisor is installed
-    apt:
-      name: supervisor
-      state: present
-    become: yes
-    when: is_debian
-  - name: Check upstart is installed
-    shell: command -v initctl
-    when: is_redhat
+- name: Check supervisor is installed
+  apt:
+    name: supervisor
+    state: present
+  become: yes
+  when: is_debian
+- name: Check upstart is installed
+  shell: command -v initctl
+  when: is_redhat
 
 - name: Check Consul is installed
   shell: "consul version"
@@ -65,42 +64,41 @@
     state: link
   become: yes
 
-- name: Install run-consul-template
-  block:
-  - copy:
-      src: "{{ role_path }}/files/run-consul-template-debian.sh"
-      dest: "{{ base_path }}/bin/run-consul-template"
-      group: "{{ consul_template_user }}"
-      owner: "{{ consul_template_user }}"
-      mode: 0755
-    become: yes
-    when: is_debian
-  - copy:
-      src: "{{ role_path }}/files/run-consul-template-redhat.sh"
-      dest: "{{ base_path }}/bin/run-consul-template"
-      group: "{{ consul_template_user }}"
-      owner: "{{ consul_template_user }}"
-      mode: 0755
-    become: yes
-    when: is_redhat
+- name: Install run-consul-template for Debian set-up
+  copy:
+    src: "{{ role_path }}/files/run-consul-template-debian.sh"
+    dest: "{{ base_path }}/bin/run-consul-template"
+    group: "{{ consul_template_user }}"
+    owner: "{{ consul_template_user }}"
+    mode: 0755
+  become: yes
+  when: is_debian
+- name: Install run-consul-template for RedHat set-up
+  copy:
+    src: "{{ role_path }}/files/run-consul-template-redhat.sh"
+    dest: "{{ base_path }}/bin/run-consul-template"
+    group: "{{ consul_template_user }}"
+    owner: "{{ consul_template_user }}"
+    mode: 0755
+  become: yes
+  when: is_redhat
 
 # Allows Consul template to send signals to tasks or restart tasks
-- block:
-  - name: "Allow {{ consul_template_user }} to use sudo with supervisorctl"
-    lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^{{ consul_template_user }}'
-      line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
-      validate: 'visudo -cf %s'
-    become: yes
-    when: is_debian and consul_template_user != "root"
-  - name: "Allow {{ consul_template_user }} to use sudo with initctl"
-    lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^{{ consul_template_user }}'
-      line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ initctl }}'
-      validate: 'visudo -cf %s'
-    become: yes
-    when: is_redhat and consul_template_user != "root"
+- name: "Allow {{ consul_template_user }} to use sudo with supervisorctl"
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ consul_template_user }}'
+    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
+    validate: 'visudo -cf %s'
+  become: yes
+  when: is_debian and consul_template_user != "root"
+- name: "Allow {{ consul_template_user }} to use sudo with initctl"
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ consul_template_user }}'
+    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ initctl }}'
+    validate: 'visudo -cf %s'
+  become: yes
+  when: is_redhat and consul_template_user != "root"
