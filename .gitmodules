@@ -1,0 +1,6 @@
+[submodule "roles/ansible-docker-ubuntu"]
+	path = roles/ansible-docker-ubuntu
+	url = https://github.com/lawliet89/ansible-docker-ubuntu.git
+[submodule "roles/ansible-ca-store"]
+	path = roles/ansible-ca-store
+	url = https://github.com/lawliet89/ansible-ca-store.git
