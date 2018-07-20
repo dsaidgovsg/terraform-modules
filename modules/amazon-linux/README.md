@@ -5,8 +5,8 @@ based AMI, which is useful when setting up custom AMI for
 [AWS EMR](https://aws.amazon.com/emr/), which only accept Amazon Linux based AMI
 at the moment.
 
-This is mirrors some of the Ansible playbooks in [core](../core/packer/roles)
-and converts some tasks that are specific to Ubuntu / `apt` into Amazon Linux /
+This mirrors some of the Ansible playbooks in [core](../core/packer/roles) and
+converts some tasks that are specific to Ubuntu / `apt` into Amazon Linux /
 `yum` ones.
 
 ## How to use
