@@ -1,3 +1,0 @@
----
-certificate: "{{ playbook_dir }}/ca.crt"
-certificate_rename: "ca.crt"
