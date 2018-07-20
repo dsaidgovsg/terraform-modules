@@ -5,7 +5,7 @@ consul_template_version: "0.19.5"
 consul_template_user: root
 # Base path to install
 base_path: "/opt/consul-template"
-# Path to supervisorctl binary (Debian)
+# Path to supervisorctl binary for Debian
 supervisorctl: "/usr/bin/supervisorctl"
-# Path to Upstart binary (RedHat)
+# Path to Upstart binary for RedHat
 initctl: "/sbin/initctl"
