@@ -366,7 +366,6 @@ EOF
 
 function start_consul_template_for_supervisor {
   log_info "Reloading Supervisor config and starting Consul Template"
-
   supervisorctl reread
   supervisorctl update
 }
