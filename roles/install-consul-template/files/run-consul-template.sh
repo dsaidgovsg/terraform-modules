@@ -9,13 +9,14 @@ readonly DEFAULT_CONFIG_FILE="default.hcl"
 readonly VAULT_CONFIG_FILE="vault.hcl"
 readonly VAULT_TOKEN_TEMPLATE="template_vault_token.hcl"
 
-readonly SUPERVISOR_CONFIG_PATH="/etc/supervisor/conf.d/run-consul-template.conf"
-
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
+
+readonly SUPERVISORCTL="supervisorctl"
+readonly INITCTL="initctl"
 
 function print_usage {
   echo
@@ -82,6 +83,11 @@ function strip_prefix {
   echo "${str#$prefix}"
 }
 
+function check_is_installed {
+  local readonly name="$1"
+  echo $(command -v "${name}")
+}
+
 function assert_not_empty {
   local readonly arg_name="$1"
   local readonly arg_value="$2"
@@ -96,8 +102,8 @@ function assert_not_empty {
 function assert_is_installed {
   local readonly name="$1"
 
-  if [[ ! $(command -v ${name}) ]]; then
-    log_error "The binary '$name' is required by this script but is not installed or in the system's PATH."
+  if [[ ! $(check_is_installed ${name}) ]]; then
+    echo "The binary '$name' is required by this script but is not installed or in the system's PATH."
     exit 1
   fi
 }
@@ -250,6 +256,49 @@ environment=$consul_template_environment
 EOF
 }
 
+function generate_upstart_config {
+  local readonly upstart_config_path="$1"
+  local readonly consul_template_config_dir="$2"
+  local readonly consul_template_log_dir="$3"
+  local readonly consul_template_bin_dir="$4"
+  local readonly consul_template_user="$5"
+  local readonly consul_template_environment="$6"
+
+  log_info "Creating Upstart config file to run Consul Template in $upstart_config_path"
+  cat > "$upstart_config_path" <<EOF
+description "Consul Template"
+
+start on (runlevel [2345] and started network)
+stop on (runlevel [!2345] or stopping network)
+
+# Allow service to revive after crash
+respawn
+
+script
+  export PATH=/usr/local/bin:$PATH $consul_template_environment
+
+  # https://superuser.com/questions/213416/running-upstart-jobs-as-unprivileged-users
+  # https://stackoverflow.com/questions/8251933/how-can-i-log-the-stdout-of-a-process-started-by-start-stop-daemon
+  exec /usr/local/bin/start-stop-daemon --start -c $consul_template_user \
+    --make-pidfile --pidfile /var/run/consul-template.pid \
+    --startas /bin/bash -- -c \
+    "exec '"$consul_template_bin_dir/consul-template"' -config '"$consul_template_config_dir"' >> '"$consul_template_log_dir/consul-template-stdout.log"' 2>&1"
+end script
+EOF
+}
+
+function generate_ctl_config {
+  local readonly ctl="${1}"
+  
+  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    shift
+    generate_supervisor_config "$@"
+  elif [[ "${ctl}" == "$INITCTL" ]]; then
+    shift
+    generate_initctl_config "$@"
+  fi
+}
+
 function generate_vault_config {
   local readonly vault_address="${1}"
   local readonly config_dir="${2}"
@@ -315,11 +364,26 @@ EOF
   chown "$user:$user" "$config_path"
 }
 
-function start_consul_template {
+function start_consul_template_for_supervisor {
   log_info "Reloading Supervisor config and starting Consul Template"
 
   supervisorctl reread
   supervisorctl update
+}
+
+function start_consul_template_for_upstart {
+  log_info "Reloading Upstart config and starting Consul Template"
+  initctl reload-configuration
+}
+
+function start_consul_template {
+  local readonly ctl="${1}"
+
+  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    start_consul_template_for_supervisor
+  elif [[ "${ctl}" == "$INITCTL" ]]; then
+    start_consul_template_for_upstart
+  fi
 }
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
@@ -430,7 +494,22 @@ function run {
     shift
   done
 
-  assert_is_installed "supervisorctl"
+  # For supervisorctl and initctl switching
+  local readonly has_supervisorctl="$(check_is_installed "$SUPERVISORCTL")"
+  local readonly has_initctl="$(check_is_installed "$INITCTL")"
+  local readonly ctl=$(([[ $has_supervisorctl ]] && echo "$SUPERVISORCTL") || ([[ $has_initctl ]] && echo "$INITCTL"))
+
+  if [[ ! "${ctl}" ]]; then
+    log_error "Need $SUPERVISORCTL or $INITCTL to continue configuration."
+    exit 1
+  fi
+
+  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    readonly config_ctl_path="/etc/supervisor/conf.d/run-consul-template.conf"
+  elif [[ "${ctl}" == "$INITCTL" ]]; then
+    readonly config_ctl_path="/etc/init/run-consul-template.conf"
+  fi
+
   assert_is_installed "consul"
   assert_is_installed "consul-template"
 
@@ -488,8 +567,8 @@ function run {
     fi
   fi
 
-  generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
-  start_consul_template
+  generate_ctl_config "$ctl" "$config_ctl_path" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
+  start_consul_template "$ctl"
 }
 
 run "$@"
