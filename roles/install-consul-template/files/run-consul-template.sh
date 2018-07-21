@@ -295,7 +295,7 @@ function generate_ctl_config {
     generate_supervisor_config "$@"
   elif [[ "${ctl}" == "$INITCTL" ]]; then
     shift
-    generate_initctl_config "$@"
+    generate_upstart_config "$@"
   fi
 }
 
