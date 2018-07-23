@@ -290,12 +290,12 @@ EOF
 function generate_ctl_config {
   local readonly ctl="${1}"
   
-  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
-    shift
-    generate_supervisor_config "$@"
-  elif [[ "${ctl}" == "$INITCTL" ]]; then
+  if [[ "${ctl}" == "$INITCTL" ]]; then
     shift
     generate_upstart_config "$@"
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    shift
+    generate_supervisor_config "$@"
   fi
 }
 
@@ -378,10 +378,10 @@ function start_consul_template_for_upstart {
 function start_consul_template {
   local readonly ctl="${1}"
 
-  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
-    start_consul_template_for_supervisor
-  elif [[ "${ctl}" == "$INITCTL" ]]; then
+  if [[ "${ctl}" == "$INITCTL" ]]; then
     start_consul_template_for_upstart
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    start_consul_template_for_supervisor
   fi
 }
 
@@ -493,20 +493,20 @@ function run {
     shift
   done
 
-  # For supervisorctl and initctl switching
-  local readonly has_supervisorctl="$(check_is_installed "$SUPERVISORCTL")"
+  # For initctl and supervisorctl switching
   local readonly has_initctl="$(check_is_installed "$INITCTL")"
-  local readonly ctl=$(([[ $has_supervisorctl ]] && echo "$SUPERVISORCTL") || ([[ $has_initctl ]] && echo "$INITCTL"))
+  local readonly has_supervisorctl="$(check_is_installed "$SUPERVISORCTL")"
+  local readonly ctl=$(([[ $has_initctl ]] && echo "$INITCTL") || ([[ $has_supervisorctl ]] && echo "$SUPERVISORCTL"))
 
   if [[ ! "${ctl}" ]]; then
-    log_error "Need $SUPERVISORCTL or $INITCTL to continue configuration."
+    log_error "Need $INITCTL or $SUPERVISORCTL  to continue configuration."
     exit 1
   fi
 
-  if [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
-    readonly config_ctl_path="/etc/supervisor/conf.d/run-consul-template.conf"
-  elif [[ "${ctl}" == "$INITCTL" ]]; then
+  if [[ "${ctl}" == "$INITCTL" ]]; then
     readonly config_ctl_path="/etc/init/run-consul-template.conf"
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    readonly config_ctl_path="/etc/supervisor/conf.d/run-consul-template.conf"
   fi
 
   assert_is_installed "consul"
