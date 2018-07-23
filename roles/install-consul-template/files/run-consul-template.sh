@@ -83,11 +83,6 @@ function strip_prefix {
   echo "${str#$prefix}"
 }
 
-function check_is_installed {
-  local readonly name="$1"
-  echo $(command -v "${name}")
-}
-
 function assert_not_empty {
   local readonly arg_name="$1"
   local readonly arg_value="$2"
@@ -102,8 +97,25 @@ function assert_not_empty {
 function assert_is_installed {
   local readonly name="$1"
 
-  if [[ ! $(check_is_installed ${name}) ]]; then
-    echo "The binary '$name' is required by this script but is not installed or in the system's PATH."
+  if [[ ! $(command -v ${name}) ]]; then
+    log_error "The binary '$name' is required by this script but is not installed or in the system's PATH."
+    exit 1
+  fi
+}
+
+function assert_os_get_ctl {
+  # https://superuser.com/questions/291210/how-to-get-amazon-ec2-instance-operating-system-info#answer-291242
+  local readonly is_ubuntu=$(cat /etc/issue | grep "Ubuntu")
+  local readonly is_amazon_linux=$(cat /etc/issue | grep "Amazon Linux")
+
+  if [[ "${is_ubuntu}" ]]; then
+    assert_is_installed "$SUPERVISORCTL"
+    echo "$SUPERVISORCTL"
+  elif [[ "${is_amazon_linux}" ]]; then
+    assert_is_installed "$INITCTL"
+    echo "$INITCTL"
+  else
+    log_error "Only Ubuntu and Amazon Linux are currently supported."
     exit 1
   fi
 }
@@ -494,14 +506,7 @@ function run {
   done
 
   # For initctl and supervisorctl switching
-  local readonly has_initctl="$(check_is_installed "$INITCTL")"
-  local readonly has_supervisorctl="$(check_is_installed "$SUPERVISORCTL")"
-  local readonly ctl=$(([[ $has_initctl ]] && echo "$INITCTL") || ([[ $has_supervisorctl ]] && echo "$SUPERVISORCTL"))
-
-  if [[ ! "${ctl}" ]]; then
-    log_error "Need $INITCTL or $SUPERVISORCTL  to continue configuration."
-    exit 1
-  fi
+  local readonly ctl="$(assert_os_get_ctl)"
 
   if [[ "${ctl}" == "$INITCTL" ]]; then
     readonly config_ctl_path="/etc/init/run-consul-template.conf"
