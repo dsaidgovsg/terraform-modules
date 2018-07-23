@@ -1,9 +1,20 @@
 ---
+- name: Set OS family flag
+  set_fact:
+    is_debian: ansible_os_family == "Debian"
+    is_redhat: ansible_os_family == "RedHat"
+- name: And check OS family flag
+  assert:
+    that: is_debian or is_redhat
+    msg: "Only Debian and Redhat OS families are supported"
+
 - name: Check supervisor is installed
   apt:
     name: supervisor
     state: present
   become: yes
+  when: is_debian
+
 - name: Check Consul is installed
   shell: "consul version"
 - name: Check Consul Template user exists
@@ -57,6 +68,7 @@
     owner: "{{ consul_template_user }}"
     mode: 0755
   become: yes
+
 # Allows Consul template to send signals to tasks or restart tasks
 - name: "Allow {{ consul_template_user }} to use sudo with supervisorctl"
   lineinfile:
@@ -66,4 +78,13 @@
     line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
     validate: 'visudo -cf %s'
   become: yes
-  when: consul_template_user != "root"
+  when: is_debian and consul_template_user != "root"
+- name: "Allow {{ consul_template_user }} to use sudo with initctl"
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ consul_template_user }}'
+    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ initctl }}'
+    validate: 'visudo -cf %s'
+  become: yes
+  when: is_redhat and consul_template_user != "root"

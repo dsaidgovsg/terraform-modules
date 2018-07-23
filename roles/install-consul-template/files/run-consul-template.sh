@@ -9,13 +9,14 @@ readonly DEFAULT_CONFIG_FILE="default.hcl"
 readonly VAULT_CONFIG_FILE="vault.hcl"
 readonly VAULT_TOKEN_TEMPLATE="template_vault_token.hcl"
 
-readonly SUPERVISOR_CONFIG_PATH="/etc/supervisor/conf.d/run-consul-template.conf"
-
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
+
+readonly SUPERVISORCTL="supervisorctl"
+readonly INITCTL="initctl"
 
 function print_usage {
   echo
@@ -98,6 +99,23 @@ function assert_is_installed {
 
   if [[ ! $(command -v ${name}) ]]; then
     log_error "The binary '$name' is required by this script but is not installed or in the system's PATH."
+    exit 1
+  fi
+}
+
+function assert_os_get_ctl {
+  # https://superuser.com/questions/291210/how-to-get-amazon-ec2-instance-operating-system-info#answer-291242
+  local readonly is_ubuntu=$(cat /etc/issue | grep "Ubuntu")
+  local readonly is_amazon_linux=$(cat /etc/issue | grep "Amazon Linux")
+
+  if [[ "${is_ubuntu}" ]]; then
+    assert_is_installed "$SUPERVISORCTL"
+    echo "$SUPERVISORCTL"
+  elif [[ "${is_amazon_linux}" ]]; then
+    assert_is_installed "$INITCTL"
+    echo "$INITCTL"
+  else
+    log_error "Only Ubuntu and Amazon Linux are currently supported."
     exit 1
   fi
 }
@@ -250,6 +268,49 @@ environment=$consul_template_environment
 EOF
 }
 
+function generate_upstart_config {
+  local readonly upstart_config_path="$1"
+  local readonly consul_template_config_dir="$2"
+  local readonly consul_template_log_dir="$3"
+  local readonly consul_template_bin_dir="$4"
+  local readonly consul_template_user="$5"
+  local readonly consul_template_environment="$6"
+
+  log_info "Creating Upstart config file to run Consul Template in $upstart_config_path"
+  cat > "$upstart_config_path" <<EOF
+description "Consul Template"
+
+start on (runlevel [2345] and started network)
+stop on (runlevel [!2345] or stopping network)
+
+# Allow service to revive after crash
+respawn
+
+script
+  export PATH=/usr/local/bin:$PATH $consul_template_environment
+
+  # https://superuser.com/questions/213416/running-upstart-jobs-as-unprivileged-users
+  # https://stackoverflow.com/questions/8251933/how-can-i-log-the-stdout-of-a-process-started-by-start-stop-daemon
+  exec /usr/local/bin/start-stop-daemon --start -c $consul_template_user \
+    --make-pidfile --pidfile /var/run/consul-template.pid \
+    --startas /bin/bash -- -c \
+    "exec '"$consul_template_bin_dir/consul-template"' -config '"$consul_template_config_dir"' >> '"$consul_template_log_dir/consul-template-stdout.log"' 2>&1"
+end script
+EOF
+}
+
+function generate_ctl_config {
+  local readonly ctl="${1}"
+  
+  if [[ "${ctl}" == "$INITCTL" ]]; then
+    shift
+    generate_upstart_config "$@"
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    shift
+    generate_supervisor_config "$@"
+  fi
+}
+
 function generate_vault_config {
   local readonly vault_address="${1}"
   local readonly config_dir="${2}"
@@ -315,11 +376,25 @@ EOF
   chown "$user:$user" "$config_path"
 }
 
-function start_consul_template {
+function start_consul_template_for_supervisor {
   log_info "Reloading Supervisor config and starting Consul Template"
-
   supervisorctl reread
   supervisorctl update
+}
+
+function start_consul_template_for_upstart {
+  log_info "Reloading Upstart config and starting Consul Template"
+  initctl reload-configuration
+}
+
+function start_consul_template {
+  local readonly ctl="${1}"
+
+  if [[ "${ctl}" == "$INITCTL" ]]; then
+    start_consul_template_for_upstart
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    start_consul_template_for_supervisor
+  fi
 }
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
@@ -430,7 +505,15 @@ function run {
     shift
   done
 
-  assert_is_installed "supervisorctl"
+  # For initctl and supervisorctl switching
+  local readonly ctl="$(assert_os_get_ctl)"
+
+  if [[ "${ctl}" == "$INITCTL" ]]; then
+    readonly config_ctl_path="/etc/init/run-consul-template.conf"
+  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+    readonly config_ctl_path="/etc/supervisor/conf.d/run-consul-template.conf"
+  fi
+
   assert_is_installed "consul"
   assert_is_installed "consul-template"
 
@@ -488,8 +571,8 @@ function run {
     fi
   fi
 
-  generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
-  start_consul_template
+  generate_ctl_config "$ctl" "$config_ctl_path" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
+  start_consul_template "$ctl"
 }
 
 run "$@"

@@ -1,6 +1,6 @@
-[submodule "modules/core/packer/roles/ansible-docker-ubuntu"]
-	path = modules/core/packer/roles/ansible-docker-ubuntu
+[submodule "roles/ansible-docker-ubuntu"]
+	path = roles/ansible-docker-ubuntu
 	url = https://github.com/lawliet89/ansible-docker-ubuntu.git
-[submodule "modules/core/packer/roles/ansible-ca-store"]
-	path = modules/core/packer/roles/ansible-ca-store
+[submodule "roles/ansible-ca-store"]
+	path = roles/ansible-ca-store
 	url = https://github.com/lawliet89/ansible-ca-store.git
