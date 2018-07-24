@@ -11,7 +11,7 @@ resource "aws_security_group_rule" "es_access_rule" {
   from_port         = "${var.es_default_access["port"]}"
   to_port           = "${var.es_default_access["port"]}"
   protocol          = "${var.es_default_access["protocol"]}"
-  cidr_blocks       = "${var.es_access_cidr_block}"
+  cidr_blocks       = ["${var.es_access_cidr_block}"]
   security_group_id = "${aws_security_group.es.id}"
 }
 
@@ -49,7 +49,7 @@ resource "aws_elasticsearch_domain" "es" {
 
   vpc_options {
     security_group_ids = ["${aws_security_group.es.id}"]
-    subnet_ids         = "${var.es_vpc_subnet_ids}"
+    subnet_ids         = ["${var.es_vpc_subnet_ids}"]
   }
 
   ebs_options {
