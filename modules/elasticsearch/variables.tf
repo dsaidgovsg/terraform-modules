@@ -131,7 +131,7 @@ variable "redirect_job_region" {
 
 variable "redirect_job_vpc_azs" {
   description = "List of VPC AZs to run the redirect job in"
-  type        = []
+  type        = "list"
 }
 
 variable "redirect_job_name" {
