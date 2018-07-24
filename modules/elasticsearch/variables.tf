@@ -47,7 +47,7 @@ variable "es_consul_service" {
 
 variable "es_domain_name" {
   description = "Elasticsearch domain name"
-  default     = "l-cloud-es"
+  default     = "tf-l-cloud-es"
 }
 
 variable "es_version" {
@@ -87,7 +87,11 @@ variable "es_ebs_volume_type" {
 }
 
 variable "es_management_iam_roles" {
-  description = "List of IAM role ARNs from which to permit management traffic (default ['*']).  Note that a client must match both the IP address and the IAM role patterns in order to be permitted access."
+  description = <<EOF
+List of IAM role ARNs from which to permit management traffic (default ['*']).
+Note that a client must match both the IP address and the IAM role patterns in order to be permitted access.
+EOF
+
   type        = "list"
   default     = ["*"]
 }
