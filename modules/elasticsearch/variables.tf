@@ -8,6 +8,7 @@ variable "security_group_vpc_id" {
 
 variable "security_group_tags" {
   description = "Tags to apply on the security group"
+  type        = "map"
 }
 
 variable "route53_zone_internal" {
