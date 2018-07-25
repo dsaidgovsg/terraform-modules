@@ -2,8 +2,16 @@
 # ES domain related
 #
 
+variable "security_group_name" {
+  description = "Name of security group, leaving this empty generates a group name"
+}
+
 variable "security_group_vpc_id" {
   description = "VPC ID to apply on the security group"
+}
+
+variable "es_domain_name" {
+  description = "Elasticsearch domain name"
 }
 
 variable "es_base_domain" {
@@ -36,19 +44,9 @@ variable "es_default_access" {
   }
 }
 
-variable "security_group_name" {
-  description = "Name of security group, leaving this empty generates a group name"
-  default     = "l-cloud-es"
-}
-
 variable "es_consul_service" {
   description = "Name to register in consul to identify Elasticsearch service"
   default     = "elasticsearch"
-}
-
-variable "es_domain_name" {
-  description = "Elasticsearch domain name"
-  default     = "tf-l-cloud-es"
 }
 
 variable "es_version" {
@@ -126,14 +124,14 @@ variable "es_additional_tags" {
 # ES Slow log settings
 #
 
+variable "slow_index_log_name" {
+  description = "Name of the Cloudwatch log group for slow index"
+  default     = "es-slow-index"
+}
+
 variable "slow_index_additional_tags" {
   description = "Additional tags to apply on Cloudwatch log group"
   default     = {}
-}
-
-variable "slow_index_log_name" {
-  description = "Name of the Cloudwatch log group for slow index"
-  default     = "l-cloud-es-slow-index"
 }
 
 variable "slow_index_log_retention" {

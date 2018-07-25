@@ -20,15 +20,21 @@ registered under the VPC name (and not the `consul` service name).
 module "es" {
   source = "../../../vendor/terraform-modules/modules/elasticsearch"
 
-  security_group_vpc_id = "${data.terraform_remote_state.core.vpc_id}"
-  security_group_additional_tags   = "${data.terraform_remote_state.core.tags}"
-  es_base_domain        = "${data.terraform_remote_state.core.base_domain}"
-  es_access_cidr_block  = ["${data.aws_vpc.this.cidr_block}", "${data.terraform_remote_state.vpc_peering.vpc_peer_cidr_block}"]
+  es_domain_name       = "${var.es_domain_name}"
+  es_base_domain       = "${data.terraform_remote_state.core.base_domain}"
+  es_access_cidr_block = ["${data.aws_vpc.this.cidr_block}", "${data.terraform_remote_state.vpc_peering.vpc_peer_cidr_block}"]
+
+  security_group_name            = "${var.security_group_name}"
+  security_group_vpc_id          = "${data.terraform_remote_state.core.vpc_id}"
+  security_group_additional_tags = "${data.terraform_remote_state.core.tags}"
 
   es_vpc_subnet_ids = [
     "${data.terraform_remote_state.core.vpc_private_subnets[0]}",
     "${data.terraform_remote_state.core.vpc_private_subnets[2]}",
   ]
+
+  slow_index_additional_tags = "${data.terraform_remote_state.core.tags}"
+  slow_index_log_name        = "${var.slow_index_log_name}"
 
   redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
   redirect_job_region  = "${data.terraform_remote_state.core.vpc_region}"
@@ -45,7 +51,7 @@ module "es" {
 | es_base_domain                 | Base domain for Elasticsearch cluster                                                                                                                                                       | string |             -             |   yes    |
 | es_consul_service              | Name to register in consul to identify Elasticsearch service                                                                                                                                | string |      `elasticsearch`      |    no    |
 | es_default_access              | Rest API / Web UI access                                                                                                                                                                    |  map   |          `<map>`          |    no    |
-| es_domain_name                 | Elasticsearch domain name                                                                                                                                                                   | string |      `tf-l-cloud-es`      |    no    |
+| es_domain_name                 | Elasticsearch domain name                                                                                                                                                                   | string |             -             |   yes    |
 | es_ebs_volume_size             | Volume capacity for attached EBS in GB for each node                                                                                                                                        | string |           `200`           |    no    |
 | es_ebs_volume_type             | Storage type of EBS volumes, if used (default gp2)                                                                                                                                          | string |           `gp2`           |    no    |
 | es_encrypt_at_rest             | Encrypts the data stored by Elasticsearch at rest                                                                                                                                           | string |          `false`          |    no    |
@@ -65,10 +71,10 @@ module "es" {
 | redirect_nginx_version         | Image tag of Nginx to use                                                                                                                                                                   | string |       `1.14-alpine`       |    no    |
 | redirect_subdomain             | Subdomain for internal redirect to kibana                                                                                                                                                   | string |         `kibana`          |    no    |
 | security_group_additional_tags | Additional tags to apply on the security group                                                                                                                                              | string |          `<map>`          |    no    |
-| security_group_name            | Name of security group, leaving this empty generates a group name                                                                                                                           | string |       `l-cloud-es`        |    no    |
+| security_group_name            | Name of security group, leaving this empty generates a group name                                                                                                                           | string |             -             |   yes    |
 | security_group_vpc_id          | VPC ID to apply on the security group                                                                                                                                                       | string |             -             |   yes    |
 | slow_index_additional_tags     | Additional tags to apply on Cloudwatch log group                                                                                                                                            | string |          `<map>`          |    no    |
-| slow_index_log_name            | Name of the Cloudwatch log group for slow index                                                                                                                                             | string |  `l-cloud-es-slow-index`  |    no    |
+| slow_index_log_name            | Name of the Cloudwatch log group for slow index                                                                                                                                             | string |      `es-slow-index`      |    no    |
 | slow_index_log_retention       | Number of days to retain logs for.                                                                                                                                                          | string |           `120`           |    no    |
 
 ## Outputs
