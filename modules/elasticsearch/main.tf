@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "es_resource_attached_policy" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "tf-${var.es_domain_name}"
+  domain_name           = "${var.es_domain_name}"
   elasticsearch_version = "${var.es_version}"
 
   cluster_config {
