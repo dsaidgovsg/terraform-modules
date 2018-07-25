@@ -28,6 +28,28 @@ variable "es_vpc_subnet_ids" {
   type        = "list"
 }
 
+variable "es_master_type" {
+  # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
+  description = "Elasticsearch instance type for dedicated master node"
+}
+
+variable "es_instance_type" {
+  description = "Elasticsearch instance type for non-master node"
+}
+
+variable "es_instance_count" {
+  # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
+  description = "Number of nodes to be deployed in Elasticsearch"
+}
+
+variable "es_ebs_volume_size" {
+  description = "Volume capacity for attached EBS in GB for each node"
+}
+
+variable "es_ebs_volume_type" {
+  description = "Storage type of EBS volumes, if used (default gp2)"
+}
+
 variable "security_group_additional_tags" {
   description = "Additional tags to apply on the security group"
   default     = {}
@@ -56,33 +78,6 @@ variable "es_version" {
   description = "Elasticsearch version to deploy"
 
   default = "5.5"
-}
-
-variable "es_master_type" {
-  # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
-  description = "Elasticsearch instance type for dedicated master node"
-  default     = "r4.xlarge.elasticsearch"
-}
-
-variable "es_instance_type" {
-  description = "Elasticsearch instance type for non-master node"
-  default     = "r4.xlarge.elasticsearch"
-}
-
-variable "es_instance_count" {
-  # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
-  description = "Number of nodes to be deployed in Elasticsearch"
-  default     = "6"
-}
-
-variable "es_ebs_volume_size" {
-  description = "Volume capacity for attached EBS in GB for each node"
-  default     = "200"
-}
-
-variable "es_ebs_volume_type" {
-  description = "Storage type of EBS volumes, if used (default gp2)"
-  default     = "gp2"
 }
 
 variable "es_management_iam_roles" {
