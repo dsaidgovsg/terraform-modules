@@ -2,7 +2,7 @@ resource "aws_security_group" "es" {
   name                   = "${var.security_group_name}"
   description            = "Security group for ${var.security_group_name}"
   vpc_id                 = "${var.security_group_vpc_id}"
-  tags                   = "${var.security_group_tags}"
+  tags                   = "${var.security_group_additional_tags}"
   revoke_rules_on_delete = true
 }
 
@@ -13,6 +13,12 @@ resource "aws_security_group_rule" "es_access_rule" {
   protocol          = "${var.es_default_access["protocol"]}"
   cidr_blocks       = ["${var.es_access_cidr_block}"]
   security_group_id = "${aws_security_group.es.id}"
+}
+
+resource "aws_cloudwatch_log_group" "es_slow_index_log" {
+  name              = "${var.slow_index_log_name}"
+  retention_in_days = "${var.slow_index_log_retention}"
+  tags              = "${merge(var.slow_index_additional_tags, map("Name", format("%s", var.slow_index_log_name)))}"
 }
 
 data "aws_iam_policy_document" "es_resource_attached_policy" {
@@ -60,6 +66,21 @@ resource "aws_elasticsearch_domain" "es" {
 
   snapshot_options {
     automated_snapshot_start_hour = "${var.es_snapshot_start_hour}"
+  }
+
+  # Note: we still have to configure Elasticsearch via the HTTP API
+  # See https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-slow-logs
+  # https://www.elastic.co/guide/en/elasticsearch/reference/5.5/index-modules-slowlog.html
+  # This is PER INDEX
+  # We should probably do an index template...?
+  # curl -XPUT  \
+  #  https://vpc-tf-l-cloud-es-v4hiqpe5nxk6o6m6g2csiwnizy.ap-southeast-1.es.amazonaws.com/syslog-*/_settings \
+  #  -H 'Content-Type: application/json' \
+  #  --data '{ "index.indexing.slowlog.threshold.index.warn": "10s", "index.indexing.slowlog.threshold.index.info": "5s", "index.indexing.slowlog.threshold.index.debug": "2s", "index.indexing.slowlog.threshold.index.trace": "500ms", "index.indexing.slowlog.level": "info", "index.indexing.slowlog.source": "1000"}'
+  log_publishing_options {
+    log_type                 = "INDEX_SLOW_LOGS"
+    enabled                  = true
+    cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es_slow_index_log.arn}"
   }
 
   encrypt_at_rest {

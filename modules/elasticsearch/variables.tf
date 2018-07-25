@@ -6,11 +6,6 @@ variable "security_group_vpc_id" {
   description = "VPC ID to apply on the security group"
 }
 
-variable "security_group_tags" {
-  description = "Tags to apply on the security group"
-  type        = "map"
-}
-
 variable "es_base_domain" {
   description = "Base domain for Elasticsearch cluster"
 }
@@ -23,6 +18,11 @@ variable "es_access_cidr_block" {
 variable "es_vpc_subnet_ids" {
   description = "Subnet IDs for Elasticsearch cluster"
   type        = "list"
+}
+
+variable "security_group_additional_tags" {
+  description = "Additional tags to apply on the security group"
+  default     = {}
 }
 
 variable "es_default_access" {
@@ -63,12 +63,12 @@ variable "es_version" {
 variable "es_master_type" {
   # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
   description = "Elasticsearch instance type for dedicated master node"
-  default     = "r4.2xlarge.elasticsearch"
+  default     = "r4.xlarge.elasticsearch"
 }
 
 variable "es_instance_type" {
   description = "Elasticsearch instance type for non-master node"
-  default     = "r4.2xlarge.elasticsearch"
+  default     = "r4.xlarge.elasticsearch"
 }
 
 variable "es_instance_count" {
@@ -93,8 +93,8 @@ List of IAM role ARNs from which to permit management traffic (default ['*']).
 Note that a client must match both the IP address and the IAM role patterns in order to be permitted access.
 EOF
 
-  type        = "list"
-  default     = ["*"]
+  type    = "list"
+  default = ["*"]
 }
 
 variable "es_zone_awareness" {
@@ -120,6 +120,25 @@ variable "es_kms_key_id" {
 variable "es_additional_tags" {
   description = "Additional tags to apply on Elasticsearch"
   default     = {}
+}
+
+#
+# ES Slow log settings
+#
+
+variable "slow_index_additional_tags" {
+  description = "Additional tags to apply on Cloudwatch log group"
+  default     = {}
+}
+
+variable "slow_index_log_name" {
+  description = "Name of the Cloudwatch log group for slow index"
+  default     = "l-cloud-es-slow-index"
+}
+
+variable "slow_index_log_retention" {
+  description = "Number of days to retain logs for."
+  default     = "120"
 }
 
 #
