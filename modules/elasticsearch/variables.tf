@@ -138,6 +138,10 @@ variable "slow_index_log_retention" {
 # Redirect related
 #
 
+variable "redirect_job_name" {
+  description = "Name of the job to redirect users to kibana"
+}
+
 variable "redirect_alias_name" {
   description = "Alias name of the internal redirect to kibana"
 }
@@ -149,11 +153,6 @@ variable "redirect_job_region" {
 variable "redirect_job_vpc_azs" {
   description = "List of VPC AZs to run the redirect job in"
   type        = "list"
-}
-
-variable "redirect_job_name" {
-  description = "Name of the job to redirect users to kibana"
-  default     = "kibana-redirect"
 }
 
 variable "redirect_nginx_version" {

@@ -42,6 +42,7 @@ module "es" {
   slow_index_additional_tags = "${data.terraform_remote_state.core.tags}"
   slow_index_log_name        = "${var.slow_index_log_name}"
 
+  redirect_job_name    = "${var.redirect_job_name}"
   redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
   redirect_job_region  = "${data.terraform_remote_state.core.vpc_region}"
   redirect_job_vpc_azs = "${data.terraform_remote_state.core.vpc_azs}"
