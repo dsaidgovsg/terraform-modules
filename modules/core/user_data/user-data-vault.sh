@@ -31,6 +31,10 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --cluster-tag-key "${consul_cluster_tag_key}" \
     --cluster-tag-value "${consul_cluster_tag_value}"
 
+# Post startup Configuration
+/opt/consul/consul/post-configure \
+    --consul-prefix "${consul_prefix}"
+
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
     --server-type vault \

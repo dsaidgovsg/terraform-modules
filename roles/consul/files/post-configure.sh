@@ -13,21 +13,20 @@ readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
 function print_usage {
   echo
-  echo "Usage: run-telegraf [OPTIONS]"
+  echo "Usage: post-configure [OPTIONS]"
   echo
-  echo "This script is used to configure Telegraf on an AWS server."
+  echo "This script is used to configure Consul after its initial startup."
   echo
   echo "Options:"
   echo
-  echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type"
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
-  echo -e "  --skip-template\t\tEnable consul-template apply on configuration file. Optional. Defaults to false."
-  echo -e "  --conf-template\t\tFile path to configuration consul-template file. Optional. Defaults to /etc/telegraf/telegraf.conf.template"
-  echo -e "  --conf-out\t\tFile path to configuration destination. Optional. Defaults to /etc/telegraf/telegraf.conf"
+  echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
+  echo -e "  --user\t\tThe user to CHOWN the config files as. Optional. Default is to use the owner of --config-dir."
+  echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
   echo
   echo "Example:"
   echo
-  echo "  run-telegraf --type consul"
+  echo "  post-configure"
 }
 
 function log {
@@ -72,6 +71,12 @@ function assert_is_installed {
   fi
 }
 
+# Based on: http://unix.stackexchange.com/a/7732/215969
+function get_owner_of_path {
+  local readonly path="$1"
+  ls -ld "$path" | awk '{print $3}'
+}
+
 function wait_for_consul {
   local consul_leader
 
@@ -110,34 +115,40 @@ function consul_kv_with_default {
   echo -n "${value}"
 }
 
-function enable_telegraf {
-  local readonly type="${1}"
-  local readonly service_override_dir="${2}"
+function generate_telemetry_conf {
+  local readonly conf_file="${1}"
+  local readonly user="${2}"
+  local readonly service="${3}"
+  local readonly statsd_addr="${4}"
 
-  log_info "Enabling and starting service telegraf for type $type..."
+  local telemetry_config=$(cat <<EOF
+telemetry {
+  dogstatsd_addr = "${statsd_addr}"
+  dogstatsd_tags = ["service:${service}"]
+  disable_hostname = true
+}
+EOF
+)
 
-  mkdir -p "$service_override_dir"
-  echo -e "[Service]\nEnvironment=SERVER_TYPE=$type" > "$service_override_dir/override.conf"
-
-  systemctl enable telegraf
-  systemctl start telegraf
-
-  log_info "Service telegraf enabled and started!"
+  log_info "Writing Telemetry Configuration for Consul to ${conf_file}"
+  echo "${telemetry_config}" > "${conf_file}"
+  chown "${user}:${user}" "${conf_file}"
 }
 
-function generate_statsd_conf {
-  local readonly conf_file="${1}"
-  echo -e 'telemetry {\n  statsd_address = "127.0.0.1:8125"\n}' > $conf_file
+function restart_service {
+  local readonly service="${1}"
+
+  log_info "Restarting service $service..."
+  supervisorctl restart $service
+  log_info "Service $service restarted!"
 }
 
 function main {
   local type=""
   local consul_prefix="terraform/"
-  local skip_template="false"
-  local conf_template="/etc/telegraf/telegraf.conf.template"
-  local conf_out="/etc/telegraf/telegraf.conf"
-
-  local readonly service_override_dir="/etc/systemd/system/telegraf.service.d"
+  local config_dir=""
+  local user=""
+  local statsd_addr="127.0.0.1:8125"
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -153,17 +164,19 @@ function main {
         consul_prefix="$2"
         shift
         ;;
-      --skip-template)
-        skip_template="false"
-        ;;
-      --conf-template)
+      --config-dir)
         assert_not_empty "$key" "$2"
-        conf_template="$2"
+        config_dir="$2"
         shift
         ;;
-      --conf-out)
+      --user)
         assert_not_empty "$key" "$2"
-        conf_out="$2"
+        user="$2"
+        shift
+        ;;
+      --statsd-addr)
+        assert_not_empty "$key" "$2"
+        statsd_addr="$2"
         shift
         ;;
       --help)
@@ -185,23 +198,26 @@ function main {
     exit 1
   fi
 
-  assert_is_installed "consul"
-  assert_is_installed "consul-template"
+  if [[ -z "$config_dir" ]]; then
+    config_dir=$(cd "$SCRIPT_DIR/../config" && pwd)
+  fi
 
+  if [[ -z "$user" ]]; then
+    user=$(get_owner_of_path "$config_dir")
+  fi
+
+  assert_is_installed "consul"
   wait_for_consul
 
   local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
+  local readonly type="consul"
 
   if [[ "$enabled" != "yes" ]]; then
-    log_info "Telegraf is not enabled for ${type}"
-  else
-    if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
-      log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      consul-template -template "$conf_template:$conf_out" -once
-      log_info "consul-template applied successfully!"
-    fi
+    log_info "Telegraf metrics is not enabled for ${type}"
 
-    enable_telegraf "$type" "$service_override_dir"
+    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${type}" "${statsd_addr}"
+  else
+    restart_service "consul"
   fi
 }
 
