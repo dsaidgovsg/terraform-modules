@@ -20,7 +20,7 @@ registered under the VPC name (and not the `consul` service name).
 module "es" {
   security_group_vpc_id = "..."
   security_group_tags   = "..."
-  route53_zone_internal = "..."
+  es_base_domain = "..."
   es_access_cidr_block  = []
   es_vpc_subnet_ids     = []
 
@@ -36,6 +36,7 @@ module "es" {
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----: | :------------------------: | :------: |
 | es_access_cidr_block    | Elasticsearch access CIDR block to allow access                                                                                                                                             |  list  |             -              |   yes    |
 | es_additional_tags      | Additional tags to apply on Elasticsearch                                                                                                                                                   | string |          `<map>`           |    no    |
+| es_base_domain          | Base domain for Elasticsearch cluster                                                                                                                                                       | string |             -              |   yes    |
 | es_consul_service       | Name to register in consul to identify Elasticsearch service                                                                                                                                | string |      `elasticsearch`       |    no    |
 | es_default_access       | Rest API / Web UI access                                                                                                                                                                    |  map   |          `<map>`           |    no    |
 | es_domain_name          | Elasticsearch domain name                                                                                                                                                                   | string |      `tf-l-cloud-es`       |    no    |
@@ -57,9 +58,8 @@ module "es" {
 | redirect_job_vpc_azs    | List of VPC AZs to run the redirect job in                                                                                                                                                  |  list  |             -              |   yes    |
 | redirect_nginx_version  | Image tag of Nginx to use                                                                                                                                                                   | string |       `1.14-alpine`        |    no    |
 | redirect_subdomain      | Subdomain for internal redirect to kibana                                                                                                                                                   | string |          `kibana`          |    no    |
-| route53_zone_internal   | AWS Route53 Zone Internal Domain for Elasticsearch cluster                                                                                                                                  | string |             -              |   yes    |
 | security_group_name     | Name of security group, leaving this empty generates a group name                                                                                                                           | string |        `l-cloud-es`        |    no    |
-| security_group_tags     | Tags to apply on the security group                                                                                                                                                         | string |             -              |   yes    |
+| security_group_tags     | Tags to apply on the security group                                                                                                                                                         |  map   |             -              |   yes    |
 | security_group_vpc_id   | VPC ID to apply on the security group                                                                                                                                                       | string |             -              |   yes    |
 
 ## Outputs

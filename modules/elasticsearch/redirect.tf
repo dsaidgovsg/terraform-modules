@@ -1,7 +1,7 @@
 # Simple Job in Nomad to redirect users to the very unfriendly Kibana URL
 
 data "aws_route53_zone" "internal" {
-  name = "${var.route53_zone_internal}"
+  name = "${var.es_base_domain}"
 }
 
 # Define the DNS record to point to the external LB

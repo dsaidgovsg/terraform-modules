@@ -11,8 +11,8 @@ variable "security_group_tags" {
   type        = "map"
 }
 
-variable "route53_zone_internal" {
-  description = "AWS Route53 Zone Internal Domain for Elasticsearch cluster"
+variable "es_base_domain" {
+  description = "Base domain for Elasticsearch cluster"
 }
 
 variable "es_access_cidr_block" {

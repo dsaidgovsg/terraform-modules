@@ -78,5 +78,5 @@ resource "aws_elasticsearch_domain_policy" "es_resource_attached_policy" {
 locals {
   endpoint        = "${aws_elasticsearch_domain.es.endpoint}"
   es_kms_key_id   = "${var.es_encrypt_at_rest ? var.es_kms_key_id : ""}"
-  redirect_domain = "${var.redirect_subdomain}.${data.terraform_remote_state.core.base_domain}"
+  redirect_domain = "${var.redirect_subdomain}.${var.es_base_domain}"
 }
