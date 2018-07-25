@@ -62,7 +62,11 @@ EOH
           "traefik.frontend.headers.SSLRedirect=true",
           "traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https",
           "traefik.frontend.headers.STSSeconds=315360000",
-          "traefik.frontend.headers.frameDeny=true"
+          "traefik.frontend.headers.frameDeny=true",
+          "traefik.frontend.headers.browserXSSFilter=true",
+          "traefik.frontend.headers.contentTypeNosniff=true",
+          "traefik.frontend.headers.referrerPolicy=strict-origin",
+          "traefik.frontend.headers.contentSecurityPolicy=default-src 'none';"
         ]
       }
 
