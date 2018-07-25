@@ -18,8 +18,3 @@ resource "aws_cloudwatch_log_resource_policy" "es_slow_index_log" {
   policy_document = "${data.aws_iam_policy_document.es_slow_index_log.json}"
   policy_name     = "${var.slow_index_log_name}"
 }
-
-# TODO:
-# - Cloudwatch Alerts (and notifications for alerts)
-# - Nomad Batch job to configure the logging
-

@@ -68,15 +68,6 @@ resource "aws_elasticsearch_domain" "es" {
     automated_snapshot_start_hour = "${var.es_snapshot_start_hour}"
   }
 
-  # Note: we still have to configure Elasticsearch via the HTTP API
-  # See https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-slow-logs
-  # https://www.elastic.co/guide/en/elasticsearch/reference/5.5/index-modules-slowlog.html
-  # This is PER INDEX
-  # We should probably do an index template...?
-  # curl -XPUT  \
-  #  https://vpc-tf-l-xxx.ap-southeast-1.es.amazonaws.com/syslog-*/_settings \
-  #  -H 'Content-Type: application/json' \
-  #  --data '{ "index.indexing.slowlog.threshold.index.warn": "10s", "index.indexing.slowlog.threshold.index.info": "5s", "index.indexing.slowlog.threshold.index.debug": "2s", "index.indexing.slowlog.threshold.index.trace": "500ms", "index.indexing.slowlog.level": "info", "index.indexing.slowlog.source": "1000"}'
   log_publishing_options {
     log_type                 = "INDEX_SLOW_LOGS"
     enabled                  = true
