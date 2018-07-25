@@ -21,9 +21,6 @@ function print_usage {
   echo
   echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type"
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
-  echo -e "  --skip-template\t\tEnable consul-template apply on configuration file. Optional. Defaults to false."
-  echo -e "  --conf-template\t\tFile path to configuration consul-template file. Optional. Defaults to /etc/telegraf/telegraf.conf.template"
-  echo -e "  --conf-out\t\tFile path to configuration destination. Optional. Defaults to /etc/telegraf/telegraf.conf"
   echo
   echo "Example:"
   echo
@@ -133,9 +130,6 @@ function generate_statsd_conf {
 function main {
   local type=""
   local consul_prefix="terraform/"
-  local skip_template="false"
-  local conf_template="/etc/telegraf/telegraf.conf.template"
-  local conf_out="/etc/telegraf/telegraf.conf"
 
   local readonly service_override_dir="/etc/systemd/system/telegraf.service.d"
 
@@ -151,19 +145,6 @@ function main {
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
-        shift
-        ;;
-      --skip-template)
-        skip_template="false"
-        ;;
-      --conf-template)
-        assert_not_empty "$key" "$2"
-        conf_template="$2"
-        shift
-        ;;
-      --conf-out)
-        assert_not_empty "$key" "$2"
-        conf_out="$2"
         shift
         ;;
       --help)
@@ -186,7 +167,6 @@ function main {
   fi
 
   assert_is_installed "consul"
-  assert_is_installed "consul-template"
 
   wait_for_consul
 
@@ -195,12 +175,6 @@ function main {
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf is not enabled for ${type}"
   else
-    if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
-      log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      consul-template -template "$conf_template:$conf_out" -once
-      log_info "consul-template applied successfully!"
-    fi
-
     enable_telegraf "$type" "$service_override_dir"
   fi
 }
