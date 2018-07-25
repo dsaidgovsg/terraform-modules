@@ -24,6 +24,12 @@ module "es" {
   es_base_domain       = "${data.terraform_remote_state.core.base_domain}"
   es_access_cidr_block = ["${data.aws_vpc.this.cidr_block}", "${data.terraform_remote_state.vpc_peering.vpc_peer_cidr_block}"]
 
+  es_master_type     = "${var.es_master_type}"
+  es_instance_type   = "${var.es_instance_type}"
+  es_instance_count  = "${var.es_instance_count}"
+  es_ebs_volume_size = "${var.es_ebs_volume_size}"
+  es_ebs_volume_type = "${var.es_ebs_volume_type}"
+
   security_group_name            = "${var.security_group_name}"
   security_group_vpc_id          = "${data.terraform_remote_state.core.vpc_id}"
   security_group_additional_tags = "${data.terraform_remote_state.core.tags}"
