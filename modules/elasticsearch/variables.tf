@@ -138,12 +138,17 @@ variable "slow_index_log_retention" {
 # Redirect related
 #
 
+variable "use_redirect" {
+  description = "Indicates whether to use Redirect job for redirecting users to Kibana URL"
+  default     = false
+}
+
 variable "redirect_job_name" {
-  description = "Name of the job to redirect users to kibana"
+  description = "Name of the job to redirect users to Kibana"
 }
 
 variable "redirect_alias_name" {
-  description = "Alias name of the internal redirect to kibana"
+  description = "Alias name of the internal redirect to Kibana"
 }
 
 variable "redirect_job_region" {
@@ -161,6 +166,6 @@ variable "redirect_nginx_version" {
 }
 
 variable "redirect_subdomain" {
-  description = "Subdomain for internal redirect to kibana"
+  description = "Subdomain for internal redirect to Kibana"
   default     = "kibana"
 }
