@@ -8,7 +8,7 @@ data "aws_route53_zone" "internal" {
 # Define the DNS record to point to the external LB
 resource "aws_route53_record" "redirect" {
   count = "${var.use_redirect ? 1 : 0}"
-  
+
   zone_id = "${data.aws_route53_zone.internal.zone_id}"
   name    = "${local.redirect_domain}"
   type    = "A"
@@ -38,7 +38,7 @@ data "template_file" "redirect_jobspec" {
 
 resource "nomad_job" "redirect" {
   count = "${var.use_redirect ? 1 : 0}"
-  
+
   depends_on = ["consul_service.es"]
   jobspec    = "${data.template_file.redirect_jobspec.rendered}"
 }
