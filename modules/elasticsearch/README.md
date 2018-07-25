@@ -31,14 +31,14 @@ module "es" {
   es_ebs_volume_type = "gp2"
 
   security_group_name            = "my-cloud-es-sg"
-  security_group_vpc_id          = "${data.terraform_remote_state.core.vpc_id}"
+  security_group_vpc_id          = "vpc-1a2b3c4d"
   security_group_additional_tags = "${data.terraform_remote_state.core.tags}"
 
   es_vpc_subnet_ids = [
-    "${data.terraform_remote_state.core.vpc_private_subnets[0]}",
+    "subnet-1a2b3c4d",
   ]
 
-  slow_index_log_name        = "my-cloud-es-slow-index"
+  slow_index_log_name = "my-cloud-es-slow-index"
 
   # Optional section, integration with Traefik
   # for redirecting users to the unfriendly Kibana URL
@@ -46,8 +46,12 @@ module "es" {
   use_redirect         = true
   redirect_job_name    = "kibana-redirect"
   redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
-  redirect_job_region  = "${data.terraform_remote_state.core.vpc_region}"
-  redirect_job_vpc_azs = "${data.terraform_remote_state.core.vpc_azs}"
+  redirect_job_region  = "ap-southeast-1"
+  redirect_job_vpc_azs = [
+    "ap-southeast-1a",
+    "ap-southeast-1b",
+    "ap-southeast-1c",
+  ]
 }
 ```
 
