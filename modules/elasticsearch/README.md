@@ -14,35 +14,37 @@ that require Elasticsearch service should always use the actual VPC service
 name, since the service is hosted under SSL and the SSL certificate to accept is
 registered under the VPC name (and not the `consul` service name).
 
-## Example Terraform configuration
+## Example Terraform configuration with Core integration (and possibly Traefik)
 
 ```hcl
 module "es" {
-  source = "../../../vendor/terraform-modules/modules/elasticsearch"
+  source = "github.com/GovTechSG/terraform-modules//modules/elasticsearch"
 
-  es_domain_name       = "${var.es_domain_name}"
+  es_domain_name       = "my-cloud-es"
   es_base_domain       = "${data.terraform_remote_state.core.base_domain}"
-  es_access_cidr_block = ["${data.aws_vpc.this.cidr_block}", "${data.terraform_remote_state.vpc_peering.vpc_peer_cidr_block}"]
+  es_access_cidr_block = ["1.2.3.4"]
 
-  es_master_type     = "${var.es_master_type}"
-  es_instance_type   = "${var.es_instance_type}"
-  es_instance_count  = "${var.es_instance_count}"
-  es_ebs_volume_size = "${var.es_ebs_volume_size}"
-  es_ebs_volume_type = "${var.es_ebs_volume_type}"
+  es_master_type     = "r4.xlarge.elasticsearch"
+  es_instance_type   = "r4.xlarge.elasticsearch"
+  es_instance_count  = "3"
+  es_ebs_volume_size = "100"  # in GB
+  es_ebs_volume_type = "gp2"
 
-  security_group_name            = "${var.security_group_name}"
+  security_group_name            = "my-cloud-es-sg"
   security_group_vpc_id          = "${data.terraform_remote_state.core.vpc_id}"
   security_group_additional_tags = "${data.terraform_remote_state.core.tags}"
 
   es_vpc_subnet_ids = [
     "${data.terraform_remote_state.core.vpc_private_subnets[0]}",
-    "${data.terraform_remote_state.core.vpc_private_subnets[2]}",
   ]
 
-  slow_index_additional_tags = "${data.terraform_remote_state.core.tags}"
-  slow_index_log_name        = "${var.slow_index_log_name}"
+  slow_index_log_name        = "my-cloud-es-slow-index"
 
-  redirect_job_name    = "${var.redirect_job_name}"
+  # Optional section, integration with Traefik
+  # for redirecting users to the unfriendly Kibana URL
+
+  use_redirect         = true
+  redirect_job_name    = "kibana-redirect"
   redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
   redirect_job_region  = "${data.terraform_remote_state.core.vpc_region}"
   redirect_job_vpc_azs = "${data.terraform_remote_state.core.vpc_azs}"
