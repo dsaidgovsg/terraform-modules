@@ -13,9 +13,9 @@ readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
 function print_usage {
   echo
-  echo "Usage: post-configure [OPTIONS]"
+  echo "Usage: configure [OPTIONS]"
   echo
-  echo "This script is used to configure Consul after its initial startup."
+  echo "This script is used for additional Vault configuration"
   echo
   echo "Options:"
   echo
@@ -27,7 +27,7 @@ function print_usage {
   echo
   echo "Example:"
   echo
-  echo "  post-configure"
+  echo "  configure"
 }
 
 function log {
@@ -131,7 +131,7 @@ telemetry {
 EOF
 )
 
-  log_info "Writing Telemetry Configuration for Consul to ${conf_file}"
+  log_info "Writing Telemetry Configuration for Vault to ${conf_file}"
   echo "${telemetry_config}" > "${conf_file}"
   chown "${user}:${user}" "${conf_file}"
 }
@@ -149,14 +149,6 @@ EOF
 
   log_info "Writing Procstat Telemetry Configuration for Telegraf to ${telegraf_conf}"
   echo "${procstat}" > "${telegraf_conf}"
-}
-
-function restart_service {
-  local readonly service="${1}"
-
-  log_info "Restarting service $service..."
-  supervisorctl restart $service
-  log_info "Service $service restarted!"
 }
 
 function main {
@@ -227,14 +219,13 @@ function main {
   wait_for_consul
 
   local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
-  local readonly type="consul"
+  local readonly type="vault"
 
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"
   else
     generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${type}" "${statsd_addr}"
-    generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
-    restart_service "consul"
+    generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^vault\$"
   fi
 }
 

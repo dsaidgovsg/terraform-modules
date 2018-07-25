@@ -23,16 +23,16 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 /opt/consul/consul/post-configure \
     --consul-prefix "${consul_prefix}"
 
-# Additional Configuration
-/opt/nomad/bin/configure \
-    --client \
-    --consul-prefix "${consul_prefix}"
-
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
     --server-type "$service_type" \
     --dedup-enable \
     --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
+# Additional Configuration
+/opt/nomad/bin/configure \
+    --client \
     --consul-prefix "${consul_prefix}"
 
 /opt/nomad/bin/run-nomad --client

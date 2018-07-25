@@ -122,14 +122,6 @@ function consul_kv_with_default {
   echo -n "${value}"
 }
 
-function restart_service {
-  local readonly service="${1}"
-
-  log_info "Restarting service $service..."
-  supervisorctl restart $service
-  log_info "Service $service restarted!"
-}
-
 function get_vault_token {
   local readonly token_role="${1}"
   local readonly address="${2}"
@@ -472,8 +464,8 @@ function main {
     log_info "Docker authentication is not enabled or this is a Nomad server."
   else
     generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}"
+    supervisorctl signal SIGHUP consul-template
   fi
-
 
   local readonly telegraf_enabled
 
@@ -485,10 +477,9 @@ function main {
 
   if [[ "${telegraf_enabled}" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled"
-    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${server}" "${statsd_addr}"
-    generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
   else
-    restart_service "nomad"
+    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${server}" "${statsd_addr}"
+    generate_telegraf_procstat "${telegraf_conf}/procstat_nomad.conf" "^nomad\$"
   fi
 }
 

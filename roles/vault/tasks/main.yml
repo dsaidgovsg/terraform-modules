@@ -30,3 +30,9 @@
       - src: "{{ cli_json_src }}"
         dest: "{{ cli_json_dest }}"
     become: yes
+- name: Install Configuration Script
+  copy:
+    src: "{{ role_path }}/files/configure.sh"
+    dest: "/opt/vault/consul/configure"
+    mode: 0755
+  become: yes

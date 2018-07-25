@@ -20,7 +20,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-value "${cluster_tag_value}"
 
 # Post startup Configuration
-/opt/consul/consul/post-configure \
+/opt/consul/bin/post-configure \
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
@@ -28,6 +28,11 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --server-type nomad_server \
     --dedup-enable \
     --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
+# Additional Configuration
+/opt/nomad/bin/configure \
+    --server \
     --consul-prefix "${consul_prefix}"
 
 /opt/nomad/bin/run-nomad --server --num-servers "${num_servers}"
@@ -39,11 +44,6 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 /opt/run-telegraf \
     --consul-prefix "${consul_prefix}" \
     --type "$service_type"
-
-# Additional Configuration
-/opt/nomad/bin/configure \
-    --server \
-    --consul-prefix "${consul_prefix}"
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
