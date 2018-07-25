@@ -18,15 +18,21 @@ registered under the VPC name (and not the `consul` service name).
 
 ```hcl
 module "es" {
-  security_group_vpc_id = "..."
-  security_group_tags   = "..."
-  es_base_domain = "..."
-  es_access_cidr_block  = []
-  es_vpc_subnet_ids     = []
+  source = "../../../vendor/terraform-modules/modules/elasticsearch"
 
-  redirect_alias_name  = ""
-  redirect_job_region  = "ap-southeast-1"
-  redirect_job_vpc_azs = []
+  security_group_vpc_id = "${data.terraform_remote_state.core.vpc_id}"
+  security_group_tags   = "${data.terraform_remote_state.core.tags}"
+  es_base_domain        = "${data.terraform_remote_state.core.base_domain}"
+  es_access_cidr_block  = ["${data.aws_vpc.this.cidr_block}", "${data.terraform_remote_state.vpc_peering.vpc_peer_cidr_block}"]
+
+  es_vpc_subnet_ids = [
+    "${data.terraform_remote_state.core.vpc_private_subnets[0]}",
+    "${data.terraform_remote_state.core.vpc_private_subnets[2]}",
+  ]
+
+  redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
+  redirect_job_region  = "${data.terraform_remote_state.core.vpc_region}"
+  redirect_job_vpc_azs = "${data.terraform_remote_state.core.vpc_azs}"
 }
 ```
 
