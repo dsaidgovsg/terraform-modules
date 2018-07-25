@@ -74,7 +74,7 @@ resource "aws_elasticsearch_domain" "es" {
   # This is PER INDEX
   # We should probably do an index template...?
   # curl -XPUT  \
-  #  https://vpc-tf-l-cloud-es-v4hiqpe5nxk6o6m6g2csiwnizy.ap-southeast-1.es.amazonaws.com/syslog-*/_settings \
+  #  https://vpc-tf-l-xxx.ap-southeast-1.es.amazonaws.com/syslog-*/_settings \
   #  -H 'Content-Type: application/json' \
   #  --data '{ "index.indexing.slowlog.threshold.index.warn": "10s", "index.indexing.slowlog.threshold.index.info": "5s", "index.indexing.slowlog.threshold.index.debug": "2s", "index.indexing.slowlog.threshold.index.trace": "500ms", "index.indexing.slowlog.level": "info", "index.indexing.slowlog.source": "1000"}'
   log_publishing_options {
