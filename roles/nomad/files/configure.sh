@@ -13,7 +13,7 @@ readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
 function print_usage {
   echo
-  echo "Usage: configure-vault [OPTIONS]"
+  echo "Usage: configure [OPTIONS]"
   echo
   echo "This script is used to configure Nomad for Vault integration on an AWS server."
   echo
@@ -26,11 +26,12 @@ function print_usage {
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
   echo -e "  --docker-auth\t\tPath to store Docker authentication information. Optional. Default is the absolute path of '../docker.json', relative to this script."
+  echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
   echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
   echo
-  echo "  configure-vault --server"
+  echo "  configure --server"
 }
 
 function log {
@@ -118,6 +119,14 @@ function consul_kv_with_default {
   value=$(consul kv get "${path}" || echo -n "${default}") || exit $?
   log_info "Consul KV Path ${path} = ${value}"
   echo -n "${value}"
+}
+
+function restart_service {
+  local readonly service="${1}"
+
+  log_info "Restarting service $service..."
+  supervisorctl restart $service
+  log_info "Service $service restarted!"
 }
 
 function get_vault_token {
@@ -286,6 +295,41 @@ EOF
   echo "${docker_template}" > "${consul_template_config}/template_nomad_docker.hcl"
 }
 
+function generate_telemetry_conf {
+  local readonly conf_file="${1}"
+  local readonly user="${2}"
+  local readonly server="${3}"
+  local readonly statsd_addr="${4}"
+
+  local telemetry_additional
+  if [[ "$server" == "true" ]]; then
+    telemetry_additional=$(cat <<EOF
+  datadog_tags = ["service:nomad_server"]
+EOF
+)
+  else
+    telemetry_additional=$(cat <<EOF
+  datadog_tags = ["service:nomad_client"]
+
+  publish_allocation_metrics = true
+  publish_node_metrics = true
+EOF
+)
+  fi
+
+  local telemetry_config=$(cat <<EOF
+telemetry {
+  datadog_address = "${statsd_addr}"
+  disable_hostname = true
+  ${telemetry_additional}
+}
+EOF
+)
+
+  log_info "Writing Telemetry Configuration for Nomad to ${conf_file}"
+  echo "${telemetry_config}" > "${conf_file}"
+  chown "${user}:${user}" "${conf_file}"
+}
 function main {
   local server="false"
   local client="false"
@@ -295,6 +339,7 @@ function main {
   local user=""
   local consul_template_config="/opt/consul-template/config"
   local docker_auth=""
+  local statsd_addr="127.0.0.1:8125"
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -335,6 +380,11 @@ function main {
       --docker-auth)
         assert_not_empty "$key" "$2"
         docker_auth="$2"
+        shift
+        ;;
+      --statsd-addr)
+        assert_not_empty "$key" "$2"
+        statsd_addr="$2"
         shift
         ;;
       --help)
@@ -399,6 +449,22 @@ function main {
     log_info "Docker authentication is not enabled or this is a Nomad server."
   else
     generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}"
+  fi
+
+
+  local readonly telegraf_enabled
+
+  if [[ "$server" == "true" ]]; then
+    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/nomad_server/enabled" "no")
+  else
+    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/nomad_client/enabled" "no")
+  fi
+
+  if [[ "${telegraf_enabled}" != "yes" ]]; then
+    log_info "Telegraf metrics is not enabled"
+    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${server}" "${statsd_addr}"
+  else
+    restart_service "nomad"
   fi
 }
 
