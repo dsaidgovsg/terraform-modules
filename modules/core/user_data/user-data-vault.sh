@@ -42,14 +42,6 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
 
-/opt/run-telegraf \
-    --consul-prefix "${consul_prefix}" \
-    --type "$service_type"
-
-/opt/run-td-agent \
-    --consul-prefix "${consul_prefix}" \
-    --type "$service_type"
-
 # The Packer template puts the TLS certs in these file paths
 readonly VAULT_TLS_CERT_FILE="${cert_file}"
 readonly VAULT_TLS_KEY_FILE="${cert_key}"
@@ -67,6 +59,14 @@ else
         --tls-cert-file "$VAULT_TLS_CERT_FILE"  \
         --tls-key-file "$VAULT_TLS_KEY_FILE"
 fi
+
+/opt/run-td-agent \
+    --consul-prefix "${consul_prefix}" \
+    --type "$service_type"
+
+/opt/run-telegraf \
+    --consul-prefix "${consul_prefix}" \
+    --type "$service_type"
 
 /opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \

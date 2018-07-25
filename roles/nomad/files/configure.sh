@@ -27,6 +27,7 @@ function print_usage {
   echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
   echo -e "  --docker-auth\t\tPath to store Docker authentication information. Optional. Default is the absolute path of '../docker.json', relative to this script."
   echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
+  echo -e "  --telegraf-conf\t\tThe directory to place Telegraf config files in. Optional. Defaults to '/etc/telegraf/telegraf.d'"
   echo -e "  --user\t\tThe user to run Nomad as. Optional. Default is to use the owner of --config-dir."
   echo
   echo "Example:"
@@ -330,6 +331,22 @@ EOF
   echo "${telemetry_config}" > "${conf_file}"
   chown "${user}:${user}" "${conf_file}"
 }
+
+function generate_telegraf_procstat {
+  local readonly telegraf_conf="${1}"
+  local readonly pgrep_pattern="${2}"
+
+  local procstat=$(cat <<EOF
+# Monitor process cpu and memory usage
+[[inputs.procstat]]
+pattern = "${pgrep_pattern}"
+EOF
+)
+
+  log_info "Writing Procstat Telemetry Configuration for Telegraf to ${telegraf_conf}"
+  echo "${procstat}" > "${telegraf_conf}"
+}
+
 function main {
   local server="false"
   local client="false"
@@ -340,6 +357,7 @@ function main {
   local consul_template_config="/opt/consul-template/config"
   local docker_auth=""
   local statsd_addr="127.0.0.1:8125"
+  local telegraf_conf="/etc/telegraf/telegraf.d"
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -385,6 +403,11 @@ function main {
       --statsd-addr)
         assert_not_empty "$key" "$2"
         statsd_addr="$2"
+        shift
+        ;;
+      --telegraf-conf)
+        assert_not_empty "$key" "$2"
+        telegraf_conf="$2"
         shift
         ;;
       --help)
@@ -463,6 +486,7 @@ function main {
   if [[ "${telegraf_enabled}" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled"
     generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${server}" "${statsd_addr}"
+    generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
   else
     restart_service "nomad"
   fi

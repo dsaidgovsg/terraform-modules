@@ -23,6 +23,7 @@ function print_usage {
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --user\t\tThe user to CHOWN the config files as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
+  echo -e "  --telegraf-conf\t\tThe directory to place Telegraf config files in. Optional. Defaults to '/etc/telegraf/telegraf.d'"
   echo
   echo "Example:"
   echo
@@ -135,6 +136,21 @@ EOF
   chown "${user}:${user}" "${conf_file}"
 }
 
+function generate_telegraf_procstat {
+  local readonly telegraf_conf="${1}"
+  local readonly pgrep_pattern="${2}"
+
+  local procstat=$(cat <<EOF
+# Monitor process cpu and memory usage
+[[inputs.procstat]]
+pattern = "${pgrep_pattern}"
+EOF
+)
+
+  log_info "Writing Procstat Telemetry Configuration for Telegraf to ${telegraf_conf}"
+  echo "${procstat}" > "${telegraf_conf}"
+}
+
 function restart_service {
   local readonly service="${1}"
 
@@ -149,6 +165,7 @@ function main {
   local config_dir=""
   local user=""
   local statsd_addr="127.0.0.1:8125"
+  local telegraf_conf="/etc/telegraf/telegraf.d"
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -177,6 +194,11 @@ function main {
       --statsd-addr)
         assert_not_empty "$key" "$2"
         statsd_addr="$2"
+        shift
+        ;;
+      --telegraf-conf)
+        assert_not_empty "$key" "$2"
+        telegraf_conf="$2"
         shift
         ;;
       --help)
@@ -216,6 +238,7 @@ function main {
     log_info "Telegraf metrics is not enabled for ${type}"
 
     generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${type}" "${statsd_addr}"
+    generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
   else
     restart_service "consul"
   fi
