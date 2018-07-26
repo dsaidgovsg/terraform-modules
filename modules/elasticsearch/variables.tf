@@ -74,15 +74,16 @@ variable "es_consul_service" {
 variable "es_version" {
   # Available versions: https://aws.amazon.com/elasticsearch-service/faqs/
   # Currently cannot use 6.X due to fluentd elasticsearch plugin output multiple type issue
+  # Telegraf also does not support 6.X
   # See: https://github.com/uken/fluent-plugin-elasticsearch/issues/412
   description = "Elasticsearch version to deploy"
 
   default = "5.5"
 }
 
-variable "es_management_iam_roles" {
+variable "es_http_iam_roles" {
   description = <<EOF
-List of IAM role ARNs from which to permit management traffic (default ['*']).
+List of IAM role ARNs from which to permit Elasticsearch HTTP traffic (default ['*']).
 Note that a client must match both the IP address and the IAM role patterns in order to be permitted access.
 EOF
 
@@ -106,8 +107,8 @@ variable "es_encrypt_at_rest" {
 }
 
 variable "es_kms_key_id" {
-  description = "KMS Key ID for encryption at rest. Not used if left empty."
-  default     = ""
+  description = "KMS Key ID for encryption at rest. Defaults to AWS service key."
+  default     = "aws/es"
 }
 
 variable "es_additional_tags" {

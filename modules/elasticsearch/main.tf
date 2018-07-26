@@ -24,7 +24,11 @@ resource "aws_cloudwatch_log_group" "es_slow_index_log" {
 data "aws_iam_policy_document" "es_resource_attached_policy" {
   statement {
     actions = [
-      "es:*",
+      "es:ESHttpDelete",
+      "es:ESHttpGet",
+      "es:ESHttpHead",
+      "es:ESHttpPost",
+      "es:ESHttpPut",
     ]
 
     resources = [
@@ -35,13 +39,13 @@ data "aws_iam_policy_document" "es_resource_attached_policy" {
     principals {
       type = "AWS"
 
-      identifiers = ["${distinct(compact(var.es_management_iam_roles))}"]
+      identifiers = ["${distinct(compact(var.es_http_iam_roles))}"]
     }
   }
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "tf-${var.es_domain_name}"
+  domain_name           = "${local.es_domain_name}"
   elasticsearch_version = "${var.es_version}"
 
   cluster_config {
@@ -83,7 +87,7 @@ resource "aws_elasticsearch_domain" "es" {
 }
 
 resource "aws_elasticsearch_domain_policy" "es_resource_attached_policy" {
-  domain_name     = "tf-${var.es_domain_name}"
+  domain_name     = "${local.es_domain_name}"
   access_policies = "${data.aws_iam_policy_document.es_resource_attached_policy.json}"
 }
 
@@ -91,4 +95,5 @@ locals {
   endpoint        = "${aws_elasticsearch_domain.es.endpoint}"
   es_kms_key_id   = "${var.es_encrypt_at_rest ? var.es_kms_key_id : ""}"
   redirect_domain = "${var.redirect_subdomain}.${var.es_base_domain}"
+  es_domain_name  = "tf-${var.es_domain_name}"
 }
