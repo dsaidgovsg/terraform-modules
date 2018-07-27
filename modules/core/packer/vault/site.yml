@@ -2,7 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
-    vault_version: "0.10.3"
+    vault_version: "0.10.4"
     vault_ui_enable: "true"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
     vault_module_version: "v0.4.1"
