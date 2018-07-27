@@ -7,7 +7,7 @@
     consul_module_version: "v0.3.5"
     consul_version: "1.2.1"
     docker_version: "17.11.0~ce-0~ubuntu"
-    vault_version: "0.10.3"
+    vault_version: "0.10.4"
     vault_module_version: "v0.4.1"
     consul_enable_syslog: true
     nomad_enable_syslog: true
