@@ -272,8 +272,8 @@ resource "aws_security_group_rule" "vault_api_outgoing" {
 resource "aws_security_group_rule" "vault_https" {
   type                     = "ingress"
   security_group_id        = "${module.vault.security_group_id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = 8200
+  to_port                  = 8200
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }
