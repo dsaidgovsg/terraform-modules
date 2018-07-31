@@ -79,7 +79,6 @@ resource "aws_security_group_rule" "internal_https_incoming" {
 ##############################
 # Nomad Server Access
 ##############################
-
 resource "aws_lb_listener_rule" "nomad_server" {
   listener_arn = "${aws_lb_listener.internal_https.arn}"
   priority     = "1"
@@ -97,7 +96,7 @@ resource "aws_lb_listener_rule" "nomad_server" {
 
 resource "aws_lb_target_group" "nomad_server" {
   name                 = "${var.internal_lb_name}-nomad-server"
-  port                 = "4646"
+  port                 = "${local.nomad_server_http_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
@@ -108,7 +107,7 @@ resource "aws_lb_target_group" "nomad_server" {
     timeout             = "5"
     unhealthy_threshold = "2"
     path                = "/v1/status/leader"
-    port                = "4646"
+    port                = "${local.nomad_server_http_port}"
   }
 
   tags = "${var.tags}"
@@ -123,8 +122,8 @@ resource "aws_autoscaling_attachment" "nomad_server_internal" {
 resource "aws_security_group_rule" "nomad_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 4646
-  to_port                  = 4646
+  from_port                = "${local.nomad_server_http_port}"
+  to_port                  = "${local.nomad_server_http_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.nomad_servers.security_group_id}"
 }
@@ -133,8 +132,8 @@ resource "aws_security_group_rule" "nomad_api_outgoing" {
 resource "aws_security_group_rule" "nomad_http" {
   type                     = "ingress"
   security_group_id        = "${module.nomad_servers.security_group_id}"
-  from_port                = 4646
-  to_port                  = 4646
+  from_port                = "${local.nomad_server_http_port}"
+  to_port                  = "${local.nomad_server_http_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }
@@ -142,7 +141,6 @@ resource "aws_security_group_rule" "nomad_http" {
 ##############################
 # Consul Server Access
 ##############################
-
 resource "aws_lb_listener_rule" "consul_server" {
   listener_arn = "${aws_lb_listener.internal_https.arn}"
   priority     = "2"
@@ -160,7 +158,7 @@ resource "aws_lb_listener_rule" "consul_server" {
 
 resource "aws_lb_target_group" "consul_servers" {
   name                 = "${var.internal_lb_name}-consul-server"
-  port                 = "8500"
+  port                 = "${local.consul_http_api_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
@@ -171,7 +169,7 @@ resource "aws_lb_target_group" "consul_servers" {
     timeout             = "5"
     unhealthy_threshold = "2"
     path                = "/v1/status/leader"
-    port                = "8500"
+    port                = "${local.consul_http_api_port}"
   }
 
   tags = "${var.tags}"
@@ -186,8 +184,8 @@ resource "aws_autoscaling_attachment" "consul_server_internal" {
 resource "aws_security_group_rule" "consul_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.consul_http_api_port}"
+  to_port                  = "${local.consul_http_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.consul_servers.security_group_id}"
 }
@@ -196,8 +194,8 @@ resource "aws_security_group_rule" "consul_api_outgoing" {
 resource "aws_security_group_rule" "consul_http" {
   type                     = "ingress"
   security_group_id        = "${module.consul_servers.security_group_id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.consul_http_api_port}"
+  to_port                  = "${local.consul_http_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }
@@ -217,7 +215,6 @@ resource "aws_route53_record" "consul" {
 ##############################
 # Vault Server Access
 ##############################
-
 resource "aws_lb_listener_rule" "vault" {
   listener_arn = "${aws_lb_listener.internal_https.arn}"
   priority     = "3"
@@ -235,7 +232,7 @@ resource "aws_lb_listener_rule" "vault" {
 
 resource "aws_lb_target_group" "vault" {
   name                 = "${var.internal_lb_name}-vault"
-  port                 = "8200"
+  port                 = "${local.vault_api_port}"
   protocol             = "HTTPS"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
@@ -247,7 +244,7 @@ resource "aws_lb_target_group" "vault" {
     unhealthy_threshold = "2"
     protocol            = "HTTPS"
     path                = "/v1/sys/health?standbyok=true"
-    port                = "8200"
+    port                = "${local.vault_api_port}"
   }
 
   tags = "${var.tags}"
@@ -262,8 +259,8 @@ resource "aws_autoscaling_attachment" "vault_internal" {
 resource "aws_security_group_rule" "vault_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 8200
-  to_port                  = 8200
+  from_port                = "${local.vault_api_port}"
+  to_port                  = "${local.vault_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.vault.security_group_id}"
 }
@@ -272,8 +269,8 @@ resource "aws_security_group_rule" "vault_api_outgoing" {
 resource "aws_security_group_rule" "vault_https" {
   type                     = "ingress"
   security_group_id        = "${module.vault.security_group_id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.vault_api_port}"
+  to_port                  = "${local.vault_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }
