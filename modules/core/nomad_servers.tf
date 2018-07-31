@@ -2,6 +2,10 @@
 # DEPLOY THE NOMAD SERVER NODES
 # --------------------------------------------------------------------------------------------------
 
+locals {
+  nomad_server_http_port = 4646
+}
+
 module "nomad_servers" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
 
@@ -23,6 +27,7 @@ module "nomad_servers" {
 
   vpc_id     = "${var.vpc_id}"
   subnet_ids = "${var.nomad_server_subnets}"
+  http_port  = "${local.nomad_server_http_port}"
 
   ssh_key_name                = "${var.ssh_key_name}"
   allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
