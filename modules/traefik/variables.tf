@@ -116,3 +116,8 @@ variable "traefik_count" {
   description = "Number of copies of Traefik to run"
   default     = 3
 }
+
+variable "additional_docker_config" {
+  description = "Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined"
+  default     = ""
+}

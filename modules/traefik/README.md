@@ -117,3 +117,47 @@ job "hashi-ui" {
   }
 }
 ```
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| additional_docker_config | Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined | string | `` | no |
+| deregistration_delay | Time before an unhealthy Elastic Load Balancer target becomes removed | string | `30` | no |
+| elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
+| external_certificate_arn | ARN for the certificate to use for the external LB | string | - | yes |
+| external_lb_incoming_cidr | A list of CIDR-formatted IP address ranges from which the external Load balancer is allowed to listen to | list | `<list>` | no |
+| external_lb_name | Name of the external Nomad load balancer | string | `traefik-external` | no |
+| external_nomad_clients_asg | The Nomad Clients Autoscaling group to attach the external load balancer to | string | - | yes |
+| internal_certificate_arn | ARN for the certificate to use for the internal LB | string | - | yes |
+| internal_lb_incoming_cidr | A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to | list | `<list>` | no |
+| internal_lb_name | Name of the external Nomad load balancer | string | `traefik-internal` | no |
+| internal_nomad_clients_asg | The Nomad Clients Autoscaling group to attach the internal load balancer to | string | - | yes |
+| nomad_clients_external_security_group | The security group of the nomad clients that the external LB will be able to connect to | string | - | yes |
+| nomad_clients_internal_security_group | The security group of the nomad clients that the internal LB will be able to connect to | string | - | yes |
+| route53_zone | Zone for Route 53 records | string | - | yes |
+| subnets | List of subnets to deploy the LB to | list | - | yes |
+| tags | A map of tags to add to all resources | string | `<map>` | no |
+| traefik_consul_catalog_prefix | Prefix for Consul catalog tags for Traefik | string | `traefik` | no |
+| traefik_consul_prefix | Prefix on Consul to store Traefik configuration to | string | `traefik` | no |
+| traefik_count | Number of copies of Traefik to run | string | `3` | no |
+| traefik_external_base_domain | Domain to expose the external Traefik load balancer | string | - | yes |
+| traefik_internal_base_domain | Domain to expose the external Traefik load balancer | string | - | yes |
+| traefik_priority | Priority of the Nomad job for Traefik. See https://www.nomadproject.io/docs/job-specification/job.html#priority | string | `50` | no |
+| traefik_ui_domain | Domain to access Traefik UI | string | - | yes |
+| traefik_version | Docker image tag of the version of Traefik to run | string | `v1.6.5-alpine` | no |
+| vpc_id | ID of the VPC to deploy the LB to | string | - | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| traefik_external_cname | URL that applications should set a CNAME record to for Traefik reverse proxy |
+| traefik_external_lb_dns | URL that applications should set a CNAME or ALIAS record to the external LB directly |
+| traefik_external_zone | The canonical hosted zone ID of the external load balancer (to be used in a Route 53 Alias record). |
+| traefik_internal_cname | URL that applications should set a CNAME record to for Traefik reverse proxy |
+| traefik_internal_lb_dns | URL that applications should set a CNAME or ALIAS record to the internal LB directly |
+| traefik_internal_zone | The canonical hosted zone ID of the internal load balancer (to be used in a Route 53 Alias record). |
+| traefik_jobspec | Nomad Jobspec for the deployed Traefik reverse proxy |
+| traefik_lb_external_https_listener_arn | ARN of the HTTPS listener for the external load balancer |
+| traefik_lb_internal_https_listener_arn | ARN of the HTTPS listener for the internal load balancer |
