@@ -83,3 +83,39 @@ resource "consul_keys" "ping_entrypoint" {
     value = "${local.api_entrypoint}"
   }
 }
+
+# [traefikLog] section
+resource "consul_keys" "traefiklog_filepath" {
+  key {
+    path  = "${var.traefik_consul_prefix}/traefiklog/filepath"
+    value = "/dev/stderr"
+  }
+}
+
+resource "consul_keys" "traefiklog_format" {
+  count = "${var.log_json ? 1 : 0}"
+
+  key {
+    path  = "${var.traefik_consul_prefix}/traefiklog/format"
+    value = "json"
+  }
+}
+
+# [accessLog] section
+resource "consul_keys" "accesslog_filepath" {
+  count = "${var.access_log_enable ? 1 : 0}"
+
+  key {
+    path  = "${var.traefik_consul_prefix}/accesslog/filepath"
+    value = "/dev/stdout"
+  }
+}
+
+resource "consul_keys" "accesslog_format" {
+  count = "${var.access_log_enable && var.access_log_json ? 1 : 0}"
+
+  key {
+    path  = "${var.traefik_consul_prefix}/accesslog/format"
+    value = "json"
+  }
+}

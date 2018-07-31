@@ -121,3 +121,18 @@ variable "additional_docker_config" {
   description = "Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined"
   default     = ""
 }
+
+variable "log_json" {
+  description = "Log in JSON format"
+  default     = false
+}
+
+variable "access_log_enable" {
+  description = "Enable access logging"
+  default     = true
+}
+
+variable "access_log_json" {
+  description = "Log access in JSON"
+  default     = false
+}
