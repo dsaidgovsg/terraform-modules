@@ -150,6 +150,16 @@ variable "nomad_servers_num" {
   default     = 3
 }
 
+variable "nomad_server_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
+}
+
+variable "nomad_client_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
+}
+
 variable "nomad_clients_min" {
   description = "The minimum number of Nomad client nodes to deploy."
   default     = 3
@@ -217,6 +227,11 @@ variable "consul_cluster_size" {
   default     = 3
 }
 
+variable "consul_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
+}
+
 variable "cluster_tag_key" {
   description = "The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster."
   default     = "consul-servers"
@@ -253,6 +268,11 @@ variable "vault_cluster_name" {
 variable "vault_cluster_size" {
   description = "The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5."
   default     = 3
+}
+
+variable "vault_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
 }
 
 variable "vault_allowed_inbound_security_group_ids" {

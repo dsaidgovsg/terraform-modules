@@ -32,7 +32,8 @@ module "consul_servers" {
   root_volume_type = "${var.consul_root_volume_type}"
   root_volume_size = "${var.consul_root_volume_size}"
 
-  health_check_type = "ELB"
+  health_check_type    = "ELB"
+  termination_policies = "${var.consul_termination_policies}"
 }
 
 # --------------------------------------------------------------------------------------------------
