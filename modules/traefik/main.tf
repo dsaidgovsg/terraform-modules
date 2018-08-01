@@ -25,13 +25,14 @@ data "template_file" "traefik_jobspec" {
   template = "${file("${path.module}/jobs/traefik.nomad")}"
 
   vars {
-    region                = "${data.aws_region.current.name}"
-    az                    = "${jsonencode(data.aws_availability_zones.available.names)}"
-    version               = "${var.traefik_version}"
-    consul_port           = "${local.consul_port}"
-    traefik_priority      = "${var.traefik_priority}"
-    traefik_count         = "${var.traefik_count}"
-    traefik_consul_prefix = "${var.traefik_consul_prefix}"
+    region                   = "${data.aws_region.current.name}"
+    az                       = "${jsonencode(data.aws_availability_zones.available.names)}"
+    version                  = "${var.traefik_version}"
+    consul_port              = "${local.consul_port}"
+    traefik_priority         = "${var.traefik_priority}"
+    traefik_count            = "${var.traefik_count}"
+    traefik_consul_prefix    = "${var.traefik_consul_prefix}"
+    additional_docker_config = "${var.additional_docker_config}"
   }
 }
 
