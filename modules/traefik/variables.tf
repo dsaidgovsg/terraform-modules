@@ -84,6 +84,26 @@ variable "internal_lb_incoming_cidr" {
 
 variable "deregistration_delay" {
   description = "Time before an unhealthy Elastic Load Balancer target becomes removed"
+  default     = 60
+}
+
+variable "healthy_threshold" {
+  description = "The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10)."
+  default     = 2
+}
+
+variable "timeout" {
+  description = "The amount of time, in seconds, during which no response means a failed health check (2-60 seconds)."
+  default     = 5
+}
+
+variable "unhealthy_threshold" {
+  description = "The number of consecutive health check failures required before considering a target unhealthy (2-10)."
+  default     = 2
+}
+
+variable "interval" {
+  description = "The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds."
   default     = 30
 }
 

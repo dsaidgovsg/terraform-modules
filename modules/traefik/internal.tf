@@ -99,12 +99,18 @@ resource "aws_lb_target_group" "internal" {
   deregistration_delay = "${var.deregistration_delay}"
 
   health_check {
-    healthy_threshold   = "5"
+    healthy_threshold   = "${var.healthy_threshold}"
     matcher             = "200"
-    timeout             = "5"
-    unhealthy_threshold = "2"
+    timeout             = "${var.timeout}"
+    unhealthy_threshold = "${var.unhealthy_threshold}"
+    interval            = "${var.interval}"
     path                = "/ping"
     port                = "8080"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
   }
 }
 
