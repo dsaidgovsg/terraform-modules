@@ -154,7 +154,7 @@ output "vault_servers_cluster_tag_key" {
 }
 
 output "vault_servers_cluster_tag_value" {
-  description = "Value that VAult instances are tagged with"
+  description = "Value that Vault instances are tagged with"
   value       = "${module.vault.cluster_tag_value}"
 }
 

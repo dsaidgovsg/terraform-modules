@@ -565,4 +565,4 @@ Replace `xxx` with the instance ID.
 | vault_s3_bucket_arn | ARN of the S3 bucket that Vault's state is stored |
 | vault_security_group_id | ID of the Security Group for Vault |
 | vault_servers_cluster_tag_key | Key that Vault instances are tagged with |
-| vault_servers_cluster_tag_value | Value that VAult instances are tagged with |
+| vault_servers_cluster_tag_value | Value that Vault instances are tagged with |
