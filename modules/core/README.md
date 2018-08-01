@@ -465,6 +465,7 @@ Replace `xxx` with the instance ID.
 | consul_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
 | consul_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
 | consul_subnets | List of subnets to launch Connsul servers in | list | - | yes |
+| consul_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | consul_user_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
 | elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
@@ -475,6 +476,7 @@ Replace `xxx` with the instance ID.
 | nomad_api_domain | Domain to access Nomad REST API | string | - | yes |
 | nomad_client_instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | nomad_client_subnets | List of subnets to launch Nomad clients in | list | - | yes |
+| nomad_client_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | nomad_clients_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage | list | - | yes |
 | nomad_clients_ami_id | AMI ID for Nomad clients | string | - | yes |
 | nomad_clients_desired | The desired number of Nomad client nodes to deploy. | string | `6` | no |
@@ -492,6 +494,7 @@ Replace `xxx` with the instance ID.
 | nomad_server_lb_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `5` | no |
 | nomad_server_lb_unhealthy_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `2` | no |
 | nomad_server_subnets | List of subnets to launch Nomad servers in | list | - | yes |
+| nomad_server_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | nomad_servers_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Servers servers for API usage | list | - | yes |
 | nomad_servers_ami_id | AMI ID for Nomad servers | string | - | yes |
 | nomad_servers_num | The number of Nomad server nodes to deploy. We strongly recommend using 3 or 5. | string | `3` | no |
@@ -519,6 +522,7 @@ Replace `xxx` with the instance ID.
 | vault_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
 | vault_s3_bucket_name | The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault_enable_s3_backend' is set to true. | string | `` | no |
 | vault_subnets | List of subnets to launch Vault servers in | list | - | yes |
+| vault_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | vault_tls_key_policy_arn | ARN of the IAM policy to allow the Vault EC2 instances to decrypt the encrypted TLS private key baked into the AMI. See README for more information. | string | - | yes |
 | vault_user_data | The user data for the Vault servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
 | vpc_id | ID of the VPC to launch the module in | string | - | yes |
