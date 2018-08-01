@@ -10,8 +10,8 @@ resource "aws_lambda_function" "lambda_function" {
   role = "${data.aws_iam_role.lambda_role.arn}"
 
   vpc_config {
-    subnet_ids         = ["${var.subnet_id}"]
-    security_group_ids = ["${var.security_group}"]
+    subnet_ids         = "${var.subnet_id}"
+    security_group_ids = "${var.security_group}"
   }
 
   environment {

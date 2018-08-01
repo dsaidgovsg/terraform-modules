@@ -57,7 +57,12 @@ Elasticsearch service (with Kibana). The module also allows integration with
 [Traefik](modules/traefik) set-up, to allow redirect service to redirect users to the Kibana
 visualisation UI with a more friendly named URL.
 
+### [Lambda-api-gateway](modules/lambda-api-gateway)
+
+This module sets up a Lambda function with a API Gateway trigger, secured with an API key authentication.
+
 ## Roles
 
 Contains Ansible roles for installation of various services. For more details, check out the README
 in the respective role directories.
+
