@@ -34,7 +34,8 @@ module "nomad_servers" {
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 
-  health_check_type = "ELB"
+  health_check_type    = "ELB"
+  termination_policies = "${var.nomad_server_termination_policies}"
 }
 
 # --------------------------------------------------------------------------------------------------

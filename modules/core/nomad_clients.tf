@@ -27,6 +27,8 @@ module "nomad_clients" {
   allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
+
+  termination_policies = "${var.nomad_client_termination_policies}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

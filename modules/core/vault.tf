@@ -32,6 +32,8 @@ module "vault" {
 
   enable_s3_backend = "${var.vault_enable_s3_backend}"
   s3_bucket_name    = "${var.vault_s3_bucket_name}"
+
+  termination_policies = "${var.vault_termination_policies}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
