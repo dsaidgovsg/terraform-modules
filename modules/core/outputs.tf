@@ -145,7 +145,7 @@ output "vault_security_group_id" {
 
 output "vault_s3_bucket_arn" {
   description = "ARN of the S3 bucket that Vault's state is stored"
-  value       = "${module.vault.s3_bucket_arn}}"
+  value       = "${module.vault.s3_bucket_arn}"
 }
 
 output "vault_servers_cluster_tag_key" {
