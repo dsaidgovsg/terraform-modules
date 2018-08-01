@@ -122,6 +122,8 @@ job "hashi-ui" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| access_log_enable | Enable access logging | string | `true` | no |
+| access_log_json | Log access in JSON | string | `false` | no |
 | additional_docker_config | Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined | string | `` | no |
 | deregistration_delay | Time before an unhealthy Elastic Load Balancer target becomes removed | string | `30` | no |
 | elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
@@ -133,6 +135,7 @@ job "hashi-ui" {
 | internal_lb_incoming_cidr | A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to | list | `<list>` | no |
 | internal_lb_name | Name of the external Nomad load balancer | string | `traefik-internal` | no |
 | internal_nomad_clients_asg | The Nomad Clients Autoscaling group to attach the internal load balancer to | string | - | yes |
+| log_json | Log in JSON format | string | `false` | no |
 | nomad_clients_external_security_group | The security group of the nomad clients that the external LB will be able to connect to | string | - | yes |
 | nomad_clients_internal_security_group | The security group of the nomad clients that the internal LB will be able to connect to | string | - | yes |
 | route53_zone | Zone for Route 53 records | string | - | yes |
@@ -147,6 +150,7 @@ job "hashi-ui" {
 | traefik_ui_domain | Domain to access Traefik UI | string | - | yes |
 | traefik_version | Docker image tag of the version of Traefik to run | string | `v1.6.5-alpine` | no |
 | vpc_id | ID of the VPC to deploy the LB to | string | - | yes |
+
 
 ## Outputs
 
