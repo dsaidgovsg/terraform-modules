@@ -6,7 +6,7 @@ This module deploys an aws lambda function from a S3 zip file with an API Gatewa
 
 Lambda functions can be uploaded via a zip file so as to package dependencies in for runtime usage. Lambda allows retrieving the zip file from a S3 bucket, this module does not assist you in this step, you should have your own function uploaded to S3 using another method.
 
-An API Gateway connect to the lambda function allows for easy triggering of lambda, while securing the trigger with an API key so as to prevent unauthorized calls.
+An API Gateway connects to the lambda function which allows for easy triggering of lambda, while securing the API with an API key so as to prevent unauthorized calls.
 
 #### AWS Services this module deploys
   - Lambda
