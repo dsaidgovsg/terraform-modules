@@ -15,7 +15,6 @@ resource "aws_api_gateway_usage_plan_key" "deploy-apigw-usage-plan-key" {
 
 resource "aws_api_gateway_rest_api" "api-gateway" {
   name           = "${var.api_name}"
-  description    = "Runs lambda function to trigger set image of a current deployment"
   api_key_source = "HEADER"
 
   endpoint_configuration {
@@ -78,8 +77,7 @@ resource "aws_api_gateway_deployment" "api-gateway-deployment" {
 }
 
 resource "aws_api_gateway_usage_plan" "deploy-api-gw-usage-plan" {
-  name        = "${var.api_name}"
-  description = "Usage plan for api to trigger kubectl lambdafunction"
+  name = "${var.api_name}"
 
   api_stages {
     api_id = "${aws_api_gateway_rest_api.api-gateway.id}"
