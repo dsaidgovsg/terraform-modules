@@ -279,6 +279,8 @@ function main {
   assert_is_installed "consul"
   wait_for_consul
 
+  local reconfigured="false"
+
   if [[ "${skip_initialisation_check}" == "true" ]]; then
     log_info "Skip checking for initialisation completion in Consul"
 
@@ -287,6 +289,7 @@ function main {
       log_info "Skip checking for initialisation completion for Consul servers pending ACL"
     else
       generate_initialisation_check "${config_dir}/user_data.hcl" "${user}" "${initialisation_marker_path}"
+      reconfigured="true"
     fi
   fi
 
@@ -305,6 +308,10 @@ function main {
     fi
     generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${service}" "${statsd_addr}"
     generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
+    reconfigured="true"
+  fi
+
+  if [[ "$reconfigured" == "true" ]]; then
     restart_service "consul"
   fi
 }
