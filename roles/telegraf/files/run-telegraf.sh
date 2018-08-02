@@ -148,7 +148,9 @@ template {
   ## The full HTTP endpoint URL for your Elasticsearch instance
   ## Multiple urls can be specified as part of the same cluster,
   ## this means that only ONE of the urls will be written to each interval.
-  urls = [ "https://|| with service "elasticsearch" |||| (index . 0).Address |||| end ||" ] # required.
+  urls = [
+    || range service "${elasticsearch_service}" ||"https://|| .Address ||:|| .Port ||", || end ||
+  ] # required.
   ## Elasticsearch client timeout, defaults to "5s" if not set.
   timeout = "5s"
   ## Set to true to ask Elasticsearch a list of all cluster nodes,
