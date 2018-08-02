@@ -213,9 +213,9 @@ function main {
   wait_for_consul
 
   local readonly type="vault"
-  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
+  local readonly telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
 
-  if [[ "$enabled" != "yes" ]]; then
+  if [[ "$telegraf_enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"
   else
     generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${type}" "${statsd_addr}"
