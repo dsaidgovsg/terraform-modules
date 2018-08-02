@@ -3,28 +3,15 @@
 This module allows enabling of `telegraf` service for metrics reporting. Meant to be used in
 instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
 
-## Pre-requisites and integration
-
-This module is integrated with the `core` module to enable you to use both in conjunction
-seamlessly.
-
-If you use the default Telegraf configuration file, metrics will be logged to the Elasticsearch
-service provisioned in the [Elasticsearch module](../elasticsearch). You will need to provision the
-module first.
-
-Otherwise, if you want to output to other sinks, you will need to provide your own configuration
-file.
-
 ## Telegraf Configuration
 
-A [default configuration template](../../roles/telegraf/files/telegraf.conf) is copied to the AMI.
-The default configuration will discard all outputs.
+By default, the Packer templates in the `Core` module will install Telegraf and the relevant
+configuration script. A [default configuration template](../../roles/telegraf/files/telegraf.conf)
+is copied to the AMI. The default configuration will discard all outputs.
 
 You will need to provide your own configuration file to output to your desired sinks. In your Packer
 template, you should copy your configuration files ending with `.conf` to the directory
 `/etc/telegraf/telegraf.d/`.
-
-In addition, all the default Packer templates will install
 
 If you are using the provided [Elasticsearch](../elasticsearch) or [Prometheus](../prometheus)
 modules, you can set the appropriate variables in this module for outputs to these two modules to
@@ -33,10 +20,8 @@ be automatically configured.
 ## Example usage
 
 ```hcl
-...
-
 module "telegraf" {
-  source = "../../../vendor/terraform-modules/modules/telegraf"
+  source = "github.com/GovTechSG/terraform-modules.git//terraform-modules/modules/telegraf"
 
   # Optional, default is true
   core_integration = true
@@ -56,8 +41,6 @@ module "telegraf" {
   # Optional, default is true
   vault_enabled = true
 }
-
-...
 ```
 
 ## Defining Additional Server Types
