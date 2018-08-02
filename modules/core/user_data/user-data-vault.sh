@@ -79,4 +79,4 @@ fi
     --type "$service_type"
 
 # Touch the marker file to indicate completion
-touch "$marker_path}"
+touch "$marker_path"
