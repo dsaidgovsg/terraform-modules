@@ -213,7 +213,7 @@ function main {
   wait_for_consul
 
   local readonly type="vault"
-  local readonly telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
+  local readonly telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/enabled" "no")
 
   if [[ "$telegraf_enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"

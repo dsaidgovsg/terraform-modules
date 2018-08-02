@@ -470,9 +470,9 @@ function main {
   local readonly telegraf_enabled
 
   if [[ "$server" == "true" ]]; then
-    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/nomad_server/enabled" "no")
+    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/nomad_server/enabled" "no")
   else
-    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/nomad_client/enabled" "no")
+    telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/nomad_client/enabled" "no")
   fi
 
   if [[ "${telegraf_enabled}" != "yes" ]]; then

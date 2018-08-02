@@ -33,6 +33,6 @@
 - name: Install Configuration Script
   copy:
     src: "{{ role_path }}/files/configure.sh"
-    dest: "/opt/vault/consul/configure"
+    dest: "/opt/vault/bin/configure"
     mode: 0755
   become: yes
