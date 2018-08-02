@@ -23,7 +23,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 # Post startup Configuration
 /opt/consul/bin/post-configure \
     --client \
-    --initialisation-marker-path "${marker_path}" \
+    --initialisation-marker-path "$marker_path\
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
@@ -53,4 +53,4 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --type "$service_type"
 
 # Touch the marker file to indicate completion
-touch "${marker_path}"
+touch "$marker_path"

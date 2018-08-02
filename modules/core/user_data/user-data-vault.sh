@@ -35,7 +35,7 @@ AWS_DEFAULT_REGION="${aws_region}" \
 # Post startup Configuration
 /opt/consul/bin/post-configure \
     --client \
-    --initialisation-marker-path "${marker_path}" \
+    --initialisation-marker-path "$marker_path" \
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
@@ -79,4 +79,4 @@ fi
     --type "$service_type"
 
 # Touch the marker file to indicate completion
-touch "${marker_path}"
+touch "$marker_path}"
