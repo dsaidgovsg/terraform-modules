@@ -96,7 +96,7 @@
 - name: Install Post Configuration Script
   copy:
     src: "{{ role_path }}/files/post-configure.sh"
-    dest: "/opt/consul/consul/post-configure"
+    dest: "/opt/consul/bin/post-configure"
     mode: 0755
   become: yes
 - name: "Copy Consul template sub-configurations"

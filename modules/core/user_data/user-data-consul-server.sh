@@ -19,7 +19,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-value "${cluster_tag_value}"
 
 # Post startup Configuration
-/opt/consul/consul/post-configure \
+/opt/consul/bin/post-configure \
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
