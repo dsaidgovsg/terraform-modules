@@ -12,7 +12,7 @@
         "vault_module_version": "cluster-ip",
         "vault_version": "0.10.4",
         "vault_ui_enable": "true",
-        "consul_version": "1.2.1",
+        "consul_version": "1.2.2",
         "consul_key": "vault",
         "tls_cert_file_src": "{{ template_dir }}/cert/cert.pem",
         "encrypted_tls_key_file_src": "{{ template_dir }}/cert/cert.key",
