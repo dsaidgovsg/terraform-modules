@@ -83,8 +83,6 @@
                 "-e",
                 "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
                 "-e",
-                "telegraf_config_file={{user `telegraf_config_file`}} telegraf_config_vars_file={{user `telegraf_config_vars_file`}} telegraf_config_dest_file={{user `telegraf_config_dest_file`}}",
-                "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
