@@ -63,14 +63,14 @@ else
         --tls-key-file "$VAULT_TLS_KEY_FILE"
 fi
 
+/opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
+    --type "$service_type"
+
 /opt/run-td-agent \
     --consul-prefix "${consul_prefix}" \
     --type "$service_type"
 
 /opt/run-telegraf \
-    --consul-prefix "${consul_prefix}" \
-    --type "$service_type"
-
-/opt/vault-ssh \
     --consul-prefix "${consul_prefix}" \
     --type "$service_type"
