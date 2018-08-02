@@ -9,7 +9,7 @@
         "ssh_interface": "",
         "consul_module_repo": "https://github.com/hashicorp/terraform-aws-consul.git",
         "consul_module_version": "v0.3.5",
-        "consul_version": "1.2.1",
+        "consul_version": "1.2.2",
         "consul_enable_syslog": "true",
         "td_agent_config_file": "",
         "td_agent_config_vars_file": "",

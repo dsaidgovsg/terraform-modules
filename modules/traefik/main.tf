@@ -25,13 +25,14 @@ data "template_file" "traefik_jobspec" {
   template = "${file("${path.module}/jobs/traefik.nomad")}"
 
   vars {
-    region                = "${data.aws_region.current.name}"
-    az                    = "${jsonencode(data.aws_availability_zones.available.names)}"
-    version               = "${var.traefik_version}"
-    consul_port           = "${local.consul_port}"
-    traefik_priority      = "${var.traefik_priority}"
-    traefik_count         = "${var.traefik_count}"
-    traefik_consul_prefix = "${var.traefik_consul_prefix}"
+    region                   = "${data.aws_region.current.name}"
+    az                       = "${jsonencode(data.aws_availability_zones.available.names)}"
+    version                  = "${var.traefik_version}"
+    consul_port              = "${local.consul_port}"
+    traefik_priority         = "${var.traefik_priority}"
+    traefik_count            = "${var.traefik_count}"
+    traefik_consul_prefix    = "${var.traefik_consul_prefix}"
+    additional_docker_config = "${var.additional_docker_config}"
   }
 }
 
@@ -61,12 +62,18 @@ resource "aws_lb_target_group" "traefik_ui" {
   deregistration_delay = "${var.deregistration_delay}"
 
   health_check {
-    healthy_threshold   = "5"
+    healthy_threshold   = "${var.healthy_threshold}"
     matcher             = "200"
-    timeout             = "5"
-    unhealthy_threshold = "2"
+    timeout             = "${var.timeout}"
+    unhealthy_threshold = "${var.unhealthy_threshold}"
+    interval            = "${var.interval}"
     path                = "/ping"
     port                = "8080"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
   }
 }
 

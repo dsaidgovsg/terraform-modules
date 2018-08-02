@@ -150,6 +150,16 @@ variable "nomad_servers_num" {
   default     = 3
 }
 
+variable "nomad_server_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "NewestInstance"
+}
+
+variable "nomad_client_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
+}
+
 variable "nomad_clients_min" {
   description = "The minimum number of Nomad client nodes to deploy."
   default     = 3
@@ -217,6 +227,11 @@ variable "consul_cluster_size" {
   default     = 3
 }
 
+variable "consul_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "NewestInstance"
+}
+
 variable "cluster_tag_key" {
   description = "The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster."
   default     = "consul-servers"
@@ -253,6 +268,11 @@ variable "vault_cluster_name" {
 variable "vault_cluster_size" {
   description = "The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5."
   default     = 3
+}
+
+variable "vault_termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "NewestInstance"
 }
 
 variable "vault_allowed_inbound_security_group_ids" {
@@ -305,13 +325,87 @@ variable "vault_user_data" {
   default = ""
 }
 
+# --------------------------------------------------------------------------------------------------
+# Internal LB Variables
+# --------------------------------------------------------------------------------------------------
+
 variable "internal_lb_name" {
   description = "Name of the internal load balancer"
   default     = "internal"
 }
 
-variable "deregistration_delay" {
-  description = "Time before an unhealthy Elastic Load Balancer target becomes removed"
+variable "nomad_server_lb_deregistration_delay" {
+  description = "The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining."
+  default     = 30
+}
+
+variable "nomad_server_lb_healthy_threshold" {
+  description = "The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10)."
+  default     = 2
+}
+
+variable "nomad_server_lb_timeout" {
+  description = "The amount of time, in seconds, during which no response means a failed health check (2-60 seconds)."
+  default     = 5
+}
+
+variable "nomad_server_lb_unhealthy_threshold" {
+  description = "The number of consecutive health check failures required before considering a target unhealthy (2-10)."
+  default     = 2
+}
+
+variable "nomad_server_lb_interval" {
+  description = "The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds."
+  default     = 30
+}
+
+variable "consul_lb_deregistration_delay" {
+  description = "The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining."
+  default     = 30
+}
+
+variable "consul_lb_healthy_threshold" {
+  description = "The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10)."
+  default     = 2
+}
+
+variable "consul_lb_timeout" {
+  description = "The amount of time, in seconds, during which no response means a failed health check (2-60 seconds)."
+  default     = 5
+}
+
+variable "consul_lb_unhealthy_threshold" {
+  description = "The number of consecutive health check failures required before considering a target unhealthy (2-10)."
+  default     = 2
+}
+
+variable "consul_lb_interval" {
+  description = "The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds."
+  default     = 30
+}
+
+variable "vault_lb_deregistration_delay" {
+  description = "The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining."
+  default     = 30
+}
+
+variable "vault_lb_healthy_threshold" {
+  description = "The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10)."
+  default     = 2
+}
+
+variable "vault_lb_timeout" {
+  description = "The amount of time, in seconds, during which no response means a failed health check (2-60 seconds)."
+  default     = 5
+}
+
+variable "vault_lb_unhealthy_threshold" {
+  description = "The number of consecutive health check failures required before considering a target unhealthy (2-10)."
+  default     = 2
+}
+
+variable "vault_lb_interval" {
+  description = "The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds."
   default     = 30
 }
 

@@ -50,7 +50,19 @@ certificates.
 
 This module is required for some of the other Vault integration.
 
+### [Elasticsearch](modules/elasticsearch)
+
+This modules serves as a post-bootstrap addon for the Core Module. This module adds managed AWS
+Elasticsearch service (with Kibana). The module also allows integration with
+[Traefik](modules/traefik) set-up, to allow redirect service to redirect users to the Kibana
+visualisation UI with a more friendly named URL.
+
+### [Lambda-api-gateway](modules/lambda-api-gateway)
+
+This module sets up a Lambda function with a API Gateway trigger, secured with an API key authentication.
+
 ## Roles
 
 Contains Ansible roles for installation of various services. For more details, check out the README
 in the respective role directories.
+

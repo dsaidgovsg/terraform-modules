@@ -2,6 +2,10 @@
 # DEPLOY THE CONSUL SERVER NODES
 # --------------------------------------------------------------------------------------------------
 
+locals {
+  consul_http_api_port = 8500
+}
+
 module "consul_servers" {
   source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.3.5"
 
@@ -9,8 +13,9 @@ module "consul_servers" {
   cluster_size  = "${var.consul_cluster_size}"
   instance_type = "${var.consul_instance_type}"
 
-  vpc_id     = "${var.vpc_id}"
-  subnet_ids = "${var.consul_subnets}"
+  vpc_id        = "${var.vpc_id}"
+  subnet_ids    = "${var.consul_subnets}"
+  http_api_port = "${local.consul_http_api_port}"
 
   ssh_key_name                = "${var.ssh_key_name}"
   allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.this.cidr_block), var.consul_allowed_inbound_cidr_blocks)}"
@@ -27,7 +32,8 @@ module "consul_servers" {
   root_volume_type = "${var.consul_root_volume_type}"
   root_volume_size = "${var.consul_root_volume_size}"
 
-  health_check_type = "ELB"
+  health_check_type    = "ELB"
+  termination_policies = "${var.consul_termination_policies}"
 }
 
 # --------------------------------------------------------------------------------------------------

@@ -12,19 +12,6 @@ resource "aws_lb" "internal" {
   tags = "${var.tags}"
 }
 
-# A Record for nomad API endpoint to point to Internal Load balancer
-resource "aws_route53_record" "nomad_rpc" {
-  zone_id = "${data.aws_route53_zone.default.zone_id}"
-  name    = "${var.nomad_api_domain}"
-  type    = "A"
-
-  alias {
-    name                   = "${aws_lb.internal.dns_name}"
-    zone_id                = "${aws_lb.internal.zone_id}"
-    evaluate_target_health = false
-  }
-}
-
 resource "aws_lb_listener" "internal_https" {
   load_balancer_arn = "${aws_lb.internal.arn}"
   port              = "443"
@@ -44,7 +31,7 @@ resource "aws_lb_target_group" "sink" {
   port                 = "80"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
-  deregistration_delay = "${var.deregistration_delay}"
+  deregistration_delay = "30"                           # It doesn't matter
 
   tags = "${var.tags}"
 }
@@ -97,18 +84,24 @@ resource "aws_lb_listener_rule" "nomad_server" {
 
 resource "aws_lb_target_group" "nomad_server" {
   name                 = "${var.internal_lb_name}-nomad-server"
-  port                 = "4646"
+  port                 = "${local.nomad_server_http_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
-  deregistration_delay = "${var.deregistration_delay}"
+  deregistration_delay = "${var.nomad_server_lb_deregistration_delay}"
 
   health_check {
-    healthy_threshold   = "5"
+    healthy_threshold   = "${var.nomad_server_lb_healthy_threshold}"
     matcher             = "200"
-    timeout             = "5"
-    unhealthy_threshold = "2"
+    timeout             = "${var.nomad_server_lb_timeout}"
+    unhealthy_threshold = "${var.nomad_server_lb_unhealthy_threshold}"
     path                = "/v1/status/leader"
-    port                = "4646"
+    port                = "${local.nomad_server_http_port}"
+    interval            = "${var.nomad_server_lb_interval}"
+  }
+
+  stickiness {
+    type    = "lb_cookie"
+    enabled = true
   }
 
   tags = "${var.tags}"
@@ -123,8 +116,8 @@ resource "aws_autoscaling_attachment" "nomad_server_internal" {
 resource "aws_security_group_rule" "nomad_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 4646
-  to_port                  = 4646
+  from_port                = "${local.nomad_server_http_port}"
+  to_port                  = "${local.nomad_server_http_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.nomad_servers.security_group_id}"
 }
@@ -133,16 +126,28 @@ resource "aws_security_group_rule" "nomad_api_outgoing" {
 resource "aws_security_group_rule" "nomad_http" {
   type                     = "ingress"
   security_group_id        = "${module.nomad_servers.security_group_id}"
-  from_port                = 4646
-  to_port                  = 4646
+  from_port                = "${local.nomad_server_http_port}"
+  to_port                  = "${local.nomad_server_http_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
+}
+
+# A Record for nomad API endpoint to point to Internal Load balancer
+resource "aws_route53_record" "nomad_rpc" {
+  zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.nomad_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
 }
 
 ##############################
 # Consul Server Access
 ##############################
-
 resource "aws_lb_listener_rule" "consul_server" {
   listener_arn = "${aws_lb_listener.internal_https.arn}"
   priority     = "2"
@@ -160,18 +165,24 @@ resource "aws_lb_listener_rule" "consul_server" {
 
 resource "aws_lb_target_group" "consul_servers" {
   name                 = "${var.internal_lb_name}-consul-server"
-  port                 = "8500"
+  port                 = "${local.consul_http_api_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
-  deregistration_delay = "${var.deregistration_delay}"
+  deregistration_delay = "${var.consul_lb_deregistration_delay}"
 
   health_check {
-    healthy_threshold   = "5"
+    healthy_threshold   = "${var.consul_lb_healthy_threshold}"
     matcher             = "200"
-    timeout             = "5"
-    unhealthy_threshold = "2"
+    timeout             = "${var.consul_lb_timeout}"
+    unhealthy_threshold = "${var.consul_lb_unhealthy_threshold}"
     path                = "/v1/status/leader"
-    port                = "8500"
+    port                = "${local.consul_http_api_port}"
+    interval            = "${var.consul_lb_interval}"
+  }
+
+  stickiness {
+    type    = "lb_cookie"
+    enabled = true
   }
 
   tags = "${var.tags}"
@@ -186,8 +197,8 @@ resource "aws_autoscaling_attachment" "consul_server_internal" {
 resource "aws_security_group_rule" "consul_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.consul_http_api_port}"
+  to_port                  = "${local.consul_http_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.consul_servers.security_group_id}"
 }
@@ -196,8 +207,8 @@ resource "aws_security_group_rule" "consul_api_outgoing" {
 resource "aws_security_group_rule" "consul_http" {
   type                     = "ingress"
   security_group_id        = "${module.consul_servers.security_group_id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.consul_http_api_port}"
+  to_port                  = "${local.consul_http_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }
@@ -217,7 +228,6 @@ resource "aws_route53_record" "consul" {
 ##############################
 # Vault Server Access
 ##############################
-
 resource "aws_lb_listener_rule" "vault" {
   listener_arn = "${aws_lb_listener.internal_https.arn}"
   priority     = "3"
@@ -235,19 +245,25 @@ resource "aws_lb_listener_rule" "vault" {
 
 resource "aws_lb_target_group" "vault" {
   name                 = "${var.internal_lb_name}-vault"
-  port                 = "8200"
+  port                 = "${local.vault_api_port}"
   protocol             = "HTTPS"
   vpc_id               = "${var.vpc_id}"
-  deregistration_delay = "${var.deregistration_delay}"
+  deregistration_delay = "${var.vault_lb_deregistration_delay}"
 
   health_check {
-    healthy_threshold   = "5"
+    healthy_threshold   = "${var.vault_lb_healthy_threshold}"
     matcher             = "200"
-    timeout             = "5"
-    unhealthy_threshold = "2"
+    timeout             = "${var.vault_lb_timeout}"
+    unhealthy_threshold = "${var.vault_lb_unhealthy_threshold}"
     protocol            = "HTTPS"
     path                = "/v1/sys/health?standbyok=true"
-    port                = "8200"
+    port                = "${local.vault_api_port}"
+    interval            = "${var.vault_lb_interval}"
+  }
+
+  stickiness {
+    type    = "lb_cookie"
+    enabled = true
   }
 
   tags = "${var.tags}"
@@ -262,8 +278,8 @@ resource "aws_autoscaling_attachment" "vault_internal" {
 resource "aws_security_group_rule" "vault_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = 8200
-  to_port                  = 8200
+  from_port                = "${local.vault_api_port}"
+  to_port                  = "${local.vault_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.vault.security_group_id}"
 }
@@ -272,8 +288,8 @@ resource "aws_security_group_rule" "vault_api_outgoing" {
 resource "aws_security_group_rule" "vault_https" {
   type                     = "ingress"
   security_group_id        = "${module.vault.security_group_id}"
-  from_port                = 8500
-  to_port                  = 8500
+  from_port                = "${local.vault_api_port}"
+  to_port                  = "${local.vault_api_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }

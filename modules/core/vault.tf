@@ -2,6 +2,10 @@
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
+locals {
+  vault_api_port = 8200
+}
+
 module "vault" {
   source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.7.1"
 
@@ -17,6 +21,7 @@ module "vault" {
 
   vpc_id     = "${var.vpc_id}"
   subnet_ids = "${var.vault_subnets}"
+  api_port   = "${local.vault_api_port}"
 
   ssh_key_name                         = "${var.ssh_key_name}"
   allowed_inbound_security_group_count = "${var.vault_allowed_inbound_security_group_count}"
@@ -27,6 +32,8 @@ module "vault" {
 
   enable_s3_backend = "${var.vault_enable_s3_backend}"
   s3_bucket_name    = "${var.vault_s3_bucket_name}"
+
+  termination_policies = "${var.vault_termination_policies}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

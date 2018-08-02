@@ -31,6 +31,8 @@ job "traefik" {
           "--consul.endpoint=169.254.1.1:${consul_port}",
           "--consul.prefix=${traefik_consul_prefix}",
         ]
+
+        ${additional_docker_config}
       }
 
       service {

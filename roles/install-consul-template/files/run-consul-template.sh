@@ -38,7 +38,7 @@ function print_usage {
   echo -e "  --syslog-facility\t\tThe syslog facility to log to. Optional. Defaults to \"LOCAL5\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --vault-address\t\tAddress of the Vault server.  Optional. Defaults to \"https://vault.service.consul:8200\""
-  echo -e "  --skip-render-self-template\t\tSkip render the Vault token passed to Consul Template to the \"~/.vault-token\" of the user provided above. Optional. Default is false"
+  echo -e "  --skip-token-out\t\tSkip writing the Vault token passed to Consul Template to the \"~/.vault-token\" of the user provided above. Optional. Default is false"
   echo -e "  --skip-config\tIf this flag is set, don't generate a Consul-template configuration file. Optional. Default is false."
   echo -e "  --skip-vault\t\tIf this flag is set, don't attempt to obtain a Vault token using the aws-auth integration. Optional. Default is false."
   echo
@@ -301,7 +301,7 @@ EOF
 
 function generate_ctl_config {
   local readonly ctl="${1}"
-  
+
   if [[ "${ctl}" == "$INITCTL" ]]; then
     shift
     generate_upstart_config "$@"
@@ -351,31 +351,6 @@ function get_vault_token {
   echo -n "${vault_token}"
 }
 
-function render_self_template {
-  local readonly config_dir="${1}"
-  local readonly user="${2}"
-  local readonly config_path="$config_dir/$VAULT_TOKEN_TEMPLATE"
-
-  local template_destination
-  template_destination="$(get_home_directory "${user}")/.vault-token"
-
-  log_info "Generating Vault token template for Consul Template"
-
-  local vault_token_template=$(cat <<EOF
-template {
-  contents = "{{ with secret \\"auth/token/lookup-self\\" }}{{ .Data.id }}{{ end }}"
-  destination = "${template_destination}"
-  create_dest_dirs = true
-  error_on_missing_key = true
-  perms = 0600
-}
-EOF
-)
-  log_info "Installing Vault token template configuration file in $config_path"
-  echo "$vault_token_template" > "$config_path"
-  chown "$user:$user" "$config_path"
-}
-
 function start_consul_template_for_supervisor {
   log_info "Reloading Supervisor config and starting Consul Template"
   supervisorctl reread
@@ -418,7 +393,7 @@ function run {
   local vault_address="https://vault.service.consul:8200"
   local skip_config="false"
   local skip_vault="false"
-  local skip_render_self_template="false"
+  local skip_token_out="false"
   local environment=()
   local all_args=()
 
@@ -488,8 +463,8 @@ function run {
       --skip-vault)
         skip_vault="true"
         ;;
-      --skip-render-self-template)
-        skip_render_self_template="true"
+      --skip-token-out)
+        skip_token_out="true"
         ;;
       --help)
         print_usage
@@ -563,10 +538,11 @@ function run {
 
       generate_vault_config "${vault_address}" "$config_dir" "$user"
 
-      if [[ "$skip_render_self_template" == "false" ]]; then
-        log_info "Configuring consul-template to render its Vault token to the home directory."
+      if [[ "$skip_token_out" == "false" ]]; then
+        local token_destination="$(get_home_directory "${user}")/.vault-token"
+        log_info "Writing Vault token to the home directory: ${token_destination}"
 
-        render_self_template "${config_dir}" "${user}"
+        echo -n "${vault_token}" > "${token_destination}"
       fi
     fi
   fi
