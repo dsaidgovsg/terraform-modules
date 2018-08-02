@@ -78,11 +78,15 @@ variable "image_name" {
 | iam_role_name | IAM Role Name that has policies attached to execute lambda functions | string | - | yes |
 | lambda_handler_name | Name of the handler in lambda function e.g. main.handler | string | - | yes |
 | lambda_timeout | Timeout afterwhich to kill the function | string | `10` | no |
+| quota_limit | Maximum number of api calls for the usage plan | string | `100` | no |
+| quota_period | Period in which the limit is accumulated, eg DAY, WEEK, MONTH | string | `DAY` | no |
 | runtime | Lambda Runtime your function uses e.g. nodejs8.10 | string | - | yes |
 | s3_bucket | S3 Bucket Name | string | - | yes |
 | s3_key | Directory of the zip file inside the S3 bucket e.g. SomePath/${var.app_version}/function.zip | string | - | yes |
 | security_group | List of security group to add to your function | list | - | yes |
 | subnet_id | List of subnets to run your function in | list | - | yes |
+| throttle_burst_limit | Burst token bucket | string | `5` | no |
+| throttle_rate_limit | Rate at which burst tokens are added to bucket | string | `10` | no |
 | vpc_id | VPC that your function will run in. Used when your function requires an internal IP for accessing internal services | string | - | yes |
 
 ## Outputs

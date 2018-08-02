@@ -85,13 +85,12 @@ resource "aws_api_gateway_usage_plan" "deploy-api-gw-usage-plan" {
   }
 
   quota_settings {
-    limit  = 20
-    offset = 2
-    period = "WEEK"
+    limit  = "${var.quota_limit}"
+    period = "${var.quota_period}"
   }
 
   throttle_settings {
-    burst_limit = 5
-    rate_limit  = 10
+    burst_limit = "${var.throttle_burst_limit}"
+    rate_limit  = "${var.throttle_rate_limit}"
   }
 }

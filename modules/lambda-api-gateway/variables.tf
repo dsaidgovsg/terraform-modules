@@ -58,3 +58,23 @@ variable "lambda_timeout" {
   description = "Timeout afterwhich to kill the function"
   default     = "10"
 }
+
+variable "quota_limit" {
+  description = "Maximum number of api calls for the usage plan"
+  default     = 100
+}
+
+variable "quota_period" {
+  description = "Period in which the limit is accumulated, eg DAY, WEEK, MONTH"
+  default     = "DAY"
+}
+
+variable "throttle_burst_limit" {
+  description = "Burst token bucket"
+  default     = 5
+}
+
+variable "throttle_rate_limit" {
+  description = "Rate at which burst tokens are added to bucket"
+  default     = 10
+}
