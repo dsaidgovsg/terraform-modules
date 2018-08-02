@@ -33,6 +33,7 @@ AWS_DEFAULT_REGION="${aws_region}" \
 
 # Post startup Configuration
 /opt/consul/bin/post-configure \
+    --client \
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
