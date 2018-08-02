@@ -26,14 +26,6 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --syslog-enable \
     --consul-prefix "${consul_prefix}"
 
-/opt/run-telegraf \
-    --consul-prefix "${consul_prefix}" \
-    --type "$service_type"
-
-/opt/run-td-agent \
-    --consul-prefix "${consul_prefix}" \
-    --type "$service_type"
-
 # Additional Configuration
 /opt/nomad/bin/configure \
     --server \
@@ -42,5 +34,13 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 /opt/nomad/bin/run-nomad --server --num-servers "${num_servers}"
 
 /opt/vault-ssh \
+    --consul-prefix "${consul_prefix}" \
+    --type "$service_type"
+
+/opt/run-td-agent \
+    --consul-prefix "${consul_prefix}" \
+    --type "$service_type"
+
+/opt/run-telegraf \
     --consul-prefix "${consul_prefix}" \
     --type "$service_type"
