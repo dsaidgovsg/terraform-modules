@@ -152,7 +152,7 @@ variable "nomad_servers_num" {
 
 variable "nomad_server_termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
-  default     = "Default"
+  default     = "NewestInstance"
 }
 
 variable "nomad_client_termination_policies" {
@@ -229,7 +229,7 @@ variable "consul_cluster_size" {
 
 variable "consul_termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
-  default     = "Default"
+  default     = "NewestInstance"
 }
 
 variable "cluster_tag_key" {
@@ -272,7 +272,7 @@ variable "vault_cluster_size" {
 
 variable "vault_termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
-  default     = "Default"
+  default     = "NewestInstance"
 }
 
 variable "vault_allowed_inbound_security_group_ids" {
