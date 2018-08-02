@@ -13,6 +13,11 @@ You will need to provide your own configuration file to output to your desired s
 template, you should copy your configuration files ending with `.conf` to the directory
 `/etc/telegraf/telegraf.d/`.
 
+By default, all the default Packer templates will install
+[consul-template](https://github.com/hashicorp/consul-template) to the AMIs and is configured to
+start `consul-template` by default. You might want to use this to render out the configuration files
+for Telegraf using values from Consul and/or Vault.
+
 If you are using the provided [Elasticsearch](../elasticsearch) or [Prometheus](../prometheus)
 modules, you can set the appropriate variables in this module for outputs to these two modules to
 be automatically configured.
