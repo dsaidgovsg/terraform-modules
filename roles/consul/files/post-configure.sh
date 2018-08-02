@@ -26,6 +26,8 @@ function print_usage {
   echo -e "  --user\t\tThe user to CHOWN the config files as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
   echo -e "  --telegraf-conf\t\tThe directory to place Telegraf config files in. Optional. Defaults to '/etc/telegraf/telegraf.d'"
+  echo -e "  --skip-initialisation-check\t\tSkip generating health checks for User data initialisation. Defaults to false. Optional."
+  echo -e "  --initialisation-marker-path\t\tPath where the 'user_data' initialisation script will write a marker file to after completion. Optional. Defaults to '/etc/user-data-marker'"
   echo
   echo "Example:"
   echo
@@ -153,6 +155,38 @@ EOF
   echo "${procstat}" > "${telegraf_conf}"
 }
 
+function generate_initialisation_check {
+  local readonly conf_file="${1}"
+  local readonly user="${2}"
+  local readonly marker_path="${3}"
+
+  local config=$(cat <<EOF
+# The default configuration for agents only accept HTTP API connections from localhost
+enable_script_checks = true
+
+# Define "health check" for User Data completion
+check {
+  id = "initialisation"
+  name = "User Data Initialisation Completion"
+  interval = "60s"
+  timeout = "1s"
+
+  # Initial Status
+  status = "passing"
+
+  args = ["ls", "-al", "${marker_path}"]
+
+  notes = "User data script completed its run via the existence of its marker file."
+}
+
+EOF
+)
+
+  log_info "Writing Initialisation Check Configuration for Consul to ${conf_file}"
+  echo "${config}" > "${conf_file}"
+  chown "${user}:${user}" "${conf_file}"
+}
+
 function restart_service {
   local readonly service="${1}"
 
@@ -167,6 +201,8 @@ function main {
   local consul_prefix="terraform/"
   local config_dir=""
   local user=""
+  local skip_initialisation_check="false"
+  local initialisation_marker_path="/etc/user-data-marker"
   local statsd_addr="127.0.0.1:8125"
   local telegraf_conf="/etc/telegraf/telegraf.d"
 
@@ -205,6 +241,14 @@ function main {
         telegraf_conf="$2"
         shift
         ;;
+      --skip-initialisation-check)
+        skip_initialisation_check="true"
+        ;;
+      --initialisation-marker-path)
+        assert_not_empty "$key" "$2"
+        initialisation_marker_path="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -234,6 +278,17 @@ function main {
 
   assert_is_installed "consul"
   wait_for_consul
+
+  if [[ "${skip_initialisation_check}" == "true" ]]; then
+    log_info "Skip checking for initialisation completion in Consul"
+
+  else
+    if [[ "$server" == "true" ]]; then
+      log_info "Skip checking for initialisation completion for Consul servers pending ACL"
+    else
+      generate_initialisation_check "${config_dir}/user_data.hcl" "${user}" "${initialisation_marker_path}"
+    fi
+  fi
 
   local readonly type="consul"
   local readonly telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/enabled" "no")

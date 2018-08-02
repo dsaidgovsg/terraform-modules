@@ -4,10 +4,11 @@
 # Vault in server mode. Note that this script assumes it's running in an AMI built from the Packer template in
 # examples/vault-consul-ami/vault-consul.json.
 
-set -e
+set -euo pipefail
 
 # Avoid Terraform template by either using double dollar signs, or not using curly braces
 readonly service_type="vault"
+readonly marker_path="/etc/user-data-marker"
 
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/
@@ -34,6 +35,7 @@ AWS_DEFAULT_REGION="${aws_region}" \
 # Post startup Configuration
 /opt/consul/bin/post-configure \
     --client \
+    --initialisation-marker-path "${marker_path}" \
     --consul-prefix "${consul_prefix}"
 
 # Configure and run consul-template
@@ -75,3 +77,6 @@ fi
 /opt/run-telegraf \
     --consul-prefix "${consul_prefix}" \
     --type "$service_type"
+
+# Touch the marker file to indicate completion
+touch "${marker_path}"
