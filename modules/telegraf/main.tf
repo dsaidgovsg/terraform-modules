@@ -22,6 +22,7 @@ module "consul" {
 
   server_type = "consul"
   enabled     = "${var.consul_enabled}"
+  path        = "${local.path}"
 
   output_elastisearch               = "${var.consul_output_elastisearch}"
   output_elasticsearch_service_name = "${var.consul_output_elasticsearch_service_name}"
@@ -32,6 +33,7 @@ module "nomad_server" {
 
   server_type = "nomad_server"
   enabled     = "${var.nomad_server_enabled}"
+  path        = "${local.path}"
 
   output_elastisearch               = "${var.nomad_server_output_elastisearch}"
   output_elasticsearch_service_name = "${var.nomad_server_output_elasticsearch_service_name}"
@@ -42,6 +44,7 @@ module "nomad_client" {
 
   server_type = "nomad_client"
   enabled     = "${var.nomad_client_enabled}"
+  path        = "${local.path}"
 
   output_elastisearch               = "${var.nomad_client_output_elastisearch}"
   output_elasticsearch_service_name = "${var.nomad_client_output_elasticsearch_service_name}"
@@ -52,6 +55,7 @@ module "vault" {
 
   server_type = "vault"
   enabled     = "${var.vault_enabled}"
+  path        = "${local.path}"
 
   output_elastisearch               = "${var.vault_output_elastisearch}"
   output_elasticsearch_service_name = "${var.vault_output_elasticsearch_service_name}"
