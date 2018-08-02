@@ -3,9 +3,29 @@ variable "consul_enabled" {
   default     = true
 }
 
+variable "consul_output_elastisearch" {
+  description = "Enable metrics output to Elasticsearch"
+  default     = false
+}
+
+variable "consul_output_elasticsearch_service_name" {
+  description = "Service name in Consul to lookup Elasticsearch URLs"
+  default     = "elasticsearch"
+}
+
 variable "nomad_server_enabled" {
   description = "Enable Telegraf for Nomad servers"
   default     = true
+}
+
+variable "nomad_server_output_elastisearch" {
+  description = "Enable metrics output to Elasticsearch"
+  default     = false
+}
+
+variable "nomad_server_output_elasticsearch_service_name" {
+  description = "Service name in Consul to lookup Elasticsearch URLs"
+  default     = "elasticsearch"
 }
 
 variable "nomad_client_enabled" {
@@ -13,9 +33,29 @@ variable "nomad_client_enabled" {
   default     = true
 }
 
+variable "nomad_client_output_elastisearch" {
+  description = "Enable metrics output to Elasticsearch"
+  default     = false
+}
+
+variable "nomad_client_output_elasticsearch_service_name" {
+  description = "Service name in Consul to lookup Elasticsearch URLs"
+  default     = "elasticsearch"
+}
+
 variable "vault_enabled" {
   description = "Enable Telegraf for Vault servers"
   default     = true
+}
+
+variable "vault_output_elastisearch" {
+  description = "Enable metrics output to Elasticsearch"
+  default     = false
+}
+
+variable "vault_output_elasticsearch_service_name" {
+  description = "Service name in Consul to lookup Elasticsearch URLs"
+  default     = "elasticsearch"
 }
 
 # --------------------------------------------------------------------------------------------------

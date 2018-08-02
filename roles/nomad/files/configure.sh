@@ -297,12 +297,12 @@ function generate_telemetry_conf {
   local telemetry_additional
   if [[ "$server" == "true" ]]; then
     telemetry_additional=$(cat <<EOF
-  datadog_tags = ["service:nomad_server"]
+  datadog_tags = ["_service:nomad_server"]
 EOF
 )
   else
     telemetry_additional=$(cat <<EOF
-  datadog_tags = ["service:nomad_client"]
+  datadog_tags = ["_service:nomad_client"]
 
   publish_allocation_metrics = true
   publish_node_metrics = true

@@ -125,7 +125,7 @@ function generate_telemetry_conf {
   local telemetry_config=$(cat <<EOF
 telemetry {
   dogstatsd_addr = "${statsd_addr}"
-  dogstatsd_tags = ["service:${service}"]
+  dogstatsd_tags = ["_service:${service}"]
   disable_hostname = true
 }
 EOF
@@ -143,7 +143,7 @@ function generate_telegraf_procstat {
   local procstat=$(cat <<EOF
 # Monitor process cpu and memory usage
 [[inputs.procstat]]
-pattern = "${pgrep_pattern}"
+exe = "${pgrep_pattern}"
 EOF
 )
 
@@ -152,7 +152,6 @@ EOF
 }
 
 function main {
-  local type=""
   local consul_prefix="terraform/"
   local config_dir=""
   local user=""
@@ -163,11 +162,6 @@ function main {
     local key="$1"
 
     case "$key" in
-      --type)
-        assert_not_empty "$key" "$2"
-        type="$2"
-        shift
-        ;;
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
@@ -218,8 +212,8 @@ function main {
   assert_is_installed "consul"
   wait_for_consul
 
-  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
   local readonly type="vault"
+  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
 
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"

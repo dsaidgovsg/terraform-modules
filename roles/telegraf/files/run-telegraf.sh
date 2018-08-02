@@ -21,6 +21,7 @@ function print_usage {
   echo
   echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type"
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
+  echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
   echo
   echo "Example:"
   echo
@@ -122,16 +123,92 @@ function enable_telegraf {
   log_info "Service telegraf enabled and started!"
 }
 
-function generate_statsd_conf {
-  local readonly conf_file="${1}"
-  echo -e 'telemetry {\n  statsd_address = "127.0.0.1:8125"\n}' > $conf_file
+function enable_elasticsearch {
+  local readonly elasticsearch_service="${1}"
+  local readonly consul_template_config="${2}"
+  local readonly config_override_dir="${3}"
+
+  local readonly destination="${config_override_dir}/output_elasticsearch.conf"
+  local readonly template_destination="${consul_template_config}/template_telegraf_output_elasticsearch.hcl"
+
+  local template=$(cat <<EOF
+template {
+  destination = "${destination}"
+  command = "service telegraf restart"
+  left_delimiter  = "||"
+  right_delimiter = "||"
+
+  contents = <<EOT
+###############################################################################
+#                            OUTPUT PLUGINS                                   #
+###############################################################################
+
+# Configuration for Elasticsearch to send metrics to.
+[[outputs.elasticsearch]]
+  ## The full HTTP endpoint URL for your Elasticsearch instance
+  ## Multiple urls can be specified as part of the same cluster,
+  ## this means that only ONE of the urls will be written to each interval.
+  urls = [ "https://|| with service "elasticsearch" |||| (index . 0).Address |||| end ||" ] # required.
+  ## Elasticsearch client timeout, defaults to "5s" if not set.
+  timeout = "5s"
+  ## Set to true to ask Elasticsearch a list of all cluster nodes,
+  ## thus it is not necessary to list all nodes in the urls config option.
+  enable_sniffer = false
+  ## Set the interval to check if the Elasticsearch nodes are available
+  ## Setting to "0s" will disable the health check (not recommended in production)
+  health_check_interval = "10s"
+  ## HTTP basic authentication details (eg. when using Shield)
+  # username = "telegraf"
+  # password = "mypassword"
+
+  ## Index Config
+  ## The target index for metrics (Elasticsearch will create if it not exists).
+  ## You can use the date specifiers below to create indexes per time frame.
+  ## The metric timestamp will be used to decide the destination index name
+  # %Y - year (2016)
+  # %y - last two digits of year (00..99)
+  # %m - month (01..12)
+  # %d - day of month (e.g., 01)
+  # %H - hour (00..23)
+  # %V - week of the year (ISO week) (01..53)
+  ## Additionally, you can specify a tag name using the notation {{tag_name}}
+  ## which will be used as part of the index name. If the tag does not exist,
+  ## the default tag value will be used.
+  index_name = "metrics.{{_server_type}}-%Y.%m.%d"
+  default_tag_value = "metrics.unknown-%Y.%m.%d"
+
+  ## Optional SSL Config
+  # ssl_ca = "/etc/telegraf/ca.pem"
+  # ssl_cert = "/etc/telegraf/cert.pem"
+  # ssl_key = "/etc/telegraf/key.pem"
+  ## Use SSL but skip chain & host verification
+  # insecure_skip_verify = false
+
+  ## Template Config
+  ## Set to true if you want telegraf to manage its index template.
+  ## If enabled it will create a recommended index template for telegraf indexes
+  manage_template = true
+  ## The template name used for telegraf indexes
+  template_name = "telegraf"
+  ## Set to true if you want telegraf to overwrite an existing template
+  overwrite_template = true
+
+EOT
+}
+EOF
+)
+
+  log_info "Writing Consul Template configuration to ${template_destination}"
+  echo -n "${template}" > "${template_destination}"
 }
 
 function main {
   local type=""
   local consul_prefix="terraform/"
+  local consul_template_config="/opt/consul-template/config"
 
   local readonly service_override_dir="/etc/systemd/system/telegraf.service.d"
+  local readonly config_override_dir="/etc/telegraf/telegraf.d"
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -145,6 +222,11 @@ function main {
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
+        shift
+        ;;
+      --consul-template-config)
+        assert_not_empty "$key" "$2"
+        consul_template_config="$2"
         shift
         ;;
       --help)
@@ -170,12 +252,23 @@ function main {
 
   wait_for_consul
 
-  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/${type}/enabled" "no")
+  local readonly enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/enabled" "no")
 
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf is not enabled for ${type}"
   else
     enable_telegraf "$type" "$service_override_dir"
+
+    local readonly elasticsearch=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/enabled" "no")
+
+    if [[ "$elasticsearch" == "yes" ]]; then
+      local readonly elasticsearch_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/service_name")
+
+      log_info "Configuring Telegraph to output to Elasticsearch at service name '${elasticsearch_service}'"
+
+      enable_elasticsearch "${elasticsearch_service}" "${consul_template_config}" "${config_override_dir}"
+      supervisorctl signal SIGHUP consul-template
+    fi
   fi
 }
 

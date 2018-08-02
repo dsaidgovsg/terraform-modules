@@ -3,6 +3,7 @@ resource "consul_keys" "core_integration" {
 
   key {
     path = "${var.consul_key_prefix}td-agent/README"
+    delete = true
 
     value = <<EOF
 This is used for integration with the `core` module.
@@ -17,6 +18,7 @@ resource "consul_keys" "consul" {
   key {
     path  = "${var.consul_key_prefix}td-agent/consul/enabled"
     value = "yes"
+    delete = true
   }
 }
 
@@ -26,6 +28,7 @@ resource "consul_keys" "nomad_server" {
   key {
     path  = "${var.consul_key_prefix}td-agent/nomad_server/enabled"
     value = "yes"
+    delete = true
   }
 }
 
@@ -35,6 +38,7 @@ resource "consul_keys" "nomad_client" {
   key {
     path  = "${var.consul_key_prefix}td-agent/nomad_client/enabled"
     value = "yes"
+    delete = true
   }
 }
 
@@ -44,5 +48,6 @@ resource "consul_keys" "vault" {
   key {
     path  = "${var.consul_key_prefix}td-agent/vault/enabled"
     value = "yes"
+    delete = true
   }
 }

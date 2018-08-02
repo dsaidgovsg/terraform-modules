@@ -6,6 +6,8 @@ resource "consul_keys" "readme" {
         This is used for integration with the `core` module.
         See https://github.com/GovTechSG/terraform-modules/tree/master/modules/vault-ssh
 EOF
+
+    delete = true
   }
 }
 
