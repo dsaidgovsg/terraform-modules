@@ -19,6 +19,8 @@ function print_usage {
   echo
   echo "Options:"
   echo
+  echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
+  echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --user\t\tThe user to CHOWN the config files as. Optional. Default is to use the owner of --config-dir."
@@ -160,6 +162,8 @@ function restart_service {
 }
 
 function main {
+  local server="false"
+  local client="false"
   local consul_prefix="terraform/"
   local config_dir=""
   local user=""
@@ -170,6 +174,12 @@ function main {
     local key="$1"
 
     case "$key" in
+      --server)
+        server="true"
+        ;;
+      --client)
+        client="true"
+        ;;
       --consul-prefix)
         assert_not_empty "$key" "$2"
         consul_prefix="$2"
@@ -209,6 +219,11 @@ function main {
     shift
   done
 
+  if [[ ("$server" == "true" && "$client" == "true") || ("$server" == "false" && "$client" == "false") ]]; then
+    log_error "Exactly one of --server or --client must be set."
+    exit 1
+  fi
+
   if [[ -z "$config_dir" ]]; then
     config_dir=$(cd "$SCRIPT_DIR/../config" && pwd)
   fi
@@ -226,7 +241,14 @@ function main {
   if [[ "$enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"
   else
-    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${type}" "${statsd_addr}"
+    local service
+
+    if [[ "$server" == "true" ]]; then
+      service="${type}_server"
+    else
+      service="${type}_agent"
+    fi
+    generate_telemetry_conf "${config_dir}/telemetry.hcl" "${user}" "${service}" "${statsd_addr}"
     generate_telegraf_procstat "${telegraf_conf}/procstat_consul.conf" "^consul\$"
     restart_service "consul"
   fi

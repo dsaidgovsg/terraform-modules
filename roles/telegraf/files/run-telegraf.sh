@@ -262,6 +262,7 @@ function main {
     local readonly elasticsearch=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/enabled" "no")
 
     if [[ "$elasticsearch" == "yes" ]]; then
+      assert_is_installed "consul-template"
       local readonly elasticsearch_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/service_name")
 
       log_info "Configuring Telegraph to output to Elasticsearch at service name '${elasticsearch_service}'"
