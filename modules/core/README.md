@@ -70,7 +70,7 @@ Refer to instructions [here](ca/README.md).
 
 ### Preparing Secrets
 
-#### Consul Gossip Encryption
+<!-- #### Consul Gossip Encryption
 
 If you would like to enable
 [gossip encryption](https://www.consul.io/docs/agent/encryption.html#gossip-encryption) on Consul,
@@ -80,7 +80,7 @@ you will have to:
 - Refer to [`packer/common/consul_gossip_base.json`](packer/common/consul_gossip_base.json) and fill in the values accordingly. Take care _not_ to check in the file to your source control unencrypted.
 
 You should then use this `consul_gossip_base.json` variable file as a common file to be included
-as part of _all_ your Packer AMI building.
+as part of _all_ your Packer AMI building. -->
 
 ## Building AMIs
 

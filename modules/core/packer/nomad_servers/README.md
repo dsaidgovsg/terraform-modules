@@ -86,3 +86,19 @@ packer build \
     -var consul_host="$(terraform output consul_api_address || echo -n '')" \
     packer.json
 ```
+
+## Components Installed
+
+This Packer image will the following:
+
+- Consul: `/opt/consul`
+- Nomad: `/opt/nomad`
+- Vault: `/opt/vault`
+- `td-agent`: As a Debian package
+- `telegraf` As a Debian package
+- [`consul-template`](https://github.com/hashicorp/consul-template): `/opt/consul-template`
+
+You can use `consul-template` to template files using data from Consul and Vault. Simply define
+the template using a new configuration file (in HCL, with the `template` stanza) and write the
+configuration file to `/opt/consul-template/config`.  You can send the `SIGHUP` signal using
+`supervisorctl signal SIGHUP consul-template` to ask `consul-template` to reload its configuration.

@@ -19,8 +19,8 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
 
-# Additional Configuration
-/opt/nomad/bin/configure \
+# Post startup Configuration
+/opt/consul/bin/post-configure \
     --client \
     --consul-prefix "${consul_prefix}"
 
@@ -29,6 +29,11 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --server-type "$service_type" \
     --dedup-enable \
     --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
+# Additional Configuration
+/opt/nomad/bin/configure \
+    --client \
     --consul-prefix "${consul_prefix}"
 
 /opt/nomad/bin/run-nomad --client

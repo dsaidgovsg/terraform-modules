@@ -26,7 +26,7 @@
   - git
   become: yes
   when: is_redhat
-  
+
 - name: Configure dnsmasq
   copy:
     src: "{{ role_path }}/files/10-consul"
@@ -92,6 +92,12 @@
   copy:
     src: "{{ role_path }}/files/config/"
     dest: "/opt/consul/config"
+  become: yes
+- name: Install Post Configuration Script
+  copy:
+    src: "{{ role_path }}/files/post-configure.sh"
+    dest: "/opt/consul/bin/post-configure"
+    mode: 0755
   become: yes
 - name: "Copy Consul template sub-configurations"
   template:

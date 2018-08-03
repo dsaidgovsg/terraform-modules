@@ -31,11 +31,19 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --cluster-tag-key "${consul_cluster_tag_key}" \
     --cluster-tag-value "${consul_cluster_tag_value}"
 
+# Post startup Configuration
+/opt/consul/bin/post-configure \
+    --client \
+    --consul-prefix "${consul_prefix}"
+
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
     --server-type vault \
     --dedup-enable \
     --syslog-enable \
+    --consul-prefix "${consul_prefix}"
+
+/opt/vault/bin/configure \
     --consul-prefix "${consul_prefix}"
 
 # The Packer template puts the TLS certs in these file paths

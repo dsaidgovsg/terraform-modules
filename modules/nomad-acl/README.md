@@ -54,6 +54,7 @@ resource "consul_keys" "bootstrap" {
     key {
         path = "terraform/nomad-acl/enabled"
         value = "true"
+        delete = true
     }
 }
 ```

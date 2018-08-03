@@ -19,6 +19,11 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --cluster-tag-key "${cluster_tag_key}" \
     --cluster-tag-value "${cluster_tag_value}"
 
+# Post startup Configuration
+/opt/consul/bin/post-configure \
+    --client \
+    --consul-prefix "${consul_prefix}"
+
 # Configure and run consul-template
 /opt/consul-template/bin/run-consul-template \
     --server-type nomad_server \

@@ -3,13 +3,8 @@
   apt:
     deb: "https://dl.influxdata.com/telegraf/releases/telegraf_{{ telegraf_version }}-1_amd64.deb"
   become: yes
-- name: Include configuration variables
-  include_vars:
-    file: "{{ config_vars_file }}"
-    name: config_vars
-  when: config_vars_file != ""
 - name: Copy Telegraf configuration
-  template:
+  copy:
     src: "{{ config_file }}"
     dest: "{{ config_dest_file }}"
     mode: 0644
