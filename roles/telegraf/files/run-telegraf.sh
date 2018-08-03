@@ -267,7 +267,7 @@ function main {
       assert_is_installed "consul-template"
       local readonly elasticsearch_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/service_name")
 
-      log_info "Configuring Telegraph to output to Elasticsearch at service name '${elasticsearch_service}'"
+      log_info "Configuring Telegraf to output to Elasticsearch at service name '${elasticsearch_service}'"
 
       enable_elasticsearch "${elasticsearch_service}" "${consul_template_config}" "${config_override_dir}"
       supervisorctl signal SIGHUP consul-template
