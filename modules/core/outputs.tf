@@ -177,7 +177,7 @@ output "consul_server_default_user_data" {
 
 output "nomad_client_default_user_data" {
   description = "Default launch configuration user data for Nomad Client"
-  value       = "${data.template_file.user_data_nomad_client.rendered}"
+  value       = "${module.nomad_clients.default_user_data}"
 }
 
 output "nomad_server_default_user_data" {
