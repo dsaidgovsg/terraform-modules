@@ -9,23 +9,23 @@ data "aws_vpc" "selected" {
 module "nomad_clients" {
   source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.2"
 
-  asg_name          = "${var.nomad_cluster_name}"
-  cluster_name      = "${var.nomad_cluster_name}"
-  cluster_tag_value = "${var.nomad_cluster_name}"
-  instance_type     = "${var.nomad_client_instance_type}"
+  asg_name          = "${var.cluster_name}"
+  cluster_name      = "${var.cluster_name}"
+  cluster_tag_value = "${var.cluster_name}"
+  instance_type     = "${var.instance_type}"
 
-  min_size         = "${var.nomad_clients_min}"
-  max_size         = "${var.nomad_clients_max}"
-  desired_capacity = "${var.nomad_clients_desired}"
+  min_size         = "${var.clients_min}"
+  max_size         = "${var.clients_max}"
+  desired_capacity = "${var.clients_desired}"
 
-  ami_id    = "${var.nomad_clients_ami_id}"
-  user_data = "${coalesce(var.nomad_clients_user_data, data.template_file.user_data_nomad_client.rendered)}"
+  ami_id    = "${var.ami_id}"
+  user_data = "${coalesce(var.user_data, data.template_file.user_data_nomad_client.rendered)}"
 
-  root_volume_type = "${var.nomad_clients_root_volume_type}"
-  root_volume_size = "${var.nomad_clients_root_volume_size}"
+  root_volume_type = "${var.root_volume_type}"
+  root_volume_size = "${var.root_volume_size}"
 
   vpc_id     = "${var.vpc_id}"
-  subnet_ids = "${var.vpc_subnets}"
+  subnet_ids = "${var.vpc_subnet_ids}"
 
   ssh_key_name                = "${var.ssh_key_name}"
   allowed_inbound_cidr_blocks = ["${local.allowed_inbound_cidr_blocks}"]
@@ -71,7 +71,7 @@ data "template_file" "user_data_nomad_client" {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
     consul_prefix     = "${var.integration_consul_prefix}"
-    service_type      = "${coalesce(var.integration_service_type, var.nomad_cluster_name)}"
+    service_type      = "${coalesce(var.integration_service_type, var.cluster_name)}"
   }
 }
 
@@ -86,6 +86,6 @@ resource "aws_security_group_rule" "nomad_client_services" {
 }
 
 locals {
-  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.allowed_inbound_cidr_blocks)}"
   services_inbound_cidr       = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"
 }
