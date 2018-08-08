@@ -73,10 +73,11 @@ data "template_file" "user_data_nomad_client" {
   template = "${file("${path.module}/user_data.sh")}"
 
   vars {
-    cluster_tag_key   = "${var.cluster_tag_key}"
-    cluster_tag_value = "${var.consul_cluster_name}"
-    consul_prefix     = "${var.integration_consul_prefix}"
-    service_type      = "${coalesce(var.integration_service_type, var.cluster_name)}"
+    client_meta_tag_value = "${var.client_meta_tag_value}"
+    cluster_tag_key       = "${var.cluster_tag_key}"
+    cluster_tag_value     = "${var.consul_cluster_name}"
+    consul_prefix         = "${var.integration_consul_prefix}"
+    service_type          = "${coalesce(var.integration_service_type, var.cluster_name)}"
   }
 }
 
