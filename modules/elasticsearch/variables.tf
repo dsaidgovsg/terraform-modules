@@ -144,6 +144,10 @@ variable "use_redirect" {
   default     = false
 }
 
+variable "nomad_clients_meta_tag_value" {
+  description = "Nomad client Meta tag value to constraint the job"
+}
+
 variable "redirect_job_name" {
   description = "Name of the job to redirect users to Kibana"
 }

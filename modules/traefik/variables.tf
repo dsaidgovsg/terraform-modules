@@ -31,6 +31,10 @@ variable "subnets" {
   type        = "list"
 }
 
+variable "nomad_clients_meta_tag_value" {
+  description = "Nomad client Meta tag value to constraint the job"
+}
+
 variable "nomad_clients_external_security_group" {
   description = "The security group of the nomad clients that the external LB will be able to connect to"
 }
