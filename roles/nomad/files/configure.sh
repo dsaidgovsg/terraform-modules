@@ -142,6 +142,31 @@ function get_vault_token {
   fi
 }
 
+function generate_client_meta_config {
+  local readonly client="${1}"
+  local readonly config_dir="${2}"
+  local readonly meta_tag_value="${3}"
+  local readonly user="${4}"
+  
+  if [[ "$client" == "true" ]]; then
+    log_info "Generating client Meta tag value ${meta_tag_value} for Nomad client"
+
+    local meta_config=$(cat <<EOF
+client {
+  meta {
+    tag = "$meta_tag_value"
+  }
+}
+EOF
+)
+    log_info "Writing Meta configuration to ${config_dir}/meta.hcl"
+    echo "${meta_config}" > "${config_dir}/meta.hcl"
+    chown "${user}:${user}" "${config_dir}/meta.hcl"
+  else
+    log_info "Skipping client Meta tag value configuration for Nomad server"
+  fi
+}
+
 function generate_vault_config {
   local readonly server="${1}"
   local readonly config_dir="${2}"
@@ -342,6 +367,7 @@ EOF
 function main {
   local server="false"
   local client="false"
+  local meta_tag_value=""
   local config_dir=""
   local vault_address="https://vault.service.consul:8200"
   local consul_prefix="terraform/"
@@ -362,11 +388,15 @@ function main {
       --client)
         client="true"
         ;;
+      --client-meta-tag-value)
+        meta_tag_value="$2"
+        shift
+        ;;
       --config-dir)
         assert_not_empty "$key" "$2"
         config_dir="$2"
         shift
-      ;;
+        ;;
       --vault-address)
         assert_not_empty "$key" "$2"
         vault_address="$2"
@@ -421,6 +451,11 @@ function main {
     exit 1
   fi
 
+  if [[ "$client" == "true" && -z "$meta_tag_value" ]]; then
+    log_error "--client-meta-tag-value must be set for Nomad client."
+    exit 1
+  fi
+
   assert_is_installed "curl"
   assert_is_installed "tr"
   assert_is_installed "jq"
@@ -440,6 +475,8 @@ function main {
   if [[ -z "$user" ]]; then
     user=$(get_owner_of_path "$config_dir")
   fi
+
+  generate_client_meta_config "${client}" "${config_dir}" "${meta_tag_value}" "${user}"
 
   local vault_integration_enabled
   vault_integration_enabled=$(consul_kv_with_default "${consul_prefix}nomad-vault-integration/enabled" "no")
