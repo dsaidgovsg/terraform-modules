@@ -1,4 +1,10 @@
 job "${redirect_job_name}" {
+  constraint {
+    attribute = "$${meta.tag}"
+    operator  = "="
+    value     = "${meta_tag_value}"
+  }
+
   datacenters = ${az}
   region      = "${region}"
   type        = "service"
