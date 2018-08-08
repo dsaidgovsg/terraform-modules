@@ -27,7 +27,7 @@ data "template_file" "traefik_jobspec" {
   vars {
     region         = "${data.aws_region.current.name}"
     az             = "${jsonencode(data.aws_availability_zones.available.names)}"
-    meta_tag_value = "${data.terraform_remote_state.core.meta_tag_value_nomad_clients}"
+    meta_tag_value = "${var.nomad_clients_meta_tag_value}"
 
     version                  = "${var.traefik_version}"
     consul_port              = "${local.consul_port}"
