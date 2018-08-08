@@ -7,7 +7,7 @@ data "aws_vpc" "selected" {
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.2"
 
   asg_name          = "${var.nomad_cluster_name}"
   cluster_name      = "${var.nomad_cluster_name}"
@@ -28,7 +28,7 @@ module "nomad_clients" {
   subnet_ids = "${var.vpc_subnets}"
 
   ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks = ["${local.allowed_inbound_cidr_blocks}"]
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 }
@@ -55,7 +55,7 @@ module "nomad_client_consul_gossip" {
   source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
 
   security_group_id                  = "${module.nomad_clients.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks        = ["${local.allowed_inbound_cidr_blocks}"]
   allowed_inbound_security_group_ids = ["${var.consul_servers_security_group_id}"]
 }
 
@@ -82,5 +82,10 @@ resource "aws_security_group_rule" "nomad_client_services" {
   from_port         = 20000
   to_port           = 32000
   protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"]
+  cidr_blocks       = ["${local.services_inbound_cidr}"]
+}
+
+locals {
+  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  services_inbound_cidr       = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"
 }
