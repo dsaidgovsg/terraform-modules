@@ -3,6 +3,11 @@ output "cluster_size" {
   value       = "${module.nomad_clients.cluster_size}"
 }
 
+output "client_meta_tag_value" {
+  description = "Nomad Client Meta tag value applied"
+  value       = "${var.client_meta_tag_value}"
+}
+
 output "asg_name" {
   description = "Name of auto-scaling group for Nomad Clients"
   value       = "${module.nomad_clients.asg_name}"
