@@ -10,7 +10,7 @@ module "nomad_clients" {
   vpc_id         = "${var.vpc_id}"
   vpc_subnet_ids = "${var.nomad_client_subnets}"
 
-  allowed_inbound_cidr_blocks      = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  allowed_inbound_cidr_blocks      = "${var.nomad_clients_allowed_inbound_cidr_blocks}"
   consul_servers_security_group_id = "${module.consul_servers.security_group_id}"
 
   cluster_name  = "${var.nomad_cluster_name}-client"
