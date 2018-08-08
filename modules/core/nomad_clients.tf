@@ -3,83 +3,33 @@
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
+  source = "../nomad-clients"
 
-  asg_name          = "${var.nomad_cluster_name}-client"
-  cluster_name      = "${var.nomad_cluster_name}-client"
-  cluster_tag_value = "${var.nomad_cluster_name}-client"
-  instance_type     = "${var.nomad_client_instance_type}"
+  ami_id = "${var.nomad_clients_ami_id}"
 
-  min_size         = "${var.nomad_clients_min}"
-  max_size         = "${var.nomad_clients_max}"
-  desired_capacity = "${var.nomad_clients_desired}"
+  vpc_id         = "${var.vpc_id}"
+  vpc_subnet_ids = "${var.nomad_client_subnets}"
 
-  ami_id    = "${var.nomad_clients_ami_id}"
-  user_data = "${coalesce(var.nomad_clients_user_data, data.template_file.user_data_nomad_client.rendered)}"
+  allowed_inbound_cidr_blocks      = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
+  consul_servers_security_group_id = "${module.consul_servers.security_group_id}"
+
+  cluster_name  = "${var.nomad_cluster_name}-client"
+  instance_type = "${var.nomad_client_instance_type}"
+
+  clients_min     = "${var.nomad_clients_min}"
+  clients_desired = "${var.nomad_clients_desired}"
+  clients_max     = "${var.nomad_clients_max}"
 
   root_volume_type = "${var.nomad_clients_root_volume_type}"
   root_volume_size = "${var.nomad_clients_root_volume_size}"
+  ssh_key_name     = "${var.ssh_key_name}"
 
-  vpc_id     = "${var.vpc_id}"
-  subnet_ids = "${var.nomad_client_subnets}"
-
-  ssh_key_name                = "${var.ssh_key_name}"
-  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
-  allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
+  allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
 
-  termination_policies = "${var.nomad_client_termination_policies}"
-}
+  client_meta_tag_value = "${var.client_meta_tag_value}"
+  cluster_tag_key       = "${var.cluster_tag_key}"
 
-# ---------------------------------------------------------------------------------------------------------------------
-# ATTACH IAM POLICIES FOR CONSUL
-# To allow our client Nodes to automatically discover the Consul servers, we need to give them the IAM permissions from
-# the Consul AWS Module's consul-iam-policies module.
-# ---------------------------------------------------------------------------------------------------------------------
-
-module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.5"
-
-  iam_role_id = "${module.nomad_clients.iam_role_id}"
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# PERMIT CONSUL SPECIFIC TRAFFIC IN NOMAD CLUSTER
-# To allow our Nomad clients consul agents to communicate with other consul agents and participate in the LAN gossip,
-# we open up the consul specific protocols and ports for consul traffic
-# ---------------------------------------------------------------------------------------------------------------------
-
-module "nomad_client_consul_gossip" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
-
-  security_group_id                  = "${module.nomad_clients.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_allowed_inbound_cidr_blocks)}"
-  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CLIENT NODE WHEN IT'S BOOTING
-# This script will configure and start Consul and Nomad
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "template_file" "user_data_nomad_client" {
-  template = "${file("${path.module}/user_data/user-data-nomad-client.sh")}"
-
-  vars {
-    client_meta_tag_value = "${var.client_meta_tag_value}"
-    cluster_tag_key       = "${var.cluster_tag_key}"
-    cluster_tag_value     = "${var.consul_cluster_name}"
-    consul_prefix         = "${var.integration_consul_prefix}"
-    service_type          = "nomad_client"
-  }
-}
-
-# Security rules to allow services on Nomad clients to talk to each other
-resource "aws_security_group_rule" "nomad_client_services" {
-  type              = "ingress"
-  security_group_id = "${module.nomad_clients.security_group_id}"
-  from_port         = 20000
-  to_port           = 32000
-  protocol          = "tcp"
-  cidr_blocks       = ["${concat(list(data.aws_vpc.this.cidr_block), var.nomad_clients_services_inbound_cidr)}"]
+  integration_consul_prefix = "${var.integration_consul_prefix}"
+  integration_service_type  = "nomad_client"
 }
