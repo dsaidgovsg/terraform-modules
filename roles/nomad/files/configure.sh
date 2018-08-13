@@ -147,7 +147,7 @@ function generate_client_meta_config {
   local readonly config_dir="${2}"
   local readonly meta_tag_value="${3}"
   local readonly user="${4}"
-  
+
   if [[ "$client" == "true" ]]; then
     log_info "Generating client Meta tag value ${meta_tag_value} for Nomad client"
 
