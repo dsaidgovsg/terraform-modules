@@ -1,3 +1,8 @@
+locals {
+  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.allowed_inbound_cidr_blocks)}"
+  services_inbound_cidr       = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"
+}
+
 data "aws_vpc" "selected" {
   id = "${var.vpc_id}"
 }
@@ -83,9 +88,4 @@ resource "aws_security_group_rule" "nomad_client_services" {
   to_port           = 32000
   protocol          = "tcp"
   cidr_blocks       = ["${local.services_inbound_cidr}"]
-}
-
-locals {
-  allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.allowed_inbound_cidr_blocks)}"
-  services_inbound_cidr       = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"
 }
