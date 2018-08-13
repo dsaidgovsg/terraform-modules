@@ -3,7 +3,7 @@
 # You must provide a value for each of these parameters.
 # --------------------------------------------------------------------------------------------------
 
-variable "nomad_clients_ami_id" {
+variable "ami_id" {
   description = "AMI ID for Nomad clients"
 }
 
@@ -11,12 +11,12 @@ variable "vpc_id" {
   description = "ID of the VPC to deploy to"
 }
 
-variable "vpc_subnets" {
+variable "vpc_subnet_ids" {
   description = "List of Subnet IDs to deploy to"
   type        = "list"
 }
 
-variable "nomad_clients_allowed_inbound_cidr_blocks" {
+variable "allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients for API usage"
   type        = "list"
 }
@@ -30,32 +30,38 @@ variable "consul_servers_security_group_id" {
 # These parameters have reasonable defaults.
 # --------------------------------------------------------------------------------------------------
 
-variable "nomad_cluster_name" {
+variable "cluster_name" {
   description = "Name of the Nomad Clients cluster"
   default     = "nomad-client"
 }
 
-variable "nomad_client_instance_type" {
+variable "instance_type" {
   description = "Type of instances to deploy Nomad servers to"
   default     = "t2.medium"
 }
 
-variable "nomad_clients_min" {
+variable "clients_min" {
   description = "The minimum number of Nomad client nodes to deploy."
   default     = 3
 }
 
-variable "nomad_clients_desired" {
+variable "clients_desired" {
   description = "The desired number of Nomad client nodes to deploy."
   default     = 6
 }
 
-variable "nomad_clients_max" {
+variable "clients_max" {
   description = "The max number of Nomad client nodes to deploy."
   default     = 8
 }
 
-variable "nomad_clients_user_data" {
+variable "nomad_clients_services_inbound_cidr" {
+  description = "A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from."
+  type        = "list"
+  default     = []
+}
+
+variable "user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-nomad-client.sh
   description = "The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used"
@@ -63,12 +69,12 @@ variable "nomad_clients_user_data" {
   default = ""
 }
 
-variable "nomad_clients_root_volume_type" {
+variable "root_volume_type" {
   description = "The type of volume. Must be one of: standard, gp2, or io1."
   default     = "gp2"
 }
 
-variable "nomad_clients_root_volume_size" {
+variable "root_volume_size" {
   description = "The size, in GB, of the root EBS volume."
   default     = 50
 }
@@ -115,7 +121,7 @@ EOF
 variable "integration_service_type" {
   description = <<EOF
 The 'server type' for this Nomad cluster. This is used in several integration.
-If empty, this defaults to the `nomad_cluster_name` variable
+If empty, this defaults to the `cluster_name` variable
 EOF
 
   default = ""
