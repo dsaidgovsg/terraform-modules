@@ -27,9 +27,9 @@ module "nomad_clients" {
   associate_public_ip_address = "${var.associate_public_ip_address}"
   allowed_ssh_cidr_blocks     = "${var.allowed_ssh_cidr_blocks}"
 
-  client_meta_tag_value = "${var.client_meta_tag_value}"
-  cluster_tag_key       = "${var.cluster_tag_key}"
-  consul_cluster_name   = "${var.consul_cluster_name}"
+  client_node_class   = "${var.client_node_class}"
+  cluster_tag_key     = "${var.cluster_tag_key}"
+  consul_cluster_name = "${var.consul_cluster_name}"
 
   integration_consul_prefix = "${var.integration_consul_prefix}"
   integration_service_type  = "nomad_client"

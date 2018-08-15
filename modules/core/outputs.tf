@@ -58,9 +58,9 @@ output "security_group_id_consul_servers" {
   value       = "${module.consul_servers.security_group_id}"
 }
 
-output "meta_tag_value_nomad_clients" {
-  description = "Nomad Client Meta tag value applied"
-  value       = "${module.nomad_clients.client_meta_tag_value}"
+output "node_class_nomad_clients" {
+  description = "Nomad Client Node Class name applied"
+  value       = "${module.nomad_clients.client_node_class}"
 }
 
 output "num_nomad_clients" {

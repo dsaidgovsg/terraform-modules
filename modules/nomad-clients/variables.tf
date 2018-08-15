@@ -95,8 +95,8 @@ variable "allowed_ssh_cidr_blocks" {
   default     = []
 }
 
-variable "client_meta_tag_value" {
-  description = "Client Meta Value (whose Key is `tag`) for Nomad client for cluster identification"
+variable "client_node_class" {
+  description = "Nomad Client Node Class name for cluster identification"
   default     = "nomad-client"
 }
 

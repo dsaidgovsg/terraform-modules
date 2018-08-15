@@ -25,9 +25,9 @@ data "template_file" "traefik_jobspec" {
   template = "${file("${path.module}/jobs/traefik.nomad")}"
 
   vars {
-    region         = "${data.aws_region.current.name}"
-    az             = "${jsonencode(data.aws_availability_zones.available.names)}"
-    meta_tag_value = "${var.nomad_clients_meta_tag_value}"
+    region     = "${data.aws_region.current.name}"
+    az         = "${jsonencode(data.aws_availability_zones.available.names)}"
+    node_class = "${var.nomad_clients_node_class}"
 
     version                  = "${var.traefik_version}"
     consul_port              = "${local.consul_port}"

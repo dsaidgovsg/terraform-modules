@@ -31,8 +31,8 @@ variable "subnets" {
   type        = "list"
 }
 
-variable "nomad_clients_meta_tag_value" {
-  description = "Nomad client Meta tag value to constraint the job"
+variable "nomad_clients_node_class" {
+  description = "Job constraint Nomad Client Node Class name"
 }
 
 variable "nomad_clients_external_security_group" {

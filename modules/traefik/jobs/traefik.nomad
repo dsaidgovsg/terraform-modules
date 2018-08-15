@@ -1,8 +1,7 @@
 job "traefik" {
   constraint {
-    attribute = "$${meta.tag}"
-    operator  = "="
-    value     = "${meta_tag_value}"
+    attribute = "$${node.class}"
+    value     = "${node_class}"
   }
 
   datacenters = ${az}
