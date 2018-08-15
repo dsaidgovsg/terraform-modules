@@ -100,6 +100,11 @@ variable "client_node_class" {
   default     = "nomad-client"
 }
 
+variable "docker_privileged" {
+  description = "Flag to enable privileged mode for Docker agent on Nomad client"
+  default     = false
+}
+
 variable "cluster_tag_key" {
   description = "The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster."
   default     = "consul-servers"
