@@ -76,6 +76,7 @@ data "template_file" "user_data_nomad_client" {
     client_node_class = "${var.client_node_class}"
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
+    docker_privileged = "${var.docker_privileged ? "--docker-privileged" : ""}"
     consul_prefix     = "${var.integration_consul_prefix}"
     service_type      = "${coalesce(var.integration_service_type, var.cluster_name)}"
   }

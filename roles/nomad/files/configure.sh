@@ -167,30 +167,6 @@ EOF
   fi
 }
 
-function generate_client_docker_config {
-  local readonly client="${1}"
-  local readonly config_dir="${2}"
-  local readonly docker_privileged="${3}"
-  local readonly user="${4}"
-
-  if [[ "$client" == "true" ]]; then
-    log_info "Generating client Docker configuration for Nomad client"
-
-    local node_class_config=$(cat <<EOF
-client {
-  options {
-  }
-}
-EOF
-)
-    log_info "Writing Docker configuration to ${config_dir}/docker_privileged.hcl"
-    echo "${node_class_config}" > "${config_dir}/docker_privileged.hcl"
-    chown "${user}:${user}" "${config_dir}/docker_privileged.hcl"
-  else
-    log_info "Skipping client Docker configuration for Nomad server"
-  fi
-}
-
 function generate_vault_config {
   local readonly server="${1}"
   local readonly config_dir="${2}"
