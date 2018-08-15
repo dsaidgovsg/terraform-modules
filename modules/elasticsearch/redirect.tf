@@ -26,8 +26,9 @@ data "template_file" "redirect_jobspec" {
   template = "${file("${path.module}/templates/redirect.nomad")}"
 
   vars {
-    region = "${var.redirect_job_region}"
-    az     = "${jsonencode(var.redirect_job_vpc_azs)}"
+    region     = "${var.redirect_job_region}"
+    az         = "${jsonencode(var.redirect_job_vpc_azs)}"
+    node_class = "${var.nomad_clients_node_class}"
 
     elasticsearch_service  = "${var.es_consul_service}"
     redirect_domain        = "${local.redirect_domain}"

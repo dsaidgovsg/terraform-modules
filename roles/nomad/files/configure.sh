@@ -21,6 +21,7 @@ function print_usage {
   echo
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
+  echo -e "  --client-node-class\t\tClient node class name. Must be set if --client is set."
   echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --vault-address\t\tAddress of Vault server. Optional. Defaults to \"https://vault.service.consul:8200\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
@@ -139,6 +140,29 @@ function get_vault_token {
     exit 1
   else
     echo -n "${token}" | jq --raw-output .auth.client_token
+  fi
+}
+
+function generate_client_node_class_config {
+  local readonly client="${1}"
+  local readonly config_dir="${2}"
+  local readonly node_class="${3}"
+  local readonly user="${4}"
+
+  if [[ "$client" == "true" ]]; then
+    log_info "Generating client Node Class value ${node_class} for Nomad client"
+
+    local node_class_config=$(cat <<EOF
+client {
+  node_class = "$node_class"
+}
+EOF
+)
+    log_info "Writing Node Class configuration to ${config_dir}/node_class.hcl"
+    echo "${node_class_config}" > "${config_dir}/node_class.hcl"
+    chown "${user}:${user}" "${config_dir}/node_class.hcl"
+  else
+    log_info "Skipping client Node Class configuration for Nomad server"
   fi
 }
 
@@ -342,6 +366,7 @@ EOF
 function main {
   local server="false"
   local client="false"
+  local node_class=""
   local config_dir=""
   local vault_address="https://vault.service.consul:8200"
   local consul_prefix="terraform/"
@@ -362,11 +387,15 @@ function main {
       --client)
         client="true"
         ;;
+      --client-node-class)
+        node_class="$2"
+        shift
+        ;;
       --config-dir)
         assert_not_empty "$key" "$2"
         config_dir="$2"
         shift
-      ;;
+        ;;
       --vault-address)
         assert_not_empty "$key" "$2"
         vault_address="$2"
@@ -421,6 +450,11 @@ function main {
     exit 1
   fi
 
+  if [[ "$client" == "true" && -z "$node_class" ]]; then
+    log_error "--client-node-class must be set for Nomad client."
+    exit 1
+  fi
+
   assert_is_installed "curl"
   assert_is_installed "tr"
   assert_is_installed "jq"
@@ -440,6 +474,8 @@ function main {
   if [[ -z "$user" ]]; then
     user=$(get_owner_of_path "$config_dir")
   fi
+
+  generate_client_node_class_config "${client}" "${config_dir}" "${node_class}" "${user}"
 
   local vault_integration_enabled
   vault_integration_enabled=$(consul_kv_with_default "${consul_prefix}nomad-vault-integration/enabled" "no")

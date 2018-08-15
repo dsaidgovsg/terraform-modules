@@ -144,6 +144,10 @@ variable "use_redirect" {
   default     = false
 }
 
+variable "nomad_clients_node_class" {
+  description = "Job constraint Nomad Client Node Class name"
+}
+
 variable "redirect_job_name" {
   description = "Name of the job to redirect users to Kibana"
 }

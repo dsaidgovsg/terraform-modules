@@ -95,6 +95,11 @@ variable "allowed_ssh_cidr_blocks" {
   default     = []
 }
 
+variable "client_node_class" {
+  description = "Nomad Client Node Class name for cluster identification"
+  default     = "nomad-client"
+}
+
 variable "cluster_tag_key" {
   description = "The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster."
   default     = "consul-servers"

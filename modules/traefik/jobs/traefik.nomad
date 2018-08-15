@@ -1,4 +1,9 @@
 job "traefik" {
+  constraint {
+    attribute = "$${node.class}"
+    value     = "${node_class}"
+  }
+
   datacenters = ${az}
   region      = "${region}"
   type        = "service"
@@ -17,10 +22,11 @@ job "traefik" {
 
       config {
         image = "traefik:${version}"
+
         port_map {
-          http = 80
+          http     = 80
           internal = 81
-          api = 8080
+          api      = 8080
         }
 
         dns_servers = ["169.254.1.1"]

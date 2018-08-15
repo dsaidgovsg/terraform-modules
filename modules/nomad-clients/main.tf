@@ -73,6 +73,7 @@ data "template_file" "user_data_nomad_client" {
   template = "${file("${path.module}/user_data.sh")}"
 
   vars {
+    client_node_class = "${var.client_node_class}"
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.consul_cluster_name}"
     consul_prefix     = "${var.integration_consul_prefix}"

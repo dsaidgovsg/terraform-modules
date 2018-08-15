@@ -1,4 +1,9 @@
 job "${redirect_job_name}" {
+  constraint {
+    attribute = "$${node.class}"
+    value     = "${node_class}"
+  }
+
   datacenters = ${az}
   region      = "${region}"
   type        = "service"

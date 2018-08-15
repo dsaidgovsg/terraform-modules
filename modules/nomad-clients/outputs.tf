@@ -3,6 +3,11 @@ output "cluster_size" {
   value       = "${module.nomad_clients.cluster_size}"
 }
 
+output "client_node_class" {
+  description = "Nomad Client Node Class name applied"
+  value       = "${var.client_node_class}"
+}
+
 output "asg_name" {
   description = "Name of auto-scaling group for Nomad Clients"
   value       = "${module.nomad_clients.asg_name}"

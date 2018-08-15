@@ -58,6 +58,11 @@ output "security_group_id_consul_servers" {
   value       = "${module.consul_servers.security_group_id}"
 }
 
+output "node_class_nomad_clients" {
+  description = "Nomad Client Node Class name applied"
+  value       = "${module.nomad_clients.client_node_class}"
+}
+
 output "num_nomad_clients" {
   description = "The desired number of Nomad clients in cluster"
   value       = "${module.nomad_clients.cluster_size}"
@@ -177,7 +182,7 @@ output "consul_server_default_user_data" {
 
 output "nomad_client_default_user_data" {
   description = "Default launch configuration user data for Nomad Client"
-  value       = "${data.template_file.user_data_nomad_client.rendered}"
+  value       = "${module.nomad_clients.default_user_data}"
 }
 
 output "nomad_server_default_user_data" {
