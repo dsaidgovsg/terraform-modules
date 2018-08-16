@@ -1,0 +1,101 @@
+{
+    "min_packer_version": "1.1.2",
+    "variables": {
+        "ami_base_name": "portworx",
+        "aws_region": "ap-southeast-1",
+        "subnet_id": "",
+        "temporary_security_group_source_cidr": "0.0.0.0/0",
+        "associate_public_ip_address": "true",
+        "ssh_interface": "",
+        "consul_module_repo": "https://github.com/hashicorp/terraform-aws-consul.git",
+        "consul_module_version": "v0.3.5",
+        "consul_version": "1.2.2",
+        "consul_enable_syslog": "true",
+        "td_agent_config_file": "",
+        "td_agent_config_vars_file": "",
+        "ca_certificate": "",
+        "consul_host": "",
+        "consul_port": "443",
+        "consul_scheme": "https",
+        "consul_token": "",
+        "consul_integration_prefix": "terraform/",
+        "px_kvbd": "-k consul:http://127.0.0.1:8500",
+        "px_data_if": "-d eth0",
+        "px_mgmt_if": "-m eth0",
+        "px_device_args": "-m /dev/xvdz",
+        "px_cluster_id": "px-cluster"
+    },
+    "builders": [
+        {
+            "name": "ubuntu-1604-portworx-ami",
+            "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+            "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
+            "instance_type": "t2.micro",
+            "region": "{{user `aws_region`}}",
+            "type": "amazon-ebs",
+            "subnet_id": "{{user `subnet_id`}}",
+            "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
+            "ssh_interface": "{{user `ssh_interface`}}",
+            "temporary_security_group_source_cidr": "{{user `temporary_security_group_source_cidr`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "architecture": "x86_64",
+                    "name": "*ubuntu-xenial-16.04-amd64-server-*",
+                    "block-device-mapping.volume-type": "gp2",
+                    "root-device-type": "ebs"
+                },
+                "owners": [
+                    "099720109477"
+                ],
+                "most_recent": true
+            },
+            "ssh_username": "ubuntu",
+            "run_tags":{
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
+            },
+            "tags": {
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
+            },
+            "snapshot_tags": {
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Base Name": "{{user `ami_base_name` }}",
+                "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
+                "Packer": "yes",
+                "Consul Version": "{{user `consul_version` }}"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "pause_before": "10s",
+            "playbook_file": "{{ template_dir }}/site.yml",
+            "user": "ubuntu",
+            "extra_arguments": [
+                "-e",
+                "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
+                "-e",
+                "{ \"consul_enable_syslog\": {{user `consul_enable_syslog`}} }",
+                "-e",
+                "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
+                "-e",
+                "ca_certificate={{user `ca_certificate`}}",
+                "-e",
+                "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
+                "-e",
+                "px_kvbd={{user `px_kvbd`}} px_data_if={{user `px_data_if`}} px_mgmt_if={{user `px_mgmt_if`}} px_device_args={{user `px_device_args`}} px_cluster_id={{user `px_cluster_id`}}",
+                "-e",
+                "ansible_python_interpreter=/usr/bin/python3"
+            ]
+        }
+    ]
+}
