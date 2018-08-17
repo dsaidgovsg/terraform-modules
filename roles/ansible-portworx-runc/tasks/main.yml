@@ -1,0 +1,19 @@
+# sudo docker run --entrypoint /runc-entry-point.sh --rm -i --privileged=true -v /opt/pwx:/opt/pwx -v /etc/pwx:/etc/pwx {{ px_image }}
+#
+# (runtime after Consul is up?)
+# sudo /opt/pwx/bin/px-runc install -k consul:http://127.0.0.1:8500 -c px-cluster -d eth0 -m eth0 -s /dev/xvdz
+#
+# sudo systemctl daemon-reload
+# sudo systemctl enable portworx
+# sudo systemctl start portworx
+---
+- name: Install Portworx ({{ px_image }})
+  docker_container:
+    name: portworx-install
+    image: "{{ px_image }}"
+    volumes:
+    - "/opt/pwx:/opt/pwx"
+    - "/etc/pwx:/etc/pwx"
+    auto_remove: yes
+    privileged: yes
+  become: yes
