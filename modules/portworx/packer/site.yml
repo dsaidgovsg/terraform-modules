@@ -47,6 +47,10 @@
   - name: Install Telegraf
     include_role:
       name: "{{ playbook_dir }}/../../../roles/telegraf"
+  - name: Install pip3
+    apt:
+      name: python3-pip
+    become: yes
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../../../roles/consul"
