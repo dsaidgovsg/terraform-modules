@@ -12,7 +12,7 @@
 - command: "/opt/pwx/bin/px-runc install {{ kvdb }} {{ cluster_id }} {{ data_if }} {{ mgmt_if }} {{ device_args }} {{ storageless }} {{ force }} {{ journal_dev }} {{ scheduler }} {{ pxenviron }}"
   become: yes
 - service:
-  name: portworx
-  enabled: yes
-  use: service
+    name: portworx
+    enabled: yes
+    use: service
   become: yes
