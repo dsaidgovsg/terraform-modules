@@ -2,6 +2,7 @@
 - name: Provision Consul AMI
   hosts: all
   vars:
+    apt_additional_packages: []
     consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
     consul_module_version: "v0.3.5"
     consul_version: "1.2.2"
@@ -16,11 +17,9 @@
     consul_token: ""
     consul_integration_prefix: "terraform/"
   tasks:
-  - name: Upgrade all packages to the latest version
-    apt:
-      upgrade: yes
-      update_cache: yes
-    become: yes
+  - name: Upgrade all packages to the latest version and install dependencies
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/apt"
   - name: Install CA Certificate
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"

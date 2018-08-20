@@ -2,6 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
+    apt_additional_packages: []
     vault_version: "0.10.4"
     vault_ui_enable: "true"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
@@ -24,11 +25,9 @@
     consul_token: ""
     consul_integration_prefix: "terraform/"
   tasks:
-  - name: Upgrade all packages to the latest version
-    apt:
-      upgrade: yes
-      update_cache: yes
-    become: yes
+  - name: Upgrade all packages to the latest version and install dependencies
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/apt"
   - name: Install CA Certificate
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"

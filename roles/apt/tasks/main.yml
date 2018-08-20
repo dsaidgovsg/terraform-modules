@@ -1,0 +1,12 @@
+---
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: yes
+    update_cache: yes
+  become: yes
+  when: apt_update_latest
+- name: Install additional apt packages
+  apt:
+    name: "{{ item }}"
+  become: yes
+  with_items: "{{ apt_additional_packages }}"
