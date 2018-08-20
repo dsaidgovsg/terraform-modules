@@ -92,7 +92,7 @@
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
-                "px_kvbd={{user `px_kvbd`}} px_data_if={{user `px_data_if`}} px_mgmt_if={{user `px_mgmt_if`}} px_device_args={{user `px_device_args`}} px_cluster_id={{user `px_cluster_id`}}",
+                "px_kvbd=\"{{user `px_kvbd`}}\" px_data_if=\"{{user `px_data_if`}}\" px_mgmt_if=\"{{user `px_mgmt_if`}}\" px_device_args=\"{{user `px_device_args`}}\" px_cluster_id=\"{{user `px_cluster_id`}}\"",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
             ]
