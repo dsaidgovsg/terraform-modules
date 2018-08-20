@@ -4,6 +4,3 @@
 [submodule "roles/ansible-ca-store"]
 	path = roles/ansible-ca-store
 	url = https://github.com/lawliet89/ansible-ca-store.git
-[submodule "roles/ansible-portworx-defaults"]
-	path = roles/ansible-portworx-defaults
-	url = https://github.com/portworx/ansible-portworx-defaults.git
