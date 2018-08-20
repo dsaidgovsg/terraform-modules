@@ -23,7 +23,7 @@
         "px_data_if": "-d eth0",
         "px_mgmt_if": "-m eth0",
         "px_device_args": "-s /dev/xvdz",
-        "px_cluster_id": "-c px-ingest"
+        "px_cluster_id": "-c my-portworx-cluster"
     },
     "builders": [
         {

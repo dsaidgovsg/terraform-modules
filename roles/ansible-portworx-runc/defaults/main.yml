@@ -3,11 +3,11 @@
 
 # portworx/px-enterprise also available
 px_image: portworx/px-dev:1.4.2.2
-kvdb: -k consul:http://127.0.0.1:8500
-cluster_id: -c my-portworx-cluster
-data_if: -d eth0
-mgmt_if: -m eth0
-device_args: -s /dev/xvdz
+kvdb: "-k consul:http://127.0.0.1:8500"
+cluster_id: "-c my-portworx-cluster"
+data_if: "-d eth0"
+mgmt_if: "-m eth0"
+device_args: "-s /dev/xvdz"
 storageless: ""
 force: ""
 journal_dev: ""
