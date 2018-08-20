@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "apt_additional_packages": "[]",
         "ami_base_name": "vault",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -85,6 +86,8 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "user": "ubuntu",
             "extra_arguments": [
+                "-e",
+                "{ \"apt_additional_packages\": {{user `apt_additional_packages`}} }",
                 "-e",
                 "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}} vault_ui_enable={{user `vault_ui_enable`}}",
                 "-e",

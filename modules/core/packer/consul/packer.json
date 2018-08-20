@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "apt_additional_packages": "[]",
         "ami_base_name": "consul",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -76,6 +77,8 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "user": "ubuntu",
             "extra_arguments": [
+                "-e",
+                "{ \"apt_additional_packages\": {{user `apt_additional_packages`}} }",
                 "-e",
                 "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
                 "-e",
