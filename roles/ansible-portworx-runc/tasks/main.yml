@@ -3,15 +3,21 @@
   docker_container:
     name: portworx-install
     image: "{{ px_image }}"
+    detach: no
+    entrypoint: /runc-entry-point.sh
+    command: --upgrade
     volumes:
     - "/opt/pwx:/opt/pwx"
     - "/etc/pwx:/etc/pwx"
-    auto_remove: yes
+    state: started
+    cleanup: yes
     privileged: yes
   become: yes
-- command: "/opt/pwx/bin/px-runc install {{ kvdb }} {{ cluster_id }} {{ data_if }} {{ mgmt_if }} {{ device_args }} {{ storageless }} {{ force }} {{ journal_dev }} {{ scheduler }} {{ pxenviron }}"
+- name: Run Portworx install configuration
+  command: "/opt/pwx/bin/px-runc install {{ kvdb }} {{ cluster_id }} {{ data_if }} {{ mgmt_if }} {{ device_args }} {{ storageless }} {{ force }} {{ journal_dev }} {{ scheduler }} {{ pxenviron }}"
   become: yes
-- service:
+- name: Enable Portworx service to run on startup
+  service:
     name: portworx
     enabled: yes
     use: service
