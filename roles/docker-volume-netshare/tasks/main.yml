@@ -1,5 +1,5 @@
 ---
-- name: Install dnsmasq and git via apt
+- name: Install NFS common dependency
   apt:
     name: nfs-common
     state: latest
@@ -16,6 +16,6 @@
   become: yes
 - name: Update Netshare configuration
   copy:
-    src: "{{ playbook_dir }}/files/docker-volume-netshare"
+    src: "{{ role_path }}/../files/docker-volume-netshare"
     dest: "/etc/default/docker-volume-netshare"
   become: yes
