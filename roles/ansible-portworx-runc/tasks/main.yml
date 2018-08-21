@@ -14,7 +14,7 @@
     privileged: yes
   become: yes
 - name: Run Portworx install configuration
-  command: "/opt/pwx/bin/px-runc install {{ kvdb }} {{ cluster_id }} {{ data_if }} {{ mgmt_if }} {{ device_args }} {{ storageless }} {{ force }} {{ journal_dev }} {{ scheduler }} {{ pxenviron }}"
+  command: "/opt/pwx/bin/px-runc install {{ px_args }}"
   become: yes
 - name: Enable Portworx service to run on startup
   service:

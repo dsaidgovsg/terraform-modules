@@ -15,11 +15,7 @@
     consul_scheme: https
     consul_token: ""
     consul_integration_prefix: "terraform/"
-    px_kvbd: "-k consul:http://127.0.0.1:8500"
-    px_data_if: "-d eth0"
-    px_mgmt_if: "-m eth0"
-    px_device_args: "-s /dev/xvdz"
-    px_cluster_id: "-c my-portworx-cluster"
+    px_args: "-k consul:http://127.0.0.1:8500 -c my-portworx-cluster -d eth0 -m eth0 -z"
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -47,12 +43,6 @@
   - name: Install Portworx
     include_role:
       name: "{{ playbook_dir }}/../../../roles/ansible-portworx-runc"
-    vars:
-      kvdb: "{{ px_kvbd }}"
-      data_if: "{{ px_data_if }}"
-      mgmt_if: "{{ px_mgmt_if }}"
-      device_args: "{{ px_device_args }}"
-      cluster_id: "{{ px_cluster_id }}"
   - name: Install td-agent
     include_role:
       name: "{{ playbook_dir }}/../../../roles/td-agent"
