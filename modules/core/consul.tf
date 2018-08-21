@@ -4,6 +4,7 @@
 
 locals {
   consul_http_api_port = 8500
+  consul_user_data     = "${coalesce(var.consul_user_data, data.template_file.user_data_consul_server.rendered)}"
 }
 
 module "consul_servers" {
@@ -27,7 +28,7 @@ module "consul_servers" {
   cluster_tag_value = "${var.consul_cluster_name}"
 
   ami_id    = "${var.consul_ami_id}"
-  user_data = "${coalesce(var.consul_user_data, data.template_file.user_data_consul_server.rendered)}"
+  user_data = "${local.consul_user_data}"
 
   root_volume_type = "${var.consul_root_volume_type}"
   root_volume_size = "${var.consul_root_volume_size}"

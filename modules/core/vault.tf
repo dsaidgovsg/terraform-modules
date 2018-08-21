@@ -3,7 +3,8 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 locals {
-  vault_api_port = 8200
+  vault_api_port  = 8200
+  vault_user_data = "${coalesce(var.vault_user_data, data.template_file.user_data_vault_cluster.rendered)}"
 }
 
 module "vault" {
@@ -14,7 +15,7 @@ module "vault" {
   instance_type = "${var.vault_instance_type}"
 
   ami_id    = "${var.vault_ami_id}"
-  user_data = "${coalesce(var.vault_user_data, data.template_file.user_data_vault_cluster.rendered)}"
+  user_data = "${local.vault_user_data}"
 
   root_volume_type = "${var.vault_root_volume_type}"
   root_volume_size = "${var.vault_root_volume_size}"

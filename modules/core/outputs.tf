@@ -180,9 +180,19 @@ output "consul_server_default_user_data" {
   value       = "${data.template_file.user_data_consul_server.rendered}"
 }
 
+output "consul_server_user_data" {
+  description = "Default launch configuration user data for Consul Server"
+  value       = "${local.consul_user_data}"
+}
+
 output "nomad_client_default_user_data" {
   description = "Default launch configuration user data for Nomad Client"
   value       = "${module.nomad_clients.default_user_data}"
+}
+
+output "nomad_client_user_data" {
+  description = "User data used by Nomad Client"
+  value       = "${module.nomad_clients.user_data}"
 }
 
 output "nomad_server_default_user_data" {
@@ -190,9 +200,19 @@ output "nomad_server_default_user_data" {
   value       = "${data.template_file.user_data_nomad_server.rendered}"
 }
 
+output "nomad_server_user_data" {
+  description = "User data used by Nomad Server"
+  value       = "${local.nomad_server_user_data}"
+}
+
 output "vault_cluster_default_user_data" {
   description = "Default launch configuration user data for Vault Cluster"
   value       = "${data.template_file.user_data_vault_cluster.rendered}"
+}
+
+output "vault_cluster_user_data" {
+  description = "User data used by Vault Cluster"
+  value       = "${local.vault_user_data}"
 }
 
 output "ssh_key_name" {

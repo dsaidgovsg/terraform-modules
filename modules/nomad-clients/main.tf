@@ -1,6 +1,7 @@
 locals {
   allowed_inbound_cidr_blocks = "${concat(list(data.aws_vpc.selected.cidr_block), var.allowed_inbound_cidr_blocks)}"
   services_inbound_cidr       = "${concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)}"
+  user_data                   = "${coalesce(var.user_data, data.template_file.user_data_nomad_client.rendered)}"
 }
 
 data "aws_vpc" "selected" {
@@ -24,7 +25,7 @@ module "nomad_clients" {
   desired_capacity = "${var.clients_desired}"
 
   ami_id    = "${var.ami_id}"
-  user_data = "${coalesce(var.user_data, data.template_file.user_data_nomad_client.rendered)}"
+  user_data = "${local.user_data}"
 
   root_volume_type = "${var.root_volume_type}"
   root_volume_size = "${var.root_volume_size}"

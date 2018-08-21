@@ -38,6 +38,11 @@ output "default_user_data" {
   value       = "${data.template_file.user_data_nomad_client.rendered}"
 }
 
+output "user_data" {
+  description = "User data used for Nomad Clients"
+  value       = "${local.user_data}"
+}
+
 output "ssh_key_name" {
   description = "Name of SSH Key for SSH login authentication to Nomad Clients cluster"
   value       = "${var.ssh_key_name}"
