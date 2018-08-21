@@ -1,10 +1,7 @@
 # Portworx AMI
 
-AMI with Portworx (`px-dev`) and Consul binaries installed. DNSmasq is also configured to use the
-local Consul agent as its DNS server.
-
-This is based on this
-[example](https://github.com/hashicorp/terraform-aws-nomad/tree/master/examples/nomad-consul-ami).
+AMI with Portworx and Consul binaries installed. DNSmasq is also configured to use the local Consul
+agent as its DNS server.
 
 ## Pre-requisite
 
@@ -43,6 +40,10 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   will need to do `{{ config_vars.xxx }}` to get the interpolation working.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
+- `px_image`: Docker image to install Portworx. Defaults to `portworx/px-dev`.
+  `portworx/px-enterprise` can be used, but would require either free trial or paid license.
+- `px_args`: Arguments to pass to Portworx during run configuration. Check
+  <https://docs.portworx.com/runc/options.html> for more details.
 
 ### Post Bootstrap Configuration
 
@@ -90,6 +91,7 @@ packer build \
 
 This Packer image will the following:
 
+- Portworx
 - Consul: `/opt/consul`
 - `td-agent`: As a Debian package
 - `telegraf` As a Debian package
