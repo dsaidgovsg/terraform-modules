@@ -1,0 +1,21 @@
+---
+- name: Install dnsmasq and git via apt
+  apt:
+    name: nfs-common
+    state: latest
+  become: yes
+- name: Install Docker Volume Netshare deb
+  apt:
+    deb: "https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ netshare_version }}/docker-volume-netshare_{{ netshare_version }}_amd64.deb"
+  become: yes
+- name: Enable Docker Volume Netshare service
+  service:
+    name: docker-volume-netshare
+    enabled: yes
+    use: service
+  become: yes
+- name: Update Netshare configuration
+  copy:
+    src: "{{ playbook_dir }}/files/docker-volume-netshare"
+    dest: "/etc/default/docker-volume-netshare"
+  become: yes

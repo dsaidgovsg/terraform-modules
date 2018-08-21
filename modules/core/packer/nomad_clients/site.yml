@@ -21,6 +21,7 @@
     consul_token: ""
     consul_integration_prefix: "terraform/"
     nomad_additional_config: []
+    netshare_version: 0.35
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -52,6 +53,9 @@
     apt:
       name: python3-pip
     become: yes
+  - name: Install Docker Volume Netshare
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/docker-volume-netshare"
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/consul"
