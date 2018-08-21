@@ -16,6 +16,6 @@
   become: yes
 - name: Update Netshare configuration
   copy:
-    src: "{{ role_path }}/../files/docker-volume-netshare"
+    src: "{{ role_path }}/files/docker-volume-netshare"
     dest: "/etc/default/docker-volume-netshare"
   become: yes
