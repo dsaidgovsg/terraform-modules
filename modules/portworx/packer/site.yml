@@ -15,7 +15,6 @@
     consul_scheme: https
     consul_token: ""
     consul_integration_prefix: "terraform/"
-    px_args: "-k consul:http://127.0.0.1:8500 -c my-portworx-cluster -d eth0 -m eth0 -z"
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
