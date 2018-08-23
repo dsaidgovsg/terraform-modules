@@ -25,6 +25,6 @@ resource "vault_policy" "app_read_write" {
 }
 
 locals {
-  app_policy_name = "${var.prefix}_${var.app}_app"
-  dev_policy_name = "${var.prefix}_${var.app}_dev"
+  app_policy_name = "${var.prefix == ""} ? ${var.app}_app : ${var.prefix}_${var.app}_app"
+  dev_policy_name = "${var.prefix == ""} ? ${var.app}_dev : ${var.prefix}_${var.app}_dev"
 }
