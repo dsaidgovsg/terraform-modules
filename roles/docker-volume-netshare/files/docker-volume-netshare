@@ -1,0 +1,1 @@
+DKV_NETSHARE_OPTS="efs --nameserver=169.254.1.1"

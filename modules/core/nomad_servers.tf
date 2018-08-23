@@ -4,6 +4,7 @@
 
 locals {
   nomad_server_http_port = 4646
+  nomad_server_user_data = "${coalesce(var.nomad_servers_user_data, data.template_file.user_data_nomad_server.rendered)}"
 }
 
 module "nomad_servers" {
@@ -20,7 +21,7 @@ module "nomad_servers" {
   desired_capacity = "${var.nomad_servers_num}"
 
   ami_id    = "${var.nomad_servers_ami_id}"
-  user_data = "${coalesce(var.nomad_servers_user_data, data.template_file.user_data_nomad_server.rendered)}"
+  user_data = "${local.nomad_server_user_data}"
 
   root_volume_type = "${var.nomad_servers_root_volume_type}"
   root_volume_size = "${var.nomad_servers_root_volume_size}"
