@@ -1,0 +1,8 @@
+---
+# For full description of options, please see https://docs.portworx.com/runc/options.html
+
+# portworx/px-dev supports up to 3 nodes in cluster only
+# portworx/px-enterprise supports up to 1000 nodes
+# Check https://portworx.com/products/features/ for comparison
+px_image: portworx/px-dev:1.4.2.2
+px_args: "-k consul:http://127.0.0.1:8500 -c my-portworx-cluster -d eth0 -m eth0 -z"

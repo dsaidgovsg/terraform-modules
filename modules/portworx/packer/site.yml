@@ -1,0 +1,65 @@
+---
+- name: Provision Consul AMI
+  hosts: all
+  vars:
+    consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
+    consul_module_version: "v0.3.5"
+    consul_version: "1.2.2"
+    consul_enable_syslog: true
+    td_agent_config_file: ""
+    td_agent_config_vars_file: ""
+    td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
+    ca_certificate: ""
+    consul_host: ""
+    consul_port: 443
+    consul_scheme: https
+    consul_token: ""
+    consul_integration_prefix: "terraform/"
+    px_image: "portworx/px-dev:1.4.2.2"
+    px_args: "-k consul:http://127.0.0.1:8500 -c my-portworx-cluster -d eth0 -m eth0 -z"
+  tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/ansible-ca-store"
+    vars:
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate != ""
+  - name: Install Vault PKI CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/vault-pki"
+  - name: Install pip3
+    apt:
+      name: python3-pip
+    become: yes
+  - name: Install Docker and Docker Compose
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/ansible-docker-ubuntu"
+  - name: Install Portworx
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/ansible-portworx-runc"
+  - name: Install td-agent
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/td-agent"
+    vars:
+      config_file: "{{ td_agent_config_file }}"
+      config_vars_file: "{{ td_agent_config_vars_file }}"
+      config_dest_file: "{{ td_agent_config_dest_file }}"
+  - name: Install Telegraf
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/telegraf"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/consul"
+  - name: Install Consul-Template
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/install-consul-template"
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/install-ssh-script"

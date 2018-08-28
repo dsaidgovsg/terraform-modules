@@ -1,0 +1,24 @@
+---
+- name: Install Portworx ({{ px_image }})
+  docker_container:
+    name: portworx-install
+    image: "{{ px_image }}"
+    detach: no
+    entrypoint: /runc-entry-point.sh
+    command: --upgrade
+    volumes:
+    - "/opt/pwx:/opt/pwx"
+    - "/etc/pwx:/etc/pwx"
+    state: started
+    cleanup: yes
+    privileged: yes
+  become: yes
+- name: Run Portworx install configuration
+  command: "/opt/pwx/bin/px-runc install {{ px_args }}"
+  become: yes
+- name: Enable Portworx service to run on startup
+  service:
+    name: portworx
+    enabled: yes
+    use: service
+  become: yes
