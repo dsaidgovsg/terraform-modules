@@ -6,16 +6,7 @@ install:
 
 script:
   - docker run --rm -ti --entrypoint terraform lint fmt -check=true
-  - docker run --rm -ti lint modules/aws-auth
-  - docker run --rm -ti lint modules/core
-  - docker run --rm -ti lint modules/docker-auth
-  - docker run --rm -ti lint modules/elasticsearch
-  - docker run --rm -ti lint modules/lambda-api-gateway
-  - docker run --rm -ti lint modules/nomad-acl
-  - docker run --rm -ti lint modules/nomad-clients
-  - docker run --rm -ti lint modules/nomad-vault-integration
-  - docker run --rm -ti lint modules/traefik
-  - docker run --rm -ti lint modules/vault-ssh
+  - find modules/ -mindepth 1 -maxdepth 1 -type d -exec docker run --rm -ti lint {} \;
 
 branches:
   only:
