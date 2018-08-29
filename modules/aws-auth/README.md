@@ -315,3 +315,33 @@ resource "vault_generic_secret" "vault_iam_role" {
 EOF
 }
 ```
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| aws_auth_path | Path to enable the AWS authentication method on | string | `aws/` | no |
+| base_policies | List of policies to assign to all tokens created via the AWS authentication method | string | `<list>` | no |
+| consul_iam_role_arn | ARN of the IAM role for Consul servers | string | - | yes |
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| consul_policies | Policies to attach to Consul servers role | string | `<list>` | no |
+| consul_role | Name of the AWS authentication role for Consul servers | string | `consul` | no |
+| core_integration | Enable integration with the `core` module by setting some values in Consul so         that the user_data scripts in core know that this module has been applied | string | `true` | no |
+| iam_policy_name | Name of the IAM policy to allow Vault servers to authenticate with AWS | string | `VaultAwsAuth` | no |
+| nomad_client_iam_role_arn | ARN of the IAM role for Nomad clients | string | - | yes |
+| nomad_client_policies | Policies to attach to Nomad clients role | string | `<list>` | no |
+| nomad_client_role | Name of the AWS authentication role for Nomad clients | string | `nomad-client` | no |
+| nomad_server_iam_role_arn | ARN of the IAM role for Nomad servers | string | - | yes |
+| nomad_server_policies | Policies to attach to Nomad servers role | string | `<list>` | no |
+| nomad_server_role | Name of the AWS authentication role for Nomad servers | string | `nomad-server` | no |
+| period_minutes | The token should be renewed within the duration specified by this value. At each renewal, the token's TTL will be set to the value of this field. The maximum allowed lifetime of token issued using this role. Specified as a number of minutes. | string | `4320` | no |
+| vault_iam_role_arn | ARN of the IAM role for Vault servers | string | - | yes |
+| vault_iam_role_id | Vault IAM role ID to apply the policy to | string | - | yes |
+| vault_policies | Policies to attach to Vault servers role | string | `<list>` | no |
+| vault_role | Name of the AWS authentication role for Vault servers | string | `vault` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| path | Path to the AWS authentication mount |

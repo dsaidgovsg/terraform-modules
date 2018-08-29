@@ -95,3 +95,11 @@ NOMAD_PROVIDER=$(cat nomad-acl) terraform plan
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the
 Terraform Vault provider for details on how you can provide a Vault token for this Terraform
 operation. In general, you might want to do this with a Root token.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| nomad_address | FQDN of Nomad addresses to access. Include the port and protocol | string | `http://nomad.service.consul:4646` | no |
+| path | Path to enable the Nomad secrets engine on Vault | string | `nomad` | no |

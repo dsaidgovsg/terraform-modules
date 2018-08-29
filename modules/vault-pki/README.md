@@ -28,3 +28,33 @@ template documentation for more details.
 
 You might want to rebuild and update all the AMIs for your server so that your CA is installed onto
 the AMI. This is necessary if you want to enable TLS for Nomad and Consul.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| ca_cn | The CN of the CA certificate | string | `Vault TLS Authority` | no |
+| ca_exclude_cn_from_sans | If set, the given common_name will not be included in DNS or Email Subject Alternate Names (as appropriate). Useful if the CN is not a hostname or email address, but is instead some human-readable identifier. | string | `true` | no |
+| ca_ip_san | Specifies the requested IP Subject Alternative Names, in a comma-delimited list. | string | `` | no |
+| ca_san | Specifies the requested Subject Alternative Names, in a comma-delimited list.   These can be host names or email addresses; they will be parsed into their respective fields. | string | `` | no |
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| core_integration | Enable integration with the `core` module by setting some values in Consul so         that the packer templates know this module has been applied. | string | `true` | no |
+| country | Specifies the C (Country) values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `<list>` | no |
+| locality | Specifies the L (Locality) values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `<list>` | no |
+| organization | Specifies the O (Organization) values in the subject field of the resulting certificate.  This is a comma-separated string or JSON array. | string | `` | no |
+| ou | Specifies the OU (OrganizationalUnit) values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `` | no |
+| pki_max_ttl | Max TTL for the PKI secrets engine in seconds | string | `315360000` | no |
+| pki_path | Path to mount the PKI secrets engine | string | `pki` | no |
+| pki_ttl | Default TTL for PKI secrets engine in seconds | string | `31536000` | no |
+| postal_code | Specifies the Postal Code values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `<list>` | no |
+| province | Specifies the ST (Province) values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `<list>` | no |
+| street_address | Specifies the Street Address values in the subject field of the resulting certificate. This is a comma-separated string or JSON array. | string | `<list>` | no |
+| vault_base_url | Base URL where your Vault cluster can be accessed. This is used to configure the CRL and CA   endpoints. Do not include a trailing slash. | string | `<list>` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| ca_endpoints_der | Endpoints where the CA certificate can be downloaded in DER form |
+| ca_endpoints_pem | Endpoints where the CA certificate can be downloaded in PEM form |
+| crl_distribution_points | Endpoints to download the CRL |

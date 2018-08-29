@@ -65,3 +65,14 @@ The following pre-requisites must be met when you want to make use of the automa
 
 For more information and examples, refer to the Packer templates and `user_data` scripts for
 the various types of servers in the [core module](../core).
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| consul_enabled | Enable td-agent for Consul servers | string | `true` | no |
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| core_integration | Enable integration with the `core` module by setting some values in Consul so         that the user_data scripts in core know that this module has been applied | string | `true` | no |
+| nomad_client_enabled | Enable td-agent for Nomad clients | string | `true` | no |
+| nomad_server_enabled | Enable td-agent for Nomad servers | string | `true` | no |
+| vault_enabled | Enable td-agent for Vault servers | string | `true` | no |
