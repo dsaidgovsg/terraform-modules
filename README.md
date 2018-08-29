@@ -74,6 +74,9 @@ instances containing services `consul`, `nomad_client`, `nomad_server` and `vaul
 
 This module sets up an additional cluster of Nomad clients after the initial bootstrap of the `core` module.
 
+### [Vault App Policy](modules/vault-app-policy)
+
+This module is an addon for adding application service policies to access key / value secrets stored in your already set-up Vault.
 
 ## Roles
 
