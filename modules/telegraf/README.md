@@ -83,9 +83,9 @@ the various types of servers in the [core module](../core).
 | nomad_client_enabled | Enable Telegraf for Nomad clients | string | `true` | no |
 | nomad_client_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | nomad_client_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
+| nomad_server_enabled | Enable Telegraf for Nomad servers | string | `true` | no |
 | nomad_server_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | nomad_server_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
-| vault_enabled | Enable Telegraf for Nomad servers | string | `true` | no |
 | vault_enabled | Enable Telegraf for Vault servers | string | `true` | no |
 | vault_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | vault_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |

@@ -450,6 +450,7 @@ Replace `xxx` with the instance ID.
 |------|-------------|:----:|:-----:|:-----:|
 | allowed_ssh_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | list | `<list>` | no |
 | associate_public_ip_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | string | `true` | no |
+| client_node_class | Nomad Client Node Class name for cluster identification | string | `nomad-client` | no |
 | cluster_tag_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `consul-servers` | no |
 | consul_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | list | - | yes |
 | consul_ami_id | AMI ID for Consul servers | string | - | yes |
@@ -536,6 +537,7 @@ Replace `xxx` with the instance ID.
 | asg_name_nomad_servers | Name of Nomad Server Autoscaling group |
 | consul_api_address | Address to access consul API |
 | consul_server_default_user_data | Default launch configuration user data for Consul Server |
+| consul_server_user_data | Default launch configuration user data for Consul Server |
 | iam_role_arn_consul_servers | IAM Role ARN for Consul servers |
 | iam_role_arn_nomad_clients | IAM Role ARN for Nomad Clients |
 | iam_role_arn_nomad_servers | IAM Role ARN for Nomad servers |
@@ -547,9 +549,12 @@ Replace `xxx` with the instance ID.
 | launch_config_name_consul_servers | Name of the Launch Configuration for Consul servers |
 | launch_config_name_nomad_clients | Name of the Launch Configuration for Nomad Clients |
 | launch_config_name_nomad_servers | Name of Launch Configuration for Nomad servers |
+| node_class_nomad_clients | Nomad Client Node Class name applied |
 | nomad_api_address | Address to access nomad API |
 | nomad_client_default_user_data | Default launch configuration user data for Nomad Client |
+| nomad_client_user_data | User data used by Nomad Client |
 | nomad_server_default_user_data | Default launch configuration user data for Nomad Server |
+| nomad_server_user_data | User data used by Nomad Server |
 | nomad_servers_cluster_tag_key | Key that Nomad Server Instances are tagged with for discovery |
 | nomad_servers_cluster_tag_value | Value that Nomad servers are tagged with for discovery |
 | num_consul_servers | Number of Consul servers in cluster |
@@ -563,6 +568,7 @@ Replace `xxx` with the instance ID.
 | vault_asg_name | Name of the Autoscaling group for Vault cluster |
 | vault_cluster_default_user_data | Default launch configuration user data for Vault Cluster |
 | vault_cluster_size | Number of instances in the Vault cluster |
+| vault_cluster_user_data | User data used by Vault Cluster |
 | vault_iam_role_arn | IAM Role ARN for Vault |
 | vault_iam_role_id | IAM Role ID for Vault |
 | vault_launch_config_name | Name of the Launch Configuration for Vault cluster |

@@ -61,6 +61,20 @@ visualisation UI with a more friendly named URL.
 
 This module sets up a Lambda function with a API Gateway trigger, secured with an API key authentication.
 
+### [Telegraf](modules/telegraf)
+
+This module sets up [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) service for collecting and reporting metrics. This is instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
+
+### [Td-Agent](modules/td-agent)
+
+This module allows enabling of `td-agent`, the stable distrution package of [Fluentd](https://www.fluentd.org), for log forwarding. For
+instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
+
+### [Nomad Clients](modules/nomad-clients)
+
+This module sets up an additional cluster of Nomad clients after the initial bootstrap of the `core` module.
+
+
 ## Roles
 
 Contains Ansible roles for installation of various services. For more details, check out the README

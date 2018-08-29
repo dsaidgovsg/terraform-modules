@@ -83,3 +83,21 @@ After you have applied this module, a key will be set in Consul's KV store. The 
 `user_data` scripts of the Core's Nomad servers and clients will check for the presence of this
 key in Consul to configure themselves accordingly. Refer to the Core module's documentation on how
 to update your Nomad cluster.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| core_integration | Enable integration with the `core` module by setting some values in Consul so         that the user_data scripts in core know that this module has been applied | string | `true` | no |
+| kv_path | Path to the KV store | string | `secret` | no |
+| kv_subpath | Subpath inside the KV store to store the authentication | string | `terraform/docker-auth` | no |
+| policy_name | Name of the policy to allow for access to Docker registries | string | `docker-auth` | no |
+| provision_kv_store | If you have not enabled a KV store for Vault, set this to `true` to provision one | string | `false` | no |
+| registries | A map of registries where the key is the URL of the registry and the value is of the form `<username>:<password>` base64 encoded.<br><br>For example, on the shell, you can use the command `echo -n '<username>:<password>' | base64 -w0` to get the output required | map | - | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| policy | Name of policy to allow access to the Docker Authentication secrets |

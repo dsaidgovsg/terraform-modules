@@ -27,6 +27,7 @@ the integration. Refer to the documentation for additional information.
 | allowed_ssh_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | list | `<list>` | no |
 | ami_id | AMI ID for Nomad clients | string | - | yes |
 | associate_public_ip_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | string | `true` | no |
+| client_node_class | Nomad Client Node Class name for cluster identification | string | `nomad-client` | no |
 | clients_desired | The desired number of Nomad client nodes to deploy. | string | `6` | no |
 | clients_max | The max number of Nomad client nodes to deploy. | string | `8` | no |
 | clients_min | The minimum number of Nomad client nodes to deploy. | string | `3` | no |
@@ -34,6 +35,7 @@ the integration. Refer to the documentation for additional information.
 | cluster_tag_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `consul-servers` | no |
 | consul_cluster_name | Name of the Consul cluster to deploy | string | `consul-nomad-prototype` | no |
 | consul_servers_security_group_id | Security group ID of Consul servers so that Consul servers can talk to the Consul clients on the Nomad clients | string | - | yes |
+| docker_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `false` | no |
 | instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
 | integration_service_type | The 'server type' for this Nomad cluster. This is used in several integration. If empty, this defaults to the `cluster_name` variable | string | `` | no |
@@ -50,6 +52,7 @@ the integration. Refer to the documentation for additional information.
 | Name | Description |
 |------|-------------|
 | asg_name | Name of auto-scaling group for Nomad Clients |
+| client_node_class | Nomad Client Node Class name applied |
 | cluster_size | Number of Nomad Clients in the cluster |
 | default_user_data | Default launch configuration user data for Nomad Clients |
 | iam_role_arn | IAM Role ARN for Nomad Clients |
@@ -57,3 +60,4 @@ the integration. Refer to the documentation for additional information.
 | launch_config_name | Name of launch config for Nomad Clients |
 | security_group_id | Security group ID for Nomad Clients |
 | ssh_key_name | Name of SSH Key for SSH login authentication to Nomad Clients cluster |
+| user_data | User data used for Nomad Clients |

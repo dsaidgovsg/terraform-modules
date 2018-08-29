@@ -140,6 +140,7 @@ job "hashi-ui" {
 | log_json | Log in JSON format | string | `false` | no |
 | nomad_clients_external_security_group | The security group of the nomad clients that the external LB will be able to connect to | string | - | yes |
 | nomad_clients_internal_security_group | The security group of the nomad clients that the internal LB will be able to connect to | string | - | yes |
+| nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
 | route53_zone | Zone for Route 53 records | string | - | yes |
 | subnets | List of subnets to deploy the LB to | list | - | yes |
 | tags | A map of tags to add to all resources | string | `<map>` | no |

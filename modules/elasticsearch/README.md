@@ -89,6 +89,7 @@ module "es" {
 | es_version | Elasticsearch version to deploy | string | `5.5` | no |
 | es_vpc_subnet_ids | Subnet IDs for Elasticsearch cluster | list | - | yes |
 | es_zone_awareness | Enable zone awareness for Elasticsearch cluster | string | `true` | no |
+| nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
 | redirect_alias_name | Alias name of the internal redirect to Kibana | string | - | yes |
 | redirect_job_name | Name of the job to redirect users to Kibana | string | - | yes |
 | redirect_job_region | AWS region to run the redirect job | string | - | yes |
