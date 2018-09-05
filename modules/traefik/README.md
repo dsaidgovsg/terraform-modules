@@ -168,4 +168,6 @@ job "hashi-ui" {
 | traefik_internal_zone | The canonical hosted zone ID of the internal load balancer (to be used in a Route 53 Alias record). |
 | traefik_jobspec | Nomad Jobspec for the deployed Traefik reverse proxy |
 | traefik_lb_external_https_listener_arn | ARN of the HTTPS listener for the external load balancer |
+| traefik_lb_external_security_group_id | Security group ID for Traefik external LB |
 | traefik_lb_internal_https_listener_arn | ARN of the HTTPS listener for the internal load balancer |
+| traefik_lb_internal_security_group_id | Security group ID for Traefik internal LB |
