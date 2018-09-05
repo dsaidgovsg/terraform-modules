@@ -536,6 +536,8 @@ Replace `xxx` with the instance ID.
 | asg_name_nomad_clients | Name of the Autoscaling group for Nomad Clients |
 | asg_name_nomad_servers | Name of Nomad Server Autoscaling group |
 | consul_api_address | Address to access consul API |
+| consul_cluster_tag_key | Key that Consul Server Instances are tagged with for discovery |
+| consul_cluster_tag_value | Value that Consul Server Instances are tagged with for discovery |
 | consul_server_default_user_data | Default launch configuration user data for Consul Server |
 | consul_server_user_data | Default launch configuration user data for Consul Server |
 | iam_role_arn_consul_servers | IAM Role ARN for Consul servers |
