@@ -42,3 +42,13 @@ output "traefik_lb_internal_https_listener_arn" {
   description = "ARN of the HTTPS listener for the internal load balancer"
   value       = "${aws_lb_listener.internal_https.arn}"
 }
+
+output "traefik_lb_internal_security_group_id" {
+  description = "Security group ID for Traefik internal LB"
+  value       = "${aws_security_group.internal_lb.id}"
+}
+
+output "traefik_lb_external_security_group_id" {
+  description = "Security group ID for Traefik external LB"
+  value       = "${aws_security_group.external_lb.id}"
+}
