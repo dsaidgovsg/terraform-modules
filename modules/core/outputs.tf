@@ -93,6 +93,16 @@ output "security_group_id_nomad_clients" {
   value       = "${module.nomad_clients.security_group_id}"
 }
 
+output "consul_cluster_tag_key" {
+  description = "Key that Consul Server Instances are tagged with for discovery"
+  value       = "${module.consul_servers.cluster_tag_key}"
+}
+
+output "consul_cluster_tag_value" {
+  description = "Value that Consul Server Instances are tagged with for discovery"
+  value       = "${module.consul_servers.cluster_tag_value}"
+}
+
 output "nomad_servers_cluster_tag_key" {
   description = "Key that Nomad Server Instances are tagged with for discovery"
   value       = "${module.nomad_servers.cluster_tag_key}"
