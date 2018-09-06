@@ -2,12 +2,14 @@
 
 This repository contains a set of (opinionated) [Terraform](https://www.terraform.io/)
 [modules](https://www.terraform.io/docs/modules/index.html) to provision HashiCorp's suite of tools
-on AWS, including [Consul](https://www.consul.io/), [Nomad](https://www.nomadproject.io/),
-and [Vault](https://www.vaultproject.io/).
+on AWS, including:
 
-These tools are useful to deploy a basic infrastructure
-on the cloud for your developers to run their applications and services with supporting service
-discovery, distributed key-value store, and secrets management,
+- [Consul](https://www.consul.io/): Service discovery, distributed key-value store, and service mesh
+- [Nomad](https://www.nomadproject.io/): Scheduling
+- [Vault](https://www.vaultproject.io/): secrets management
+
+These tools are useful to deploy a basic infrastructure on the cloud for your developers to run
+their applications and services.
 
 To get started, see the [Core](modules/core) module. Some of the modules are optional and
 add additional features after you have provisioned the Core module.
