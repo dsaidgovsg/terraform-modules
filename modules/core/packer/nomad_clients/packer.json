@@ -24,6 +24,8 @@
         "consul_scheme": "https",
         "consul_token": "",
         "consul_integration_prefix": "terraform/",
+        "netshare_version": "0.35",
+        "docker_enable_efs": "false",
         "extra_vars": "{}"
     },
     "builders": [
@@ -105,6 +107,8 @@
                 "ansible_python_interpreter=/usr/bin/python3",
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
+                "-e",
+                "netshare_version={{user `netshare_version`}} docker_enable_efs={{user `docker_enable_efs`}}",
                 "-e",
                 "{{user `extra_vars` }}"
             ]
