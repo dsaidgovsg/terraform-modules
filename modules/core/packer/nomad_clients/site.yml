@@ -22,6 +22,7 @@
     consul_integration_prefix: "terraform/"
     nomad_additional_config: []
     netshare_version: 0.35
+    docker_enable_efs: false
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -56,6 +57,7 @@
   - name: Install Docker Volume Netshare
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/docker-volume-netshare"
+    when: docker_enable_efs
   - name: Install Consul
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/consul"
