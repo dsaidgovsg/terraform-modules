@@ -50,6 +50,13 @@ See [this page](https://www.packer.io/docs/templates/user-variables.html) for mo
   will need to do `{{ config_vars.xxx }}` to get the interpolation working.
 - `ca_certificate`: Path to the CA certificate you have generated to install on the machine. Set to
   empty to not install anything.
+- `netshare_version`: Docker Volume Netshare version to use for EFS Docker Volume Driver. Only
+  applicable if `docker_enable_efs` is set to `true`. Check
+  <https://github.com/ContainX/docker-volume-netshare/releases> for the latest versions.
+- `docker_enable_efs`: Defaults to `false`. Set to `true` to install Docker Volume Netshare and
+  enable Docker on the Nomad clients to use
+  [`efs`](https://github.com/ContainX/docker-volume-netshare#launching-in-efs-mode) for volume
+  driver.
 - `extra_vars`: Additional variables to pass to Ansible via the [`-e`](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html#cmdoption-ansible-playbook-e) flag. This is useful for additional variables that are available in the Ansible playbooks used to provision the packer images.
 
 ### Post Bootstrap Configuration
