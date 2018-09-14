@@ -1,14 +1,79 @@
 # `td-agent` module
 
-This module allows enabling of `td-agent` service for log forwarding. Meant to be used in
-instances containing services `consul`, `nomad_client`, `nomad_server` and `vault`.
+This module allows enabling of `td-agent` service for log forwarding.
 
-## Integration with `Core` module
+## Requirements
 
-This module is integrated with the `core` module to enable you to use both in conjunction
-seamlessly.
+- [Core](../core) module
 
-## Example usage
+If you are using the provided configuration:
+
+- [Elasticsearch](../elasticsearch)
+- [Fluentd](../fluentd)
+
+## Usage
+
+When this module is provisioned, the default `user_data` scripts provided by the Core module will
+start `td-agent` automatically and configure it. This applies to the `consul`, `nomad_client`, `nomad_server` and `vault` AMIs. If you want to use your custom `user_data`, see the section below.
+
+When used with the default Packer templates, you should provide a
+[Jinja template](http://jinja.pocoo.org/) with the `td_agent_config_file` Packer variable. To
+provide the values for your Jinja Template, you can provide a YAML file with the values with the
+`td_agent_config_vars_file` Packer variable.
+
+It is perfectly fine to have the `td_agent_config_file` not contain any Jinja Template clauses. You
+should be careful of using the `{{` and `}}` delimiters in your template files, though.
+
+### Example Configuration
+
+The directory contains some example configuration that you might find useful. The example
+configuration will forward logs to the fluentd service provisioned by the [Fluentd](../fluentd)
+module.
+
+In particular, the example configuration files are:
+
+- [`config/template/td-agent.conf`](conf/template/td-agent.conf) is the template configuration file
+- [`config/consul/td-agent-vars.yml`](config/consul/td-agent-vars.yml) is the variable file for Consul servers
+- [`config/nomad_servers/td-agent-vars.yml`](config/nomad_servers/td-agent-vars.yml) is the variable file for Nomad servers
+- [`config/nomad_clients/td-agent-vars.yml`](config/nomad_clients/td-agent-vars.yml) is the variable file for Nomad Clients
+- [`config/vault/td-agent-vars.yml`](config/vault/td-agent-vars.yml) is the variable file for Vault servers
+
+Provide the variables to the Packer template variables. For example, to build the `Consul` AMI:
+
+```bash
+packer build \
+  -var td_agent_config_file="config/template/td-agent.conf" \
+  -var td_agent_config_vars_file="config/consul/td-agent-vars.yml" \
+  .../consul.json
+```
+
+#### Tagging
+
+The following services will be are tagged as:
+
+- Consul: `services.consul`
+- Consul Template: `services.consul-template`
+- Nomad Servers and Clients: `services.nomad`
+- Vault: `services.vault`
+
+The audit logs from Vault are in JSON format and will be parsed into keys. All the parsed keys from
+Vault will be prefixed with `vault.`.
+
+Additionally, the following syslog identifier from `systemd` will be forwarded and tagged:
+
+- `cron`: `system.cron`
+- `td-agent`: `system.td-agent`
+- `telegraf`: `system.telegraf`
+- `sshd`: `system.sshd`
+- `sudo`: `system.sudo`
+
+### Custom User Data
+
+You should copy your `td-agent` configuration file into `/etc/td-agent/td-agent.conf` of your AMI,
+and run `/opt/run-td-agent --type <service_type>` in the user data to start the service with the
+custom configuration.
+
+### Example usage
 
 ```hcl
 ...
@@ -38,18 +103,10 @@ module "td-agent" {
 ...
 ```
 
-You should copy your `td-agent` configuration file into `/etc/td-agent/td-agent.conf`, and run
-`/opt/run-td-agent --type <service_type>` in the user data to start the service with the custom
-configuration.
-
-If you wish to apply interpolation from `consul-template`, you may instead copy the configuration
-file to `/etc/td-agent/td-agent.conf.template`. `run-td-agent` will automatically detect this file
-and apply template interpolation, unless `--skip-template` is explicitly set for `run-td-agent`.
-
-## Additional Server Types
+## Additional Server Types or Custom User Data
 
 If you have a new "server type" or a different category of servers to forward logs, you can make
-use of the automated bootstrap and configuration that this repository. You can always configure
+use of the automated bootstrap and configuration from this repository. You can always configure
 `td-agent` manually if you elect not to do so.
 
 For example, you might want to add a separate cluster of [Nomad clients](../nomad-clients)
