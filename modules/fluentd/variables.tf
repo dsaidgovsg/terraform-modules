@@ -54,11 +54,6 @@ variable "fluentd_conf_file" {
   default     = "alloc/config/fluent.conf"
 }
 
-variable "elasticsearch_consul_name" {
-  description = "Elasticsearch registered Consul service name"
-  default     = "elasticsearch"
-}
-
 variable "fluentd_force_pull" {
   description = "Force pull an image. Useful if the tag is mutable."
   default     = "false"

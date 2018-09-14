@@ -47,7 +47,6 @@ additional security group rules to your Nomad clients cluster.
 |------|-------------|:----:|:-----:|:-----:|
 | aws_region | Region of AWS for which this is deployed | string | `ap-southeast-1` | no |
 | consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
-| elasticsearch_consul_name | Elasticsearch registered Consul service name | string | `elasticsearch` | no |
 | elasticsearch_hostname | Host name of Elasticsearch | string | - | yes |
 | elasticsearch_port | Port number of Elasticsearch | string | - | yes |
 | enable_file_logging | Enable logging to file on the Nomad jobs. Useful for debugging, but not really needed for production | string | `false` | no |

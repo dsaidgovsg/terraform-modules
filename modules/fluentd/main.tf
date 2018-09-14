@@ -1,7 +1,3 @@
-data "consul_catalog_service" "elasticsearch" {
-  name = "${var.elasticsearch_consul_name}"
-}
-
 data "template_file" "fluentd_tf_rendered_conf" {
   template = "${file("${path.module}/templates/fluent.conf")}"
 
