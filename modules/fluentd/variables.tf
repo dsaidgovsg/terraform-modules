@@ -93,7 +93,7 @@ variable "logs_s3_enabled" {
 
 variable "logs_s3_bucket_name" {
   description = "Name of S3 bucket to store logs for long term archival"
-  default     = "l-cloud-staging-logs"
+  default     = ""
 }
 
 variable "logs_s3_abort_incomplete_days" {
