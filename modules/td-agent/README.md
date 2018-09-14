@@ -54,7 +54,7 @@ The following services will be are tagged as:
 - Consul: `services.consul`
 - Consul Template: `services.consul-template`
 - Nomad Servers and Clients: `services.nomad`
-- Vault: `services.nomad`
+- Vault: `services.vault`
 
 The audit logs from Vault are in JSON format and will be parsed into keys. All the parsed keys from
 Vault will be prefixed with `vault.`.
