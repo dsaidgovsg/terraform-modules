@@ -41,6 +41,26 @@ Nomad clients.
 In order for your applications to forward logs to your Fluentd servers, you will have to define
 additional security group rules to your Nomad clients cluster.
 
+### Elasticsearch Address and Port
+
+If you provisioned Elasticsearch with the [elasticsearch module](../elasticsearch) module, you can
+provide the address to Elasticsearch using the Consul service catalog.
+
+For example:
+
+```hcl
+data "consul_catalog_service" "elasticsearch" {
+  name = "elasticsearch"
+}
+
+module "fluentd" {
+  # ...
+  elasticsearch_hostname = "${data.consul_catalog_service.elasticsearch.service.0.address}"
+  elasticsearch_port     = "${data.consul_catalog_service.elasticsearch.service.0.port}"
+}
+
+```
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
