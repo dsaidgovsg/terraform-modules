@@ -116,7 +116,7 @@ job "job" {
 | log_vault_policy | Name of the Vault policy to allow creating AWS credentials to write to Elasticsearch and S3 | string | `fluentd_logger` | no |
 | log_vault_role | Name of the Vault role in the AWS secrets engine to provide credentials for fluentd to write to Elasticsearch and S3 | string | `fluentd_logger` | no |
 | logs_s3_abort_incomplete_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | string | `7` | no |
-| logs_s3_bucket_name | Name of S3 bucket to store logs for long term archival | string | `l-cloud-staging-logs` | no |
+| logs_s3_bucket_name | Name of S3 bucket to store logs for long term archival | string | `` | no |
 | logs_s3_enabled | Enable to log to S3 | string | `true` | no |
 | logs_s3_glacier_transition_days | Number of days before logs are transitioned to IA. Must be > var.logs_s3_ia_transition_days + 30 days | string | `365` | no |
 | logs_s3_ia_transition_days | Number of days before logs are transitioned to IA. Must be > 30 days | string | `90` | no |
@@ -127,3 +127,9 @@ job "job" {
 | nomad_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | string | `<list>` | no |
 | tags | Tags to apply to resources | string | `<map>` | no |
 | vault_sts_path | If logging to S3 is enabled, provide to the path in Vault in which the AWS Secrets Engine is mounted | string | `` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| jobspec | Rendered jobspec |
