@@ -25,7 +25,8 @@ Provide the necessary paths to the module variables.
 
 By default, `fluentd` is configured to match tags from logs sent from the example configuration
 provided in the [`td-agent`](../td-agent) module. See the module for more information on how to
-configure your instances to forward logs to fluentd.
+configure your instances to forward logs to fluentd. It also match logs tagged with `docker.*` for
+your Nomad jobs.
 
 You can change the matched tags with the `fluentd_match` variable.
 
@@ -59,6 +60,40 @@ module "fluentd" {
   elasticsearch_port     = "${data.consul_catalog_service.elasticsearch.service.0.port}"
 }
 
+```
+
+## Forwarding Logs
+
+You can use the [td-agent module](../td-agent) along with the example configuration files to forward
+logs from your Consul Servers, Noamd Servers, Nomad Clients, and Vault Servers to Fluentd.
+
+If you would like to forward logs from your Nomad jobs, you might want to tag them with
+`docker.XXX`.
+
+For example, in your Jobspec, you can use:
+
+```hcl
+job "job" {
+  # ...
+  group "group" {
+    # ...
+    task "task" {
+      # ...
+      driver = "docker"
+
+      config {
+        logging {
+          type = "fluentd"
+
+          config {
+            fluentd-address = "fluentd.service.consul:4224"
+            tag             = "docker.job"
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 ## Inputs
