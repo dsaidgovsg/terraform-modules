@@ -46,5 +46,11 @@ data "template_file" "fluentd_jobspec" {
 }
 
 resource "nomad_job" "fluentd" {
+  depends_on = [
+    "consul_keys.consul_keys_match",
+    "consul_keys.log_to_file",
+    "consul_keys.log_to_s3",
+  ]
+
   jobspec = "${data.template_file.fluentd_jobspec.rendered}"
 }
