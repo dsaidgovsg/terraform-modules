@@ -90,8 +90,11 @@ This module sets up an additional cluster of Nomad clients after the initial boo
 
 This module is an addon for adding application service policies to access key / value secrets stored in your already set-up Vault.
 
+## [Fluentd](modules/fluentd)
+
+This module runs Fluentd on Nomad to forward logs to Elasticsearch and (optionally) S3.
+
 ## Roles
 
 Contains Ansible roles for installation of various services. For more details, check out the README
 in the respective role directories.
-

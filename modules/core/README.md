@@ -90,7 +90,7 @@ have Ansible 2.5 installed.
 The list below will link to example packer scripts that we have provided. If you have additional
 requirements, you are encouraged to extend from these examples.
 
-- [Consul servers](package/consul)
+- [Consul servers](packer/consul)
 - [Nomad servers (with Consul agent)](packer/nomad_servers)
 - [Nomad clients (with Consul agent)](packer/nomad_clients)
 - [Vault (with Consul agent)](packer/vault)
