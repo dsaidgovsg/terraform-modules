@@ -40,3 +40,36 @@ Nomad clients.
 
 In order for your applications to forward logs to your Fluentd servers, you will have to define
 additional security group rules to your Nomad clients cluster.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| aws_region | Region of AWS for which this is deployed | string | `ap-southeast-1` | no |
+| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
+| elasticsearch_consul_name | Elasticsearch registered Consul service name | string | `elasticsearch` | no |
+| elasticsearch_hostname | Host name of Elasticsearch | string | - | yes |
+| elasticsearch_port | Port number of Elasticsearch | string | - | yes |
+| enable_file_logging | Enable logging to file on the Nomad jobs. Useful for debugging, but not really needed for production | string | `false` | no |
+| es6_support | Set to `true` if you are using Elasticsearch 6 and above to support the removal of mapping types (https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html) | string | `false` | no |
+| fluentd_conf_file | Rendered fluentd configuration file | string | `alloc/config/fluent.conf` | no |
+| fluentd_count | Number of copies of Fluentd to run | string | `3` | no |
+| fluentd_force_pull | Force pull an image. Useful if the tag is mutable. | string | `false` | no |
+| fluentd_image | Docker image for fluentd | string | `govtechsg/fluentd-s3-elasticsearch` | no |
+| fluentd_match | Tags that fluentd should output to S3 and Elasticsearch | string | `app.** docker.** services.** system.**` | no |
+| fluentd_port | Port on the Docker image in which the TCP interface is exposed | string | `4224` | no |
+| fluentd_tag | Tag for fluentd Docker image | string | `1.2.5-latest` | no |
+| log_vault_policy | Name of the Vault policy to allow creating AWS credentials to write to Elasticsearch and S3 | string | `fluentd_logger` | no |
+| log_vault_role | Name of the Vault role in the AWS secrets engine to provide credentials for fluentd to write to Elasticsearch and S3 | string | `fluentd_logger` | no |
+| logs_s3_abort_incomplete_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | string | `7` | no |
+| logs_s3_bucket_name | Name of S3 bucket to store logs for long term archival | string | `l-cloud-staging-logs` | no |
+| logs_s3_enabled | Enable to log to S3 | string | `true` | no |
+| logs_s3_glacier_transition_days | Number of days before logs are transitioned to IA. Must be > var.logs_s3_ia_transition_days + 30 days | string | `365` | no |
+| logs_s3_ia_transition_days | Number of days before logs are transitioned to IA. Must be > 30 days | string | `90` | no |
+| logs_s3_policy | Name of the IAM policy to provision for write access to the bucket | string | `LogsS3Write` | no |
+| logs_s3_storage_class | Default storage class to store logs in S3. Choose from `STANDARD`, `REDUCED_REDUNDANCY` or `STANDARD_IA` | string | `STANDARD` | no |
+| node_class | Node class for Nomad clients to constraint the jobs to. Use this with `node_class_operator`. The default matches everything. | string | `.?` | no |
+| node_class_operator | Nomad constrant operator (https://www.nomadproject.io/docs/job-specification/constraint.html#operator) to use for restricting Nomad clients node class. Use this with `node_class`. The default matches everything. | string | `regexp` | no |
+| nomad_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | string | `<list>` | no |
+| tags | Tags to apply to resources | string | `<map>` | no |
+| vault_sts_path | If logging to S3 is enabled, provide to the path in Vault in which the AWS Secrets Engine is mounted | string | `` | no |
