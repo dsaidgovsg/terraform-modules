@@ -1,0 +1,38 @@
+---
+consul:
+  tag: consul
+  identifier: consul
+  position_file: /etc/td-agent/positions/consul.pos
+consul_template:
+  tag: consul-template
+  identifier: consul-template
+  position_file: /etc/td-agent/positions/consul-template.pos
+nomad:
+  tag: nomad_client
+  identifier: nomad
+  position_file: /etc/td-agent/positions/nomad_client.pos
+
+additionals:
+  - tag: cron
+    identifier: cron
+    position_file: /etc/td-agent/positions/cron.pos
+  - tag: dockerd
+    identifier: dockerd
+    position_file: /etc/td-agent/positions/dockerd.pos
+  - tag: td-agent
+    identifier: td-agent
+    position_file: /etc/td-agent/positions/td-agent.pos
+  - tag: telegraf
+    identifier: telegraf
+    position_file: /etc/td-agent/positions/telegraf.pos
+  - tag: sshd
+    identifier: sshd
+    position_file: /etc/td-agent/positions/sshd.pos
+  - tag: sudo
+    identifier: sudo
+    position_file: /etc/td-agent/positions/sudo.pos
+
+server:
+  name: fluentd-consul
+  host: fluentd.service.consul
+  port: 4224
