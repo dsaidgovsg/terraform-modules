@@ -52,20 +52,6 @@ module "consul_iam_policies_servers" {
   iam_role_id = "${module.nomad_servers.iam_role_id}"
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# PERMIT CONSUL SPECIFIC TRAFFIC IN NOMAD CLUSTER
-# To allow our Nomad servers consul agents to communicate with other consul agents and participate in the LAN gossip,
-# we open up the consul specific protocols and ports for consul traffic
-# ---------------------------------------------------------------------------------------------------------------------
-
-module "nomad_server_consul_gossip" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
-
-  security_group_id                  = "${module.nomad_servers.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.this.cidr_block), var.nomad_servers_allowed_inbound_cidr_blocks)}"
-  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
-}
-
 # --------------------------------------------------------------------------------------------------
 # THE USER DATA SCRIPT THAT WILL RUN ON EACH NOMAD SERVER NODE WHEN IT'S BOOTING
 # This script will configure and start Nomad

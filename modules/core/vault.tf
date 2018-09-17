@@ -50,20 +50,6 @@ module "vault_iam_policies_servers" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# PERMIT CONSUL SPECIFIC TRAFFIC IN VAULT CLUSTER
-# To allow our Vault servers consul agents to communicate with other consul agents and participate in the LAN gossip,
-# we open up the consul specific protocols and ports for consul traffic
-# ---------------------------------------------------------------------------------------------------------------------
-
-module "vault_consul_gossip" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-client-security-group-rules?ref=v0.3.5"
-
-  security_group_id                  = "${module.vault.security_group_id}"
-  allowed_inbound_cidr_blocks        = "${concat(list(data.aws_vpc.this.cidr_block), var.vault_allowed_inbound_cidr_blocks)}"
-  allowed_inbound_security_group_ids = ["${module.consul_servers.security_group_id}"]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # THE USER DATA SCRIPT THAT WILL RUN ON EACH VAULT SERVER WHEN IT'S BOOTING
 # This script will configure and start Vault
 # ---------------------------------------------------------------------------------------------------------------------

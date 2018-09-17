@@ -34,11 +34,11 @@ the integration. Refer to the documentation for additional information.
 | cluster_name | Name of the Nomad Clients cluster | string | `nomad-client` | no |
 | cluster_tag_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `consul-servers` | no |
 | consul_cluster_name | Name of the Consul cluster to deploy | string | `consul-nomad-prototype` | no |
-| consul_servers_security_group_id | Security group ID of Consul servers so that Consul servers can talk to the Consul clients on the Nomad clients | string | - | yes |
 | docker_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `false` | no |
 | instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
 | integration_service_type | The 'server type' for this Nomad cluster. This is used in several integration. If empty, this defaults to the `cluster_name` variable | string | `` | no |
+| nomad_client_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | nomad_clients_services_inbound_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | list | `<list>` | no |
 | root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
 | root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
