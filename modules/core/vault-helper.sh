@@ -14,6 +14,8 @@ readonly SCRIPT_NAME="$(basename "$0")"
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
+TERRAFORM="${TERRAFORM:-terraform}"
+
 function log {
   local readonly level="$1"
   local readonly message="$2"
@@ -47,7 +49,7 @@ function assert_is_installed {
 
 function get_optional_terraform_output {
   local readonly output_name="$1"
-  terraform output -no-color "$output_name"
+  "${TERRAFORM}" output -no-color "$output_name"
 }
 
 function get_required_terraform_output {
