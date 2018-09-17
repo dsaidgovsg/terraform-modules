@@ -133,3 +133,5 @@ job "job" {
 | Name | Description |
 |------|-------------|
 | jobspec | Rendered jobspec |
+| s3_arn | ARN of the S3 bucket created |
+| s3_iam_arn | ARN of the IAM Policy document for S3 access |
