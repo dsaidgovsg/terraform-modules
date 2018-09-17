@@ -33,7 +33,7 @@
             "name": "ubuntu-1604-nomad-client-ami",
             "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_ami_name}}",
             "ami_description": "An Ubuntu 16.04 AMI that has Nomad and Consul installed.",
-            "instance_type": "t2.micro",
+            "instance_type": "t3.micro",
             "region": "{{user `aws_region`}}",
             "type": "amazon-ebs",
             "subnet_id": "{{user `subnet_id`}}",
