@@ -216,7 +216,7 @@ unhardened manner. You will need to perform some tasks to harden it further.
 Due to a [limitation](https://github.com/GovTechSG/terraform-modules/issues/152) in how Terraform
 deals with `count`, we are unable to automatically provision the security group rules for
 Nomad (both servers and clients) and Vault instances to retrieve
-[Consul Sef Gossip](https://www.consul.io/docs/internals/gossip.html) traffic. The instances can
+[Consul Serf Gossip](https://www.consul.io/docs/internals/gossip.html) traffic. The instances can
 send _out_ Serf gossip traffic to Consul servers and other peers, but they are unable
 to receive any.
 
