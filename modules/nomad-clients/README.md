@@ -34,7 +34,6 @@ the integration. Refer to the documentation for additional information.
 | cluster_name | Name of the Nomad Clients cluster | string | `nomad-client` | no |
 | cluster_tag_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `consul-servers` | no |
 | consul_cluster_name | Name of the Consul cluster to deploy | string | `consul-nomad-prototype` | no |
-| consul_servers_security_group_id | Security group ID of Consul servers so that Consul servers can talk to the Consul clients on the Nomad clients | string | - | yes |
 | docker_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `false` | no |
 | instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
@@ -43,6 +42,7 @@ the integration. Refer to the documentation for additional information.
 | root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
 | root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
 | ssh_key_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | string | `` | no |
+| termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | user_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | string | `` | no |
 | vpc_id | ID of the VPC to deploy to | string | - | yes |
 | vpc_subnet_ids | List of Subnet IDs to deploy to | list | - | yes |

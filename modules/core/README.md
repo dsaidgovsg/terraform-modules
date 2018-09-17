@@ -211,6 +211,20 @@ for a solution.
 As indicated above, the initial Terraform apply will bootstrap the cluster in a usable but
 unhardened manner. You will need to perform some tasks to harden it further.
 
+### Consul Gossip Traffic
+
+Due to a [limitation](https://github.com/GovTechSG/terraform-modules/issues/152) in how Terraform
+deals with `count`, we are unable to automatically provision the security group rules for
+Nomad (both servers and clients) and Vault instances to retrieve
+[Consul Serf Gossip](https://www.consul.io/docs/internals/gossip.html) traffic. The instances can
+send _out_ Serf gossip traffic to Consul servers and other peers, but they are unable
+to receive any.
+
+It is recommended that you provision the rules for Nomad and Vault instances using this
+[Terraform module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-client-security-group-rules).
+
+This allows better scaling as the number of nodes in the Consul cluster increases.
+
 ### Vault Initialisation and Configuration
 
 After you have applied the Terraform plan, we need to perform some manual steps in order to set up
@@ -272,6 +286,11 @@ We can use Vault's
 generate signed certificates to access your machines via SSH.
 
 See the [`vault-ssh`](../vault-ssh) module for more information.
+
+### Other Integrations
+
+There are other integrations that add features to your cluster in this repository that are not
+mentioned in this README.
 
 ### Upgrading and updating
 

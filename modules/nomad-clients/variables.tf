@@ -21,10 +21,6 @@ variable "allowed_inbound_cidr_blocks" {
   type        = "list"
 }
 
-variable "consul_servers_security_group_id" {
-  description = "Security group ID of Consul servers so that Consul servers can talk to the Consul clients on the Nomad clients"
-}
-
 # --------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
@@ -113,6 +109,11 @@ variable "cluster_tag_key" {
 variable "consul_cluster_name" {
   description = "Name of the Consul cluster to deploy"
   default     = "consul-nomad-prototype"
+}
+
+variable "termination_policies" {
+  description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
+  default     = "Default"
 }
 
 # --------------------------------------------------------------------------------------------------
