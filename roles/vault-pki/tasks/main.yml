@@ -61,4 +61,4 @@
         certificate: "{{ download_temp.path }}"
         certificate_rename: "vault.crt"
       become: yes
-  when: consul_host != "" and integration_enabled and integration_enabled.data.Value == "yes"
+  when: consul_host != "" and integration_enabled and integration_enabled.data and integration_enabled.data.Value == "yes"
