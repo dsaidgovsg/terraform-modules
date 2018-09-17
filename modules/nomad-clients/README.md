@@ -38,11 +38,11 @@ the integration. Refer to the documentation for additional information.
 | instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
 | integration_service_type | The 'server type' for this Nomad cluster. This is used in several integration. If empty, this defaults to the `cluster_name` variable | string | `` | no |
-| nomad_client_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | nomad_clients_services_inbound_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | list | `<list>` | no |
 | root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
 | root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
 | ssh_key_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | string | `` | no |
+| termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
 | user_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | string | `` | no |
 | vpc_id | ID of the VPC to deploy to | string | - | yes |
 | vpc_subnet_ids | List of Subnet IDs to deploy to | list | - | yes |
