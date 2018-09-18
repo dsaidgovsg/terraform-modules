@@ -4,10 +4,6 @@ resource "aws_cloudwatch_log_group" "es_slow_index_log" {
   name              = "${var.slow_index_log_name}"
   retention_in_days = "${var.slow_index_log_retention}"
   tags              = "${merge(var.slow_index_additional_tags, map("Name", format("%s", var.slow_index_log_name)))}"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 data "aws_iam_policy_document" "es_slow_index_log" {
