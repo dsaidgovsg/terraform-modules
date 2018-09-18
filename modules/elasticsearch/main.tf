@@ -39,6 +39,8 @@ data "aws_iam_policy_document" "es_resource_attached_policy" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
+  depends_on = ["aws_iam_service_linked_role.es"]
+
   domain_name           = "${local.es_domain_name}"
   elasticsearch_version = "${var.es_version}"
 
@@ -83,6 +85,12 @@ resource "aws_elasticsearch_domain" "es" {
 resource "aws_elasticsearch_domain_policy" "es_resource_attached_policy" {
   domain_name     = "${local.es_domain_name}"
   access_policies = "${data.aws_iam_policy_document.es_resource_attached_policy.json}"
+}
+
+resource "aws_iam_service_linked_role" "es" {
+  count = "${var.create_service_linked_role ? 1 : 0}"
+
+  aws_service_name = "es.amazonaws.com"
 }
 
 locals {

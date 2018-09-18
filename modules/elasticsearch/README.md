@@ -47,6 +47,21 @@ module:
 - `var.lb_zone_id`: `module.core.internal_lb_zone_id`
 - `var.redirect_listener_arn`: `module.core.internal_lb_https_listener_arn`
 
+## Service Linked Role
+
+If, while applying, you get the error
+
+```
+* aws_elasticsearch_domain.es: Error reading IAM Role
+AWSServiceRoleForAmazonElasticsearchService: NoSuchEntity: The role with name
+AWSServiceRoleForAmazonElasticsearchService cannot be found.
+```
+
+you can set `create_service_linked_role` to true.
+
+You can see the relevant
+[issue](https://github.com/terraform-providers/terraform-provider-aws/issues/5218).
+
 ## Example Terraform configuration with Core integration
 
 ```hcl
@@ -93,6 +108,7 @@ module "es" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| create_service_linked_role | Create Elasticsearch service linked role. See README | string | `false` | no |
 | enable_slow_index_log | Enable slow log indexing | string | `false` | no |
 | es_access_cidr_block | Elasticsearch access CIDR block to allow access | list | - | yes |
 | es_additional_tags | Additional tags to apply on Elasticsearch | string | `<map>` | no |
@@ -125,6 +141,8 @@ module "es" {
 | slow_index_log_name | Name of the Cloudwatch log group for slow index | string | `es-slow-index` | no |
 | slow_index_log_retention | Number of days to retain logs for. | string | `120` | no |
 | use_redirect | Indicates whether to use redirect users | string | `false` | no |
+
+
 
 ## Outputs
 
