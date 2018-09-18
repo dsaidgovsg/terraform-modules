@@ -1,8 +1,7 @@
 # AWS Elasticsearch module
 
-This modules creates an Elasticsearch cluster in a domain, with redirection
-service to allow easy access to Kibana web interface (requires DNS CNAME alias
-to be set up).
+This modules creates an Elasticsearch cluster in a domain, with (optional) redirection
+service to allow easy access to Kibana web interface.
 
 ## Registered `consul` service name
 
@@ -25,6 +24,28 @@ This module sets up the following access controls:
 - A security group to allow access to its HTTPS endpoint on port 443 to the list of CIDRs provided in the `es_access_cidr_block` variable. If you wish to add rules to the security group, you can add rules to the Security Group ID under the output `security_group_id`.
 - The resource based policy attached to Elasticsearch allows HTTP access to all Elasticsearch APIs by everyone by default. You can configure the list of IAM principals with the `es_http_iam_roles` variable, but you would now have to [sign](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-ac.html#es-managedomains-signing-service-requests) requests to Elasticseearch. This is not supported by many of the plugins.
 - No one is granted explicit `DENY` or `ACCEPT` permissions to the configuration APIs for Elasticsearch provided by AWS. Use identity based policies to control this.
+
+## Slow Index Logs
+
+You can enable logging of slow indexing with the `enable_slow_index_log` variable. After applying
+the Terraform module, you will have to manually configure Elasticsearch to log slow indexing.
+
+See the
+[instructions](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-slow-logs-indices)
+for how to do so.
+
+## Redirection
+
+The module can optionally setup an ELB listener rule to redirect users to the Kibana interface
+using a much friendlier URL.
+
+We recommend that you use the internal ELB that was created by the `Core` module. For example, the
+list below will list the pairs of variables in this module that can use the output from the `Core`
+module:
+
+- `var.lb_cname`: `module.core.internal_lb_dns_name`
+- `var.lb_zone_id`: `module.core.internal_lb_zone_id`
+- `var.redirect_listener_arn`: `module.core.internal_lb_https_listener_arn`
 
 ## Example Terraform configuration with Core integration (and possibly Traefik)
 
@@ -71,6 +92,7 @@ module "es" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| enable_slow_index_log | Enable slow log indexing | string | `false` | no |
 | es_access_cidr_block | Elasticsearch access CIDR block to allow access | list | - | yes |
 | es_additional_tags | Additional tags to apply on Elasticsearch | string | `<map>` | no |
 | es_base_domain | Base domain for Elasticsearch cluster | string | - | yes |
@@ -89,20 +111,19 @@ module "es" {
 | es_version | Elasticsearch version to deploy | string | `5.5` | no |
 | es_vpc_subnet_ids | Subnet IDs for Elasticsearch cluster | list | - | yes |
 | es_zone_awareness | Enable zone awareness for Elasticsearch cluster | string | `true` | no |
-| nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
-| redirect_alias_name | Alias name of the internal redirect to Kibana | string | - | yes |
-| redirect_job_name | Name of the job to redirect users to Kibana | string | - | yes |
-| redirect_job_region | AWS region to run the redirect job | string | - | yes |
-| redirect_job_vpc_azs | List of VPC AZs to run the redirect job in | list | - | yes |
-| redirect_nginx_version | Image tag of Nginx to use | string | `1.14-alpine` | no |
-| redirect_subdomain | Subdomain for internal redirect to Kibana | string | `kibana` | no |
+| lb_cname | DNS CNAME for the Load balancer | string | `` | no |
+| lb_zone_id | Zone ID for the Load balancer DNS CNAME | string | `` | no |
+| redirect_domain | Domain name to redirect | string | `` | no |
+| redirect_listener_arn | LB listener ARN to attach the rule to | string | `` | no |
+| redirect_route53_zone_id | Route53 Zone ID to create the Redirect Record in | string | `` | no |
+| redirect_rule_priority | Rule prioriry for redirect | string | `100` | no |
 | security_group_additional_tags | Additional tags to apply on the security group | string | `<map>` | no |
 | security_group_name | Name of security group, leaving this empty generates a group name | string | - | yes |
 | security_group_vpc_id | VPC ID to apply on the security group | string | - | yes |
 | slow_index_additional_tags | Additional tags to apply on Cloudwatch log group | string | `<map>` | no |
 | slow_index_log_name | Name of the Cloudwatch log group for slow index | string | `es-slow-index` | no |
 | slow_index_log_retention | Number of days to retain logs for. | string | `120` | no |
-| use_redirect | Indicates whether to use Redirect job for redirecting users to Kibana URL | string | `false` | no |
+| use_redirect | Indicates whether to use redirect users | string | `false` | no |
 
 ## Outputs
 

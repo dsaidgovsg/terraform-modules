@@ -174,8 +174,18 @@ output "vault_servers_cluster_tag_value" {
 }
 
 output "internal_lb_id" {
-  description = "ID of the internal LB that exposes Nomad, Consul and Vault RPC"
-  value       = "${aws_security_group.internal_lb.id}"
+  description = "ARN of the internal LB that exposes Nomad, Consul and Vault RPC"
+  value       = "${aws_lb.internal.id}"
+}
+
+output "internal_lb_dns_name" {
+  description = "DNS name of the internal LB"
+  value       = "${aws_lb.internal.dns_name}"
+}
+
+output "internal_lb_zone_id" {
+  description = "The canonical hosted zone ID of the internal load balancer"
+  value       = "${aws_lb.internal.zone_id}"
 }
 
 output "internal_lb_https_listener_arn" {
