@@ -9,3 +9,4 @@
 - Add more outputs to the `fluentd` module
 - Add a new HTTP listener to the `Core` Internal ELB to redirect to HTTPS
 - Modify Traefik LB HTTP listener to redirect to HTTPS
+- The Elasticsearch Module will no longer provision a Nomad job for redirection. Instead, it adds an ELB Listener rule to do the redirection.

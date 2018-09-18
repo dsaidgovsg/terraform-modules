@@ -120,6 +120,11 @@ variable "es_additional_tags" {
 # ES Slow log settings
 #
 
+variable "enable_slow_index_log" {
+  description = "Enable slow log indexing"
+  default     = false
+}
+
 variable "slow_index_log_name" {
   description = "Name of the Cloudwatch log group for slow index"
   default     = "es-slow-index"
@@ -140,37 +145,36 @@ variable "slow_index_log_retention" {
 #
 
 variable "use_redirect" {
-  description = "Indicates whether to use Redirect job for redirecting users to Kibana URL"
+  description = "Indicates whether to use redirect users "
   default     = false
 }
 
-variable "nomad_clients_node_class" {
-  description = "Job constraint Nomad Client Node Class name"
+variable "redirect_route53_zone_id" {
+  description = "Route53 Zone ID to create the Redirect Record in"
+  default     = ""
 }
 
-variable "redirect_job_name" {
-  description = "Name of the job to redirect users to Kibana"
+variable "redirect_domain" {
+  description = "Domain name to redirect"
+  default     = ""
 }
 
-variable "redirect_alias_name" {
-  description = "Alias name of the internal redirect to Kibana"
+variable "lb_cname" {
+  description = "DNS CNAME for the Load balancer"
+  default     = ""
 }
 
-variable "redirect_job_region" {
-  description = "AWS region to run the redirect job"
+variable "lb_zone_id" {
+  description = "Zone ID for the Load balancer DNS CNAME"
+  default     = ""
 }
 
-variable "redirect_job_vpc_azs" {
-  description = "List of VPC AZs to run the redirect job in"
-  type        = "list"
+variable "redirect_listener_arn" {
+  description = "LB listener ARN to attach the rule to"
+  default     = ""
 }
 
-variable "redirect_nginx_version" {
-  description = "Image tag of Nginx to use"
-  default     = "1.14-alpine"
-}
-
-variable "redirect_subdomain" {
-  description = "Subdomain for internal redirect to Kibana"
-  default     = "kibana"
+variable "redirect_rule_priority" {
+  description = "Rule priority for redirect"
+  default     = 100
 }

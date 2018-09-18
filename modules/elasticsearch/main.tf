@@ -15,12 +15,6 @@ resource "aws_security_group_rule" "es_access_rule" {
   security_group_id = "${aws_security_group.es.id}"
 }
 
-resource "aws_cloudwatch_log_group" "es_slow_index_log" {
-  name              = "${var.slow_index_log_name}"
-  retention_in_days = "${var.slow_index_log_retention}"
-  tags              = "${merge(var.slow_index_additional_tags, map("Name", format("%s", var.slow_index_log_name)))}"
-}
-
 data "aws_iam_policy_document" "es_resource_attached_policy" {
   statement {
     actions = [
@@ -74,8 +68,8 @@ resource "aws_elasticsearch_domain" "es" {
 
   log_publishing_options {
     log_type                 = "INDEX_SLOW_LOGS"
-    enabled                  = true
-    cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es_slow_index_log.arn}"
+    enabled                  = "${var.enable_slow_index_log}"
+    cloudwatch_log_group_arn = "${local.cloudwatch_log_group_arn}"
   }
 
   encrypt_at_rest {
@@ -92,8 +86,9 @@ resource "aws_elasticsearch_domain_policy" "es_resource_attached_policy" {
 }
 
 locals {
-  endpoint        = "${aws_elasticsearch_domain.es.endpoint}"
-  es_kms_key_id   = "${var.es_encrypt_at_rest ? var.es_kms_key_id : ""}"
-  redirect_domain = "${var.redirect_subdomain}.${var.es_base_domain}"
-  es_domain_name  = "tf-${var.es_domain_name}"
+  endpoint       = "${aws_elasticsearch_domain.es.endpoint}"
+  es_kms_key_id  = "${var.es_encrypt_at_rest ? var.es_kms_key_id : ""}"
+  es_domain_name = "tf-${var.es_domain_name}"
+
+  cloudwatch_log_group_arn = "${element(coalescelist(aws_cloudwatch_log_group.es_slow_index_log.*.arn, list("")), 0)}"
 }
