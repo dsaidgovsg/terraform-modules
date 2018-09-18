@@ -57,7 +57,7 @@ AWSServiceRoleForAmazonElasticsearchService: NoSuchEntity: The role with name
 AWSServiceRoleForAmazonElasticsearchService cannot be found.
 ```
 
-while applying, you can set `create_service_linked_role` to true.
+you can set `create_service_linked_role` to true.
 
 You can see the relevant
 [issue](https://github.com/terraform-providers/terraform-provider-aws/issues/5218).
