@@ -178,3 +178,11 @@ variable "redirect_rule_priority" {
   description = "Rule priority for redirect"
   default     = 100
 }
+
+#
+# Others
+#
+variable "create_service_linked_role" {
+  description = "Create Elasticsearch service linked role. See README"
+  default     = false
+}
