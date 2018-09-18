@@ -2,7 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
-    nomad_version: "0.8.4"
+    nomad_version: "0.8.5"
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.3.5"
     consul_version: "1.2.2"
