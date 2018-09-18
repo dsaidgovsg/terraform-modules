@@ -69,7 +69,7 @@ resource "aws_elasticsearch_domain" "es" {
   log_publishing_options {
     log_type                 = "INDEX_SLOW_LOGS"
     enabled                  = "${var.enable_slow_index_log}"
-    cloudwatch_log_group_arn = "${var.enable_slow_index_log ? aws_cloudwatch_log_group.es_slow_index_log.arn : ""}"
+    cloudwatch_log_group_arn = "${local.cloudwatch_log_group_arn}"
   }
 
   encrypt_at_rest {
@@ -89,4 +89,6 @@ locals {
   endpoint       = "${aws_elasticsearch_domain.es.endpoint}"
   es_kms_key_id  = "${var.es_encrypt_at_rest ? var.es_kms_key_id : ""}"
   es_domain_name = "tf-${var.es_domain_name}"
+
+  cloudwatch_log_group_arn = "${element(coalescelist(aws_cloudwatch_log_group.es_slow_index_log.*.arn, list("")), 0)}"
 }
