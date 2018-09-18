@@ -47,9 +47,13 @@ module:
 - `var.lb_zone_id`: `module.core.internal_lb_zone_id`
 - `var.redirect_listener_arn`: `module.core.internal_lb_https_listener_arn`
 
-## Example Terraform configuration with Core integration (and possibly Traefik)
+## Example Terraform configuration with Core integration
 
 ```hcl
+module "core" {
+  # ...
+}
+
 module "es" {
   source = "github.com/GovTechSG/terraform-modules//modules/elasticsearch"
 
@@ -71,20 +75,17 @@ module "es" {
     "subnet-1a2b3c4d",
   ]
 
-  slow_index_log_name = "my-cloud-es-slow-index"
+  enable_slow_index_log = true
+  slow_index_log_name   = "my-cloud-es-slow-index"
 
-  # Optional section, integration with Traefik
-  # for redirecting users to the unfriendly Kibana URL
+  # Optional section for redirecting users to the unfriendly Kibana URL
 
-  use_redirect         = true
-  redirect_job_name    = "kibana-redirect"
-  redirect_alias_name  = "${data.terraform_remote_state.traefik.traefik_internal_cname}"
-  redirect_job_region  = "ap-southeast-1"
-  redirect_job_vpc_azs = [
-    "ap-southeast-1a",
-    "ap-southeast-1b",
-    "ap-southeast-1c",
-  ]
+  use_redirect             = true
+  redirect_route53_zone_id = "xxx"
+  redirect_domain          = "kibana.xxx.xxx"
+  lb_cname                 = "${module.core.internal_lb_dns_name}"
+  lb_zone_id               = "${module.core.internal_lb_zone_id}"
+  redirect_listener_arn    = "${module.core.internal_lb_https_listener_arn}"
 }
 ```
 
