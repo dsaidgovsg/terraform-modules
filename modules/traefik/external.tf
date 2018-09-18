@@ -95,9 +95,15 @@ resource "aws_lb_listener" "http_external" {
   port              = "80"
   protocol          = "HTTP"
 
+  # Redirect to HTTPS
   default_action {
-    target_group_arn = "${aws_lb_target_group.external.arn}"
-    type             = "forward"
+    type = "redirect"
+
+    redirect {
+      protocol    = "HTTPS"
+      port        = 443
+      status_code = "HTTP_301"
+    }
   }
 }
 

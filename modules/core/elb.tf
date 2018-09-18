@@ -12,6 +12,23 @@ resource "aws_lb" "internal" {
   tags = "${var.tags}"
 }
 
+resource "aws_lb_listener" "internal_http" {
+  load_balancer_arn = "${aws_lb.internal.arn}"
+  port              = "80"
+  protocol          = "HTTP"
+
+  # Redirect to HTTPS
+  default_action {
+    type = "redirect"
+
+    redirect {
+      protocol    = "HTTPS"
+      port        = 443
+      status_code = "HTTP_301"
+    }
+  }
+}
+
 resource "aws_lb_listener" "internal_https" {
   load_balancer_arn = "${aws_lb.internal.arn}"
   port              = "443"
