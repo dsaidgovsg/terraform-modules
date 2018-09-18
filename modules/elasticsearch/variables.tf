@@ -175,6 +175,6 @@ variable "redirect_listener_arn" {
 }
 
 variable "redirect_rule_priority" {
-  description = "Rule prioriry for redirect"
+  description = "Rule priority for redirect"
   default     = 100
 }

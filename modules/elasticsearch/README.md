@@ -117,7 +117,7 @@ module "es" {
 | redirect_domain | Domain name to redirect | string | `` | no |
 | redirect_listener_arn | LB listener ARN to attach the rule to | string | `` | no |
 | redirect_route53_zone_id | Route53 Zone ID to create the Redirect Record in | string | `` | no |
-| redirect_rule_priority | Rule prioriry for redirect | string | `100` | no |
+| redirect_rule_priority | Rule priority for redirect | string | `100` | no |
 | security_group_additional_tags | Additional tags to apply on the security group | string | `<map>` | no |
 | security_group_name | Name of security group, leaving this empty generates a group name | string | - | yes |
 | security_group_vpc_id | VPC ID to apply on the security group | string | - | yes |
