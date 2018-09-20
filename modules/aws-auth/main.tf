@@ -10,7 +10,7 @@ resource "vault_aws_auth_backend_role" "consul" {
   backend            = "${vault_auth_backend.aws.path}"
   role               = "${var.consul_role}"
   auth_type          = "ec2"
-  bound_iam_role_arn = "${var.consul_iam_role_arn}"
+  bound_iam_role_arn = ["${var.consul_iam_role_arn}"]
   policies           = ["${sort(concat(var.base_policies, var.consul_policies))}"]
   period             = "${var.period_minutes}"
 }
@@ -19,7 +19,7 @@ resource "vault_aws_auth_backend_role" "nomad_server" {
   backend            = "${vault_auth_backend.aws.path}"
   role               = "${var.nomad_server_role}"
   auth_type          = "ec2"
-  bound_iam_role_arn = "${var.nomad_server_iam_role_arn}"
+  bound_iam_role_arn = ["${var.nomad_server_iam_role_arn}"]
   policies           = ["${sort(concat(var.base_policies, var.nomad_server_policies))}"]
   period             = "${var.period_minutes}"
 }
@@ -28,7 +28,7 @@ resource "vault_aws_auth_backend_role" "nomad_client" {
   backend            = "${vault_auth_backend.aws.path}"
   role               = "${var.nomad_client_role}"
   auth_type          = "ec2"
-  bound_iam_role_arn = "${var.nomad_client_iam_role_arn}"
+  bound_iam_role_arn = ["${var.nomad_client_iam_role_arn}"]
   policies           = ["${sort(concat(var.base_policies, var.nomad_client_policies))}"]
   period             = "${var.period_minutes}"
 }
@@ -37,7 +37,7 @@ resource "vault_aws_auth_backend_role" "vault" {
   backend            = "${vault_auth_backend.aws.path}"
   role               = "${var.vault_role}"
   auth_type          = "ec2"
-  bound_iam_role_arn = "${var.vault_iam_role_arn}"
+  bound_iam_role_arn = ["${var.vault_iam_role_arn}"]
   policies           = ["${sort(concat(var.base_policies, var.vault_policies))}"]
   period             = "${var.period_minutes}"
 }
