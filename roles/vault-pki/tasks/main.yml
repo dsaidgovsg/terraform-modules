@@ -55,9 +55,9 @@
         msg: "Failed to download the CA from all the URLs. Make sure they are accessible from your machine."
       when: first_working is not defined
     - name: Install certificate to OS store
-      include_role:
-        name: "{{ role_path }}/../ansible-ca-store"
+      include_tasks: "{{ role_path }}/../../tasks/include_role_checked.yml"
       vars:
+        role: "{{ role_path }}/../ansible-ca-store"
         certificate: "{{ download_temp.path }}"
         certificate_rename: "vault.crt"
       become: yes

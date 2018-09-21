@@ -1,0 +1,7 @@
+---
+- name: Check for {{ file }}
+  local_action: "stat path={{ file }}"
+  register: st
+- assert:
+    that: st.stat.exists
+    msg: "{{ file }} does not exist, aborting..."
