@@ -180,6 +180,288 @@ variable "redirect_rule_priority" {
 }
 
 #
+# Alarm related
+# for recommended cloudwatch alert: https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/cloudwatch-alarms.html
+
+variable "alarm_action" {
+  types       = "list"
+  description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
+  default     = []
+}
+
+variable "ok_action" {
+  types       = "list"
+  description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
+  default     = []
+}
+
+#
+# Cluster_status_red
+#
+
+variable "cluster_status_red_alarm_name" {
+  description = "Name of the alarm."
+}
+
+variable "cluster_status_red_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "cluster_status_red_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+variable "cluster_status_red_threshold" {
+  description = "Threshold for the number of primary shard not allocated to a node"
+  default     = "1"
+}
+
+#
+# Cluster_status_yellow
+#
+
+variable "cluster_status_yellow_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "cluster_status_yellow_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "cluster_status_yellow_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+variable "cluster_status_yellow_threshold" {
+  description = "Threshold for the number of replicas shard not allocated to a node"
+  default     = "1"
+}
+
+#
+# Low_storage_space
+#
+
+variable "low_storage_space_name" {
+  description = "Name of the alarm"
+}
+
+variable "low_storage_space_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "low_storage_space_yellow_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+#
+# Cluster_index_writes_blocked
+#
+
+variable "cluster_index_writes_blocked_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "cluster_index_writes_blocked_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "cluster_index_writes_blocked_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "300"
+}
+
+variable "cluster_index_writes_blocked_threshold" {
+  description = "Threshold for the number of write request blocked"
+  default     = "1"
+}
+
+#
+# Node_unreachable
+#
+
+variable "node_unreachable_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "node_unreachable_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "node_unreachable_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "86400"
+}
+
+#
+# Snapshot_failed
+#
+
+variable "snapshot_failed_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "snapshot_failed_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "snapshot_failed_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+variable "snapshot_failed_threshold" {
+  description = "Threshold for the number of snapshot failed"
+  default     = "1"
+}
+
+#
+# High_cpu_utilization_data_node
+#
+
+variable "high_cpu_utilization_data_node_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "high_cpu_utilization_data_node_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "3"
+}
+
+variable "high_cpu_utilization_data_node_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "900"
+}
+
+variable "high_cpu_utilization_data_node_threshold" {
+  description = "Threshold % of cpu utilization for data node"
+  default     = "80"
+}
+
+#
+# High_jvm_memory_utilization_data_node
+#
+
+variable "high_jvm_memory_utilization_data_node_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "high_jvm_memory_utilization_data_node_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "high_jvm_memory_utilization_data_node_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "900"
+}
+
+variable "high_jvm_memory_utilization_data_node_threshold" {
+  description = "Threshold % of jvm memory utilization for data node"
+  default     = "80"
+}
+
+#
+# High_cpu_utilization_master_node
+#
+
+variable "high_cpu_utilization_master_node_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "high_cpu_utilization_master_node_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "3"
+}
+
+variable "high_cpu_utilization_master_node_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "900"
+}
+
+variable "high_cpu_utilization_master_node_threshold" {
+  description = "Threshold % of cpu utilization for master node"
+  default     = "50"
+}
+
+#
+# High_jvm_memory_utilization_master_node
+#
+
+variable "high_jvm_memory_utilization_master_node_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "high_jvm_memory_utilization_master_node_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "high_jvm_memory_utilization_master_node_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "900"
+}
+
+variable "high_jvm_memory_utilization_master_node_threshold" {
+  description = "Threshold % of jvm memory utilization for master node"
+  default     = "80"
+}
+
+#
+# KMS_key_error
+#
+
+variable "KMS_key_error_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "KMS_key_error_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "KMS_key_error_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+variable "KMS_key_error_threshold" {
+  description = "Threshold for the number of KMS key error"
+  default     = "1"
+}
+
+#
+# KMS_key_inaccessible
+#
+
+variable "KMS_key_inaccessible_alarm_name" {
+  description = "Name of the alarm"
+}
+
+variable "KMS_key_inaccessible_evaluation_periods" {
+  description = "Number of periods to evaluate for the alarm."
+  default     = "1"
+}
+
+variable "KMS_key_inaccessible_period" {
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = "60"
+}
+
+variable "KMS_key_inaccessible_threshold" {
+  description = "Threshold for the number of KMS key inaccessible error"
+  default     = "1"
+}
+
+#
 # Others
 #
 variable "create_service_linked_role" {
