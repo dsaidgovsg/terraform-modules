@@ -1,0 +1,37 @@
+- set_fact:
+    check_tasks: true
+    tasks_file: main.yml
+    check_defaults: false
+    defaults_file: main.yml
+    check_vars: false
+    vars_file: main.yml
+    check_meta: false
+    meta_file: main.yml
+
+# Tasks
+- include_tasks: assert_local_file.yml
+  vars:
+    file: "{{ role_path }}/tasks/{{ tasks_file }}"
+  when: check_tasks
+
+# Defaults
+- include_tasks: assert_local_file.yml
+  vars:
+    file: "{{ role_path }}/defaults/{{ defaults_file }}"
+  when: check_defaults
+
+# Vars
+- include_tasks: assert_local_file.yml
+  vars:
+    file: "{{ role_path }}/vars/{{ vars_file }}"
+  when: check_vars
+
+# Meta
+- include_tasks: assert_local_file.yml
+  vars:
+    file: "{{ role_path }}/meta/{{ meta_file }}"
+  when: check_meta
+
+- name: Include role at {{ role_path }}
+  include_role:
+    name: "{{ role_path }}"
