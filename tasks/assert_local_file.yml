@@ -1,3 +1,4 @@
+---
 - name: Check for {{ file }}
   local_action: "stat path={{ file }}"
   register: st

@@ -32,7 +32,7 @@
   - name: Install CA Certificate
     include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
-      role_path: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
+      role: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
       certificate: "{{ ca_certificate }}"
       certificate_rename: "ca.crt"
     become: yes
@@ -72,7 +72,7 @@
   - name: Install Docker and Docker Compose
     include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
-      role_path: "{{ playbook_dir }}/../../../../roles/ansible-docker-ubuntu"
+      role: "{{ playbook_dir }}/../../../../roles/ansible-docker-ubuntu"
   - name: Install Vault SSH Configuration Script
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"

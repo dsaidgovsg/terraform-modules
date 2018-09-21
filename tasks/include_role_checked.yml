@@ -1,34 +1,35 @@
+---
 # Tasks (opinionated, checks by default)
 - name: Check for Tasks file
   include_tasks: assert_local_file.yml
   vars:
-    file: "{{ role_path }}/tasks/{{ tasks_file | default('main.yml') }}"
+    file: "{{ role }}/tasks/{{ tasks_file | default('main.yml') }}"
   when: tasks_check is undefined or tasks_check
 
 # Defaults
 - name: Check for Defaults file
   include_tasks: assert_local_file.yml
   vars:
-    file: "{{ role_path }}/defaults/{{ defaults_file | default('main.yml') }}"
+    file: "{{ role }}/defaults/{{ defaults_file | default('main.yml') }}"
   when: defaults_check is defined and defaults_check
 
 # Vars
 - name: Check for Vars file
   include_tasks: assert_local_file.yml
   vars:
-    file: "{{ role_path }}/vars/{{ vars_file | default('main.yml') }}"
+    file: "{{ role }}/vars/{{ vars_file | default('main.yml') }}"
   when: vars_check is defined and vars_check
 
 # Meta
 - name: Check for Meta file
   include_tasks: assert_local_file.yml
   vars:
-    file: "{{ role_path }}/meta/{{ meta_file | default('main.yml') }}"
+    file: "{{ role }}/meta/{{ meta_file | default('main.yml') }}"
   when: meta_check is defined and meta_check
 
-- name: Include role at {{ role_path }}
+- name: Include role at {{ role }}
   include_role:
     tasks_from: "{{ tasks_file | default('main.yml') }}"
     defaults_from: "{{ defaults_file | default('main.yml') }}"
     vars_from: "{{ vars_file | default('main.yml') }}"
-    name: "{{ role_path }}"
+    name: "{{ role }}"

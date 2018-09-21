@@ -57,7 +57,7 @@
     - name: Install certificate to OS store
       include_tasks: "{{ role_path }}/../../tasks/include_role_checked.yml"
       vars:
-        role_path: "{{ role_path }}/../ansible-ca-store"
+        role: "{{ role_path }}/../ansible-ca-store"
         certificate: "{{ download_temp.path }}"
         certificate_rename: "vault.crt"
       become: yes
