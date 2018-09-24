@@ -27,7 +27,7 @@ initialised and unsealed the Vault servers.
 
 ## Vault Provider
 
-You must be using Vault provider version `>= 1.1.4` due to the breaking changes in many of the field
+You must be using Vault provider version `~> 1.1.4` due to the breaking changes in many of the field
 types. See the Vault provider
 [CHANGELOG](https://github.com/terraform-providers/terraform-provider-vault/blob/master/CHANGELOG.md#114-september-20-2018)
 for more details.
