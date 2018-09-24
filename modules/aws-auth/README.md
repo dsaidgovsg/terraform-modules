@@ -27,6 +27,11 @@ initialised and unsealed the Vault servers.
 
 ## Vault Provider
 
+You must be using Vault provider version `>= 1.1.4` due to the breaking changes in many of the field
+types. See the Vault provider
+[CHANGELOG](https://github.com/terraform-providers/terraform-provider-vault/blob/master/CHANGELOG.md#114-september-20-2018)
+for more details.
+
 Refer to the [documentation](https://www.terraform.io/docs/providers/vault/index.html) on the
 Terraform Vault provider for details on how you can provide a Vault token for this Terraform
 operation. In general, you might want to do this with a Root token.
