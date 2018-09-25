@@ -10,10 +10,17 @@
 - name: Install dependencies for td-agent
   apt:
     name: "{{ item }}"
+    update_cache: yes
   with_items:
   - gcc
   - make
   become: yes
+  register: result
+  # Workaround for `No package matching 'gcc' is available`
+  # See https://github.com/GovTechSG/terraform-modules/issues/169
+  retries: 10
+  delay: 10
+  until: not result.failed
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
