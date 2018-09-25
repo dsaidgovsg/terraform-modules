@@ -1,5 +1,5 @@
 {
-    "CN": "ACME Corporation Internal Certificate Authorty",
+    "CN": "ACME Corporation Internal Certificate Authority",
     "hosts": [],
     "key": {
         "algo": "ecdsa",

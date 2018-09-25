@@ -1,5 +1,5 @@
 {
-    "CN": "ACME Corporation Vault Intermediate Certificate Authorty",
+    "CN": "ACME Corporation Vault Intermediate Certificate Authority",
     "hosts": [],
     "key": {
         "algo": "ecdsa",
