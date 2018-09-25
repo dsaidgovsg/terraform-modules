@@ -10,10 +10,15 @@
 - name: Install dependencies for td-agent
   apt:
     name: "{{ item }}"
+    update_cache: yes
   with_items:
   - gcc
   - make
   become: yes
+  register: result
+  retries: 10 # Workaround for `No package matching 'gcc' is available`
+  delay: 10
+  until: not result.failed
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"
   become: yes
