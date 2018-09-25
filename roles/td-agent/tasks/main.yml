@@ -16,7 +16,9 @@
   - make
   become: yes
   register: result
-  retries: 10 # Workaround for `No package matching 'gcc' is available`
+  # Workaround for `No package matching 'gcc' is available`
+  # See https://github.com/GovTechSG/terraform-modules/issues/169
+  retries: 10
   delay: 10
   until: not result.failed
 - name: Run the install script
