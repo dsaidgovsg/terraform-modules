@@ -103,3 +103,9 @@ operation. In general, you might want to do this with a Root token.
 | consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
 | nomad_address | FQDN of Nomad addresses to access. Include the port and protocol | string | `http://nomad.service.consul:4646` | no |
 | path | Path to enable the Nomad secrets engine on Vault | string | `nomad` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| path | Path to the Nomad secrets engine. Useful for implicit dependencies |
