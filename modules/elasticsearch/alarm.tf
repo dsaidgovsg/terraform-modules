@@ -1,4 +1,6 @@
 resource "aws_cloudwatch_metric_alarm" "cluster_status_red" {
+  count = "${var.cluster_status_red_enable ? 1 : 0 }"
+
   alarm_name          = "${var.cluster_status_red_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.cluster_status_red_evaluation_periods}"
@@ -13,6 +15,8 @@ resource "aws_cloudwatch_metric_alarm" "cluster_status_red" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cluster_status_yellow" {
+  count = "${var.cluster_status_yellow_enable ? 1 : 0}"
+
   alarm_name          = "${var.cluster_status_yellow_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.cluster_status_yellow_evaluation_periods}"
@@ -27,6 +31,8 @@ resource "aws_cloudwatch_metric_alarm" "cluster_status_yellow" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "low_storage_space" {
+  count = "${var.low_storage_space_enable ? 1 : 0}"
+
   alarm_name          = "${var.low_storage_space_name}"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "1"
@@ -41,6 +47,8 @@ resource "aws_cloudwatch_metric_alarm" "low_storage_space" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cluster_index_writes_blocked" {
+  count = "${var.cluster_index_writes_blocked_enable ? 1 : 0}"
+
   alarm_name          = "${var.cluster_index_writes_blocked_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.cluster_index_writes_blocked_evaluation_periods}"
@@ -54,6 +62,8 @@ resource "aws_cloudwatch_metric_alarm" "cluster_index_writes_blocked" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "node_unreachable" {
+  count = "${var.node_unreachable_enable ? 1 : 0}"
+
   alarm_name          = "${var.node_unreachable_alarm_name}"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "${var.node_unreachable_evaluation_periods}"
@@ -68,6 +78,8 @@ resource "aws_cloudwatch_metric_alarm" "node_unreachable" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "snapshot_failed" {
+  count = "${var.snapshot_failed_enable ? 1 : 0}"
+
   alarm_name          = "${var.snapshot_failed_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.snapshot_failed_evaluation_periods}"
@@ -82,6 +94,8 @@ resource "aws_cloudwatch_metric_alarm" "snapshot_failed" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "high_cpu_utilization_data_node" {
+  count = "${var.high_cpu_utilization_data_node_enable ? 1 : 0}"
+
   alarm_name          = "${var.high_cpu_utilization_data_node_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.high_cpu_utilization_data_node_evaluation_periods}"
@@ -96,6 +110,8 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu_utilization_data_node" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "high_jvm_memory_utilization_data_node" {
+  count = "${var.high_jvm_memory_utilization_data_node_enable ? 1 : 0}"
+
   alarm_name          = "${var.high_jvm_memory_utilization_data_node_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.high_jvm_memory_utilization_data_node_evaluation_periods}"
@@ -110,6 +126,8 @@ resource "aws_cloudwatch_metric_alarm" "high_jvm_memory_utilization_data_node" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "high_cpu_utilization_master_node" {
+  count = "${var.high_cpu_utilization_master_node_enable ? 1 : 0}"
+
   alarm_name          = "${var.high_cpu_utilization_master_node_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.high_cpu_utilization_master_node_evaluation_periods}"
@@ -124,6 +142,8 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu_utilization_master_node" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "high_jvm_memory_utilization_master_node" {
+  count = "${var.high_jvm_memory_utilization_master_node_enable ? 1 : 0}"
+
   alarm_name          = "${var.high_jvm_memory_utilization_master_node_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.high_jvm_memory_utilization_master_node_evaluation_periods}"
@@ -138,6 +158,8 @@ resource "aws_cloudwatch_metric_alarm" "high_jvm_memory_utilization_master_node"
 }
 
 resource "aws_cloudwatch_metric_alarm" "KMS_key_error" {
+  count = "${var.KMS_key_error_enable ? 1 : 0}"
+
   alarm_name          = "${var.KMS_key_error_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.KMS_key_error_alarm_name}"
@@ -151,13 +173,15 @@ resource "aws_cloudwatch_metric_alarm" "KMS_key_error" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "KMS_key_inaccessible" {
+  count = "${var.KMS_key_inaccessible_enable ? 1 : 0}"
+
   alarm_name          = "${var.KMS_key_inaccessible_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.KMS_key_inaccessible_evaluation_periods}"
   metric_name         = "KMSKeyInaccessible"
   namespace           = "AWS/ES"
   period              = "${var.KMS_key_inaccessible_period}"
-  threshold           = "${KMS_key_inaccessible_threshold}"
+  threshold           = "${var.KMS_key_inaccessible_threshold}"
   alarm_description   = "The KMS encryption key has been deleted or has revoked its grants to Amazon ES"
   alarm_action        = ["${var.alarm_action}"]
   ok_action           = ["${var.ok_action}"]
