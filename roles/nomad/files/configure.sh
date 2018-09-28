@@ -243,6 +243,7 @@ function generate_docker_config {
 client {
   options {
     "docker.auth.config" = "${docker_auth_path}"
+    "docker.caps.whitelist" = "SYS_ADMIN,CHOWN,DAC_OVERRIDE,FSETID,FOWNER,MKNOD,NET_RAW,SETGID,SETUID,SETFCAP,SETPCAP,NET_BIND_SERVICE,SYS_CHROOT,KILL,AUDIT_WRITE"
     "docker.privileged.enabled" = "${docker_privileged}"
   }
 }
