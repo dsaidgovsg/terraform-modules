@@ -52,7 +52,7 @@ job "fluentd" {
           "alloc/logs:/fluentd/logs:rw",
           "alloc/buffer:/fluentd/buffer:rw",
           "secrets/config:/config/secrets",
-          "alloc/config:/config/additional",
+          "alloc/additional:/config/additional",
         ]
 
         dns_servers = ["169.254.1.1"]

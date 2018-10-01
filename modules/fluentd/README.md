@@ -101,7 +101,7 @@ job "job" {
 If you would like to add additional configuration to Fluentd, you can do so with the
 `additional_blocks` variable. You can use the
 [`template`](https://www.nomadproject.io/docs/job-specification/template.html) stanza to template
-out files to the `alloc/config` or `secrets/config` directories, depending on the
+out files to the `alloc/additional` or `secrets/config` directories, depending on the
 sensitivity of your data. All the file names must end with `.conf`.
 
 The default fluentd config will
