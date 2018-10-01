@@ -133,12 +133,12 @@ variable "inject_source_host" {
 
 variable "source_address_key" {
   description = "Key to inject the source address to"
-  default     = "_host"
+  default     = "host"
 }
 
 variable "source_hostname_key" {
   description = "Key to inject the source hostname to"
-  default     = "_hostname"
+  default     = "hostname"
 }
 
 variable "tags" {
