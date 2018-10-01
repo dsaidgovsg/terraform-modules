@@ -126,6 +126,21 @@ variable "logs_s3_storage_class" {
   default     = "STANDARD"
 }
 
+variable "inject_source_host" {
+  description = "Inject the log source host name and address into the logs"
+  default     = true
+}
+
+variable "source_address_key" {
+  description = "Key to inject the source address to"
+  default     = "_host"
+}
+
+variable "source_hostname_key" {
+  description = "Key to inject the source hostname to"
+  default     = "_hostname"
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
 

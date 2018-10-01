@@ -16,6 +16,10 @@ data "template_file" "fluentd_tf_rendered_conf" {
     file_logging_consul_key  = "${local.file_logging_consul_key}"
     fluentd_match_consul_key = "${local.fluentd_match_consul_key}"
     s3_consul_key            = "${local.s3_consul_key}"
+
+    inject_source_host  = "${local.inject_source_host}"
+    source_address_key  = "${local.source_address_key}"
+    source_hostname_key = "${local.source_hostname_key}"
   }
 }
 
