@@ -123,7 +123,7 @@ files from secrets first before the non-secrets file **before** the rest of the 
 | fluentd_count | Number of copies of Fluentd to run | string | `3` | no |
 | fluentd_force_pull | Force pull an image. Useful if the tag is mutable. | string | `false` | no |
 | fluentd_image | Docker image for fluentd | string | `govtechsg/fluentd-s3-elasticsearch` | no |
-| fluentd_match | Tags that fluentd should output to S3 and Elasticsearch | string | `app.** docker.** services.** system.** vault**` | no |
+| fluentd_match | Tags that fluentd should output to S3 and Elasticsearch | string | `@ERROR app.** docker.** services.** system.** vault**` | no |
 | fluentd_port | Port on the Docker image in which the TCP interface is exposed | string | `4224` | no |
 | fluentd_tag | Tag for fluentd Docker image | string | `1.2.5-latest` | no |
 | log_vault_policy | Name of the Vault policy to allow creating AWS credentials to write to Elasticsearch and S3 | string | `fluentd_logger` | no |

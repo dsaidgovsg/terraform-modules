@@ -154,5 +154,5 @@ variable "enable_file_logging" {
 
 variable "fluentd_match" {
   description = "Tags that fluentd should output to S3 and Elasticsearch"
-  default     = "app.** docker.** services.** system.** vault**"
+  default     = "@ERROR app.** docker.** services.** system.** vault**"
 }
