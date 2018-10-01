@@ -96,10 +96,23 @@ job "job" {
 }
 ```
 
+## Additional Configuration
+
+If you would like to add additional configuration to Fluentd, you can do so with the
+`additional_blocks` variable. You can use the
+[`template`](https://www.nomadproject.io/docs/job-specification/template.html) stanza to template
+out files to the `alloc/config` or `secrets/config` directories, depending on the
+sensitivity of your data. All the file names must end with `.conf`.
+
+The default fluentd config will
+[`@include`](https://docs.fluentd.org/v0.12/articles/config-file#(6)-re-use-your-config:-the-%E2%80%9C@include%E2%80%9D-directive)
+files from secrets first before the non-secrets file **before** the rest of the configuration.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| additional_blocks | Additional blocks to be added to the Jobspec | string | `` | no |
 | aws_region | Region of AWS for which this is deployed | string | `ap-southeast-1` | no |
 | consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
 | elasticsearch_hostname | Host name of Elasticsearch | string | - | yes |
@@ -110,7 +123,7 @@ job "job" {
 | fluentd_count | Number of copies of Fluentd to run | string | `3` | no |
 | fluentd_force_pull | Force pull an image. Useful if the tag is mutable. | string | `false` | no |
 | fluentd_image | Docker image for fluentd | string | `govtechsg/fluentd-s3-elasticsearch` | no |
-| fluentd_match | Tags that fluentd should output to S3 and Elasticsearch | string | `app.** docker.** services.** system.**` | no |
+| fluentd_match | Tags that fluentd should output to S3 and Elasticsearch | string | `app.** docker.** services.** system.** vault**` | no |
 | fluentd_port | Port on the Docker image in which the TCP interface is exposed | string | `4224` | no |
 | fluentd_tag | Tag for fluentd Docker image | string | `1.2.5-latest` | no |
 | log_vault_policy | Name of the Vault policy to allow creating AWS credentials to write to Elasticsearch and S3 | string | `fluentd_logger` | no |

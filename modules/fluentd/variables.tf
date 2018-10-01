@@ -64,6 +64,11 @@ variable "fluentd_count" {
   default     = 3
 }
 
+variable "additional_blocks" {
+  description = "Additional blocks to be added to the Jobspec"
+  default = ""
+}
+
 #############################
 # Vault related
 #############################

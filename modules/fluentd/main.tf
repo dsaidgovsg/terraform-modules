@@ -42,6 +42,8 @@ data "template_file" "fluentd_jobspec" {
 
     vault_policy = "${vault_policy.logs.name}"
     aws_path     = "${local.aws_creds_path}"
+
+    additional_blocks = "${var.additional_blocks}"
   }
 }
 
