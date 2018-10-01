@@ -51,6 +51,8 @@ job "fluentd" {
           "${fluentd_conf_file}:/fluentd/etc/fluent.conf",
           "alloc/logs:/fluentd/logs:rw",
           "alloc/buffer:/fluentd/buffer:rw",
+          "secrets/config:/config/secrets",
+          "alloc/additional:/config/additional",
         ]
 
         dns_servers = ["169.254.1.1"]
@@ -78,6 +80,8 @@ AWS_SECRET_ACCESS_KEY="{{ .Data.secret_key }}"
 {{ end }}
 EOH
       }
+
+      ${additional_blocks}
 
       service {
         name = "$${JOB}"
