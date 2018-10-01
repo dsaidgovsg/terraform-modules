@@ -66,7 +66,7 @@ variable "fluentd_count" {
 
 variable "additional_blocks" {
   description = "Additional blocks to be added to the Jobspec"
-  default = ""
+  default     = ""
 }
 
 #############################
