@@ -21,22 +21,11 @@
     consul_integration_prefix: "terraform/"
     nomad_additional_config: []
   pre_tasks:
-  - name: Echo /etc/apt/sources.list
-    command: cat /etc/apt/sources.list
-    register: source1
-  - debug: msg="{{ source1.stdout }}"
-
   - name: Upgrade all packages to the latest version
     apt:
       upgrade: yes
       update_cache: yes
     become: yes
-
-  - name: Echo cached packages
-    command: apt-cache policy
-    register: source2
-  - debug: msg="{{ source2.stdout }}"
-
   - name: Install CA Certificate
     include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
