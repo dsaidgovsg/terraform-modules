@@ -72,7 +72,7 @@
     "provisioners": [
         {
             "type": "shell",
-            "inline": ["while ! [ -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting on cloud-init...'; sleep 2; done"]
+            "inline": ["timeout 60s bash -c \"while ! [ -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting on cloud-init...'; sleep 2; done\""]
         },
         {
             "type": "ansible",
