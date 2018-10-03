@@ -81,8 +81,11 @@
     ],
     "provisioners": [
         {
+            "type": "shell",
+            "inline": ["while ! [ -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting on cloud-init...'; sleep 2; done"]
+        },
+        {
             "type": "ansible",
-            "pause_before": "10s",
             "playbook_file": "{{ template_dir }}/site.yml",
             "user": "ubuntu",
             "extra_arguments": [
