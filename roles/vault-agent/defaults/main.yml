@@ -1,0 +1,3 @@
+---
+vault_user: "vault"
+agent_path: "/opt/vault/agent"

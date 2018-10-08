@@ -13,3 +13,5 @@ encrypted_aes_key_dest: "/opt/aes-kms/keys/aes.encrypted.key"
 
 cli_json_src: "{{ playbook_dir }}/cert/cli.json"
 cli_json_dest:  "/opt/aes-kms/keys/cli.json"
+
+vault_user: "vault"
