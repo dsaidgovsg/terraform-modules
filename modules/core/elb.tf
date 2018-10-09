@@ -9,6 +9,12 @@ resource "aws_lb" "internal" {
   subnets         = ["${var.internal_lb_subnets}"]
   internal        = true
 
+  access_logs {
+    enabled = "${var.elb_access_log}"
+    bucket  = "${var.elb_access_log_bucket}"
+    prefix  = "${var.elb_access_log_prefix}"
+  }
+
   tags = "${var.tags}"
 }
 

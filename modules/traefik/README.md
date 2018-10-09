@@ -137,6 +137,12 @@ job "hashi-ui" {
 | internal_lb_name | Name of the external Nomad load balancer | string | `traefik-internal` | no |
 | internal_nomad_clients_asg | The Nomad Clients Autoscaling group to attach the internal load balancer to | string | - | yes |
 | interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `30` | no |
+| lb_external_access_log | Log External Traefik LB access to a S3 bucket | string | `false` | no |
+| lb_external_access_log_bucket | S3 bucket to log access to the External Traefik LB to | string | `` | no |
+| lb_external_access_log_prefix | Prefix in the S3 bucket to log External Traefik LB access | string | `` | no |
+| lb_internal_access_log | Log internal Traefik LB access to a S3 bucket | string | `false` | no |
+| lb_internal_access_log_bucket | S3 bucket to log access to the internal Traefik LB to | string | `` | no |
+| lb_internal_access_log_prefix | Prefix in the S3 bucket to log internal Traefik LB access | string | `` | no |
 | log_json | Log in JSON format | string | `false` | no |
 | nomad_clients_external_security_group | The security group of the nomad clients that the external LB will be able to connect to | string | - | yes |
 | nomad_clients_internal_security_group | The security group of the nomad clients that the internal LB will be able to connect to | string | - | yes |

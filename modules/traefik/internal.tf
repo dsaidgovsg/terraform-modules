@@ -8,6 +8,12 @@ resource "aws_lb" "internal" {
   security_groups = ["${aws_security_group.internal_lb.id}"]
   subnets         = ["${var.subnets}"]
 
+  access_logs {
+    enabled = "${var.lb_internal_access_log}"
+    bucket  = "${var.lb_internal_access_log_bucket}"
+    prefix  = "${var.lb_internal_access_log_prefix}"
+  }
+
   tags = "${var.tags}"
 }
 

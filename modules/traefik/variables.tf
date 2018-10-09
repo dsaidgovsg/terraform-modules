@@ -160,3 +160,33 @@ variable "access_log_json" {
   description = "Log access in JSON"
   default     = false
 }
+
+variable "lb_external_access_log" {
+  description = "Log External Traefik LB access to a S3 bucket"
+  default     = false
+}
+
+variable "lb_external_access_log_bucket" {
+  description = "S3 bucket to log access to the External Traefik LB to"
+  default     = ""
+}
+
+variable "lb_external_access_log_prefix" {
+  description = "Prefix in the S3 bucket to log External Traefik LB access"
+  default     = ""
+}
+
+variable "lb_internal_access_log" {
+  description = "Log internal Traefik LB access to a S3 bucket"
+  default     = false
+}
+
+variable "lb_internal_access_log_bucket" {
+  description = "S3 bucket to log access to the internal Traefik LB to"
+  default     = ""
+}
+
+variable "lb_internal_access_log_prefix" {
+  description = "Prefix in the S3 bucket to log internal Traefik LB access"
+  default     = ""
+}

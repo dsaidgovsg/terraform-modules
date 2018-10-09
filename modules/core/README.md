@@ -487,6 +487,9 @@ Replace `xxx` with the instance ID.
 | consul_subnets | List of subnets to launch Connsul servers in | list | - | yes |
 | consul_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `NewestInstance` | no |
 | consul_user_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
+| elb_access_log | Log Internal LB access to a S3 bucket | string | `false` | no |
+| elb_access_log_bucket | S3 bucket to log access to the internal LB to | string | `` | no |
+| elb_access_log_prefix | Prefix in the S3 bucket to log internal LB access | string | `` | no |
 | elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
 | internal_lb_certificate_arn | ARN of the certificate to use for the internal LB | string | - | yes |
