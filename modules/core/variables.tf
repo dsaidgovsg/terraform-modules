@@ -419,6 +419,21 @@ variable "elb_ssl_policy" {
   default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
+variable "elb_access_log" {
+  description = "Log Internal LB access to a S3 bucket"
+  default     = false
+}
+
+variable "elb_access_log_bucket" {
+  description = "S3 bucket to log access to the internal LB to"
+  default     = ""
+}
+
+variable "elb_access_log_prefix" {
+  description = "Prefix in the S3 bucket to log internal LB access"
+  default     = ""
+}
+
 # --------------------------------------------------------------------------------------------------
 # Post Bootstrap Integration Parameters
 # These parameters are used in conjunction with the other modules in this repository.
