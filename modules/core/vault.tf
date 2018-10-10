@@ -5,6 +5,9 @@
 locals {
   vault_api_port  = 8200
   vault_user_data = "${coalesce(var.vault_user_data, data.template_file.user_data_vault_cluster.rendered)}"
+
+  # Port for connection between the ELB and Vault
+  vault_lb_port = 8300
 }
 
 module "vault" {
@@ -77,6 +80,9 @@ data "template_file" "user_data_vault_cluster" {
     s3_bucket_name    = "${var.vault_s3_bucket_name}"
 
     consul_prefix = "${var.integration_consul_prefix}"
+
+    lb_listener_port = "${local.vault_lb_port}"
+    lb_cidr          = "${join(",", data.aws_subnet.internal_lb_subnets.*.cidr_block)}"
   }
 }
 
