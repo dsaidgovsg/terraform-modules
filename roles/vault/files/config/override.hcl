@@ -3,3 +3,4 @@ ha_storage "consul" {
 }
 
 ui = "{{ vault_ui_enable }}"
+proxy_protocol_behavior = "use_always"
