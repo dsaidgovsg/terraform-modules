@@ -7,3 +7,9 @@ data "aws_region" "current" {}
 data "aws_vpc" "this" {
   id = "${var.vpc_id}"
 }
+
+data "aws_subnet" "internal_lb_subnets" {
+  count = "${length(var.internal_lb_subnets)}"
+
+  id = "${element(var.internal_lb_subnets, count.index)}"
+}

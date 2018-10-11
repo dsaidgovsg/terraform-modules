@@ -24,6 +24,10 @@ function print_usage {
   echo -e "  --user\t\tThe user to CHOWN the config files as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --statsd-addr\t\tThe address of the DogStatsD server to report to. Optional. Defaults to '127.0.0.1:8125'"
   echo -e "  --telegraf-conf\t\tThe directory to place Telegraf config files in. Optional. Defaults to '/etc/telegraf/telegraf.d'"
+  echo -e "  --lb-listener-port\t\tThe port to create a listener for ELB. Optional. Defaults to 8300"
+  echo -e "  --x-forwarded-for-addrs\t\tComma separated list of source IP addresses for which an \`X-Forwarded-For\` header will be trusted. Optional. Defaults to empty."
+  echo -e "  --tls-cert-file\tSpecifies the path to the certificate for ELB TLS. Required. To use a CA certificate, concatenate the primary certificate and the CA certificate together."
+  echo -e "  --tls-key-file\tSpecifies the path to the private key for the certificate. Required."
   echo
   echo "Example:"
   echo
@@ -151,12 +155,42 @@ EOF
   echo "${procstat}" > "${telegraf_conf}"
 }
 
+function generate_lb_listener {
+  local readonly conf_file="${1}"
+  local readonly user="${2}"
+  local readonly lb_listener_port="${3}"
+  local readonly x_forwarded_for_addrs="${4}"
+  local readonly tls_cert_file="${5}"
+  local readonly tls_key_file="${6}"
+
+  local elb_listener
+  elb_listener=$(cat <<EOF
+listener "tcp" {
+  address = "0.0.0.0:${lb_listener_port}"
+  tls_cert_file   = "${tls_cert_file}"
+  tls_key_file    = "${tls_key_file}"
+
+  x_forwarded_for_authorized_addrs   = "${x_forwarded_for_addrs}"
+  x_forwarded_for_reject_not_present = false
+}
+EOF
+)
+
+  log_info "Writing ELB Listener Configuration for Vault to ${conf_file}"
+  echo "${elb_listener}" > "${conf_file}"
+  chown "${user}:${user}" "${conf_file}"
+}
+
 function main {
   local consul_prefix="terraform/"
   local config_dir=""
   local user=""
   local statsd_addr="127.0.0.1:8125"
   local telegraf_conf="/etc/telegraf/telegraf.d"
+  local lb_listener_port="8300"
+  local x_forwarded_for_addrs=""
+  local tls_cert_file=""
+  local tls_key_file=""
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -187,6 +221,24 @@ function main {
         telegraf_conf="$2"
         shift
         ;;
+      --lb-listener-port)
+        assert_not_empty "$key" "$2"
+        lb_listener_port="$2"
+        shift
+        ;;
+      --x-forwarded-for-addrs)
+        assert_not_empty "$key" "$2"
+        x_forwarded_for_addrs="$2"
+        shift
+        ;;
+      --tls-cert-file)
+        tls_cert_file="$2"
+        shift
+        ;;
+      --tls-key-file)
+        tls_key_file="$2"
+        shift
+;;
       --help)
         print_usage
         exit
@@ -201,6 +253,9 @@ function main {
     shift
   done
 
+  assert_not_empty "--tls-cert-file" "$tls_cert_file"
+  assert_not_empty "--tls-key-file" "$tls_key_file"
+
   if [[ -z "$config_dir" ]]; then
     config_dir=$(cd "$SCRIPT_DIR/../config" && pwd)
   fi
@@ -214,6 +269,8 @@ function main {
 
   local readonly type="vault"
   local readonly telegraf_enabled=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/enabled" "no")
+
+  generate_lb_listener "${config_dir}/elb.hcl" "${user}" "${lb_listener_port}" "${x_forwarded_for_addrs}" "${tls_cert_file}" "${tls_key_file}"
 
   if [[ "$telegraf_enabled" != "yes" ]]; then
     log_info "Telegraf metrics is not enabled for ${type}"

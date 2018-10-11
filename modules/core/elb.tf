@@ -268,7 +268,7 @@ resource "aws_lb_listener_rule" "vault" {
 
 resource "aws_lb_target_group" "vault" {
   name                 = "${var.internal_lb_name}-vault"
-  port                 = "${local.vault_api_port}"
+  port                 = "${local.vault_lb_port}"
   protocol             = "HTTPS"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.vault_lb_deregistration_delay}"
@@ -280,7 +280,7 @@ resource "aws_lb_target_group" "vault" {
     unhealthy_threshold = "${var.vault_lb_unhealthy_threshold}"
     protocol            = "HTTPS"
     path                = "/v1/sys/health?standbyok=true"
-    port                = "${local.vault_api_port}"
+    port                = "${local.vault_lb_port}"
     interval            = "${var.vault_lb_interval}"
   }
 
@@ -301,8 +301,8 @@ resource "aws_autoscaling_attachment" "vault_internal" {
 resource "aws_security_group_rule" "vault_api_outgoing" {
   type                     = "egress"
   security_group_id        = "${aws_security_group.internal_lb.id}"
-  from_port                = "${local.vault_api_port}"
-  to_port                  = "${local.vault_api_port}"
+  from_port                = "${local.vault_lb_port}"
+  to_port                  = "${local.vault_lb_port}"
   protocol                 = "tcp"
   source_security_group_id = "${module.vault.security_group_id}"
 }
@@ -311,8 +311,8 @@ resource "aws_security_group_rule" "vault_api_outgoing" {
 resource "aws_security_group_rule" "vault_https" {
   type                     = "ingress"
   security_group_id        = "${module.vault.security_group_id}"
-  from_port                = "${local.vault_api_port}"
-  to_port                  = "${local.vault_api_port}"
+  from_port                = "${local.vault_lb_port}"
+  to_port                  = "${local.vault_lb_port}"
   protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.internal_lb.id}"
 }

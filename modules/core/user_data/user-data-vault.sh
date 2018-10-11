@@ -10,6 +10,10 @@ set -euo pipefail
 readonly service_type="vault"
 readonly marker_path="/etc/user-data-marker"
 
+# The Packer template puts the TLS certs in these file paths
+readonly VAULT_TLS_CERT_FILE="${cert_file}"
+readonly VAULT_TLS_KEY_FILE="${cert_key}"
+
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
@@ -46,11 +50,11 @@ AWS_DEFAULT_REGION="${aws_region}" \
     --consul-prefix "${consul_prefix}"
 
 /opt/vault/bin/configure \
-    --consul-prefix "${consul_prefix}"
-
-# The Packer template puts the TLS certs in these file paths
-readonly VAULT_TLS_CERT_FILE="${cert_file}"
-readonly VAULT_TLS_KEY_FILE="${cert_key}"
+    --consul-prefix "${consul_prefix}" \
+    --tls-cert-file "$VAULT_TLS_CERT_FILE"  \
+    --tls-key-file "$VAULT_TLS_KEY_FILE" \
+    --lb-listener-port "${lb_listener_port}" \
+    --x-forwarded-for-addrs "${lb_cidr}"
 
 if [ "${enable_s3_backend}" = "true" ] ; then
     /opt/vault/bin/run-vault \
