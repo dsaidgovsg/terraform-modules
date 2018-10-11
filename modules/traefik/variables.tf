@@ -26,8 +26,13 @@ variable "vpc_id" {
   description = "ID of the VPC to deploy the LB to"
 }
 
-variable "subnets" {
-  description = "List of subnets to deploy the LB to"
+variable "lb_external_subnets" {
+  description = "List of subnets to deploy the external LB to"
+  type        = "list"
+}
+
+variable "lb_internal_subnets" {
+  description = "List of subnets to deploy the internal LB to"
   type        = "list"
 }
 

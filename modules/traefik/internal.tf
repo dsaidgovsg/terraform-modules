@@ -6,7 +6,7 @@ resource "aws_lb" "internal" {
   name            = "${var.internal_lb_name}"
   internal        = true
   security_groups = ["${aws_security_group.internal_lb.id}"]
-  subnets         = ["${var.subnets}"]
+  subnets         = ["${var.lb_internal_subnets}"]
 
   access_logs {
     enabled = "${var.lb_internal_access_log}"
