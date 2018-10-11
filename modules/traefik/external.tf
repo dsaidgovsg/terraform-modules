@@ -5,7 +5,7 @@
 resource "aws_lb" "external" {
   name            = "${var.external_lb_name}"
   security_groups = ["${aws_security_group.external_lb.id}"]
-  subnets         = ["${var.subnets}"]
+  subnets         = ["${var.lb_external_subnets}"]
 
   access_logs {
     enabled = "${var.lb_external_access_log}"

@@ -140,15 +140,16 @@ job "hashi-ui" {
 | lb_external_access_log | Log External Traefik LB access to a S3 bucket | string | `false` | no |
 | lb_external_access_log_bucket | S3 bucket to log access to the External Traefik LB to | string | `` | no |
 | lb_external_access_log_prefix | Prefix in the S3 bucket to log External Traefik LB access | string | `` | no |
+| lb_external_subnets | List of subnets to deploy the external LB to | list | - | yes |
 | lb_internal_access_log | Log internal Traefik LB access to a S3 bucket | string | `false` | no |
 | lb_internal_access_log_bucket | S3 bucket to log access to the internal Traefik LB to | string | `` | no |
 | lb_internal_access_log_prefix | Prefix in the S3 bucket to log internal Traefik LB access | string | `` | no |
+| lb_internal_subnets | List of subnets to deploy the internal LB to | list | - | yes |
 | log_json | Log in JSON format | string | `false` | no |
 | nomad_clients_external_security_group | The security group of the nomad clients that the external LB will be able to connect to | string | - | yes |
 | nomad_clients_internal_security_group | The security group of the nomad clients that the internal LB will be able to connect to | string | - | yes |
 | nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
 | route53_zone | Zone for Route 53 records | string | - | yes |
-| subnets | List of subnets to deploy the LB to | list | - | yes |
 | tags | A map of tags to add to all resources | string | `<map>` | no |
 | timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `5` | no |
 | traefik_consul_catalog_prefix | Prefix for Consul catalog tags for Traefik | string | `traefik` | no |
