@@ -2,7 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
-    additional_ntp_servers: ["169.254.169.123"]
+    additional_ntp_servers: "[\"169.254.169.123\"]"
     vault_version: "0.11.1"
     vault_ui_enable: "true"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
