@@ -10,5 +10,5 @@
     path: /etc/chrony/chrony.conf
     insertbefore: BOF
     line: "server {{ item }} prefer iburst"
-  with_items: "{{ additional_ntp_servers | from_json | reverse }}"
+  with_items: "{{ additional_ntp_servers | from_json | reverse | list }}"
   become: yes
