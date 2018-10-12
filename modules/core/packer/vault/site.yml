@@ -24,6 +24,7 @@
     consul_scheme: https
     consul_token: ""
     consul_integration_prefix: "terraform/"
+    timezone: "Asia/Singapore"
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -68,3 +69,6 @@
   - name: Install Vault SSH Configuration Script
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"
+  - name: Set default timezone
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/timezone"

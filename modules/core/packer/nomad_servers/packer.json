@@ -23,7 +23,9 @@
         "consul_port": "443",
         "consul_scheme": "https",
         "consul_token": "",
-        "nomad_additional_config": ""
+        "nomad_additional_config": "",
+        "extra_vars": "{}",
+        "timezone": "Asia/Singapore"
     },
     "builders": [
         {
@@ -105,9 +107,11 @@
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
+                "timezone={{user `timezone`}}",
+                "-e",
                 "ansible_python_interpreter=/usr/bin/python3",
                 "-e",
-                "{{user `extra_vars` }}"
+                "{{user `extra_vars`}}"
             ]
         }
     ]
