@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "additional_ntp_servers": "[\"169.254.169.123\"]",
         "ami_base_name": "vault",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -88,6 +89,8 @@
             "playbook_file": "{{ template_dir }}/site.yml",
             "user": "ubuntu",
             "extra_arguments": [
+                "-e",
+                "{ \"additional_ntp_servers\": {{user `additional_ntp_servers`}} }",
                 "-e",
                 "vault_version={{user `vault_version`}} consul_module_version={{user `consul_module_version`}} vault_ui_enable={{user `vault_ui_enable`}}",
                 "-e",
