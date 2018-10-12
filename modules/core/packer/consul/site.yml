@@ -2,7 +2,7 @@
 - name: Provision Consul AMI
   hosts: all
   vars:
-    additional_ntp_servers: "[\"169.254.169.123\"]"
+    additional_ntp_servers: ["169.254.169.123"]
     consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
     consul_module_version: "v0.3.5"
     consul_version: "1.2.3"
