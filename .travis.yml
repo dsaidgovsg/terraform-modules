@@ -1,12 +1,22 @@
+language: bash
+
 services:
   - docker
 
+env:
+  global:
+    - LINT_IMAGE=lint
+
 install:
-  - docker build -t lint -f Dockerfile-lint .
+  - docker build -t ${LINT_IMAGE} -f Dockerfile-lint .
 
 script:
-  - docker run --rm -ti --entrypoint terraform lint fmt -check=true
-  - find modules/ -mindepth 1 -maxdepth 1 -type d -exec docker run --rm -ti lint {} \;
+  - docker run --rm -ti --entrypoint terraform ${LINT_IMAGE} fmt -check=true
+  - |
+    find . \
+      -not -path '*/\.*' \
+      -type f -iname '*.tf' \
+      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm ${LINT_IMAGE} {}"
 
 branches:
   only:
