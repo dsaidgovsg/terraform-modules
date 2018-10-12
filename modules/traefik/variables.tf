@@ -173,7 +173,6 @@ variable "lb_external_access_log" {
 
 variable "lb_external_access_log_bucket" {
   description = "S3 bucket to log access to the External Traefik LB to"
-  default     = ""
 }
 
 variable "lb_external_access_log_prefix" {
@@ -188,7 +187,6 @@ variable "lb_internal_access_log" {
 
 variable "lb_internal_access_log_bucket" {
   description = "S3 bucket to log access to the internal Traefik LB to"
-  default     = ""
 }
 
 variable "lb_internal_access_log_prefix" {
