@@ -184,13 +184,11 @@ variable "redirect_rule_priority" {
 # for recommended cloudwatch alert: https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/cloudwatch-alarms.html
 
 variable "alarm_action" {
-  types       = "list"
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
   default     = []
 }
 
 variable "ok_action" {
-  types       = "list"
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
   default     = []
 }
