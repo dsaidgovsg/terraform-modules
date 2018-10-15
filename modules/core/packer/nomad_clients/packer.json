@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "additional_ntp_servers": "[\"169.254.169.123\"]",
         "ami_base_name": "nomad-clients",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -26,6 +27,7 @@
         "consul_integration_prefix": "terraform/",
         "netshare_version": "0.35",
         "docker_enable_efs": "false",
+        "timezone": "Asia/Singapore",
         "extra_vars": "{}"
     },
     "builders": [
@@ -97,6 +99,8 @@
             "user": "ubuntu",
             "extra_arguments": [
                 "-e",
+                "{ \"additional_ntp_servers\": {{user `additional_ntp_servers`}} }",
+                "-e",
                 "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}} docker_version={{user `docker_version`}}",
                 "-e",
                 "vault_version={{user `vault_version`}} vault_module_version={{user `vault_module_version`}}",
@@ -107,13 +111,15 @@
                 "-e",
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
-                "ansible_python_interpreter=/usr/bin/python3",
-                "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
                 "netshare_version={{user `netshare_version`}} docker_enable_efs={{user `docker_enable_efs`}}",
                 "-e",
-                "{{user `extra_vars` }}"
+                "timezone={{user `timezone`}}",
+                "-e",
+                "ansible_python_interpreter=/usr/bin/python3",
+                "-e",
+                "{{user `extra_vars`}}"
             ]
         }
     ]

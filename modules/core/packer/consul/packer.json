@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "additional_ntp_servers": "[\"169.254.169.123\"]",
         "ami_base_name": "consul",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -18,7 +19,8 @@
         "consul_port": "443",
         "consul_scheme": "https",
         "consul_token": "",
-        "consul_integration_prefix": "terraform/"
+        "consul_integration_prefix": "terraform/",
+        "timezone": "Asia/Singapore"
     },
     "builders": [
         {
@@ -80,6 +82,8 @@
             "user": "ubuntu",
             "extra_arguments": [
                 "-e",
+                "{ \"additional_ntp_servers\": {{user `additional_ntp_servers`}} }",
+                "-e",
                 "consul_module_version={{user `consul_module_version`}} consul_version={{user `consul_version`}} consul_module_repo={{user `consul_module_repo`}}",
                 "-e",
                 "{ \"consul_enable_syslog\": {{user `consul_enable_syslog`}} }",
@@ -89,6 +93,8 @@
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
+                "-e",
+                "timezone={{user `timezone`}}",
                 "-e",
                 "ansible_python_interpreter=/usr/bin/python3"
             ]

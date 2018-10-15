@@ -2,6 +2,7 @@
 - name: Provision AMI
   hosts: all
   vars:
+    additional_ntp_servers: ["169.254.169.123"]
     nomad_version: "0.8.5"
     nomad_module_version: "v0.1.1"
     consul_module_version: "v0.3.5"
@@ -23,6 +24,7 @@
     nomad_additional_config: []
     netshare_version: 0.35
     docker_enable_efs: false
+    timezone: "Asia/Singapore"
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -40,6 +42,9 @@
   - name: Install Vault PKI CA Certificate
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/vault-pki"
+  - name: Install chrony
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/chrony"
   - name: Install td-agent
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/td-agent"
@@ -76,3 +81,6 @@
   - name: Install Vault SSH Configuration Script
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"
+  - name: Set default timezone
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/timezone"

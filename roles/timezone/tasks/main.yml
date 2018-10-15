@@ -1,0 +1,7 @@
+---
+- name: Set tz environment variable to set timezone
+  lineinfile:
+    path: /etc/environment
+    insertafter: EOF
+    line: "TZ=\"{{ timezone }}\""
+  become: yes

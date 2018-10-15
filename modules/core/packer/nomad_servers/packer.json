@@ -1,6 +1,7 @@
 {
     "min_packer_version": "1.1.2",
     "variables": {
+        "additional_ntp_servers": "[\"169.254.169.123\"]",
         "ami_base_name": "nomad-servers",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
@@ -22,7 +23,9 @@
         "consul_port": "443",
         "consul_scheme": "https",
         "consul_token": "",
-        "nomad_additional_config": ""
+        "nomad_additional_config": "",
+        "extra_vars": "{}",
+        "timezone": "Asia/Singapore"
     },
     "builders": [
         {
@@ -90,6 +93,8 @@
             "user": "ubuntu",
             "extra_arguments": [
                 "-e",
+                "{ \"additional_ntp_servers\": {{user `additional_ntp_servers`}} }",
+                "-e",
                 "nomad_version={{user `nomad_version`}} consul_module_version={{user `consul_module_version`}} nomad_module_version={{user `nomad_module_version`}} consul_version={{user `consul_version`}}",
                 "-e",
                 "vault_version={{user `vault_version`}} vault_module_version={{user `vault_module_version`}}",
@@ -102,9 +107,11 @@
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
                 "-e",
+                "timezone={{user `timezone`}}",
+                "-e",
                 "ansible_python_interpreter=/usr/bin/python3",
                 "-e",
-                "{{user `extra_vars` }}"
+                "{{user `extra_vars`}}"
             ]
         }
     ]

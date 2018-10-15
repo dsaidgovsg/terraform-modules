@@ -1,0 +1,14 @@
+---
+- name: Install chrony
+  apt:
+    name: chrony
+    state: latest
+  become: yes
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-time.html#configure-amazon-time-service-ubuntu
+- name: Update chrony configuration
+  lineinfile:
+    path: /etc/chrony/chrony.conf
+    insertbefore: BOF
+    line: "server {{ item }} prefer iburst"
+  with_items: "{{ additional_ntp_servers | reverse | list }}"
+  become: yes

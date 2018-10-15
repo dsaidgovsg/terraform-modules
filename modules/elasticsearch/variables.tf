@@ -185,11 +185,13 @@ variable "redirect_rule_priority" {
 
 variable "alarm_action" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
+  type        = "list"
   default     = []
 }
 
 variable "ok_action" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
+  type        = "list"
   default     = []
 }
 
