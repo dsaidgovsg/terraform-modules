@@ -488,7 +488,7 @@ Replace `xxx` with the instance ID.
 | consul_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `NewestInstance` | no |
 | consul_user_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
 | elb_access_log | Log Internal LB access to a S3 bucket | string | `false` | no |
-| elb_access_log_bucket | S3 bucket to log access to the internal LB to | string | `` | no |
+| elb_access_log_bucket | S3 bucket to log access to the internal LB to | string | - | yes |
 | elb_access_log_prefix | Prefix in the S3 bucket to log internal LB access | string | `` | no |
 | elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
@@ -568,8 +568,10 @@ Replace `xxx` with the instance ID.
 | iam_role_id_consul_servers | IAM Role ID for Consul servers |
 | iam_role_id_nomad_clients | IAM Role ID for Nomad Clients |
 | iam_role_id_nomad_servers | IAM Role ID for Nomad servers |
+| internal_lb_dns_name | DNS name of the internal LB |
 | internal_lb_https_listener_arn | ARN of the HTTPS listener for the internal LB |
-| internal_lb_id | ID of the internal LB that exposes Nomad, Consul and Vault RPC |
+| internal_lb_id | ARN of the internal LB that exposes Nomad, Consul and Vault RPC |
+| internal_lb_zone_id | The canonical hosted zone ID of the internal load balancer |
 | launch_config_name_consul_servers | Name of the Launch Configuration for Consul servers |
 | launch_config_name_nomad_clients | Name of the Launch Configuration for Nomad Clients |
 | launch_config_name_nomad_servers | Name of Launch Configuration for Nomad servers |

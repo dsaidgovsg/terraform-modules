@@ -426,7 +426,6 @@ variable "elb_access_log" {
 
 variable "elb_access_log_bucket" {
   description = "S3 bucket to log access to the internal LB to"
-  default     = ""
 }
 
 variable "elb_access_log_prefix" {
