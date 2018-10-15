@@ -14,7 +14,7 @@ readonly SCRIPT_NAME="$(basename "$0")"
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
-TERRAFORM="${TERRAFORM:-terragrunt}"
+TERRAFORM="${TERRAFORM:-terraform}"
 
 function log {
   local readonly level="$1"
