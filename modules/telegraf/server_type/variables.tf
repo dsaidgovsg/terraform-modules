@@ -17,6 +17,26 @@ variable "output_elasticsearch_service_name" {
   default     = "elasticsearch"
 }
 
+variable "output_prometheus" {
+  description = "Create a Prometheus Client to serve the metrics for a Prometheus server to scrape"
+  default     = false
+}
+
+variable "output_prometheus_service_name" {
+  description = "Name of the service to advertise in Consul"
+  default     = "prometheus-client"
+}
+
+variable "output_prometheus_service_port" {
+  description = "Port of the Prometheus Client"
+  default     = 9273
+}
+
+variable "output_prometheus_service_cidrs" {
+  description = "List of CIDRs that the Prometheus client will permit scraping"
+  default     = ["0.0.0.0/0"]
+}
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
