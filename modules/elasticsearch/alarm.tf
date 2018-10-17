@@ -164,12 +164,12 @@ resource "aws_cloudwatch_metric_alarm" "kms_key_error" {
   alarm_name          = "${var.kms_key_error_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.kms_key_error_evaluation_periods}"
-  metric_name         = "kmsKeyError"
+  metric_name         = "KMSKeyError"
   namespace           = "AWS/ES"
   period              = "${var.kms_key_error_period}"
   statistic           = "SampleCount"
   threshold           = "${var.kms_key_error_threshold}"
-  alarm_description   = "The kms encryption key that is used to encrypt data at rest in your domain is disabled"
+  alarm_description   = "The KMS encryption key that is used to encrypt data at rest in your domain is disabled"
   alarm_actions       = ["${var.alarm_actions}"]
   ok_actions          = ["${var.ok_actions}"]
 }
@@ -180,12 +180,12 @@ resource "aws_cloudwatch_metric_alarm" "kms_key_inaccessible" {
   alarm_name          = "${var.kms_key_inaccessible_alarm_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "${var.kms_key_inaccessible_evaluation_periods}"
-  metric_name         = "kmsKeyInaccessible"
+  metric_name         = "KMSKeyInaccessible"
   namespace           = "AWS/ES"
   period              = "${var.kms_key_inaccessible_period}"
   statistic           = "SampleCount"
   threshold           = "${var.kms_key_inaccessible_threshold}"
-  alarm_description   = "The kms encryption key has been deleted or has revoked its grants to Amazon ES"
+  alarm_description   = "The KMS encryption key has been deleted or has revoked its grants to Amazon ES"
   alarm_actions       = ["${var.alarm_actions}"]
   ok_actions          = ["${var.ok_actions}"]
 }
