@@ -33,7 +33,7 @@ variable "output_prometheus_service_port" {
 }
 
 variable "output_prometheus_service_cidrs" {
-  description = "List of CIDRs that the Prometheus client will permit scraping"
+  description = "List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks."
   default     = ["0.0.0.0/0"]
 }
 

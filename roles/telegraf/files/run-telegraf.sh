@@ -233,7 +233,7 @@ service {
 
   check {
     name     = "Prometheus Client"
-    http     = "http://127.0.0.1:${prometheus_port}/"
+    http     = "http://127.0.0.1:${prometheus_port}/metrics"
     method   = "GET"
     interval = "30s"
     timeout  = "2s"
