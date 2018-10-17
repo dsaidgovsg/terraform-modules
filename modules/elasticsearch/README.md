@@ -108,29 +108,19 @@ module "es" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| KMS_key_error_alarm_name | Name of the alarm | string | `KMS_key_error_alarm` | no |
-| KMS_key_error_enable | Whether to enable alarm | string | `true` | no |
-| KMS_key_error_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
-| KMS_key_error_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
-| KMS_key_error_threshold | Threshold for the number of KMS key error | string | `1` | no |
-| KMS_key_inaccessible_alarm_name | Name of the alarm | string | `KMS_key_inaccessible_alarm` | no |
-| KMS_key_inaccessible_enable | Whether to enable alarm | string | `true` | no |
-| KMS_key_inaccessible_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
-| KMS_key_inaccessible_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
-| KMS_key_inaccessible_threshold | Threshold for the number of KMS key inaccessible error | string | `1` | no |
-| alarm_action | A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action | string | `<list>` | no |
+| alarm_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action | list | `<list>` | no |
 | cluster_index_writes_blocked_alarm_name | Name of the alarm | string | `cluster_index_writes_blocked_alarm` | no |
 | cluster_index_writes_blocked_enable | Whether to enable alarm | string | `true` | no |
 | cluster_index_writes_blocked_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_index_writes_blocked_period | Duration in seconds to evaluate for the alarm. | string | `300` | no |
 | cluster_index_writes_blocked_threshold | Threshold for the number of write request blocked | string | `1` | no |
 | cluster_status_red_alarm_name | Name of the alarm. | string | `cluster_status_red_alarm` | no |
-| cluster_status_red_enabled | Whether to enable alarm | string | `true` | no |
+| cluster_status_red_enable | Whether to enable alarm | string | `true` | no |
 | cluster_status_red_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_status_red_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | cluster_status_red_threshold | Threshold for the number of primary shard not allocated to a node | string | `1` | no |
 | cluster_status_yellow_alarm_name | Name of the alarm | string | `cluster_status_yellow_alarm` | no |
-| cluster_status_yellow_enabled | Whether to enable alarm | string | `true` | no |
+| cluster_status_yellow_enable | Whether to enable alarm | string | `true` | no |
 | cluster_status_yellow_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_status_yellow_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | cluster_status_yellow_threshold | Threshold for the number of replicas shard not allocated to a node | string | `1` | no |
@@ -148,7 +138,7 @@ module "es" {
 | es_http_iam_roles | List of IAM role ARNs from which to permit Elasticsearch HTTP traffic (default ['*']). Note that a client must match both the IP address and the IAM role patterns in order to be permitted access. | list | `<list>` | no |
 | es_instance_count | Number of nodes to be deployed in Elasticsearch | string | - | yes |
 | es_instance_type | Elasticsearch instance type for non-master node | string | - | yes |
-| es_kms_key_id | KMS Key ID for encryption at rest. Defaults to AWS service key. | string | `aws/es` | no |
+| es_kms_key_id | kms Key ID for encryption at rest. Defaults to AWS service key. | string | `aws/es` | no |
 | es_master_type | Elasticsearch instance type for dedicated master node | string | - | yes |
 | es_snapshot_start_hour | Hour at which automated snapshots are taken, in UTC (default 0) | string | `19` | no |
 | es_version | Elasticsearch version to deploy | string | `5.5` | no |
@@ -174,9 +164,19 @@ module "es" {
 | high_jvm_memory_utilization_master_node_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | high_jvm_memory_utilization_master_node_period | Duration in seconds to evaluate for the alarm. | string | `900` | no |
 | high_jvm_memory_utilization_master_node_threshold | Threshold % of jvm memory utilization for master node | string | `80` | no |
+| kms_key_error_alarm_name | Name of the alarm | string | `kms_key_error_alarm` | no |
+| kms_key_error_enable | Whether to enable alarm | string | `true` | no |
+| kms_key_error_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
+| kms_key_error_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
+| kms_key_error_threshold | Threshold for the number of kms key error | string | `1` | no |
+| kms_key_inaccessible_alarm_name | Name of the alarm | string | `kms_key_inaccessible_alarm` | no |
+| kms_key_inaccessible_enable | Whether to enable alarm | string | `true` | no |
+| kms_key_inaccessible_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
+| kms_key_inaccessible_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
+| kms_key_inaccessible_threshold | Threshold for the number of kms key inaccessible error | string | `1` | no |
 | lb_cname | DNS CNAME for the Load balancer | string | `` | no |
 | lb_zone_id | Zone ID for the Load balancer DNS CNAME | string | `` | no |
-| low_storage_space_enabled | Whether to enable alarm | string | `true` | no |
+| low_storage_space_enable | Whether to enable alarm | string | `true` | no |
 | low_storage_space_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | low_storage_space_name | Name of the alarm | string | `low_storage_space_alarm` | no |
 | low_storage_space_yellow_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
@@ -184,7 +184,7 @@ module "es" {
 | node_unreachable_enable | Whether to enable alarm | string | `true` | no |
 | node_unreachable_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | node_unreachable_period | Duration in seconds to evaluate for the alarm. | string | `86400` | no |
-| ok_action | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | string | `<list>` | no |
+| ok_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | list | `<list>` | no |
 | redirect_domain | Domain name to redirect | string | `` | no |
 | redirect_listener_arn | LB listener ARN to attach the rule to | string | `` | no |
 | redirect_route53_zone_id | Route53 Zone ID to create the Redirect Record in | string | `` | no |
@@ -201,7 +201,6 @@ module "es" {
 | snapshot_failed_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | snapshot_failed_threshold | Threshold for the number of snapshot failed | string | `1` | no |
 | use_redirect | Indicates whether to use redirect users | string | `false` | no |
-
 
 ## Outputs
 

@@ -107,7 +107,7 @@ variable "es_encrypt_at_rest" {
 }
 
 variable "es_kms_key_id" {
-  description = "KMS Key ID for encryption at rest. Defaults to AWS service key."
+  description = "kms Key ID for encryption at rest. Defaults to AWS service key."
   default     = "aws/es"
 }
 
@@ -183,13 +183,13 @@ variable "redirect_rule_priority" {
 # Alarm related
 # for recommended cloudwatch alert: https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/cloudwatch-alarms.html
 
-variable "alarm_action" {
+variable "alarm_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
   type        = "list"
   default     = []
 }
 
-variable "ok_action" {
+variable "ok_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
   type        = "list"
   default     = []
@@ -199,7 +199,7 @@ variable "ok_action" {
 # Cluster_status_red
 #
 
-variable "cluster_status_red_enabled" {
+variable "cluster_status_red_enable" {
   description = "Whether to enable alarm"
   default     = true
 }
@@ -228,7 +228,7 @@ variable "cluster_status_red_threshold" {
 # Cluster_status_yellow
 #
 
-variable "cluster_status_yellow_enabled" {
+variable "cluster_status_yellow_enable" {
   description = "Whether to enable alarm"
   default     = true
 }
@@ -257,7 +257,7 @@ variable "cluster_status_yellow_threshold" {
 # Low_storage_space
 #
 
-variable "low_storage_space_enabled" {
+variable "low_storage_space_enable" {
   description = "Whether to enable alarm"
   default     = true
 }
@@ -476,60 +476,60 @@ variable "high_jvm_memory_utilization_master_node_threshold" {
 }
 
 #
-# KMS_key_error
+# kms_key_error
 #
 
-variable "KMS_key_error_enable" {
+variable "kms_key_error_enable" {
   description = "Whether to enable alarm"
   default     = true
 }
 
-variable "KMS_key_error_alarm_name" {
+variable "kms_key_error_alarm_name" {
   description = "Name of the alarm"
-  default     = "KMS_key_error_alarm"
+  default     = "kms_key_error_alarm"
 }
 
-variable "KMS_key_error_evaluation_periods" {
+variable "kms_key_error_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
   default     = "1"
 }
 
-variable "KMS_key_error_period" {
+variable "kms_key_error_period" {
   description = "Duration in seconds to evaluate for the alarm."
   default     = "60"
 }
 
-variable "KMS_key_error_threshold" {
-  description = "Threshold for the number of KMS key error"
+variable "kms_key_error_threshold" {
+  description = "Threshold for the number of kms key error"
   default     = "1"
 }
 
 #
-# KMS_key_inaccessible
+# kms_key_inaccessible
 #
 
-variable "KMS_key_inaccessible_enable" {
+variable "kms_key_inaccessible_enable" {
   description = "Whether to enable alarm"
   default     = true
 }
 
-variable "KMS_key_inaccessible_alarm_name" {
+variable "kms_key_inaccessible_alarm_name" {
   description = "Name of the alarm"
-  default     = "KMS_key_inaccessible_alarm"
+  default     = "kms_key_inaccessible_alarm"
 }
 
-variable "KMS_key_inaccessible_evaluation_periods" {
+variable "kms_key_inaccessible_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
   default     = "1"
 }
 
-variable "KMS_key_inaccessible_period" {
+variable "kms_key_inaccessible_period" {
   description = "Duration in seconds to evaluate for the alarm."
   default     = "60"
 }
 
-variable "KMS_key_inaccessible_threshold" {
-  description = "Threshold for the number of KMS key inaccessible error"
+variable "kms_key_inaccessible_threshold" {
+  description = "Threshold for the number of kms key inaccessible error"
   default     = "1"
 }
 
