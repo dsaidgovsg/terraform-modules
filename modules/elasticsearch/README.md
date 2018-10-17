@@ -110,17 +110,17 @@ module "es" {
 |------|-------------|:----:|:-----:|:-----:|
 | alarm_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action | list | `<list>` | no |
 | cluster_index_writes_blocked_alarm_name | Name of the alarm | string | `cluster_index_writes_blocked_alarm` | no |
-| cluster_index_writes_blocked_enable | Whether to enable alarm | string | `true` | no |
+| cluster_index_writes_blocked_enable | Whether to enable alarm | string | `false` | no |
 | cluster_index_writes_blocked_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_index_writes_blocked_period | Duration in seconds to evaluate for the alarm. | string | `300` | no |
 | cluster_index_writes_blocked_threshold | Threshold for the number of write request blocked | string | `1` | no |
 | cluster_status_red_alarm_name | Name of the alarm. | string | `cluster_status_red_alarm` | no |
-| cluster_status_red_enable | Whether to enable alarm | string | `true` | no |
+| cluster_status_red_enable | Whether to enable alarm | string | `false` | no |
 | cluster_status_red_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_status_red_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | cluster_status_red_threshold | Threshold for the number of primary shard not allocated to a node | string | `1` | no |
 | cluster_status_yellow_alarm_name | Name of the alarm | string | `cluster_status_yellow_alarm` | no |
-| cluster_status_yellow_enable | Whether to enable alarm | string | `true` | no |
+| cluster_status_yellow_enable | Whether to enable alarm | string | `false` | no |
 | cluster_status_yellow_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | cluster_status_yellow_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | cluster_status_yellow_threshold | Threshold for the number of replicas shard not allocated to a node | string | `1` | no |
@@ -145,43 +145,43 @@ module "es" {
 | es_vpc_subnet_ids | Subnet IDs for Elasticsearch cluster | list | - | yes |
 | es_zone_awareness | Enable zone awareness for Elasticsearch cluster | string | `true` | no |
 | high_cpu_utilization_data_node_alarm_name | Name of the alarm | string | `high_cpu_utilization_data_node_alarm` | no |
-| high_cpu_utilization_data_node_enable | Whether to enable alarm | string | `true` | no |
+| high_cpu_utilization_data_node_enable | Whether to enable alarm | string | `false` | no |
 | high_cpu_utilization_data_node_evaluation_periods | Number of periods to evaluate for the alarm. | string | `3` | no |
 | high_cpu_utilization_data_node_period | Duration in seconds to evaluate for the alarm. | string | `900` | no |
 | high_cpu_utilization_data_node_threshold | Threshold % of cpu utilization for data node | string | `80` | no |
 | high_cpu_utilization_master_node_alarm_name | Name of the alarm | string | `high_cpu_utilization_master_node_alarm` | no |
-| high_cpu_utilization_master_node_enable | Whether to enable alarm | string | `true` | no |
+| high_cpu_utilization_master_node_enable | Whether to enable alarm | string | `false` | no |
 | high_cpu_utilization_master_node_evaluation_periods | Number of periods to evaluate for the alarm. | string | `3` | no |
 | high_cpu_utilization_master_node_period | Duration in seconds to evaluate for the alarm. | string | `900` | no |
 | high_cpu_utilization_master_node_threshold | Threshold % of cpu utilization for master node | string | `50` | no |
 | high_jvm_memory_utilization_data_node_alarm_name | Name of the alarm | string | `high_jvm_memory_utilization_data_node_alarm` | no |
-| high_jvm_memory_utilization_data_node_enable | Whether to enable alarm | string | `true` | no |
+| high_jvm_memory_utilization_data_node_enable | Whether to enable alarm | string | `false` | no |
 | high_jvm_memory_utilization_data_node_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | high_jvm_memory_utilization_data_node_period | Duration in seconds to evaluate for the alarm. | string | `900` | no |
 | high_jvm_memory_utilization_data_node_threshold | Threshold % of jvm memory utilization for data node | string | `80` | no |
 | high_jvm_memory_utilization_master_node_alarm_name | Name of the alarm | string | `high_jvm_memory_utilization_master_node_alarm` | no |
-| high_jvm_memory_utilization_master_node_enable | Whether to enable alarm | string | `true` | no |
+| high_jvm_memory_utilization_master_node_enable | Whether to enable alarm | string | `false` | no |
 | high_jvm_memory_utilization_master_node_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | high_jvm_memory_utilization_master_node_period | Duration in seconds to evaluate for the alarm. | string | `900` | no |
 | high_jvm_memory_utilization_master_node_threshold | Threshold % of jvm memory utilization for master node | string | `80` | no |
 | kms_key_error_alarm_name | Name of the alarm | string | `kms_key_error_alarm` | no |
-| kms_key_error_enable | Whether to enable alarm | string | `true` | no |
+| kms_key_error_enable | Whether to enable alarm | string | `false` | no |
 | kms_key_error_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | kms_key_error_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | kms_key_error_threshold | Threshold for the number of kms key error | string | `1` | no |
 | kms_key_inaccessible_alarm_name | Name of the alarm | string | `kms_key_inaccessible_alarm` | no |
-| kms_key_inaccessible_enable | Whether to enable alarm | string | `true` | no |
+| kms_key_inaccessible_enable | Whether to enable alarm | string | `false` | no |
 | kms_key_inaccessible_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | kms_key_inaccessible_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | kms_key_inaccessible_threshold | Threshold for the number of kms key inaccessible error | string | `1` | no |
 | lb_cname | DNS CNAME for the Load balancer | string | `` | no |
 | lb_zone_id | Zone ID for the Load balancer DNS CNAME | string | `` | no |
-| low_storage_space_enable | Whether to enable alarm | string | `true` | no |
+| low_storage_space_enable | Whether to enable alarm | string | `false` | no |
 | low_storage_space_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | low_storage_space_name | Name of the alarm | string | `low_storage_space_alarm` | no |
 | low_storage_space_yellow_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | node_unreachable_alarm_name | Name of the alarm | string | `node_unreachable_enable_alarm` | no |
-| node_unreachable_enable | Whether to enable alarm | string | `true` | no |
+| node_unreachable_enable | Whether to enable alarm | string | `false` | no |
 | node_unreachable_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | node_unreachable_period | Duration in seconds to evaluate for the alarm. | string | `86400` | no |
 | ok_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | list | `<list>` | no |
@@ -196,7 +196,7 @@ module "es" {
 | slow_index_log_name | Name of the Cloudwatch log group for slow index | string | `es-slow-index` | no |
 | slow_index_log_retention | Number of days to retain logs for. | string | `120` | no |
 | snapshot_failed_alarm_name | Name of the alarm | string | `snapshot_failed_alarm` | no |
-| snapshot_failed_enable | Whether to enable alarm | string | `true` | no |
+| snapshot_failed_enable | Whether to enable alarm | string | `false` | no |
 | snapshot_failed_evaluation_periods | Number of periods to evaluate for the alarm. | string | `1` | no |
 | snapshot_failed_period | Duration in seconds to evaluate for the alarm. | string | `60` | no |
 | snapshot_failed_threshold | Threshold for the number of snapshot failed | string | `1` | no |

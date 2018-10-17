@@ -201,7 +201,7 @@ variable "ok_actions" {
 
 variable "cluster_status_red_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "cluster_status_red_alarm_name" {
@@ -230,7 +230,7 @@ variable "cluster_status_red_threshold" {
 
 variable "cluster_status_yellow_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "cluster_status_yellow_alarm_name" {
@@ -259,7 +259,7 @@ variable "cluster_status_yellow_threshold" {
 
 variable "low_storage_space_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "low_storage_space_name" {
@@ -283,7 +283,7 @@ variable "low_storage_space_yellow_period" {
 
 variable "cluster_index_writes_blocked_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "cluster_index_writes_blocked_alarm_name" {
@@ -312,7 +312,7 @@ variable "cluster_index_writes_blocked_threshold" {
 
 variable "node_unreachable_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "node_unreachable_alarm_name" {
@@ -336,7 +336,7 @@ variable "node_unreachable_period" {
 
 variable "snapshot_failed_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "snapshot_failed_alarm_name" {
@@ -365,7 +365,7 @@ variable "snapshot_failed_threshold" {
 
 variable "high_cpu_utilization_data_node_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "high_cpu_utilization_data_node_alarm_name" {
@@ -394,7 +394,7 @@ variable "high_cpu_utilization_data_node_threshold" {
 
 variable "high_jvm_memory_utilization_data_node_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "high_jvm_memory_utilization_data_node_alarm_name" {
@@ -423,7 +423,7 @@ variable "high_jvm_memory_utilization_data_node_threshold" {
 
 variable "high_cpu_utilization_master_node_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "high_cpu_utilization_master_node_alarm_name" {
@@ -452,7 +452,7 @@ variable "high_cpu_utilization_master_node_threshold" {
 
 variable "high_jvm_memory_utilization_master_node_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "high_jvm_memory_utilization_master_node_alarm_name" {
@@ -481,7 +481,7 @@ variable "high_jvm_memory_utilization_master_node_threshold" {
 
 variable "kms_key_error_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "kms_key_error_alarm_name" {
@@ -510,7 +510,7 @@ variable "kms_key_error_threshold" {
 
 variable "kms_key_inaccessible_enable" {
   description = "Whether to enable alarm"
-  default     = true
+  default     = false
 }
 
 variable "kms_key_inaccessible_alarm_name" {
