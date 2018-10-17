@@ -21,7 +21,8 @@ function print_usage {
   echo
   echo -e "  --type\t\tThe type of instance being configured. Required. Keys must exist in Consul for the server type"
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
-  echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to `/opt/consul-template/config`"
+  echo -e "  --consul-template-config\t\tPath to directory of configuration files for Consul Template. Optional. Defaults to '/opt/consul-template/config'"
+  echo -e "  --consul-config\t\tPath to directory of configuration files for Consul. Optional. Defaults to '/opt/consul/config'"
   echo
   echo "Example:"
   echo
@@ -106,6 +107,12 @@ function consul_kv_with_default {
   value=$(consul kv get "${path}" || echo -n "${default}") || exit $?
   log_info "Consul KV Path ${path} = ${value}"
   echo -n "${value}"
+}
+
+# Based on: http://unix.stackexchange.com/a/7732/215969
+function get_owner_of_path {
+  local readonly path="$1"
+  ls -ld "$path" | awk '{print $3}'
 }
 
 function enable_telegraf {
@@ -204,10 +211,71 @@ EOF
   echo -n "${template}" > "${template_destination}"
 }
 
+function enable_prometheus {
+  local readonly prometheus_service="${1}"
+  local readonly prometheus_port="${2}"
+  local readonly prometheus_cidrs="${3}"
+  local readonly server_type="${4}"
+  local readonly consul_config="${5}"
+  local readonly config_override_dir="${6}"
+
+  local readonly destination="${config_override_dir}/output_prometheus.conf"
+  local readonly consul_destination="${consul_config}/telegraf_prometheus.hcl"
+
+  local consul=$(cat <<EOF
+service {
+  name = "${prometheus_service}"
+  port = ${prometheus_port}
+
+  tags = [
+    "${server_type}"
+  ]
+
+  check {
+    name     = "Prometheus Client"
+    http     = "http://127.0.0.1:${prometheus_port}/"
+    method   = "GET"
+    interval = "30s"
+    timeout  = "2s"
+  }
+}
+EOF
+)
+
+  log_info "Writing Consul configuration to ${consul_destination}"
+  echo -n "${consul}" > "${consul_destination}"
+  local readonly consul_owner=$(get_owner_of_path "${consul_config}")
+  chown "${consul_owner}:${consul_owner}" "${consul_destination}"
+
+  local prometheus=$(cat <<EOF
+# Publish all metrics to /metrics for Prometheus to scrape
+[[outputs.prometheus_client]]
+  ## Address to listen on.
+  listen = ":${prometheus_port}"
+
+  ## If set, the IP Ranges which are allowed to access metrics.
+  ##   ex: ip_range = ["192.168.0.0/24", "192.168.1.0/30"]
+  ip_range = ${prometheus_cidrs}
+
+  ## Path to publish the metrics on.
+  # path = "/metrics"
+
+  ## Expiration interval for each metric. 0 == no expiration
+  expiration_interval = "60s"
+EOF
+)
+
+  log_info "Writing Telegraf configuration to ${destination}"
+  echo -n "${prometheus}" > "${destination}"
+  local readonly prometheus_owner=$(get_owner_of_path "${destination}")
+  chown "${prometheus_owner}:${prometheus_owner}" "${destination}"
+}
+
 function main {
   local type=""
   local consul_prefix="terraform/"
   local consul_template_config="/opt/consul-template/config"
+  local consul_config="/opt/consul/config"
 
   local readonly service_override_dir="/etc/systemd/system/telegraf.service.d"
   local readonly config_override_dir="/etc/telegraf/telegraf.d"
@@ -229,6 +297,11 @@ function main {
       --consul-template-config)
         assert_not_empty "$key" "$2"
         consul_template_config="$2"
+        shift
+        ;;
+      --consul-config)
+        assert_not_empty "$key" "$2"
+        consul_config="$2"
         shift
         ;;
       --help)
@@ -271,6 +344,17 @@ function main {
 
       enable_elasticsearch "${elasticsearch_service}" "${consul_template_config}" "${config_override_dir}"
       supervisorctl signal SIGHUP consul-template
+    fi
+
+    local readonly prometheus=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/output/prometheus/enabled" "no")
+
+    if [[ "$prometheus" == "yes" ]]; then
+      local readonly prometheus_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/service")
+      local readonly prometheus_port=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/port")
+      local readonly prometheus_cidrs=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/cidrs")
+
+      enable_prometheus "${prometheus_service}" "${prometheus_port}" "${prometheus_cidrs}" "${type}" "${consul_config}" "${config_override_dir}"
+      supervisorctl signal SIGHUP consul
     fi
   fi
 }

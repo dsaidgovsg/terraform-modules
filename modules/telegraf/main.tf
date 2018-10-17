@@ -28,7 +28,7 @@ module "consul" {
   output_elasticsearch_service_name = "${var.consul_output_elasticsearch_service_name}"
 
   output_prometheus               = "${var.consul_output_prometheus}"
-  output_prometheus_service_name  = "${var.consul_prometheus_service_name}"
+  output_prometheus_service_name  = "${var.consul_output_prometheus_service_name}"
   output_prometheus_service_port  = "${var.consul_output_prometheus_service_port}"
   output_prometheus_service_cidrs = "${var.consul_output_prometheus_service_cidrs}"
 }
@@ -44,7 +44,7 @@ module "nomad_server" {
   output_elasticsearch_service_name = "${var.nomad_server_output_elasticsearch_service_name}"
 
   output_prometheus               = "${var.nomad_server_output_prometheus}"
-  output_prometheus_service_name  = "${var.nomad_server_prometheus_service_name}"
+  output_prometheus_service_name  = "${var.nomad_server_output_prometheus_service_name}"
   output_prometheus_service_port  = "${var.nomad_server_output_prometheus_service_port}"
   output_prometheus_service_cidrs = "${var.nomad_server_output_prometheus_service_cidrs}"
 }
@@ -60,7 +60,7 @@ module "nomad_client" {
   output_elasticsearch_service_name = "${var.nomad_client_output_elasticsearch_service_name}"
 
   output_prometheus               = "${var.nomad_client_output_prometheus}"
-  output_prometheus_service_name  = "${var.nomad_client_prometheus_service_name}"
+  output_prometheus_service_name  = "${var.nomad_client_output_prometheus_service_name}"
   output_prometheus_service_port  = "${var.nomad_client_output_prometheus_service_port}"
   output_prometheus_service_cidrs = "${var.nomad_client_output_prometheus_service_cidrs}"
 }
@@ -76,7 +76,7 @@ module "vault" {
   output_elasticsearch_service_name = "${var.vault_output_elasticsearch_service_name}"
 
   output_prometheus               = "${var.vault_output_prometheus}"
-  output_prometheus_service_name  = "${var.vault_prometheus_service_name}"
+  output_prometheus_service_name  = "${var.vault_output_prometheus_service_name}"
   output_prometheus_service_port  = "${var.vault_output_prometheus_service_port}"
   output_prometheus_service_cidrs = "${var.vault_output_prometheus_service_cidrs}"
 }
