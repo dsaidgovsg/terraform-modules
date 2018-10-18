@@ -130,10 +130,11 @@ function enable_telegraf {
   log_info "Service telegraf enabled and started!"
 }
 
-function enable_elasticsearch {
-  local readonly elasticsearch_service="${1}"
-  local readonly consul_template_config="${2}"
-  local readonly config_override_dir="${3}"
+function write_elasticsearch {
+  local readonly consul_prefix="${1}"
+  local readonly server_type="${2}"
+  local readonly consul_template_config="${3}"
+  local readonly config_override_dir="${4}"
 
   local readonly destination="${config_override_dir}/output_elasticsearch.conf"
   local readonly template_destination="${consul_template_config}/template_telegraf_output_elasticsearch.hcl"
@@ -146,6 +147,10 @@ template {
   right_delimiter = "||"
 
   contents = <<EOT
+||- \$enabled := keyOrDefault "${consul_prefix}telegraf/server_types/${server_type}/output/elasticsearch/enabled" "no" ||
+||- \$service := keyOrDefault "${consul_prefix}telegraf/server_types/${server_type}/output/elasticsearch/service_name" "" ||
+
+||- if eq \$enabled "yes" ||
 ###############################################################################
 #                            OUTPUT PLUGINS                                   #
 ###############################################################################
@@ -156,7 +161,7 @@ template {
   ## Multiple urls can be specified as part of the same cluster,
   ## this means that only ONE of the urls will be written to each interval.
   urls = [
-    || range service "${elasticsearch_service}" ||"https://|| .Address ||:|| .Port ||", || end ||
+    || range service \$service ||"https://|| .Address ||:|| .Port ||", || end ||
   ] # required.
   ## Elasticsearch client timeout, defaults to "5s" if not set.
   timeout = "5s"
@@ -201,7 +206,7 @@ template {
   template_name = "telegraf"
   ## Set to true if you want telegraf to overwrite an existing template
   overwrite_template = true
-
+||- end ||
 EOT
 }
 EOF
@@ -211,16 +216,19 @@ EOF
   echo -n "${template}" > "${template_destination}"
 }
 
-function enable_prometheus {
-  local readonly prometheus_service="${1}"
-  local readonly prometheus_port="${2}"
-  local readonly prometheus_cidrs="${3}"
-  local readonly server_type="${4}"
-  local readonly consul_config="${5}"
-  local readonly config_override_dir="${6}"
+function write_prometheus {
+  local readonly consul_prefix="${1}"
+  local readonly server_type="${2}"
+  local readonly consul_template_config="${3}"
+  local readonly consul_config="${4}"
+  local readonly config_override_dir="${5}"
 
-  local readonly destination="${config_override_dir}/output_prometheus.conf"
+  local readonly telegraf="${config_override_dir}/output_prometheus.conf"
+  local readonly telegraf_template="${consul_template_config}/template_output_prometheus.hcl"
   local readonly consul_destination="${consul_config}/telegraf_prometheus.hcl"
+
+  local readonly prometheus_service=$(consul_kv "${consul_prefix}telegraf/server_types/${server_type}/output/prometheus/service")
+  local readonly prometheus_port=$(consul_kv "${consul_prefix}telegraf/server_types/${server_type}/output/prometheus/port")
 
   local consul=$(cat <<EOF
 service {
@@ -248,27 +256,40 @@ EOF
   chown "${consul_owner}:${consul_owner}" "${consul_destination}"
 
   local prometheus=$(cat <<EOF
+template {
+  destination = "${telegraf}"
+  command = "service telegraf restart"
+  left_delimiter  = "||"
+  right_delimiter = "||"
+  contents = <<EOT
+
+||- \$enabled :=  keyOrDefault "${consul_prefix}telegraf/server_types/${server_type}/output/prometheus/enabled" "no" ||
+||- \$port := keyOrDefault "${consul_prefix}telegraf/server_types/${server_type}/output/prometheus/port" "" ||
+||- \$cidrs := keyOrDefault "${consul_prefix}telegraf/server_types/${server_type}/output/prometheus/cidrs" "" ||
+||- if eq \$enabled "yes" ||
 # Publish all metrics to /metrics for Prometheus to scrape
 [[outputs.prometheus_client]]
   ## Address to listen on.
-  listen = ":${prometheus_port}"
+  listen = ":|| \$port ||"
 
   ## If set, the IP Ranges which are allowed to access metrics.
   ##   ex: ip_range = ["192.168.0.0/24", "192.168.1.0/30"]
-  ip_range = ${prometheus_cidrs}
+  ip_range = || \$cidrs ||
 
   ## Path to publish the metrics on.
   # path = "/metrics"
 
   ## Expiration interval for each metric. 0 == no expiration
   expiration_interval = "60s"
+
+||- end ||
+EOT
+}
 EOF
 )
 
-  log_info "Writing Telegraf configuration to ${destination}"
-  echo -n "${prometheus}" > "${destination}"
-  local readonly prometheus_owner=$(get_owner_of_path "${destination}")
-  chown "${prometheus_owner}:${prometheus_owner}" "${destination}"
+  log_info "Writing Telegraf Template to ${telegraf_template}"
+  echo -n "${prometheus}" > "${telegraf_template}"
 }
 
 function main {
@@ -324,6 +345,7 @@ function main {
   fi
 
   assert_is_installed "consul"
+  assert_is_installed "consul-template"
 
   wait_for_consul
 
@@ -337,25 +359,18 @@ function main {
     local readonly elasticsearch=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/enabled" "no")
 
     if [[ "$elasticsearch" == "yes" ]]; then
-      assert_is_installed "consul-template"
-      local readonly elasticsearch_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/elasticsearch/service_name")
-
-      log_info "Configuring Telegraf to output to Elasticsearch at service name '${elasticsearch_service}'"
-
-      enable_elasticsearch "${elasticsearch_service}" "${consul_template_config}" "${config_override_dir}"
-      supervisorctl signal SIGHUP consul-template
+      log_info "Writing Consul Template for Elasticsearch Output"
+      write_elasticsearch "${consul_prefix}" "${type}" "${consul_template_config}" "${config_override_dir}"
     fi
 
     local readonly prometheus=$(consul_kv_with_default "${consul_prefix}telegraf/server_types/${type}/output/prometheus/enabled" "no")
-
     if [[ "$prometheus" == "yes" ]]; then
-      local readonly prometheus_service=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/service")
-      local readonly prometheus_port=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/port")
-      local readonly prometheus_cidrs=$(consul_kv "${consul_prefix}telegraf/server_types/${type}/output/prometheus/cidrs")
-
-      enable_prometheus "${prometheus_service}" "${prometheus_port}" "${prometheus_cidrs}" "${type}" "${consul_config}" "${config_override_dir}"
-      supervisorctl signal SIGHUP consul
+      log_info "Writing Consul Template for Prometheus Output"
+      write_prometheus "${consul_prefix}" "${type}" "${consul_template_config}" "${consul_config}" "${config_override_dir}"
     fi
+
+    supervisorctl signal SIGHUP consul
+    supervisorctl signal SIGHUP consul-template
   fi
 }
 
