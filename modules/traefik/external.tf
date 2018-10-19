@@ -13,7 +13,7 @@ resource "aws_lb" "external" {
     prefix  = "${var.lb_external_access_log_prefix}"
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", var.external_lb_name))}"
 }
 
 resource "aws_security_group" "external_lb" {
@@ -127,7 +127,7 @@ resource "aws_lb_listener" "https_external" {
 }
 
 resource "aws_lb_target_group" "external" {
-  name                 = "${var.external_lb_name}-traefik"
+  name_prefix          = "tfk"
   port                 = "80"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
@@ -146,6 +146,12 @@ resource "aws_lb_target_group" "external" {
   stickiness {
     enabled = true
     type    = "lb_cookie"
+  }
+
+  tags = "${merge(var.tags, map("Name", format("%s-traefik", var.external_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
