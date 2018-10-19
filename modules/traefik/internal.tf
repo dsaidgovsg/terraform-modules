@@ -14,7 +14,7 @@ resource "aws_lb" "internal" {
     prefix  = "${var.lb_internal_access_log_prefix}"
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", var.internal_lb_name))}"
 }
 
 resource "aws_security_group" "internal_lb" {
@@ -98,7 +98,7 @@ resource "aws_security_group_rule" "nomad_client_internal_health_check" {
 #####################
 
 resource "aws_lb_target_group" "internal" {
-  name                 = "${var.internal_lb_name}-traefik"
+  name_prefix          = "tfk-i"
   port                 = "81"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
@@ -117,6 +117,12 @@ resource "aws_lb_target_group" "internal" {
   stickiness {
     enabled = true
     type    = "lb_cookie"
+  }
+
+  tags = "${merge(var.tags, map("Name", format("%s-traefik-internal", var.internal_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
