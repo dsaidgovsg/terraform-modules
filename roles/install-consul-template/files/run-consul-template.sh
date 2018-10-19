@@ -181,7 +181,8 @@ function request_vault_token {
 
   local token
   token=$(
-    curl -Ss -XPOST "${address}/v1/auth/${auth_path}login" \
+    curl -Ss -XPOST --retry 5 \
+      "${address}/v1/auth/${auth_path}login" \
       -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
   ) || exit $?
 
