@@ -109,4 +109,5 @@
   with_items:
   - syslog.hcl
   - override.hcl
+  - dns_config.hcl
   become: yes
