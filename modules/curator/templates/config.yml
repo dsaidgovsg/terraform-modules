@@ -1,0 +1,7 @@
+client:
+  hosts:
+  {{- $service := or (env "ELASTICSEARCH_SERVICE") "elasticsearch" }}
+  {{- range service "elasticsearch" }}
+    - {{ .Address }}:{{ .Port }}
+  {{- end }}
+  use_ssl: true
