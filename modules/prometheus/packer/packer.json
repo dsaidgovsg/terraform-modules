@@ -21,12 +21,12 @@
         "consul_token": "",
         "consul_integration_prefix": "terraform/",
         "timezone": "Asia/Singapore",
-        "prometheus_version": "2.4.3"
-    prometheus_db_dir: "/mnt/data"
-    prometheus_storage_retention: "90d"
-    prometheus_client_service: "prometheus-client"
-    prometheus_consul_job_name: "consul"
-    prometheus_port: 9090
+        "prometheus_version": "2.4.3",
+        "prometheus_db_dir": "/mnt/data",
+        "prometheus_storage_retention": "90d",
+        "prometheus_client_service": "prometheus-client",
+        "prometheus_consul_job_name": "consul",
+        "prometheus_port": "9090"
     },
     "builders": [
         {
@@ -104,6 +104,8 @@
                 "ca_certificate={{user `ca_certificate`}}",
                 "-e",
                 "consul_host={{user `consul_host`}} consul_port={{user `consul_port`}} consul_scheme={{user `consul_scheme`}} consul_token={{user `consul_token`}} consul_integration_prefix={{user `consul_integration_prefix`}}",
+                "-e",
+                "prometheus_version={{user `prometheus_version`}} prometheus_db_dir={{user `prometheus_db_dir`}} prometheus_storage_retention={{user `prometheus_storage_retention`}} prometheus_client_service={{user `prometheus_client_service`}} prometheus_consul_job_name={{user `prometheus_consul_job_name`}} prometheus_port={{user `prometheus_port`}}",
                 "-e",
                 "timezone={{user `timezone`}}",
                 "-e",
