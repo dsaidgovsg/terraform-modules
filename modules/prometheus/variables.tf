@@ -73,6 +73,40 @@ variable "aws_auth_period_minutes" {
 }
 
 # --------------------------------------------------------------------------------------------------
+# Vault SSH Integration
+# --------------------------------------------------------------------------------------------------
+
+variable "vault_ssh_enabled" {
+  description = "Enable Vault SSH integration"
+  default     = false
+}
+
+variable "vault_ssh_path" {
+  description = "Path to mount the SSH secrets engine"
+  default     = "ssh_prometheus"
+}
+
+variable "vault_ssh_role_name" {
+  description = "Role name for the Vault SSH secrets engine"
+  default     = "default"
+}
+
+variable "vault_ssh_user" {
+  description = "Username to allow SSH access"
+  default     = "ubuntu"
+}
+
+variable "vault_ssh_ttl" {
+  description = "TTL for the Vault SSH certificate in seconds"
+  default     = 300
+}
+
+variable "vault_ssh_max_ttl" {
+  description = "Max TTL for certificate renewal"
+  default     = 86400
+}
+
+# --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "consul_key_prefix" {
