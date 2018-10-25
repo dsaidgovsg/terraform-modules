@@ -31,7 +31,7 @@ The default entrypoints and arguments assumes an image built from the official r
 | actions_path | Path to render the actions file in the Docker container | string | `/config/actions.yml` | no |
 | additional_docker_config | Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined | string | `` | no |
 | args | Arguments for the Docker image | string | `<list>` | no |
-| command | Command for the Docker Image | string | `/curator/curator` | no |
+| command | Command for the Docker Image | string | `` | no |
 | config_path | Path to render the configuration file in the Docker container | string | `/config/config.yml` | no |
 | consul_age | Age in days to clear Consul server log indices | string | `90` | no |
 | consul_disable | Disable clearing Consul server log indices | string | `false` | no |
@@ -50,10 +50,11 @@ The default entrypoints and arguments assumes an image built from the official r
 | docker_prefix | Prefix for docker logs | string | `docker.` | no |
 | docker_tag | Docker tag to run | string | `latest` | no |
 | elasticsearch_service | Name of the Elasticsearch service to lookup in Consul | string | `elasticsearch` | no |
-| entrypoint | Entrypoint for the Docker Image | string | `/bin/sh` | no |
+| entrypoint | Entrypoint for the Docker Image | string | `<list>` | no |
 | force_pull | Force Nomad Clients to always force pull | string | `false` | no |
 | job_name | Name of the Nomad Job | string | `curator` | no |
 | nomad_age | Age in days to clear nomad log indices | string | `90` | no |
+| nomad_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | string | `<list>` | no |
 | nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
 | nomad_disable | Disable clearing nomad log indices | string | `false` | no |
 | nomad_prefix | Prefix for nomad logs | string | `services.nomad.` | no |
@@ -70,6 +71,9 @@ The default entrypoints and arguments assumes an image built from the official r
 | telegraf_disable | Disable clearing telegraf log indices | string | `false` | no |
 | telegraf_prefix | Prefix for telegraf logs | string | `system.telegraf.` | no |
 | timezone | Timezone to run cron job scheduling | string | `Asia/Singapore` | no |
+| user_data_age | Age in days to clear user_data log indices | string | `90` | no |
+| user_data_disable | Disable clearing user_data log indices | string | `false` | no |
+| user_data_prefix | Prefix for user_data logs | string | `system.user_data.` | no |
 | vault_age | Age in days to clear vault log indices | string | `90` | no |
 | vault_disable | Disable clearing vault log indices | string | `false` | no |
 | vault_prefix | Prefix for vault logs | string | `services.vault.` | no |
