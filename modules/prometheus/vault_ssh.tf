@@ -1,5 +1,5 @@
 module "vault_ssh" {
-  source = "../ssh-engine"
+  source = "../vault-ssh/ssh-engine"
 
   enabled     = "${var.vault_ssh_enabled}"
   path        = "${var.vault_ssh_path}"

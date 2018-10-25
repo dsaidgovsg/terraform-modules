@@ -8,7 +8,9 @@ repository.
 You will have to build an AMI with the [Packer template](packer/packer.json) provided.
 
 ```bash
-packer build -var-file "your_vars.json" packer/packer.json
+packer build \
+    -var-file "your_vars.json" \
+    packer/packer.json
 ```
 
 Ansible will be used to provision the AMI.
@@ -47,3 +49,29 @@ work properly.
 - `prometheus_port`: Port at which the server will be listening to. Defaults to `9090`.
 
 ## Integration with other modules
+
+### Traefik
+
+### AWS Authentication
+
+### Vault SSH
+
+### `td-agent`
+
+If you would like to configure `td-agent` to automatically ship logs to your fluentd server, you
+will have to provide a configuration file for `td-agent`.
+
+You can use the recommended default template and variables by setting the following variables for
+the Packer template:
+
+- `td_agent_config_file`: Set this to `../td-agent/config/template/td-agent.conf`
+- `td_agent_config_vars_file`: Set this to `packer/td-agent-vars.yml`.
+
+For example, add the following arguments to `packer build`:
+
+```bash
+    --var "td_agent_config_file=$(pwd)/..td-agent/config/template/td-agent.conf" \
+    --var "td_agent_config_vars_file=$(pwd)/packer/td-agent-vars.yml"
+```
+
+Refer to the module documentation for more details.

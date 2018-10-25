@@ -107,6 +107,15 @@ variable "vault_ssh_max_ttl" {
 }
 
 # --------------------------------------------------------------------------------------------------
+# td-agent Integration
+# --------------------------------------------------------------------------------------------------
+
+variable "td_agent_enabled" {
+  description = "Enable td-agent integration. You will still need to provide the appropriate configuration file for td-agent during the AMI building process."
+  default     = false
+}
+
+# --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "consul_key_prefix" {
