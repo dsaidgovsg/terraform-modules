@@ -116,6 +116,24 @@ variable "td_agent_enabled" {
 }
 
 # --------------------------------------------------------------------------------------------------
+# Curator Integration
+# --------------------------------------------------------------------------------------------------
+variable "curator_enable" {
+  description = "Enable Curator integration for Prometheus"
+  default     = false
+}
+
+variable "curator_age" {
+  description = "Age in days to retain indices"
+  default     = "90"
+}
+
+variable "curator_prefix" {
+  description = "Elasticsearch prefix for Curator logs"
+  default     = "services.prometheus"
+}
+
+# --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "consul_key_prefix" {
