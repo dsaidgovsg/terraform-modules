@@ -15,7 +15,7 @@ resource "aws_lb" "internal" {
     prefix  = "${var.elb_access_log_prefix}"
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", var.internal_lb_name))}"
 }
 
 resource "aws_lb_listener" "internal_http" {
@@ -50,13 +50,17 @@ resource "aws_lb_listener" "internal_https" {
 }
 
 resource "aws_lb_target_group" "sink" {
-  name                 = "${var.internal_lb_name}-sink"
+  name_prefix          = "sink"
   port                 = "80"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
-  deregistration_delay = "30"                           # It doesn't matter
+  deregistration_delay = "30"            # It doesn't matter
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", format("%s-sink", var.internal_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Security group for the Internal LB
@@ -106,7 +110,7 @@ resource "aws_lb_listener_rule" "nomad_server" {
 }
 
 resource "aws_lb_target_group" "nomad_server" {
-  name                 = "${var.internal_lb_name}-nomad-server"
+  name_prefix          = "nomad"
   port                 = "${local.nomad_server_http_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
@@ -127,7 +131,11 @@ resource "aws_lb_target_group" "nomad_server" {
     enabled = true
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", format("%s-nomad-server", var.internal_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Attach target group to the Nomad servers ASG
@@ -187,7 +195,7 @@ resource "aws_lb_listener_rule" "consul_server" {
 }
 
 resource "aws_lb_target_group" "consul_servers" {
-  name                 = "${var.internal_lb_name}-consul-server"
+  name_prefix          = "consul"
   port                 = "${local.consul_http_api_port}"
   protocol             = "HTTP"
   vpc_id               = "${var.vpc_id}"
@@ -208,7 +216,11 @@ resource "aws_lb_target_group" "consul_servers" {
     enabled = true
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", format("%s-consul-server", var.internal_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Attach target group to the Consul servers ASG
@@ -267,7 +279,7 @@ resource "aws_lb_listener_rule" "vault" {
 }
 
 resource "aws_lb_target_group" "vault" {
-  name                 = "${var.internal_lb_name}-vault"
+  name_prefix          = "vault"
   port                 = "${local.vault_lb_port}"
   protocol             = "HTTPS"
   vpc_id               = "${var.vpc_id}"
@@ -289,7 +301,11 @@ resource "aws_lb_target_group" "vault" {
     enabled = true
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, map("Name", format("%s-vault", var.internal_lb_name)))}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Attach target group to the Vault servers ASG

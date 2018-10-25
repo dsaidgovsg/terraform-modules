@@ -79,13 +79,29 @@ the various types of servers in the [core module](../core).
 | consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
 | consul_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | consul_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
+| consul_output_prometheus | Create a Prometheus Client to serve the metrics for a Prometheus server to scrape | string | `false` | no |
+| consul_output_prometheus_service_cidrs | List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks. | string | `<list>` | no |
+| consul_output_prometheus_service_name | Name of the service to advertise in Consul | string | `prometheus-client` | no |
+| consul_output_prometheus_service_port | Port of the Prometheus Client | string | `9273` | no |
 | core_integration | Enable integration with the `core` module by setting some values in Consul so         that the user_data scripts in core know that this module has been applied | string | `true` | no |
 | nomad_client_enabled | Enable Telegraf for Nomad clients | string | `true` | no |
 | nomad_client_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | nomad_client_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
+| nomad_client_output_prometheus | Create a Prometheus Client to serve the metrics for a Prometheus server to scrape | string | `false` | no |
+| nomad_client_output_prometheus_service_cidrs | List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks. | string | `<list>` | no |
+| nomad_client_output_prometheus_service_name | Name of the service to advertise in Consul | string | `prometheus-client` | no |
+| nomad_client_output_prometheus_service_port | Port of the Prometheus Client | string | `9273` | no |
 | nomad_server_enabled | Enable Telegraf for Nomad servers | string | `true` | no |
 | nomad_server_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | nomad_server_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
+| nomad_server_output_prometheus | Create a Prometheus Client to serve the metrics for a Prometheus server to scrape | string | `false` | no |
+| nomad_server_output_prometheus_service_cidrs | List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks. | string | `<list>` | no |
+| nomad_server_output_prometheus_service_name | Name of the service to advertise in Consul | string | `prometheus-client` | no |
+| nomad_server_output_prometheus_service_port | Port of the Prometheus Client | string | `9273` | no |
 | vault_enabled | Enable Telegraf for Vault servers | string | `true` | no |
 | vault_output_elasticsearch_service_name | Service name in Consul to lookup Elasticsearch URLs | string | `elasticsearch` | no |
 | vault_output_elastisearch | Enable metrics output to Elasticsearch | string | `false` | no |
+| vault_output_prometheus | Create a Prometheus Client to serve the metrics for a Prometheus server to scrape | string | `false` | no |
+| vault_output_prometheus_service_cidrs | List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks. | string | `<list>` | no |
+| vault_output_prometheus_service_name | Name of the service to advertise in Consul | string | `prometheus-client` | no |
+| vault_output_prometheus_service_port | Port of the Prometheus Client | string | `9273` | no |
