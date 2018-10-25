@@ -45,6 +45,34 @@ variable "traefik_fqdns" {
 }
 
 # --------------------------------------------------------------------------------------------------
+# AWS Auth Integration
+# --------------------------------------------------------------------------------------------------
+variable "aws_auth_enabled" {
+  description = "Enable AWS Authentication"
+  default     = false
+}
+
+variable "aws_auth_path" {
+  description = "Path to the Vault AWS Authentication backend"
+  default     = "aws"
+}
+
+variable "aws_auth_vault_role" {
+  description = "Name of the role in the AWS Authentication backend to create"
+  default     = "prometheus"
+}
+
+variable "aws_auth_policies" {
+  description = "List of Vault policies to assign to the tokens issued by the AWS authentication backend"
+  default     = []
+}
+
+variable "aws_auth_period_minutes" {
+  description = "Period, in minutes, that the Vault token issued will live for"
+  default     = "60"
+}
+
+# --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
 variable "consul_key_prefix" {
@@ -55,4 +83,9 @@ variable "consul_key_prefix" {
 EOF
 
   default = "terraform/"
+}
+
+variable "server_type" {
+  description = "Server type for the various types of modules integration"
+  default     = "prometheus"
 }
