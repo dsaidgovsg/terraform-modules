@@ -97,3 +97,13 @@ module "sudo" {
   prefix            = "${var.sudo_prefix}"
   consul_key_prefix = "${var.consul_key_prefix}"
 }
+
+module "user_data" {
+  source = "./action"
+
+  key               = "user_data"
+  disable           = "${var.user_data_disable}"
+  age               = "${var.user_data_age}"
+  prefix            = "${var.user_data_prefix}"
+  consul_key_prefix = "${var.consul_key_prefix}"
+}
