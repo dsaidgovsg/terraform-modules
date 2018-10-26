@@ -4,7 +4,7 @@ resource "vault_aws_auth_backend_role" "prometheus" {
   backend            = "${var.aws_auth_path}"
   role               = "${var.aws_auth_vault_role}"
   auth_type          = "ec2"
-  bound_iam_role_arn = "${local.iam_role}"
+  bound_iam_role_arn = "${aws_iam_role.prometheus.arn}"
   policies           = ["${var.aws_auth_policies}"]
   period             = "${var.aws_auth_period_minutes}"
 }

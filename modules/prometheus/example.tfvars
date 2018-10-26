@@ -1,0 +1,1 @@
+ami_id = "xxx"

@@ -1,3 +1,40 @@
+variable "ami_id" {
+  description = "AMI ID for Prometheus Server"
+}
+
+variable "ssh_key_name" {
+  description = "Name of SSH key to assign to the instance"
+}
+
+variable "subnet_id" {
+  description = "Subnet ID to deploy the instance to"
+}
+
+variable "name" {
+  description = "Base name for resources"
+  default     = "prometheus"
+}
+
+variable "associate_public_ip_address" {
+  description = "Associate a public IP address for instance"
+  default     = false
+}
+
+variable "instance_type" {
+  description = "Type of instance to deploy"
+  default     = "t2.micro"
+}
+
+variable "data_volume_size" {
+  description = "Size of the data volume in GB"
+  default     = 400
+}
+
+variable "data_volume_snapshot_id" {
+  description = "Snapshot ID to create the data volume from"
+  default     = ""
+}
+
 variable "prometheus_service" {
   description = "Name of Prometheus server service to register in Consul."
   default     = "prometheus"
