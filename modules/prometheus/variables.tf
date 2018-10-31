@@ -10,6 +10,10 @@ variable "subnet_id" {
   description = "Subnet ID to deploy the instance to"
 }
 
+variable "consul_security_group_id" {
+  description = "Security Group ID for Consul servers"
+}
+
 variable "name" {
   description = "Base name for resources"
   default     = "prometheus"
@@ -58,6 +62,39 @@ variable "prometheus_port" {
 variable "data_device_name" {
   description = "Path of the EBS device that is mounted"
   default     = "/dev/nvme1n1p1"
+}
+
+variable "allowed_ssh_cidr_blocks" {
+  description = "List of allowed CIDR blocks to allow SSH access"
+  default     = []
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+
+  default {
+    Terraform = "true"
+  }
+}
+
+variable "root_volume_size" {
+  description = "Size of the Prometheus server root volume in GB"
+  default     = 50
+}
+
+variable "consul_cluster_tag_key" {
+  description = "Key that Consul Server Instances are tagged with for discovery"
+  default     = "consul-servers"
+}
+
+variable "consul_cluster_tag_value" {
+  description = "Value that Consul Server Instances are tagged with for discovery"
+  default     = "consul"
+}
+
+variable "data_volume_mount" {
+  description = "Data volume mount device name"
+  default     = "/dev/sdf"
 }
 
 # --------------------------------------------------------------------------------------------------

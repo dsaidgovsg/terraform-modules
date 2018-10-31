@@ -40,7 +40,7 @@ resource "aws_ebs_volume" "data" {
 }
 
 resource "aws_volume_attachment" "data" {
-  device_name = "${local.data_volume_mount}"
+  device_name = "${var.data_volume_mount}"
   volume_id   = "${aws_ebs_volume.data.id}"
   instance_id = "${aws_instance.prometheus.id}"
 
@@ -53,18 +53,10 @@ data "template_file" "user_data" {
   vars {
     service_type = "${var.server_type}"
 
-    data_device_name = "${var.data_device_name}"
-    data_mount_path  = "${var.data_mount_path}"
-
-    cluster_tag_key   = "${data.terraform_remote_state.core.consul_cluster_tag_key}"
-    cluster_tag_value = "${data.terraform_remote_state.core.consul_cluster_tag_value}"
+    cluster_tag_key   = "${var.consul_cluster_tag_key}"
+    cluster_tag_value = "${var.consul_cluster_tag_value}"
     consul_prefix     = "${var.consul_key_prefix}"
   }
-}
-
-resource "local_file" "user_data" {
-  content  = "${data.template_file.user_data.rendered}"
-  filename = "${path.module}/rendered/user_data.sh"
 }
 
 resource "aws_iam_instance_profile" "prometheus" {
@@ -114,7 +106,7 @@ resource "aws_security_group_rule" "ssh_ingress" {
   from_port   = 22
   to_port     = 22
   protocol    = "tcp"
-  cidr_blocks = ["${var.allowed_ssh_cidr_block}"]
+  cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
   description = "SSH access to Prometheus server"
 
   security_group_id = "${aws_security_group.prometheus.id}"
