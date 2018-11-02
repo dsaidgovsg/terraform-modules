@@ -22,6 +22,8 @@ Ansible will be used to provision the AMI.
 You will need to use Packer to build a __one off__ data volume to hold your Prometheus data. You
 will then need to provide the EBS volume ID to the Terraform module.
 
+**Make sure you create the volume in the same availability zone as the instance you are going to run.**
+
 ```bash
 packer build \
     -var-file "your_vars.json" \

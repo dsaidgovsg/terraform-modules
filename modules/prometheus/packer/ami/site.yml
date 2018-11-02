@@ -93,6 +93,7 @@
     systemd:
       name: prometheus
       state: stopped
+      enabled: false
     become: yes
   - name: Make Prometheus Data Mount directory
     file:
@@ -108,4 +109,5 @@
     copy:
       src: "{{ playbook_dir }}/configure.sh"
       dest: /opt/prometheus
+      mode: 0755
     become: yes

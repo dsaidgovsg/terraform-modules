@@ -39,7 +39,7 @@
                     "volume_type": "gp2",
                     "device_name": "/dev/sdf",
                     "delete_on_termination": false,
-                    "volume_size": 400,
+                    "volume_size": "{{user `data_volume_size`}}",
                     "tags": {
                         "Name": "{{user `volume_name`}}",
                         "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}"

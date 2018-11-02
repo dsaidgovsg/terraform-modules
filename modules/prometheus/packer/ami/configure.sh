@@ -240,6 +240,9 @@ function main {
   local readonly data_device_name=$(consul_kv "${consul_prefix}prometheus/data_device_name")
   local readonly db_dir=$(consul_kv "${consul_prefix}prometheus/db_dir")
   mount_ebs "$data_device_name" "$db_dir"
+
+  systemctl enable prometheus
+  systemctl start prometheus
 }
 
 main "$@"
