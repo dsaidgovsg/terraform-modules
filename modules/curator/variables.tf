@@ -234,6 +234,21 @@ variable "sudo_prefix" {
   default     = "system.sudo."
 }
 
+variable "user_data_disable" {
+  description = "Disable clearing user_data log indices"
+  default     = false
+}
+
+variable "user_data_age" {
+  description = "Age in days to clear user_data log indices"
+  default     = 90
+}
+
+variable "user_data_prefix" {
+  description = "Prefix for user_data logs"
+  default     = "system.user_data."
+}
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------

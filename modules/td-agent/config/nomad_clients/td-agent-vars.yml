@@ -36,3 +36,5 @@ server:
   name: fluentd-consul
   host: fluentd.service.consul
   port: 4224
+
+user_data_path: /var/log/user-data.log
