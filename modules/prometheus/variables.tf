@@ -18,7 +18,6 @@ variable "data_volume_id" {
   description = "EBS Volume ID for Prometheus Data Storage"
 }
 
-
 variable "name" {
   description = "Base name for resources"
   default     = "prometheus"

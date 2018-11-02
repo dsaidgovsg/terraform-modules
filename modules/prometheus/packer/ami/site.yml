@@ -30,45 +30,45 @@
       update_cache: yes
     become: yes
   - name: Install CA Certificate
-    include_tasks: "{{ playbook_dir }}/../../../tasks/include_role_checked.yml"
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
-      role: "{{ playbook_dir }}/../../../roles/ansible-ca-store"
+      role: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
       certificate: "{{ ca_certificate }}"
       certificate_rename: "ca.crt"
     become: yes
   - name: Install Vault PKI CA Certificate
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/vault-pki"
+      name: "{{ playbook_dir }}/../../../../roles/vault-pki"
   - name: Install chrony
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/chrony"
+      name: "{{ playbook_dir }}/../../../../roles/chrony"
   - name: Install td-agent
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/td-agent"
+      name: "{{ playbook_dir }}/../../../../roles/td-agent"
     vars:
       config_file: "{{ td_agent_config_file }}"
       config_vars_file: "{{ td_agent_config_vars_file }}"
       config_dest_file: "{{ td_agent_config_dest_file }}"
   - name: Install Telegraf
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/telegraf"
+      name: "{{ playbook_dir }}/../../../../roles/telegraf"
   - name: Install Consul
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/consul"
+      name: "{{ playbook_dir }}/../../../../roles/consul"
   - name: Install Consul-Template
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/install-consul-template"
+      name: "{{ playbook_dir }}/../../../../roles/install-consul-template"
   - name: Install Vault SSH Configuration Script
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/install-ssh-script"
+      name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"
   - name: Set default timezone
     include_role:
-      name: "{{ playbook_dir }}/../../../roles/timezone"
+      name: "{{ playbook_dir }}/../../../../roles/timezone"
 
   - name: Install Prometheus
-    include_tasks: "{{ playbook_dir }}/../../../tasks/include_role_checked.yml"
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
-      role: "{{ playbook_dir }}/../../../roles/prometheus"
+      role: "{{ playbook_dir }}/../../../../roles/prometheus"
       prometheus_web_listen_address: "0.0.0.0:{{ prometheus_port }}"
       prometheus_scrape_configs:
         - job_name: "{{ prometheus_consul_job_name }}"
