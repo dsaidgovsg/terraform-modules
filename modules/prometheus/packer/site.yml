@@ -96,3 +96,8 @@
       owner: "prometheus"
       group: "prometheus"
     become: yes
+  - name: Install Prometheus Script
+    copy:
+      src: "{{ playbook_dir }}/configure.sh"
+      dest: /opt/prometheus
+    become: yes
