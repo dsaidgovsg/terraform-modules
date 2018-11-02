@@ -13,6 +13,26 @@ variable "consul_output_elasticsearch_service_name" {
   default     = "elasticsearch"
 }
 
+variable "consul_output_prometheus" {
+  description = "Create a Prometheus Client to serve the metrics for a Prometheus server to scrape"
+  default     = false
+}
+
+variable "consul_output_prometheus_service_name" {
+  description = "Name of the service to advertise in Consul"
+  default     = "prometheus-client"
+}
+
+variable "consul_output_prometheus_service_port" {
+  description = "Port of the Prometheus Client"
+  default     = 9273
+}
+
+variable "consul_output_prometheus_service_cidrs" {
+  description = "List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks."
+  default     = ["0.0.0.0/0"]
+}
+
 variable "nomad_server_enabled" {
   description = "Enable Telegraf for Nomad servers"
   default     = true
@@ -26,6 +46,26 @@ variable "nomad_server_output_elastisearch" {
 variable "nomad_server_output_elasticsearch_service_name" {
   description = "Service name in Consul to lookup Elasticsearch URLs"
   default     = "elasticsearch"
+}
+
+variable "nomad_server_output_prometheus" {
+  description = "Create a Prometheus Client to serve the metrics for a Prometheus server to scrape"
+  default     = false
+}
+
+variable "nomad_server_output_prometheus_service_name" {
+  description = "Name of the service to advertise in Consul"
+  default     = "prometheus-client"
+}
+
+variable "nomad_server_output_prometheus_service_port" {
+  description = "Port of the Prometheus Client"
+  default     = 9273
+}
+
+variable "nomad_server_output_prometheus_service_cidrs" {
+  description = "List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks."
+  default     = ["0.0.0.0/0"]
 }
 
 variable "nomad_client_enabled" {
@@ -43,6 +83,26 @@ variable "nomad_client_output_elasticsearch_service_name" {
   default     = "elasticsearch"
 }
 
+variable "nomad_client_output_prometheus" {
+  description = "Create a Prometheus Client to serve the metrics for a Prometheus server to scrape"
+  default     = false
+}
+
+variable "nomad_client_output_prometheus_service_name" {
+  description = "Name of the service to advertise in Consul"
+  default     = "prometheus-client"
+}
+
+variable "nomad_client_output_prometheus_service_port" {
+  description = "Port of the Prometheus Client"
+  default     = 9273
+}
+
+variable "nomad_client_output_prometheus_service_cidrs" {
+  description = "List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks."
+  default     = ["0.0.0.0/0"]
+}
+
 variable "vault_enabled" {
   description = "Enable Telegraf for Vault servers"
   default     = true
@@ -56,6 +116,26 @@ variable "vault_output_elastisearch" {
 variable "vault_output_elasticsearch_service_name" {
   description = "Service name in Consul to lookup Elasticsearch URLs"
   default     = "elasticsearch"
+}
+
+variable "vault_output_prometheus" {
+  description = "Create a Prometheus Client to serve the metrics for a Prometheus server to scrape"
+  default     = false
+}
+
+variable "vault_output_prometheus_service_name" {
+  description = "Name of the service to advertise in Consul"
+  default     = "prometheus-client"
+}
+
+variable "vault_output_prometheus_service_port" {
+  description = "Port of the Prometheus Client"
+  default     = 9273
+}
+
+variable "vault_output_prometheus_service_cidrs" {
+  description = "List of CIDRs that the Prometheus client will permit scraping. Remember to allow 127.0.0.1/32 for Consul health checks."
+  default     = ["0.0.0.0/0"]
 }
 
 # --------------------------------------------------------------------------------------------------
