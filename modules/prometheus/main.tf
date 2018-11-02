@@ -99,6 +99,17 @@ resource "aws_security_group_rule" "ssh_ingress" {
   security_group_id = "${aws_security_group.prometheus.id}"
 }
 
+resource "aws_security_group_rule" "prometheus" {
+  type        = "ingress"
+  from_port   = "${var.prometheus_port}"
+  to_port     = "${var.prometheus_port}"
+  protocol    = "tcp"
+  cidr_blocks = ["${concat(var.additional_cidr_blocks, list(data.aws_vpc.selected.cidr_block))}"]
+  description = "Access to Prometheus server"
+
+  security_group_id = "${aws_security_group.prometheus.id}"
+}
+
 resource "aws_security_group_rule" "egress" {
   type        = "egress"
   from_port   = 0

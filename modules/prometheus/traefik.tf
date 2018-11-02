@@ -14,7 +14,7 @@ resource "consul_keys" "traefik_fqdns" {
 
   key {
     path   = "${local.consul_prefix}traefik/fqdns"
-    value  = "${jsonencode(var.traefik_fqdns)}"
+    value  = "${join(",", var.traefik_fqdns)}"
     delete = true
   }
 }
@@ -24,7 +24,7 @@ resource "consul_keys" "traefik_entrypoints" {
 
   key {
     path   = "${local.consul_prefix}traefik/entrypoints"
-    value  = "${jsonencode(var.traefik_entrypoints)}"
+    value  = "${join(",", var.traefik_entrypoints)}"
     delete = true
   }
 }

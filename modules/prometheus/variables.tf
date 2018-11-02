@@ -55,11 +55,16 @@ variable "prometheus_port" {
 
 variable "data_device_name" {
   description = "Path of the EBS device that is mounted"
-  default     = "/dev/nvme1n1p1"
+  default     = "/dev/nvme1n1"
 }
 
 variable "allowed_ssh_cidr_blocks" {
   description = "List of allowed CIDR blocks to allow SSH access"
+  default     = []
+}
+
+variable "additional_cidr_blocks" {
+  description = "Additional CIDR blocks other than the VPC CIDR block thatn can access the Prometheus server"
   default     = []
 }
 

@@ -102,6 +102,7 @@ Refer to the module documentation for more details.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| additional_cidr_blocks | Additional CIDR blocks other than the VPC CIDR block thatn can access the Prometheus server | string | `<list>` | no |
 | allowed_ssh_cidr_blocks | List of allowed CIDR blocks to allow SSH access | string | `<list>` | no |
 | ami_id | AMI ID for Prometheus Server | string | - | yes |
 | associate_public_ip_address | Associate a public IP address for instance | string | `false` | no |
@@ -117,9 +118,9 @@ Refer to the module documentation for more details.
 | curator_age | Age in days to retain indices | string | `90` | no |
 | curator_enable | Enable Curator integration for Prometheus | string | `false` | no |
 | curator_prefix | Elasticsearch prefix for Curator logs | string | `services.prometheus` | no |
-| data_device_name | Path of the EBS device that is mounted | string | `/dev/nvme1n1p1` | no |
-| data_volume_size | Size of the data volume in GB | string | `400` | no |
-| data_volume_snapshot_id | Snapshot ID to create the data volume from | string | `` | no |
+| data_device_name | Path of the EBS device that is mounted | string | `/dev/nvme1n1` | no |
+| data_volume_id | EBS Volume ID for Prometheus Data Storage | string | - | yes |
+| data_volume_mount | Data volume mount device name | string | `/dev/sdf` | no |
 | instance_type | Type of instance to deploy | string | `t2.micro` | no |
 | name | Base name for resources | string | `prometheus` | no |
 | prometheus_client_service | Name of the Prometheus Client services to scrape | string | `prometheus-client` | no |
@@ -142,3 +143,10 @@ Refer to the module documentation for more details.
 | vault_ssh_ttl | TTL for the Vault SSH certificate in seconds | string | `300` | no |
 | vault_ssh_user | Username to allow SSH access | string | `ubuntu` | no |
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| instance_id | Instance ID for the server |
+| instance_private_ip | Private IP address for the server |
+| security_group_id | Security Group ID for the instance |

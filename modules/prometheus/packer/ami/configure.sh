@@ -170,6 +170,8 @@ EOF
   echo -n "${consul}" > "${consul_destination}"
   local readonly consul_owner=$(get_owner_of_path "${consul_config}")
   chown "${consul_owner}:${consul_owner}" "${consul_destination}"
+
+  supervisorctl signal SIGHUP consul
 }
 
 function mount_ebs {
@@ -190,6 +192,8 @@ function mount_ebs {
   echo "UUID=${uuid} ${db_dir} ext4 defaults,nofail" >> /etc/fstab
   # Safety Check
   mount -a
+
+  chown -R prometheus:prometheus "${db_dir}"
 }
 function main {
   local consul_config="/opt/consul/config"
