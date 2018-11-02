@@ -62,7 +62,6 @@ work properly.
 - `prometheus_client_service`: Name of the Prometheus clients to scrape from. Defaults to `prometheus-client`
 - `prometheus_db_dir`: Path where the data for Prometheus will be stored. This will be where the EBS volume where data is persisted will be mounted. Defaults to `/mnt/data`.
 - `prometheus_port`: Port at which the server will be listening to. Defaults to `9090`.
-- `data_volume_mount`: The device name that is exposed to the instance. Note that the OS on the instance might enumerate nvme devices on a different path. Defaults to `/dev/sdf`
 
 ## Integration with other modules
 
