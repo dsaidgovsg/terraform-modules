@@ -78,6 +78,12 @@
     include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
     vars:
       role: "{{ playbook_dir }}/../../../../roles/ansible-docker-ubuntu"
+  - name: Use DNSMasq as default Docker Daemon DNS server
+    copy:
+      content: '{ "dns": ["169.254.1.1"] }'
+      dest: /etc/docker/daemon.json
+      owner: root
+    become: yes
   - name: Install Vault SSH Configuration Script
     include_role:
       name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"

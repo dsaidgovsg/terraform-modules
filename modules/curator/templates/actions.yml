@@ -1,0 +1,37 @@
+actions:
+  {{- scratch.Set "index" 1 }}
+  {{- $prefix := or (env "CONSUL_PREFIX") "terraform/curator" }}
+  {{- range $key, $pairs := tree $prefix | byKey }}
+  {{ scratch.Get "index" }}: # {{ $key }}
+    {{- $age := (keyOrDefault (printf "%s/%s/age" $prefix $key) "90") }}
+    {{- $prefix := (keyOrDefault (printf "%s/%s/prefix" $prefix $key) "") }}
+    {{- $suffix := (keyOrDefault (printf "%s/%s/suffix" $prefix $key) "") }}
+    {{- $disable := ((keyOrDefault (printf "%s/%s/disable" $prefix $key) "false") | parseBool) }}
+    action: delete_indices
+    description: >-
+      Delete indices older than {{ $age }} days (based on index creation), for
+      {{- if ne $prefix "" }} prefix {{ $prefix }}{{- end}}
+      {{- if ne $suffix "" }} suffix {{ $suffix }}{{- end}}
+      Ignore the error if the filter does not result in an actionable list of indices
+      (ignore_empty_list) and exit cleanly.
+    options:
+      ignore_empty_list: true
+      disable_action: {{ $disable }}
+    filters:
+    - filtertype: age
+      source: creation_date
+      direction: older
+      unit: days
+      unit_count: {{ $age }}
+    {{- if ne $prefix "" }}
+    - filtertype: pattern
+      kind: prefix
+      value: {{ $prefix | toJSON }}
+    {{- end}}
+    {{- if ne $suffix "" }}
+    - filtertype: pattern
+      kind: suffix
+      value: {{ $suffix | toJSON }}
+    {{- end}}
+  {{- scratch.Set "index" (add (scratch.Get "index") 1) }}
+  {{- end }}
