@@ -89,13 +89,21 @@
             regex: .*,prometheus_([^,=]+)=([^,]+),.*
             replacement: '${2}'
             target_label: '${1}'
+  - name: Stop Prometheus Service for the rest of the build
+    systemd:
+      name: prometheus
+      state: stopped
+    become: yes
   - name: Make Prometheus Data Mount directory
     file:
-      state: directory
+      state: "{{ item }}"
       path: "{{ prometheus_db_dir }}"
       owner: "prometheus"
       group: "prometheus"
     become: yes
+    loop:
+      - absent
+      - directory
   - name: Install Prometheus Script
     copy:
       src: "{{ playbook_dir }}/configure.sh"

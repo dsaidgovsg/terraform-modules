@@ -26,22 +26,9 @@ resource "aws_instance" "prometheus" {
   }
 }
 
-resource "aws_ebs_volume" "data" {
-  availability_zone = "${data.aws_subnet.selected.availability_zone}"
-  size              = "${var.data_volume_size}"
-  type              = "gp2"
-  snapshot_id       = "${var.data_volume_snapshot_id}"
-
-  tags = "${merge(var.tags, map("Name", "${var.name}-data"))}"
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
 resource "aws_volume_attachment" "data" {
   device_name = "${var.data_volume_mount}"
-  volume_id   = "${aws_ebs_volume.data.id}"
+  volume_id   = "${var.data_volume_id}"
   instance_id = "${aws_instance.prometheus.id}"
 
   skip_destroy = true

@@ -5,15 +5,28 @@ repository.
 
 ## Packer Template
 
+### Instance AMI
+
 You will have to build an AMI with the [Packer template](packer/packer.json) provided.
 
 ```bash
 packer build \
     -var-file "your_vars.json" \
-    packer/packer.json
+    packer/ami/packer.json
 ```
 
 Ansible will be used to provision the AMI.
+
+### Data Volume Snapshot
+
+You will need to use Packer to build a __one off__ data volume to hold your Prometheus data. You
+will then need to provide the EBS volume ID to the Terraform module.
+
+```bash
+packer build \
+    -var-file "your_vars.json" \
+    packer/data/packer.json
+```
 
 ## Persistence
 
@@ -47,6 +60,7 @@ work properly.
 - `prometheus_client_service`: Name of the Prometheus clients to scrape from. Defaults to `prometheus-client`
 - `prometheus_db_dir`: Path where the data for Prometheus will be stored. This will be where the EBS volume where data is persisted will be mounted. Defaults to `/mnt/data`.
 - `prometheus_port`: Port at which the server will be listening to. Defaults to `9090`.
+- `data_volume_mount`: The device name that is exposed to the instance. Note that the OS on the instance might enumerate nvme devices on a different path. Defaults to `/dev/sdf`
 
 ## Integration with other modules
 

@@ -14,6 +14,11 @@ variable "consul_security_group_id" {
   description = "Security Group ID for Consul servers"
 }
 
+variable "data_volume_id" {
+  description = "EBS Volume ID for Prometheus Data Storage"
+}
+
+
 variable "name" {
   description = "Base name for resources"
   default     = "prometheus"
@@ -27,16 +32,6 @@ variable "associate_public_ip_address" {
 variable "instance_type" {
   description = "Type of instance to deploy"
   default     = "t2.micro"
-}
-
-variable "data_volume_size" {
-  description = "Size of the data volume in GB"
-  default     = 400
-}
-
-variable "data_volume_snapshot_id" {
-  description = "Snapshot ID to create the data volume from"
-  default     = ""
 }
 
 variable "prometheus_service" {
