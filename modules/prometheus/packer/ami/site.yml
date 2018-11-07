@@ -1,0 +1,113 @@
+---
+- name: Provision Prometheus AMI
+  hosts: all
+  vars:
+    additional_ntp_servers: ["169.254.169.123"]
+    consul_module_repo: "https://github.com/hashicorp/terraform-aws-consul.git"
+    consul_module_version: "v0.3.5"
+    consul_version: "1.2.3"
+    consul_enable_syslog: true
+    td_agent_config_file: ""
+    td_agent_config_vars_file: ""
+    td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
+    ca_certificate: ""
+    consul_host: ""
+    consul_port: 443
+    consul_scheme: https
+    consul_token: ""
+    consul_integration_prefix: "terraform/"
+    timezone: "Asia/Singapore"
+    prometheus_version: "2.4.3"
+    prometheus_db_dir: "/mnt/data"
+    prometheus_storage_retention: "90d"
+    prometheus_client_service: "prometheus-client"
+    prometheus_consul_job_name: "consul"
+    prometheus_port: 9090
+  tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install CA Certificate
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
+    vars:
+      role: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+  - name: Install Vault PKI CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/vault-pki"
+  - name: Install chrony
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/chrony"
+  - name: Install td-agent
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/td-agent"
+    vars:
+      config_file: "{{ td_agent_config_file }}"
+      config_vars_file: "{{ td_agent_config_vars_file }}"
+      config_dest_file: "{{ td_agent_config_dest_file }}"
+  - name: Install Telegraf
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/telegraf"
+  - name: Install Consul
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/consul"
+  - name: Install Consul-Template
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/install-consul-template"
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"
+  - name: Set default timezone
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/timezone"
+
+  - name: Install Prometheus
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
+    vars:
+      role: "{{ playbook_dir }}/../../../../roles/prometheus"
+      prometheus_web_listen_address: "0.0.0.0:{{ prometheus_port }}"
+      prometheus_scrape_configs:
+        - job_name: "{{ prometheus_consul_job_name }}"
+          consul_sd_configs:
+            - server: "localhost:8500"
+              services:
+                - "{{ prometheus_client_service }}"
+              allow_stale: false
+          relabel_configs:
+          # From https://groups.google.com/forum/#!topic/prometheus-users/Jn6RdehOX0Q
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: .*,prometheus_path=([^,]+),.*
+            replacement: '${1}'
+            target_label: __metrics_path__
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: .*,prometheus_([^,=]+)=([^,]+),.*
+            replacement: '${2}'
+            target_label: '${1}'
+  - name: Stop Prometheus Service for the rest of the build
+    systemd:
+      name: prometheus
+      state: stopped
+      enabled: false
+    become: yes
+  - name: Make Prometheus Data Mount directory
+    file:
+      state: "{{ item }}"
+      path: "{{ prometheus_db_dir }}"
+      owner: "prometheus"
+      group: "prometheus"
+    become: yes
+    loop:
+      - absent
+      - directory
+  - name: Install Prometheus Script
+    copy:
+      src: "{{ playbook_dir }}/configure.sh"
+      dest: /opt/prometheus
+      mode: 0755
+    become: yes

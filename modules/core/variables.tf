@@ -132,7 +132,7 @@ variable "associate_public_ip_address" {
 
 variable "nomad_cluster_name" {
   description = "The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module."
-  default     = "consul-nomad-prototype"
+  default     = "nomad"
 }
 
 variable "nomad_server_instance_type" {
@@ -219,7 +219,7 @@ variable "nomad_clients_user_data" {
 
 variable "consul_cluster_name" {
   description = "Name of the Consul cluster to deploy"
-  default     = "consul-nomad-prototype"
+  default     = "consul"
 }
 
 variable "consul_cluster_size" {
