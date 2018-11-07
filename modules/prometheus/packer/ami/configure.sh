@@ -16,7 +16,7 @@ function print_usage {
   echo "Options:"
   echo
   echo -e "  --server-type\t\tType of server for integrations with other modules. Optional. Defaults to 'prometheus'."
-  echo -e "  --consul-config\t\Consul configuration directory. Optional. Defaults to '/opt/consul/config'."
+  echo -e "  --consul-config\t\tConsul configuration directory. Optional. Defaults to '/opt/consul/config'."
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
 }
 

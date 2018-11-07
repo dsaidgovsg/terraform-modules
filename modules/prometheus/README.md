@@ -42,7 +42,7 @@ Prometheus will be configured to scrape targets from
 [Consul](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config).
 
 Prometheus will be configured will scrape from targets in the `prometheus-client` service by default
-on the path `/mertics` by default. The port of the Prometheus client will be the port that is
+on the path `/metrics` by default. The port of the Prometheus client will be the port that is
 reported by the service.
 
 In addition, you can add the following [tags](https://www.consul.io/docs/agent/services.html) in
@@ -91,7 +91,7 @@ the Packer template:
 For example, add the following arguments to `packer build`:
 
 ```bash
-    --var "td_agent_config_file=$(pwd)/..td-agent/config/template/td-agent.conf" \
+    --var "td_agent_config_file=$(pwd)/../td-agent/config/template/td-agent.conf" \
     --var "td_agent_config_vars_file=$(pwd)/packer/td-agent-vars.yml"
 ```
 
