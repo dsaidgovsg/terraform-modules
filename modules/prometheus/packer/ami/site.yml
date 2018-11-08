@@ -85,10 +85,38 @@
             replacement: '${1}'
             target_label: __metrics_path__
           - source_labels: ["__meta_consul_tags"]
+            regex: .*,prometheus_disable=true,.*
+            action: drop
+          # Convert all the `prometheus_tag_xxx` tags to additional tags for the target
+          # Due to how the regex works, we have to have as many actions as the number of potential
+          # tags
+          # See https://www.robustperception.io/extracting-full-labels-from-consul-tags
+          - source_labels: ["__meta_consul_tags"]
             action: replace
-            regex: .*,prometheus_([^,=]+)=([^,]+),.*
+            regex: ',(?:[^,]+,){0}prometheus_tag_([^=]+)=([^,]+),.*'
             replacement: '${2}'
             target_label: '${1}'
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: ',(?:[^,]+,){1}prometheus_tag_([^=]+)=([^,]+),.*'
+            replacement: '${2}'
+            target_label: '${1}'
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: ',(?:[^,]+,){2}prometheus_tag_([^=]+)=([^,]+),.*'
+            replacement: '${2}'
+            target_label: '${1}'
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: ',(?:[^,]+,){3}prometheus_tag_([^=]+)=([^,]+),.*'
+            replacement: '${2}'
+            target_label: '${1}'
+          - source_labels: ["__meta_consul_tags"]
+            action: replace
+            regex: ',(?:[^,]+,){4}prometheus_tag_([^=]+)=([^,]+),.*'
+            replacement: '${2}'
+            target_label: '${1}'
+
   - name: Stop Prometheus Service for the rest of the build
     systemd:
       name: prometheus
