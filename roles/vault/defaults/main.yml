@@ -1,6 +1,5 @@
 ---
 vault_ui_enable: "true"
-consul_key: "vault/"
 
 tls_cert_file_src: "{{ playbook_dir }}/cert/cert.pem"
 tls_cert_file_dest: "/opt/vault/tls/vault.crt"
