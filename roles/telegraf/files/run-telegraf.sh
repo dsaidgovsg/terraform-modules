@@ -236,7 +236,7 @@ service {
   port = ${prometheus_port}
 
   tags = [
-    "prometheus_server_type=${server_type}",
+    "prometheus_tag_server_type=${server_type}",
   ]
 
   check {

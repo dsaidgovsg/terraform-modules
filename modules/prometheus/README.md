@@ -49,9 +49,12 @@ In addition, you can add the following [tags](https://www.consul.io/docs/agent/s
 the form of `<key>=<value>` to change the behaviour for scraping:
 
 - `prometheus_path`: Change the path for scraping to anything else other than `/metrics`.
+- `prometheus_disable`: Set this to `true` to temporarily stop scraping this target
 
-Any other keys that are prefixed with `prometheus_` will be added as labels for the target with
-their prefixes removed.
+Up to 5 other keys that are prefixed with `prometheus_tag_` will be added as labels for the target
+with their prefixes removed. To allow for more tags, modify the the
+[Ansible playbook](packer/ami/site.yml) with more relabel actions. This is a limitation of
+Prometheus.
 
 ## Important Variables
 
