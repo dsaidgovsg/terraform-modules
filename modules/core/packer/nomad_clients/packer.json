@@ -13,7 +13,7 @@
         "nomad_module_version": "v0.4.1",
         "consul_version": "1.2.3",
         "vault_module_version": "v0.7.1",
-        "vault_version": "0.11.1",
+        "vault_version": "0.11.4",
         "docker_version": "18.06.0~ce~3-0~ubuntu",
         "consul_enable_syslog": "true",
         "nomad_enable_syslog": "true",
