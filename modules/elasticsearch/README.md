@@ -74,7 +74,7 @@ module "es" {
 
   es_domain_name       = "my-cloud-es"
   es_base_domain       = "${data.terraform_remote_state.core.base_domain}"
-  es_access_cidr_block = ["1.2.3.4"]
+  es_access_cidr_block = ["1.3.1.4"]
 
   es_master_type     = "r4.xlarge.elasticsearch"
   es_instance_type   = "r4.xlarge.elasticsearch"
