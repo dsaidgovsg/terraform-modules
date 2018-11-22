@@ -4,11 +4,10 @@
   register: release_name
 - name: Install dependencies
   apt:
-    name: "{{ item }}"
+    name:
+      - "libssl-dev"
+      - "software-properties-common"
     state: latest
-  with_items:
-    - "libssl-dev"
-    - "software-properties-common"
   become: yes
 - name: Add Ansible PPA
   apt_repository:
