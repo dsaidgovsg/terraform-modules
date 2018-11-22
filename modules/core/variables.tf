@@ -433,6 +433,11 @@ variable "elb_access_log_prefix" {
   default     = ""
 }
 
+variable "elb_idle_timeout" {
+  description = "The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that."
+  default     = 660
+}
+
 # --------------------------------------------------------------------------------------------------
 # Post Bootstrap Integration Parameters
 # These parameters are used in conjunction with the other modules in this repository.

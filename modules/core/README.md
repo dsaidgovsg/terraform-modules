@@ -474,7 +474,7 @@ Replace `xxx` with the instance ID.
 | consul_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | list | - | yes |
 | consul_ami_id | AMI ID for Consul servers | string | - | yes |
 | consul_api_domain | Domain to access Consul HTTP API | string | - | yes |
-| consul_cluster_name | Name of the Consul cluster to deploy | string | `consul-nomad-prototype` | no |
+| consul_cluster_name | Name of the Consul cluster to deploy | string | `consul` | no |
 | consul_cluster_size | The number of Consul server nodes to deploy. We strongly recommend using 3 or 5. | string | `3` | no |
 | consul_instance_type | Type of instances to deploy Consul servers and clients to | string | `t2.medium` | no |
 | consul_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
@@ -490,6 +490,7 @@ Replace `xxx` with the instance ID.
 | elb_access_log | Log Internal LB access to a S3 bucket | string | `false` | no |
 | elb_access_log_bucket | S3 bucket to log access to the internal LB to | string | - | yes |
 | elb_access_log_prefix | Prefix in the S3 bucket to log internal LB access | string | `` | no |
+| elb_idle_timeout | The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that. | string | `660` | no |
 | elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
 | integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
 | internal_lb_certificate_arn | ARN of the certificate to use for the internal LB | string | - | yes |
@@ -509,7 +510,7 @@ Replace `xxx` with the instance ID.
 | nomad_clients_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
 | nomad_clients_services_inbound_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | list | `<list>` | no |
 | nomad_clients_user_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | string | `` | no |
-| nomad_cluster_name | The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module. | string | `consul-nomad-prototype` | no |
+| nomad_cluster_name | The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module. | string | `nomad` | no |
 | nomad_server_instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
 | nomad_server_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
 | nomad_server_lb_healthy_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `2` | no |

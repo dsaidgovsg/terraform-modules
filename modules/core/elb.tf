@@ -9,6 +9,8 @@ resource "aws_lb" "internal" {
   subnets         = ["${var.internal_lb_subnets}"]
   internal        = true
 
+  idle_timeout = "${var.elb_idle_timeout}"
+
   access_logs {
     enabled = "${var.elb_access_log}"
     bucket  = "${var.elb_access_log_bucket}"
