@@ -9,10 +9,9 @@
     mode: 0400
 - name: Install dependencies for td-agent
   apt:
-    name: "{{ item }}"
-  with_items:
-  - gcc
-  - make
+    name:
+      - gcc
+      - make
   become: yes
 - name: Run the install script
   command: "sh {{ td_agent_tmp_file }}"

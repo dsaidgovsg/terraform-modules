@@ -10,20 +10,18 @@
 
 - name: Install dnsmasq and git via apt
   apt:
-    name: "{{ item }}"
+    name:
+      - dnsmasq
+      - git
     state: latest
-  with_items:
-  - dnsmasq
-  - git
   become: yes
   when: is_debian
 - name: Install dnsmasq and git via yum
   yum:
-    name: "{{ item }}"
+    name:
+      - dnsmasq
+      - git
     state: latest
-  with_items:
-  - dnsmasq
-  - git
   become: yes
   when: is_redhat
 
