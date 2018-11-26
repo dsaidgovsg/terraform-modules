@@ -18,6 +18,7 @@ it makes use of Vault store and retrieve secrets that are needed for Grafana to 
 
 - Vault AWS Secrets engine
 - Elasticsearch (via the module in this repository, or otherwise)
+- Prometheus (via the module)
 
 In addition, you will need to prepare the following secrets, as described in the sections below.
 
@@ -130,6 +131,8 @@ Write any additional dashboard as individual `json` files to `alloc/dashboards/`
 | grafana_vault_policies | List of Vault Policies for Grafana to retrieve the relevant secrets | list | - | yes |
 | nomad_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | string | `<list>` | no |
 | nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
+| prometheus_datasource_name | Name of the Prometheus data source | string | `Prometheus` | no |
+| prometheus_service | If set, will query Consul for the Prometheus service and retrieve the host and port of a Prometheus server | string | `` | no |
 | session_config | A Go template string to template out the session provider configuration. Depends on the type of provider | string | `` | no |
 | session_provider | Type of session store | string | `memory` | no |
 | vault_admin_password_path | Path for the Go template to read the admin password | string | `.Data.password` | no |

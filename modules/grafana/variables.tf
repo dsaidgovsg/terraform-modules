@@ -159,6 +159,16 @@ variable "cloudwatch_datasource_name" {
   default     = "Cloudwatch"
 }
 
+variable "prometheus_service" {
+  description = "If set, will query Consul for the Prometheus service and retrieve the host and port of a Prometheus server"
+  default     = ""
+}
+
+variable "prometheus_datasource_name" {
+  description = "Name of the Prometheus data source"
+  default     = "Prometheus"
+}
+
 #
 # Dashboards
 #

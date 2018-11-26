@@ -56,6 +56,7 @@ data "template_file" "grafana_jobspec" {
     grafana_conf_template            = "${data.template_file.grafana_config.rendered}"
     grafana_dashboards               = "${file("${path.module}/templates/dashboards.yml")}"
     cloudwatch_datasource            = "${data.template_file.grafana_datasource_cloudwatch.rendered}"
+    prometheus_datasource            = "${data.template_file.prometheus_datasource.rendered}"
     grafana_dashboard_aws_billing    = "${data.template_file.grafana_dashboard_aws_billing.rendered}"
     grafana_dashboard_aws_cloudwatch = "${data.template_file.grafana_dashboard_aws_cloudwatch.rendered}"
 
@@ -71,6 +72,15 @@ data "template_file" "grafana_datasource_cloudwatch" {
     name       = "${var.cloudwatch_datasource_name}"
     aws_path   = "${var.cloudwatch_datasource_aws_path}"
     aws_region = "${var.aws_region}"
+  }
+}
+
+data "template_file" "prometheus_datasource" {
+  template = "${var.prometheus_service != "" ? file("${path.module}/templates/datasources/prometheus.yml"): ""}"
+
+  vars {
+    name    = "${var.prometheus_datasource_name}"
+    service = "${var.prometheus_service}"
   }
 }
 

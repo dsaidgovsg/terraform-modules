@@ -62,6 +62,13 @@ EOH
 
       template {
         data = <<EOH
+${prometheus_datasource}
+EOH
+        destination = "secrets/provisioning/datasources/prometheus.yaml"
+      }
+
+      template {
+        data = <<EOH
 ${grafana_dashboard_aws_billing}
 EOH
 
