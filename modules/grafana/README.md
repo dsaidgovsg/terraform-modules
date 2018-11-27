@@ -58,7 +58,7 @@ If you are using the KV store, make sure you input your data in the right key-va
 You will need to provide a set of default Admin username and passsword.
 
 You can use [`random_string`](https://www.terraform.io/docs/providers/random/r/string.html) to
-randomly generate the pasword and write it to Vault.
+randomly generate the password and write it to Vault.
 
 Alternatively, you can encrypt the password with AWS KMS to your code, and then use
 [`aws_kms_secrets`](https://www.terraform.io/docs/providers/aws/d/kms_secrets.html) to decrypt it
