@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: ${name}
+    type: prometheus
+    access: proxy
+    url: http://{{ with service "${service}" }}{{ with index . 0}}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}

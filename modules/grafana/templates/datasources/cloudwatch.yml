@@ -1,0 +1,14 @@
+apiVersion: 1
+
+# http://docs.grafana.org/administration/provisioning/#datasources
+datasources:
+{{- with secret "${aws_path}" }}
+- name: ${name}
+  type: cloudwatch
+  jsonData:
+    authType: keys
+    defaultRegion: ${aws_region}
+  secureJsonData:
+    accessKey: "{{ .Data.access_key }}"
+    secretKey: "{{ .Data.secret_key }}"
+{{ end }}
