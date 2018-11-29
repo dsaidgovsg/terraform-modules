@@ -160,9 +160,14 @@ function generate_initialisation_check {
   local readonly user="${2}"
   local readonly marker_path="${3}"
 
+  # This function should only be run by Consul agents and not by server
+
   local config=$(cat <<EOF
 # The default configuration for agents only accept HTTP API connections from localhost
-enable_script_checks = true
+
+# Use enable_local_script_checks instead of enable_script_checks
+# See https://www.hashicorp.com/blog/protecting-consul-from-rce-risk-in-specific-configurations
+enable_local_script_checks = true
 
 # Define "health check" for User Data completion
 check {
