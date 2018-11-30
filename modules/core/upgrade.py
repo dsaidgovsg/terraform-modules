@@ -273,7 +273,7 @@ def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
     n = find_n_to_kill_in_quorum(aws_instances)
     assert_n_quorum(n)
 
-    checker = lambda prev_aws_instances, idx: \
+    def checker(prev_aws_instances, idx):
         consul_nomad_server_checker(prev_aws_instances, idx, n, consul_tag_pattern, lambda: list_consul_peers(address))
 
     execute_kill_loop(
@@ -298,7 +298,7 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
     n = find_n_to_kill_in_quorum(aws_instances)
     assert_n_quorum(n)
     
-    checker = lambda prev_aws_instances, idx: \
+    def checker(prev_aws_instances, idx):
         consul_nomad_server_checker(prev_aws_instances, idx, n, nomad_server_tag_pattern, lambda: list_nomad_server_members(address))
 
     execute_kill_loop(
@@ -332,6 +332,18 @@ def upgrade_vault(vault_tag_pattern, unseal_count, ca_cert_path, check_interval,
 
     n = find_n_to_kill_in_quorum(aws_instances)
     assert_n_quorum(n)
+
+    def checker(prev_aws_instances, idx):
+        # consul_nomad_server_checker(prev_aws_instances, idx, n, vault_tag_pattern, lambda: list_nomad_server_members(address))
+        pass
+
+    # execute_kill_loop(
+    #     kill_instance,
+    #     vault_tag_pattern,
+    #     checker,
+    #     n,
+    #     check_interval,
+    #     timeout)
 
 #
 # Main
