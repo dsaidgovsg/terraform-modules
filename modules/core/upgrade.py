@@ -94,7 +94,7 @@ def get_auto_scaling_name(grep_name):
         return invoke_shell("""
         aws autoscaling describe-auto-scaling-groups | \
             jq --raw-output \
-                '.AutoScalingGroups | .[] | .AutoScalingGroupName' | grep {}
+                '.AutoScalingGroups | .[].AutoScalingGroupName' | grep {}
         """.format(grep_name))
     except:
         raise AssertionError('"{}" prefixed ASG name does not exist!'.format(grep_name))
