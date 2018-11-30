@@ -299,9 +299,45 @@ build a new AMI, then update the terraform variables with the new AMI ID. Then, 
 `terraform apply` to update the launch configuration.
 
 Then, you will need to terminate the various instances for Auto Scaling Group to start
-new instances with the updated launch configurations. You should do this ONE BY ONE.
+new instances with the updated launch configurations. You should do this ONE BY ONE, or at least be
+mindful about the quorum and maximum number of instances that can be terminated each time. See
+the [consensus table](https://www.consul.io/docs/internals/consensus.html#deployment-table) for
+clarity in the quorum values.
 
-#### Upgrading Consul
+#### Automated upgrade via script
+
+You may choose to run the Python 3 `upgrade.py` script, which should not require additional
+dependency installation, to upgrade the instances.
+
+Currently only `consul` and `nomad-server` services can be done in this way.
+
+Before you run the upgrade script, make sure to have your AWS credentials (such as env vars) set up
+correctly, to point to the right environment for the instance upgrade.
+
+The script will terminate the max number of instances within the quorum (i.e. number of instances
+of that service type left would still be in quorum), checking that the new instances are up and
+correctly connected to their respective servies, before continuing to repeat the process, until
+all old instances in that service type have been terminated and upgraded with new ones.
+
+For `consul`, the command should look like this:
+
+```bash
+./upgrade.py consul --consul-addr https://consul.x.y
+```
+
+For `nomad-server`, the command should look like this:
+
+```bash
+./upgrade.py nomad-server --nomad-addr https://nomad.x.y
+```
+
+For more information, run
+
+```bash
+./upgrade.py -h
+```
+
+#### Manual upgrading Consul
 
 **Important**: It is important that you only terminate Consul instances one by one. Make sure the
 new servers are healthy and have joined the cluster before continuing. If you lose more than a
@@ -326,7 +362,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Upgrading Nomad Servers
+#### Manual upgrading Nomad Servers
 
 **Important**: It is important that you only terminate Nomad server instances one by one.
 Make sure the new servers are healthy and have joined the cluster before continuing.
@@ -351,7 +387,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Upgrading Nomad Clients
+#### Manual upgrading Nomad Clients
 
 **Important**: These steps are recommended to minimise the outage your services might experience. In
 particular, if your service only has one instance of it running, you will definitely encounter
@@ -440,7 +476,7 @@ aws ec2 terminate-instances \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
 ```
 
-#### Upgrading Vault
+#### Manual upgrading Vault
 
 **Important**: It is important that you update the instances one by one. Make sure the new instance
 is healthy, has joined the cluster and is **unsealed** first before continuing.
