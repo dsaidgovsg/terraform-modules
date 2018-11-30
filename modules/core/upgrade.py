@@ -42,6 +42,12 @@ CMDS = [
 # Assertion commands
 #
 
+
+def assert_n_quorum(n):
+    if n == 0:
+        sys.exit('This process can only be run when there are 3 or more servers to maintain quorum.')
+
+
 def assert_environ(env_name):
     env = os.environ.get(env_name)
     if not env:
@@ -71,10 +77,10 @@ def unique(seq):
     return [x for x in seq if not (x in seen or seen.add(x))]
 
 
-def find_max_n_to_kill(instances):
-    # Find the max N instances that can terminate in one go
-    # Min is still 1, cannot be 0
-    return max(math.floor(len(instances) / 2), 1)
+def find_n_to_kill_in_quorum(instances):
+    # The number of instances left must be simple majority to maintain quorum
+    # https://www.consul.io/docs/internals/consensus.html#deployment-table
+    return int(max((len(instances) + 1) / 2 - 1, 0))
 
 
 def invoke_shell(cmd):
@@ -126,7 +132,7 @@ def try_until_timeout(predicate, check_interval, timeout):
             return False
 
         wait_secs = check_interval.total_seconds()
-        print('> Waiting for {}s ({}s has elapsed)'.format(wait_secs, elapsed_time.total_seconds()))
+        print('> Waiting for {}s ({}s elapsed)'.format(wait_secs, elapsed_time.total_seconds()))
         time.sleep(wait_secs)
         elapsed_time += check_interval
 
@@ -164,7 +170,7 @@ def execute_kill_loop(kill_fn, asg_name, get_service_nodes_fn, n, check_interval
                     'New instance(s) is/are unable to join the service after timeout of {}s, aborting...'.format(timeout.total_seconds()))
             
             new_instances = get_instances_from_asg(asg_name).difference(prev_aws_instances)
-            print('New instance(s) found: {}', format(new_instances))
+            print('New instance(s) found: {}'.format(new_instances))
 
 #
 # Consul specifics
@@ -209,7 +215,8 @@ def upgrade_consul(consul_asg, address, check_interval, timeout):
     print(' Consul nodes: {}'.format(consul_nodes))
     assert_same_instances(aws_instances, consul_nodes)
 
-    n = find_max_n_to_kill(aws_instances)
+    n = find_n_to_kill_in_quorum(aws_instances)
+    assert_n_quorum(n)
     
     execute_kill_loop(
         kill_instance_from_asg,
@@ -231,7 +238,8 @@ def upgrade_nomad_server(nomad_server_asg, address, check_interval, timeout):
     print('Nomad servers: {}'.format(nomad_servers))
     assert_same_instances(aws_instances, nomad_servers)
 
-    n = find_max_n_to_kill(aws_instances)
+    n = find_n_to_kill_in_quorum(aws_instances)
+    assert_n_quorum(n)
     
     execute_kill_loop(
         kill_instance_from_asg,
