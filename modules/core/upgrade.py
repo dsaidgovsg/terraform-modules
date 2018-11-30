@@ -80,7 +80,9 @@ def unique(seq):
 def find_n_to_kill_in_quorum(instances):
     # The number of instances left must be simple majority to maintain quorum
     # https://www.consul.io/docs/internals/consensus.html#deployment-table
-    return int(max((len(instances) + 1) / 2 - 1, 0))
+    # Be careful with numeric operations in Python, since they are by default
+    # interpreted as floating points operations
+    return int(max(math.floor((len(instances) + 1) / 2) - 1, 0))
 
 
 def invoke_shell(cmd):
