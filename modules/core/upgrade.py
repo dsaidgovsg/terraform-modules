@@ -105,7 +105,9 @@ def get_instances_from_asg(asg_name):
         return set(invoke_shell("""
         aws autoscaling describe-auto-scaling-groups \
             --auto-scaling-group-name {} | \
-            jq --raw-output '.AutoScalingGroups[0].Instances[].InstanceId'
+            jq --raw-output '.AutoScalingGroups[0].Instances[] |
+                select(.LifecycleState | contains("InService")) |
+                .InstanceId'
         """.format(asg_name)).split())
     except:
         raise AssertionError('Cannot find instances from "{}" ASG!'.format(asg_name))
