@@ -13,16 +13,16 @@ import time
 # Constants
 #
 
-# ASG prefixes to grep
-CONSUL_ASG = 'consul'
-NOMAD_SERVER_ASG = 'nomad-server'
-NOMAD_CLIENT_ASG = 'nomad-client'
-VAULT_ASG = 'vault'
+# Tag patterns to filter
+CONSUL_TAG = 'consul'
+NOMAD_SERVER_TAG = 'nomad-server'
+NOMAD_CLIENT_TAG = 'nomad-client'
+VAULT_TAG = 'vault'
 
 # Default addresses
 CONSUL_ADDR = 'http://127.0.0.1:8500'
 NOMAD_ADDR = 'http://127.0.0.1:4646'
-VAULT_ADDR = 'https://127.0.0.1:8200'
+# VAULT_ADDR = 'https://127.0.0.1:8200'
 
 # Interval of checking the change in set entries
 CHECK_INTERVAL_SECS = 5
@@ -30,12 +30,18 @@ CHECK_INTERVAL_SECS = 5
 # Max time value to allow for ensuring both AWS and services have same set after killing
 TIMEOUT_SECS = 300
 
+# Default number of unseals required
+VAULT_UNSEAL_COUNT = 3
+
 # Commands to ensure to be available before starting
 CMDS = [
     'aws',
     'consul',
+    'curl',
     'nomad',
-    'jq'
+    'jq',
+    'scp',
+    'ssh'
 ]
 
 #
@@ -89,31 +95,31 @@ def invoke_shell(cmd):
     return subprocess.check_output(cmd, shell=True).decode('ascii').strip()
 
 
-def get_auto_scaling_name(grep_name):
-    try:
-        return invoke_shell("""
-        aws autoscaling describe-auto-scaling-groups | \
-            jq --raw-output \
-                '.AutoScalingGroups | .[].AutoScalingGroupName' | grep {}
-        """.format(grep_name))
-    except:
-        raise AssertionError('"{}" prefixed ASG name does not exist!'.format(grep_name))
-
-
-def get_instances_from_asg(asg_name):
+def get_instance_ids_from_tag(tag_pattern):
     try:
         return set(invoke_shell("""
-        aws autoscaling describe-auto-scaling-groups \
-            --auto-scaling-group-name {} | \
-            jq --raw-output '.AutoScalingGroups[0].Instances[] |
-                select(.LifecycleState | contains("InService")) |
-                .InstanceId'
-        """.format(asg_name)).split())
+        aws ec2 describe-instances --filter \
+            "Name=tag:Name,Values=*{}*" \
+            "Name=instance-state-name,Values=running" | \
+            jq --raw-output '.Reservations[].Instances[].InstanceId'
+        """.format(tag_pattern)).split())
     except:
-        raise AssertionError('Cannot find instances from "{}" ASG!'.format(asg_name))
+        raise AssertionError('Cannot find instance IDs with tag pattern "{}"!'.format(tag_pattern))
 
 
-def kill_instance_from_asg(aws_instance):
+def get_instance_ip_addrs_from_tag(tag_pattern):
+    try:
+        return set(invoke_shell("""
+        aws ec2 describe-instances --filter \
+            "Name=tag:Name,Values=*{}*" \
+            "Name=instance-state-name,Values=running" | \
+            jq --raw-output '.Reservations[].Instances[].PrivateIpAddress'
+        """.format(tag_pattern)).split())
+    except:
+        raise AssertionError('Cannot get instance IP addresses with tag pattern "{}"!'.format(tag_pattern))
+
+
+def kill_instance(aws_instance):
     try:
         invoke_shell("""
         aws autoscaling terminate-instance-in-auto-scaling-group \
@@ -141,14 +147,14 @@ def try_until_timeout(predicate, check_interval, timeout):
         elapsed_time += check_interval
 
 
-def execute_kill_loop(kill_fn, asg_name, get_service_nodes_fn, n, check_interval, timeout):
+def execute_kill_loop(kill_fn, tag_pattern, get_service_nodes_fn, n, check_interval, timeout):
     print("Killing {} instance(s) in one go...".format(n))
 
-    orig_aws_instances = get_instances_from_asg(asg_name)
+    orig_aws_instances = get_instance_ids_from_tag(tag_pattern)
     instance_count = len(orig_aws_instances)
 
     for idx, orig_aws_instance in enumerate(orig_aws_instances):
-        prev_aws_instances = get_instances_from_asg(asg_name)
+        prev_aws_instances = get_instance_ids_from_tag(tag_pattern)
 
         print('Killing instance "{} ({}/{})"...'.format(orig_aws_instance, idx + 1, instance_count))
         kill_fn(orig_aws_instance)
@@ -156,7 +162,7 @@ def execute_kill_loop(kill_fn, asg_name, get_service_nodes_fn, n, check_interval
         # Check only after every N kills
         if (idx + 1) % n == 0 or (idx + 1) == instance_count:
             def predicate():
-                curr_aws_instances = get_instances_from_asg(asg_name)
+                curr_aws_instances = get_instance_ids_from_tag(tag_pattern)
                 curr_service_nodes = get_service_nodes_fn()
 
                 # Cater for remaining instances when the count is less than N
@@ -173,7 +179,7 @@ def execute_kill_loop(kill_fn, asg_name, get_service_nodes_fn, n, check_interval
                 raise AssertionError(
                     'New instance(s) is/are unable to join the service after timeout of {}s, aborting...'.format(timeout.total_seconds()))
             
-            new_instances = get_instances_from_asg(asg_name).difference(prev_aws_instances)
+            new_instances = get_instance_ids_from_tag(tag_pattern).difference(prev_aws_instances)
             print('New instance(s) found: {}'.format(new_instances))
 
 #
@@ -205,15 +211,56 @@ def list_nomad_server_members(address):
             .format(address))
 
 #
+# Vault specifics
+#
+
+def list_vault_members():
+    try:
+        return set(invoke_shell("""
+        curl -s https://consul.locus.rocks/v1/catalog/service/vault | jq --raw-output '.[].Node'
+        """).split())
+    except:
+        raise AssertionError('Unable to obtain Vault members from Consul catalog!')
+
+
+def send_ca_cert(username, ip_addr, local_ca_cert_path, remote_ca_cert_dir):
+    try:
+        local_ca_cert_name = os.path.basename(local_ca_cert_path)
+
+        return invoke_shell("""
+        scp -o StrictHostKeyChecking=no {lcertname} {user}@{addr}:/tmp && \
+        ssh -o StrictHostKeyChecking=no {user}@{addr} "sudo mv /tmp/{lcertname} {rcertdir}"
+        """.format(
+            user=username,
+            addr=ip_addr,
+            lcertpath=local_ca_cert_path,
+            certname=local_ca_cert_name,
+            rcertdir=remote_ca_cert_dir))
+    except:
+        raise AssertionError('Unable to send CA certificate across to "{}"!'.format(ip_addr))
+
+
+def unseal_vault(username, ip_addr, vault_local_ip_addr, unseal_key):
+    try:
+        return invoke_shell("""
+        ssh -o StrictHostKeyChecking=no {user}@{addr} "vault operator unseal -address {local_addr} {unseal_key}"
+        """.format(
+            user=username,
+            addr=ip_addr,
+            local_addr=vault_local_ip_addr,
+            unseal_key=unseal_key))
+    except:
+        raise AssertionError('Unable to send CA certificate across to "{}"!'.format(ip_addr))
+
+#
 # High level
 #
 
-def upgrade_consul(consul_asg, address, check_interval, timeout):
+def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
     print("Upgrading Consul instances...")
-    consul_asg = get_auto_scaling_name(consul_asg)
 
     # Sanity check
-    aws_instances = get_instances_from_asg(consul_asg)
+    aws_instances = get_instance_ids_from_tag(consul_tag_pattern)
     consul_nodes = list_consul_peers(address)
     print('AWS instances: {}'.format(aws_instances))
     print(' Consul nodes: {}'.format(consul_nodes))
@@ -223,20 +270,19 @@ def upgrade_consul(consul_asg, address, check_interval, timeout):
     assert_n_quorum(n)
     
     execute_kill_loop(
-        kill_instance_from_asg,
-        consul_asg,
+        kill_instance,
+        consul_tag_pattern,
         lambda: list_consul_peers(address),
         n,
         check_interval,
         timeout)
 
 
-def upgrade_nomad_server(nomad_server_asg, address, check_interval, timeout):
+def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, timeout):
     print("Upgrading Nomad Servers instances...")
-    nomad_server_asg = get_auto_scaling_name(nomad_server_asg)
 
     # Sanity check
-    aws_instances = get_instances_from_asg(nomad_server_asg)
+    aws_instances = get_instance_ids_from_tag(nomad_server_tag_pattern)
     nomad_servers = list_nomad_server_members(address)
     print('AWS instances: {}'.format(aws_instances))
     print('Nomad servers: {}'.format(nomad_servers))
@@ -246,8 +292,8 @@ def upgrade_nomad_server(nomad_server_asg, address, check_interval, timeout):
     assert_n_quorum(n)
     
     execute_kill_loop(
-        kill_instance_from_asg,
-        nomad_server_asg,
+        kill_instance,
+        nomad_server_tag_pattern,
         lambda: list_nomad_server_members(address),
         n,
         check_interval,
@@ -256,13 +302,26 @@ def upgrade_nomad_server(nomad_server_asg, address, check_interval, timeout):
 
 # TODO - Need to figure out how to properly wait for all upgradeed allocs get
 #        reallocated first synchronously
-# def upgrade_nomad_client(nomad_client_asg, address, check_interval, timeout):
-#     nomad_client_asg = get_auto_scaling_name(nomad_client_asg)
+# def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout):
+#     pass
 
 # TODO - Need to make it such that we can place N unsealing keys into an env var
 #        and let it automatically unseal using the env var iteratively
-# def upgrade_vault(vault_asg, address, check_interval, timeout):
-#     vault_asg = get_auto_scaling_name(vault_asg)
+def upgrade_vault(vault_tag_pattern, unseal_count, ca_cert_path, check_interval, timeout):
+    print('Enter any {} Vault unseal key(s):'.format(unseal_count))
+
+    unseal_keys = []
+    for _ in range(0, unseal_count):
+        unseal_keys.append(sys.stdin.readline().strip())
+
+    aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
+    vault_servers = list_vault_members()
+    print('AWS instances: {}'.format(aws_instances))
+    print('Nomad servers: {}'.format(vault_servers))
+    assert_same_instances(aws_instances, vault_servers)
+
+    n = find_n_to_kill_in_quorum(aws_instances)
+    assert_n_quorum(n)
 
 #
 # Main
@@ -274,15 +333,16 @@ if __name__ == '__main__':
     # Dashes get converted into underscore when accessing the fields
     parser.add_argument('service', nargs='+', help='Service type to upgrade. consul | nomad-server | nomad-client | vault')
 
-    parser.add_argument('--consul-asg', default=CONSUL_ASG, help='Simple grep pattern to get Consul ASG. Defaults to "{}".'.format(CONSUL_ASG))
+    parser.add_argument('--consul-tag', default=CONSUL_TAG, help='Tag pattern of Consul instances. Defaults to "{}".'.format(CONSUL_TAG))
     parser.add_argument('--consul-addr', default=CONSUL_ADDR, help='Consul server address to connect to. Defaults to "{}".'.format(CONSUL_ADDR))
 
-    parser.add_argument('--nomad-server-asg', default=NOMAD_SERVER_ASG, help='Simple grep pattern to get Nomad Server ASG. Defaults to "{}".'.format(NOMAD_SERVER_ASG))
-    parser.add_argument('--nomad-client-asg', default=NOMAD_CLIENT_ASG, help='Simple grep pattern to get Nomad Client ASG. Defaults to "{}".'.format(NOMAD_CLIENT_ASG))
+    parser.add_argument('--nomad-server-tag', default=NOMAD_SERVER_TAG, help='Tag pattern of Nomad Server instances. Defaults to "{}".'.format(NOMAD_SERVER_TAG))
+    parser.add_argument('--nomad-client-tag', default=NOMAD_CLIENT_TAG, help='Tag pattern of Nomad Client instances. Defaults to "{}".'.format(NOMAD_CLIENT_TAG))
     parser.add_argument('--nomad-addr', default=NOMAD_ADDR, help='Nomad Server address to connect to. Defaults to "{}".'.format(NOMAD_ADDR))
 
-    parser.add_argument('--vault-asg', default=VAULT_ASG, help='Simple grep pattern to get Vault ASG. Defaults to "{}".'.format(VAULT_ASG))
-    parser.add_argument('--vault-addr', default=VAULT_ADDR, help='Vault server address to connect to. Defaults to "{}".'.format(VAULT_ADDR))
+    parser.add_argument('--vault-tag', default=VAULT_TAG, help='Tag pattern of Vault instances. Defaults to "{}".'.format(VAULT_TAG))
+    parser.add_argument('--vault-unseal-count', type=int, default=VAULT_UNSEAL_COUNT, help='Number of unseal keys required to fully unseal a new Vault server')
+    parser.add_argument('--vault-ca-cert', help='Path to CA certificate for unsealing')
 
     parser.add_argument('--check-interval', type=int, default=CHECK_INTERVAL_SECS, help='Interval of checking success for every upgrade step. Defaults to "{}" seconds.'.format(CHECK_INTERVAL_SECS))
     parser.add_argument('--timeout', type=int, default=TIMEOUT_SECS, help='Max time value to allow for ensuring consistency in upgrade after killing. Defaults to "{}" seconds.'.format(TIMEOUT_SECS))
@@ -301,18 +361,18 @@ if __name__ == '__main__':
         # All environment addresses should not contain trailing slash
         # e.g. http://consul.x.y OR https://consul.x.y
         if service == 'consul':
-            upgrade_consul(args.consul_asg, args.consul_addr, check_interval, timeout)
+            upgrade_consul(args.consul_tag, args.consul_addr, check_interval, timeout)
             print('DONE Consul upgrading!')
         elif service == 'nomad-server':
-            upgrade_nomad_server(args.nomad_server_asg, args.nomad_addr, check_interval, timeout)
+            upgrade_nomad_server(args.nomad_server_tag, args.nomad_addr, check_interval, timeout)
             print('DONE Nomad Server upgrading!')
         elif service == 'nomad-client':
             # TODO
-            # upgrade_nomad_client(args.nomad_client_asg, args.nomad_addr, check_interval, timeout)
+            # upgrade_nomad_client(args.nomad_client_tag, args.nomad_addr, check_interval, timeout)
             print('DONE Nomad Client upgrading!')
         elif service == 'vault':
             # TODO
-            # upgrade_vault(args.vault_asg, args.vault_addr, check_interval, timeout)
+            upgrade_vault(args.vault_tag, args.vault_unseal_count, args.vault_ca_cert, check_interval, timeout)
             print('DONE Vault upgrading!')
         else:
             print('Ignoring unknown command "{}"'.format(service))
