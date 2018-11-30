@@ -131,11 +131,11 @@ def kill_instance(aws_instance):
             .format(aws_instance))
 
 
-def try_until_timeout(predicate, check_interval, timeout):
+def try_until_timeout(checker, prev_aws_instances, killing_idx, check_interval, timeout):
     elapsed_time = timedelta(seconds=0)
 
     while True:
-        if predicate():
+        if checker(prev_aws_instances, killing_idx):
             return True
 
         if elapsed_time >= timeout:
@@ -147,7 +147,23 @@ def try_until_timeout(predicate, check_interval, timeout):
         elapsed_time += check_interval
 
 
-def execute_kill_loop(kill_fn, tag_pattern, get_service_nodes_fn, n, check_interval, timeout):
+def consul_nomad_server_checker(prev_aws_instances, killing_idx, n, tag_pattern, get_service_nodes_fn):
+    # We assume that prev_aws_instances contain the same number of entries as
+    # the original
+    instance_count = len(prev_aws_instances)
+
+    curr_aws_instances = get_instance_ids_from_tag(tag_pattern)
+
+    # Cater for remaining instances when the count is less than N
+    wait_n = min(instance_count - killing_idx, n)
+
+    return \
+        len(curr_aws_instances) == instance_count and \
+        len(curr_aws_instances.difference(prev_aws_instances)) == wait_n and \
+        curr_aws_instances == get_service_nodes_fn()
+
+
+def execute_kill_loop(kill_fn, tag_pattern, checker, n, check_interval, timeout):
     print("Killing {} instance(s) in one go...".format(n))
 
     orig_aws_instances = get_instance_ids_from_tag(tag_pattern)
@@ -161,21 +177,9 @@ def execute_kill_loop(kill_fn, tag_pattern, get_service_nodes_fn, n, check_inter
 
         # Check only after every N kills
         if (idx + 1) % n == 0 or (idx + 1) == instance_count:
-            def predicate():
-                curr_aws_instances = get_instance_ids_from_tag(tag_pattern)
-                curr_service_nodes = get_service_nodes_fn()
-
-                # Cater for remaining instances when the count is less than N
-                wait_n = min(instance_count - idx, n)
-
-                return \
-                    len(orig_aws_instances) == len(curr_aws_instances) and \
-                    len(curr_aws_instances.difference(prev_aws_instances)) == wait_n and \
-                    curr_aws_instances == curr_service_nodes
-
             print('KILL okay! Waiting for new instance(s) to spin up...')
 
-            if not try_until_timeout(predicate, check_interval, timeout):
+            if not try_until_timeout(checker, prev_aws_instances, idx, check_interval, timeout):
                 raise AssertionError(
                     'New instance(s) is/are unable to join the service after timeout of {}s, aborting...'.format(timeout.total_seconds()))
             
@@ -268,11 +272,14 @@ def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
 
     n = find_n_to_kill_in_quorum(aws_instances)
     assert_n_quorum(n)
-    
+
+    checker = lambda prev_aws_instances, idx: \
+        consul_nomad_server_checker(prev_aws_instances, idx, n, consul_tag_pattern, lambda: list_consul_peers(address))
+
     execute_kill_loop(
         kill_instance,
         consul_tag_pattern,
-        lambda: list_consul_peers(address),
+        checker,
         n,
         check_interval,
         timeout)
@@ -291,10 +298,13 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
     n = find_n_to_kill_in_quorum(aws_instances)
     assert_n_quorum(n)
     
+    checker = lambda prev_aws_instances, idx: \
+        consul_nomad_server_checker(prev_aws_instances, idx, n, nomad_server_tag_pattern, lambda: list_nomad_server_members(address))
+
     execute_kill_loop(
         kill_instance,
         nomad_server_tag_pattern,
-        lambda: list_nomad_server_members(address),
+        checker,
         n,
         check_interval,
         timeout)
