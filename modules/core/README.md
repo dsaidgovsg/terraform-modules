@@ -309,7 +309,7 @@ clarity in the quorum values.
 You may choose to run the Python 3 `upgrade.py` script, which should not require additional
 dependency installation, to upgrade the instances.
 
-Currently only `consul` and `nomad-server` services can be done in this way.
+Currently only `consul`, `nomad-server` and `vault` services can be done in this way.
 
 Before you run the upgrade script, make sure to have your AWS credentials (such as env vars) set up
 correctly, to point to the right environment for the instance upgrade.
@@ -329,6 +329,12 @@ For `nomad-server`, the command should look like this:
 
 ```bash
 ./upgrade.py nomad-server --nomad-addr https://nomad.x.y
+```
+
+For `vault`, the command should look like this (run within your environment directory):
+
+```bash
+./upgrade.py vault --vault-ca-cert "$(git rev-parse --show-toplevel)/environments/xxx/ca/root/ca.pem"
 ```
 
 For more information, run
