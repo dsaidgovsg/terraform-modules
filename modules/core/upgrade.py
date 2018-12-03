@@ -431,7 +431,7 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
     aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
     vault_servers = list_vault_members()
     print('AWS instances: {}'.format(aws_instances))
-    print('Nomad servers: {}'.format(vault_servers))
+    print('Vault servers: {}'.format(vault_servers))
     assert_same_instances(aws_instances, vault_servers)
 
     n = find_n_to_kill_in_quorum(aws_instances)
