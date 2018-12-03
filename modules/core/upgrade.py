@@ -66,7 +66,8 @@ def assert_arg(flag, arg):
 
 def assert_collection_len(collection, length):
     if len(collection) != length:
-        sys.exit('Collection "{}" does not have expected length {}!'.format(collection, length))
+        sys.exit('Collection "{}" does not have expected length {}!'.format(
+            collection, length))
 
 
 def assert_file_exists(path):
@@ -93,11 +94,12 @@ def assert_same_instances(aws_instances, service_nodes):
 # Can be used to swap out kill_fn
 def fake_kill_fn(aws_instance):
     print('Fake killing instance "{}"'.format(aws_instance))
-    
+
 
 # Can be used to swap out check_fn
 def fake_check_fn(prev_instances, killing_idx):
-    print('Fake checking {} at killing index {}'.format(prev_instances, killing_idx))
+    print('Fake checking {} at killing index {}'.format(
+        prev_instances, killing_idx))
     return True
 
 
@@ -108,6 +110,7 @@ def fake_get_new_instances(prev_instances, curr_instances):
 #
 # General
 #
+
 
 def unique(seq):
     # Inefficient but works
@@ -209,7 +212,6 @@ def check_service_up(prev_aws_instances, killing_idx, n, tag_pattern, get_servic
     # We assume that prev_aws_instances contain the same number of entries as
     # the original
     instance_count = len(prev_aws_instances)
-
     curr_aws_instances = get_instance_ids_from_tag(tag_pattern)
 
     # Cater for remaining instances when the count is less than N
@@ -244,7 +246,8 @@ def kill_check_post(kill_fn, check_fn, post_fn, tag_pattern, n, check_interval, 
                     'New instance(s) is/are unable to join the service after timeout of {}s, aborting...'.format(timeout.total_seconds()))
 
             curr_instances = get_instance_ids_from_tag(tag_pattern)
-            new_instances = get_new_instances_fn(prev_aws_instances, curr_instances)
+            new_instances = get_new_instances_fn(
+                prev_aws_instances, curr_instances)
 
             print('New instance(s) found: {}'.format(new_instances))
 
@@ -361,10 +364,11 @@ def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
     assert_n_quorum(n)
 
     def check_fn(prev_aws_instances, idx):
-        check_service_up(prev_aws_instances, idx, n,
-                         consul_tag_pattern, lambda: list_consul_peers(address))
+        return check_service_up(prev_aws_instances, idx, n,
+                                consul_tag_pattern, lambda: list_consul_peers(address))
 
     def post_fn(new_instances):
+        # Do nothing
         pass
 
     kill_check_post(
@@ -391,10 +395,11 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
     assert_n_quorum(n)
 
     def check_fn(prev_aws_instances, idx):
-        check_service_up(prev_aws_instances, idx, n, nomad_server_tag_pattern,
-                         lambda: list_nomad_server_members(address))
+        return check_service_up(prev_aws_instances, idx, n, nomad_server_tag_pattern,
+                                lambda: list_nomad_server_members(address))
 
     def post_fn(new_instances):
+        # Do nothing
         pass
 
     kill_check_post(
@@ -433,8 +438,8 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
     assert_n_quorum(n)
 
     def check_fn(prev_aws_instances, idx):
-        check_service_up(prev_aws_instances, idx, n, vault_tag_pattern,
-                         list_vault_members)
+        return check_service_up(prev_aws_instances, idx, n, vault_tag_pattern,
+                                list_vault_members)
 
     def post_fn(new_instances):
         send_and_unseal_vault(new_instances, username, local_ca_cert_path,
