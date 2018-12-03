@@ -293,11 +293,11 @@ def list_nomad_server_members(address):
 #
 
 
-def list_vault_members():
+def list_vault_members(consul_addr):
     try:
         return set(invoke_shell("""
-        curl -s https://consul.locus.rocks/v1/catalog/service/vault | jq --raw-output '.[].Node'
-        """).split())
+        curl -s {}/v1/catalog/service/vault | jq --raw-output '.[].Node'
+        """.format(consul_addr)).split())
     except:
         raise AssertionError(
             'Unable to obtain Vault members from Consul catalog!')
@@ -305,7 +305,6 @@ def list_vault_members():
 
 def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_keys):
     new_ip_addrs = get_instance_ip_addrs_from_ids(new_instances)
-    print('Unsealing Vault servers at {}'.format(new_ip_addrs))
 
     for new_ip_addr in new_ip_addrs:
         send_ca_cert(username, new_ip_addr,
@@ -317,7 +316,8 @@ def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca
             seal_check_re = UNSEALED_RE if key_idx == len(
                 unseal_keys) else SEALED_RE
 
-            print('Unsealing vault with key #{}...'.format(key_idx))
+            print('Unsealing vault with key #{} for "{}"...'.format(
+                key_idx, new_ip_addr))
             unseal_output = unseal_vault(username, new_ip_addr,
                                          vault_local_addr, unseal_key)
 
@@ -432,7 +432,7 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
 #     pass
 
 
-def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_count, check_interval, timeout):
+def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, vault_local_addr, unseal_count, check_interval, timeout):
     print('Enter any {} Vault unseal key(s):'.format(unseal_count))
 
     unseal_keys = set()
@@ -442,7 +442,7 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
     assert_collection_len(unseal_keys, unseal_count)
 
     aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
-    vault_servers = list_vault_members()
+    vault_servers = list_vault_members(consul_addr)
     print('AWS instances: {}'.format(aws_instances))
     print('Vault servers: {}'.format(vault_servers))
     assert_same_instances(aws_instances, vault_servers)
@@ -452,7 +452,7 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
 
     def check_fn(prev_aws_instances, idx):
         return check_service_up(prev_aws_instances, idx, n, vault_tag_pattern,
-                                list_vault_members)
+                                lambda: list_vault_members(consul_addr))
 
     def post_fn(new_instances):
         send_and_unseal_vault(new_instances, username, local_ca_cert_path,
@@ -482,7 +482,7 @@ if __name__ == '__main__':
     parser.add_argument('--consul-tag', default=CONSUL_TAG,
                         help='Tag pattern of Consul instances. Defaults to "{}".'.format(CONSUL_TAG))
     parser.add_argument('--consul-addr', default=CONSUL_ADDR,
-                        help='Consul server address to connect to. Defaults to "{}".'.format(CONSUL_ADDR))
+                        help='Consul server address to connect to. Used by both consul and vault commands. Defaults to "{}".'.format(CONSUL_ADDR))
 
     parser.add_argument('--nomad-server-tag', default=NOMAD_SERVER_TAG,
                         help='Tag pattern of Nomad Server instances. Defaults to "{}".'.format(NOMAD_SERVER_TAG))
@@ -541,6 +541,7 @@ if __name__ == '__main__':
 
             upgrade_vault(args.vault_tag, args.vault_username,
                           vault_ca_cert, args.vault_remote_ca_cert,
+                          args.consul_addr,
                           args.vault_local_addr, args.vault_unseal_count,
                           check_interval, timeout)
             print('DONE Vault upgrading!')
