@@ -4,6 +4,7 @@ import argparse
 from datetime import timedelta
 import math
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,9 @@ NOMAD_ADDR = 'http://127.0.0.1:4646'
 VAULT_USERNAME = 'ubuntu'
 VAULT_REMOTE_CA_CERT_PATH = '/etc/ssl/certs/'
 VAULT_LOCAL_ADDR = 'https://127.0.0.1:8200'
+
+SEALED_RE = re.compile(r'Sealed\s+true')
+UNSEALED_RE = re.compile(r'Sealed\s+false')
 
 # Interval of checking the change in set entries
 CHECK_INTERVAL_SECS = 5
@@ -159,13 +163,13 @@ def get_instance_ip_addrs_from_tag(tag_pattern):
 
 def get_instance_ip_addr_from_id(id):
     try:
-        return set(invoke_shell("""
+        return invoke_shell("""
         aws ec2 describe-instances --filter \
             "Name=instance-state-name,Values=running" | \
             jq --raw-output '.Reservations[].Instances[] | 
                 select(.InstanceId == "{}") |
                 .PrivateIpAddress'
-        """.format(id)).split())
+        """.format(id)).strip()
     except:
         raise AssertionError(
             'Cannot find instance IP address with Node ID: "{}"!'.format(id))
@@ -306,11 +310,20 @@ def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca
         send_ca_cert(username, new_ip_addr,
                      local_ca_cert_path, remote_ca_cert_dir)
 
+        # Unseal and check status each time
         for idx, unseal_key in enumerate(unseal_keys):
             key_idx = idx + 1
+            seal_check_re = UNSEALED_RE if key_idx == len(
+                unseal_keys) else SEALED_RE
+
             print('Unsealing vault with key #{}...'.format(key_idx))
-            unseal_vault(username, new_ip_addr,
-                         vault_local_addr, unseal_key)
+            unseal_output = unseal_vault(username, new_ip_addr,
+                                         vault_local_addr, unseal_key)
+
+            if not seal_check_re.search(unseal_output):
+                raise AssertionError(
+                    'Unexpected seal status after using key #{}'.format(key_idx))
+
             print('Unseal vault with key #{} okay!'.format(key_idx))
 
 
@@ -412,13 +425,12 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
         timeout)
 
 
-# TODO - Need to figure out how to properly wait for all upgradeed allocs get
+# TODO - Need to figure out how to properly wait for all upgraded allocs get
 #        reallocated first synchronously
 # def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout):
 #     pass
 
-# TODO - Need to make it such that we can place N unsealing keys into an env var
-#        and let it automatically unseal using the env var iteratively
+
 def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_count, check_interval, timeout):
     print('Enter any {} Vault unseal key(s):'.format(unseal_count))
 
