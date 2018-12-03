@@ -305,6 +305,7 @@ def list_vault_members():
 
 def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_keys):
     new_ip_addrs = get_instance_ip_addrs_from_ids(new_instances)
+    print('Unsealing Vault servers at {}'.format(new_ip_addrs))
 
     for new_ip_addr in new_ip_addrs:
         send_ca_cert(username, new_ip_addr,
