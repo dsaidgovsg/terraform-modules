@@ -64,6 +64,11 @@ def assert_arg(flag, arg):
         sys.exit('Flag "{}" must be set!'.format(flag))
 
 
+def assert_collection_len(collection, length):
+    if len(collection) != length:
+        sys.exit('Collection "{}" does not have expected length {}!'.format(collection, length))
+
+
 def assert_file_exists(path):
     if not os.path.exists(path):
         sys.exit('"{}" does not exist!'.format(path))
@@ -174,7 +179,7 @@ def get_new_instances_from_prev(prev_instances, curr_instances):
 def kill_fn(aws_instance):
     try:
         invoke_shell("""
-        echo aws autoscaling terminate-instance-in-auto-scaling-group \
+        aws autoscaling terminate-instance-in-auto-scaling-group \
             --no-should-decrement-desired-capacity \
             --instance-id {}
         """.format(aws_instance))
@@ -412,9 +417,11 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
 def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_count, check_interval, timeout):
     print('Enter any {} Vault unseal key(s):'.format(unseal_count))
 
-    unseal_keys = []
+    unseal_keys = set()
     for _ in range(0, unseal_count):
-        unseal_keys.append(sys.stdin.readline().strip())
+        unseal_keys.add(sys.stdin.readline().strip())
+
+    assert_collection_len(unseal_keys, unseal_count)
 
     aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
     vault_servers = list_vault_members()
