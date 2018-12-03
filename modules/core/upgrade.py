@@ -172,7 +172,7 @@ def get_instance_ip_addr_from_id(id):
 
 
 def get_instance_ip_addrs_from_ids(ids):
-    map(get_instance_ip_addr_from_id, ids)
+    return map(get_instance_ip_addr_from_id, ids)
 
 
 def get_new_instances_from_prev(prev_instances, curr_instances):
@@ -300,7 +300,7 @@ def list_vault_members():
 
 
 def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_keys):
-    new_ip_addrs = get_instance_ip_addr_from_id(new_instances)
+    new_ip_addrs = get_instance_ip_addrs_from_ids(new_instances)
 
     for new_ip_addr in new_ip_addrs:
         send_ca_cert(username, new_ip_addr,
