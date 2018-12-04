@@ -26,8 +26,8 @@ NOMAD_ADDR = 'http://127.0.0.1:4646'
 
 # Vault defaults
 VAULT_USERNAME = 'ubuntu'
-VAULT_REMOTE_CA_CERT_PATH = '/etc/ssl/certs/'
-VAULT_LOCAL_ADDR = 'https://127.0.0.1:8200'
+VAULT_TLS_SERVER = 'vault.consul.service'
+VAULT_PORT = 8200
 VAULT_CONSUL_SERVICE_NAME = 'vault'
 VAULT_UNSEAL_COUNT = 3  # Default number of unseals required
 
@@ -321,13 +321,29 @@ def list_vault_members(consul_addr, service_name):
             'Unable to obtain Vault members from Consul catalog!')
 
 
-def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca_cert_dir, vault_local_addr, unseal_keys):
+def unseal_vault(ip_addr, vault_port, tls_server, ca_cert, unseal_key):
+    try:
+        return invoke_shell("""
+        vault operator unseal \
+            -address https://{addr}:{port} \
+            -tls-server-name={tls_server} \
+            -ca-cert={ca_cert} {unseal_key}
+        """.format(
+            addr=ip_addr,
+            port=vault_port,
+            tls_server=tls_server,
+            ca_cert=ca_cert,
+            unseal_key=unseal_key))
+    except:
+        raise AssertionError(
+            'Unable to unseal vault in "https://{}:{}" with given unseal key!'
+            .format(ip_addr, vault_port))
+
+
+def unseal_and_check_vault(new_instances, vault_port, tls_server, ca_cert_path, unseal_keys):
     new_ip_addrs = get_instance_ip_addrs_from_ids(new_instances)
 
     for new_ip_addr in new_ip_addrs:
-        send_ca_cert(username, new_ip_addr,
-                     local_ca_cert_path, remote_ca_cert_dir)
-
         # Unseal and check status each time
         for idx, unseal_key in enumerate(unseal_keys):
             key_idx = idx + 1
@@ -336,8 +352,9 @@ def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca
 
             print('Unsealing vault with key #{} for "{}"...'.format(
                 key_idx, new_ip_addr))
-            unseal_output = unseal_vault(username, new_ip_addr,
-                                         vault_local_addr, unseal_key)
+
+            unseal_output = unseal_vault(
+                new_ip_addr, vault_port, tls_server, ca_cert_path, unseal_key)
 
             if not seal_check_re.search(unseal_output):
                 raise AssertionError(
@@ -345,37 +362,6 @@ def send_and_unseal_vault(new_instances, username, local_ca_cert_path, remote_ca
 
             print('Unseal vault with key #{} okay!'.format(key_idx))
 
-
-def send_ca_cert(username, ip_addr, local_ca_cert_path, remote_ca_cert_dir):
-    try:
-        return invoke_shell("""
-        scp -o StrictHostKeyChecking=no {lcertpath} {user}@{addr}:/tmp && \
-        ssh -o StrictHostKeyChecking=no {user}@{addr} "sudo mv /tmp/{lcertname} {rcertdir}"
-        """.format(
-            user=username,
-            addr=ip_addr,
-            lcertpath=local_ca_cert_path,
-            lcertname=os.path.basename(local_ca_cert_path),
-            rcertdir=remote_ca_cert_dir))
-    except:
-        raise AssertionError(
-            'Unable to send CA certificate across to "{}"!'.format(ip_addr))
-
-
-def unseal_vault(username, ip_addr, vault_local_addr, unseal_key):
-    try:
-        return invoke_shell("""
-        ssh -o StrictHostKeyChecking=no {user}@{addr} \
-            "vault operator unseal -address {local_addr} {unseal_key}"
-        """.format(
-            user=username,
-            addr=ip_addr,
-            local_addr=vault_local_addr,
-            unseal_key=unseal_key))
-    except:
-        raise AssertionError(
-            'Unable to unseal vault in "{}@{}", using Vault local address "{}" with given unseal key!'
-            .format(username, ip_addr, vault_local_addr))
 
 #
 # High level
@@ -454,7 +440,7 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
 #     pass
 
 
-def upgrade_vault(tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, service_name, vault_local_addr, unseal_count, check_interval, timeout, fast_mode):
+def upgrade_vault(tag_pattern, consul_addr, service_name, vault_port, tls_server, ca_cert_path, unseal_count, check_interval, timeout, fast_mode):
     aws_instances = get_instance_ids_from_tag(tag_pattern)
     assert_instance_count(aws_instances)
 
@@ -480,8 +466,8 @@ def upgrade_vault(tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir,
                                 lambda: list_vault_members(consul_addr, service_name))
 
     def post_fn(new_instances):
-        send_and_unseal_vault(new_instances, username, local_ca_cert_path,
-                              remote_ca_cert_dir, vault_local_addr, unseal_keys)
+        unseal_and_check_vault(new_instances, vault_port,
+                               tls_server, ca_cert_path, unseal_keys)
 
     kill_check_post(
         kill_fn,
@@ -518,14 +504,12 @@ if __name__ == '__main__':
 
     parser.add_argument('--vault-tag', default=VAULT_TAG,
                         help='Tag pattern of Vault instances. Defaults to "{}".'.format(VAULT_TAG))
-    parser.add_argument('--vault-username', default=VAULT_USERNAME,
-                        help='Vault username to use for SSH into the Vault instance. Defaults to "{}".'.format(VAULT_USERNAME))
+    parser.add_argument('--vault-tls-server', default=VAULT_TLS_SERVER,
+                        help='TLS server to point to when connecting to the Vault server via TLS. Defaults to "{}"'.format(VAULT_TLS_SERVER))
     parser.add_argument('--vault-ca-cert',
                         help='Path to CA certificate on this host machine for unsealing')
-    parser.add_argument('--vault-remote-ca-cert', default=VAULT_REMOTE_CA_CERT_PATH,
-                        help='Remote path to place the CA certificate. Defaults to "{}".'.format(VAULT_REMOTE_CA_CERT_PATH))
-    parser.add_argument('--vault-local-addr', default=VAULT_LOCAL_ADDR,
-                        help='Address to use for Vault unsealing after remotely SSHed into the Vault instance. Defaults to "{}".'.format(VAULT_LOCAL_ADDR))
+    parser.add_argument('--vault-port', default=VAULT_PORT,
+                        help='Port to use for Vault unsealing. Defaults to {}.'.format(VAULT_PORT))
     parser.add_argument('--vault-consul-service-name', default=VAULT_CONSUL_SERVICE_NAME,
                         help='Vault consul service name to perform API calls on. Defaults to "{}".'.format(VAULT_CONSUL_SERVICE_NAME))
     parser.add_argument('--vault-unseal-count', type=int, default=VAULT_UNSEAL_COUNT,
@@ -577,11 +561,11 @@ if __name__ == '__main__':
             assert_arg('--vault-ca-cert', vault_ca_cert)
             assert_file_exists(vault_ca_cert)
 
-            upgrade_vault(args.vault_tag, args.vault_username,
-                          vault_ca_cert, args.vault_remote_ca_cert,
-                          args.consul_addr, args.vault_consul_service_name,
-                          args.vault_local_addr, args.vault_unseal_count,
+            upgrade_vault(args.vault_tag, args.consul_addr, args.vault_consul_service_name,
+                          args.vault_port, args.vault_tls_server, vault_ca_cert,
+                          args.vault_unseal_count,
                           check_interval, timeout, fast_mode)
+
             print('DONE Vault upgrading!')
         else:
             print('Ignoring unknown command "{}"'.format(service))
