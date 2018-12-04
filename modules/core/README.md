@@ -299,9 +299,60 @@ build a new AMI, then update the terraform variables with the new AMI ID. Then, 
 `terraform apply` to update the launch configuration.
 
 Then, you will need to terminate the various instances for Auto Scaling Group to start
-new instances with the updated launch configurations. You should do this ONE BY ONE.
+new instances with the updated launch configurations. You should do this ONE BY ONE, or at least be
+mindful about the quorum and maximum number of instances that can be terminated each time. See
+the [consensus table](https://www.consul.io/docs/internals/consensus.html#deployment-table) for
+clarity in the quorum values.
 
-#### Upgrading Consul
+#### Automated upgrade via script
+
+You may choose to run the Python 3 `upgrade.py` script, which should not require additional
+dependency installation, to upgrade the instances.
+
+Currently only `consul`, `nomad-server` and `vault` services can be done in this way.
+
+Before you run the upgrade script, make sure to have your AWS credentials (such as env vars) set up
+correctly, to point to the right environment for the instance upgrade. You may also choose to
+supply the environment variables while running the script, e.g.
+`AWS_PROFILE=staging ./upgrade.py ...`.
+
+The script will terminate every instance type one-by-one, which is the safest way to maintain
+quorum in each of the service type. Additionally, the script will check that the new instance is up
+and correctly connected to its respective service, before continuing with the upgrade process,
+until all old instances in that service type have been terminated and upgraded with new ones.
+
+A fast (and furious) mode has also been added to the script, which can be turned on with the flag
+`--fast`. In this mode, the script will calculate the maximum number of instances to terminate
+at runtime for the specified service, while still maintaining quorum even if the new instances
+are unable to start up properly. Please take precaution when using this mode.
+
+For `consul`, the command should look like this:
+
+```bash
+./upgrade.py consul --consul-addr https://consul.x.y
+```
+
+For `nomad-server`, the command should look like this:
+
+```bash
+./upgrade.py nomad-server --nomad-addr https://nomad.x.y
+```
+
+For `vault`, the command should look like this:
+
+```bash
+./upgrade.py vault \
+    --consul-addr https://consul.x.y \
+    --vault-ca-cert /path/to/environments/xxx/ca.pem"
+```
+
+For more information, run
+
+```bash
+./upgrade.py -h
+```
+
+#### Manual upgrading Consul
 
 **Important**: It is important that you only terminate Consul instances one by one. Make sure the
 new servers are healthy and have joined the cluster before continuing. If you lose more than a
@@ -326,7 +377,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Upgrading Nomad Servers
+#### Manual upgrading Nomad Servers
 
 **Important**: It is important that you only terminate Nomad server instances one by one.
 Make sure the new servers are healthy and have joined the cluster before continuing.
@@ -351,7 +402,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Upgrading Nomad Clients
+#### Manual upgrading Nomad Clients
 
 **Important**: These steps are recommended to minimise the outage your services might experience. In
 particular, if your service only has one instance of it running, you will definitely encounter
@@ -440,7 +491,7 @@ aws ec2 terminate-instances \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
 ```
 
-#### Upgrading Vault
+#### Manual upgrading Vault
 
 **Important**: It is important that you update the instances one by one. Make sure the new instance
 is healthy, has joined the cluster and is **unsealed** first before continuing.
