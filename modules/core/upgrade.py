@@ -26,7 +26,7 @@ NOMAD_ADDR = 'http://127.0.0.1:4646'
 
 # Vault defaults
 VAULT_USERNAME = 'ubuntu'
-VAULT_TLS_SERVER = 'vault.consul.service'
+VAULT_TLS_SERVER = 'vault.service.consul'
 VAULT_PORT = 8200
 VAULT_CONSUL_SERVICE_NAME = 'vault'
 VAULT_UNSEAL_COUNT = 3  # Default number of unseals required
@@ -505,7 +505,7 @@ if __name__ == '__main__':
     parser.add_argument('--vault-tag', default=VAULT_TAG,
                         help='Tag pattern of Vault instances. Defaults to "{}".'.format(VAULT_TAG))
     parser.add_argument('--vault-tls-server', default=VAULT_TLS_SERVER,
-                        help='TLS server to point to when connecting to the Vault server via TLS. Defaults to "{}"'.format(VAULT_TLS_SERVER))
+                        help='TLS server to point to when connecting to the Vault server via TLS. Defaults to "{}".'.format(VAULT_TLS_SERVER))
     parser.add_argument('--vault-ca-cert',
                         help='Path to CA certificate on this host machine for unsealing')
     parser.add_argument('--vault-port', default=VAULT_PORT,
