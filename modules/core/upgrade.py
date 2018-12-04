@@ -56,6 +56,15 @@ CMDS = [
 #
 
 
+def assert_yes_no(response):
+    conv_reply = response.lower()
+    if conv_reply != 'y':
+        if conv_reply == 'n':
+            sys.exit('Aborting...')
+        else:
+            sys.exit('Invalid response, aborting...')
+
+
 def assert_instance_count(instances):
     if len(instances) < 3:
         sys.exit(
@@ -135,7 +144,7 @@ def calc_max_kill_count(instances):
 
 
 def invoke_shell(cmd):
-    return subprocess.check_output(cmd, shell=True).decode('ascii').strip()
+    return subprocess.check_output(cmd, shell=True).decode('utf8').strip()
 
 
 def get_instance_ids_from_tag(tag_pattern):
@@ -299,8 +308,14 @@ def list_nomad_server_members(address):
 def list_vault_members(consul_addr, service_name):
     try:
         return set(invoke_shell("""
-        curl -s {}/v1/catalog/service/{} | jq --raw-output '.[].Node'
-        """.format(consul_addr, service_name)).split())
+        ( \
+            curl -s {addr}/v1/catalog/service/{name}?tag=standby | jq --raw-output '.[].Node' && \
+            curl -s {addr}/v1/catalog/service/{name}?tag=active | jq --raw-output '.[].Node' \
+        ) | \
+        cat
+        """.format(
+            addr=consul_addr,
+            name=service_name)).split())
     except:
         raise AssertionError(
             'Unable to obtain Vault members from Consul catalog!')
@@ -532,6 +547,10 @@ if __name__ == '__main__':
 
     # Give verbose warning here
     if fast_mode:
+        sys.stdout.write(
+            'Are you sure you want the FAST and FURIOUS mode turned on (y/n)? ')
+        sys.stdout.flush()
+        assert_yes_no(sys.stdin.readline().strip())
         print('FAST and FURIOUS mode activated! Be mindful about maintaining the quorum in each service.')
 
     print('Services to upgrade (in order): {}'.format(services))
