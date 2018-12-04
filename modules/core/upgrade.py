@@ -28,6 +28,8 @@ NOMAD_ADDR = 'http://127.0.0.1:4646'
 VAULT_USERNAME = 'ubuntu'
 VAULT_REMOTE_CA_CERT_PATH = '/etc/ssl/certs/'
 VAULT_LOCAL_ADDR = 'https://127.0.0.1:8200'
+VAULT_CONSUL_SERVICE_NAME = 'vault'
+VAULT_UNSEAL_COUNT = 3  # Default number of unseals required
 
 SEALED_RE = re.compile(r'Sealed\s+true')
 UNSEALED_RE = re.compile(r'Sealed\s+false')
@@ -37,9 +39,6 @@ CHECK_INTERVAL_SECS = 5
 
 # Max time value to allow for ensuring both AWS and services have same set after killing
 TIMEOUT_SECS = 300
-
-# Default number of unseals required
-VAULT_UNSEAL_COUNT = 3
 
 # Commands to ensure to be available before starting
 CMDS = [
@@ -297,11 +296,11 @@ def list_nomad_server_members(address):
 #
 
 
-def list_vault_members(consul_addr):
+def list_vault_members(consul_addr, service_name):
     try:
         return set(invoke_shell("""
-        curl -s {}/v1/catalog/service/vault | jq --raw-output '.[].Node'
-        """.format(consul_addr)).split())
+        curl -s {}/v1/catalog/service/{} | jq --raw-output '.[].Node'
+        """.format(consul_addr, service_name)).split())
     except:
         raise AssertionError(
             'Unable to obtain Vault members from Consul catalog!')
@@ -379,7 +378,7 @@ def upgrade_consul(consul_tag_pattern, address, check_interval, timeout, fast_mo
     print('AWS instances: {}'.format(aws_instances))
     print(' Consul nodes: {}'.format(consul_nodes))
     assert_same_instances(aws_instances, consul_nodes)
-    
+
     kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
     assert_kill_count(kill_count)
 
@@ -440,11 +439,11 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
 #     pass
 
 
-def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, vault_local_addr, unseal_count, check_interval, timeout, fast_mode):
-    aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
+def upgrade_vault(tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, service_name, vault_local_addr, unseal_count, check_interval, timeout, fast_mode):
+    aws_instances = get_instance_ids_from_tag(tag_pattern)
     assert_instance_count(aws_instances)
 
-    vault_servers = list_vault_members(consul_addr)
+    vault_servers = list_vault_members(consul_addr, service_name)
     print('AWS instances: {}'.format(aws_instances))
     print('Vault servers: {}'.format(vault_servers))
     assert_same_instances(aws_instances, vault_servers)
@@ -462,8 +461,8 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
     assert_collection_len(unseal_keys, unseal_count)
 
     def check_fn(prev_aws_instances, idx):
-        return check_service_up(prev_aws_instances, idx, kill_count, vault_tag_pattern,
-                                lambda: list_vault_members(consul_addr))
+        return check_service_up(prev_aws_instances, idx, kill_count, tag_pattern,
+                                lambda: list_vault_members(consul_addr, service_name))
 
     def post_fn(new_instances):
         send_and_unseal_vault(new_instances, username, local_ca_cert_path,
@@ -473,7 +472,7 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
         kill_fn,
         check_fn,
         post_fn,
-        vault_tag_pattern,
+        tag_pattern,
         kill_count,
         check_interval,
         timeout)
@@ -512,6 +511,8 @@ if __name__ == '__main__':
                         help='Remote path to place the CA certificate. Defaults to "{}".'.format(VAULT_REMOTE_CA_CERT_PATH))
     parser.add_argument('--vault-local-addr', default=VAULT_LOCAL_ADDR,
                         help='Address to use for Vault unsealing after remotely SSHed into the Vault instance. Defaults to "{}".'.format(VAULT_LOCAL_ADDR))
+    parser.add_argument('--vault-consul-service-name', default=VAULT_CONSUL_SERVICE_NAME,
+                        help='Vault consul service name to perform API calls on. Defaults to "{}".'.format(VAULT_CONSUL_SERVICE_NAME))
     parser.add_argument('--vault-unseal-count', type=int, default=VAULT_UNSEAL_COUNT,
                         help='Number of unseal keys required to fully unseal a new Vault server. Defaults to {}.'.format(VAULT_UNSEAL_COUNT))
 
@@ -528,6 +529,10 @@ if __name__ == '__main__':
     check_interval = timedelta(seconds=args.check_interval)
     timeout = timedelta(seconds=args.timeout)
     fast_mode = args.fast
+
+    # Give verbose warning here
+    if fast_mode:
+        print('FAST and FURIOUS mode activated! Be mindful about maintaining the quorum in each service.')
 
     print('Services to upgrade (in order): {}'.format(services))
 
@@ -555,7 +560,7 @@ if __name__ == '__main__':
 
             upgrade_vault(args.vault_tag, args.vault_username,
                           vault_ca_cert, args.vault_remote_ca_cert,
-                          args.consul_addr,
+                          args.consul_addr, args.vault_consul_service_name,
                           args.vault_local_addr, args.vault_unseal_count,
                           check_interval, timeout, fast_mode)
             print('DONE Vault upgrading!')
