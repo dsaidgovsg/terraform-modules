@@ -312,12 +312,19 @@ dependency installation, to upgrade the instances.
 Currently only `consul`, `nomad-server` and `vault` services can be done in this way.
 
 Before you run the upgrade script, make sure to have your AWS credentials (such as env vars) set up
-correctly, to point to the right environment for the instance upgrade.
+correctly, to point to the right environment for the instance upgrade. You may also choose to
+supply the environment variables while running the script, e.g.
+`AWS_PROFILE=staging ./upgrade.py ...`.
 
-The script will terminate the max number of instances within the quorum (i.e. number of instances
-of that service type left would still be in quorum), checking that the new instances are up and
-correctly connected to their respective servies, before continuing to repeat the process, until
-all old instances in that service type have been terminated and upgraded with new ones.
+The script will terminate every instance type one-by-one, which is the safest way to maintain
+quorum in each of the service type. Additionally, the script will check that the new instance is up
+and correctly connected to its respective service, before continuing with the upgrade process,
+until all old instances in that service type have been terminated and upgraded with new ones.
+
+A fast (and furious) mode has also been added to the script, which can be turned on with the flag
+`--fast`. In this mode, the script will calculate the maximum number of instances to terminate
+at runtime for the specified service, while still maintaining quorum even if the new instances
+are unable to start up properly. Please take precaution when using this mode.
 
 For `consul`, the command should look like this:
 
@@ -331,10 +338,12 @@ For `nomad-server`, the command should look like this:
 ./upgrade.py nomad-server --nomad-addr https://nomad.x.y
 ```
 
-For `vault`, the command should look like this (run within your environment directory):
+For `vault`, the command should look like this:
 
 ```bash
-./upgrade.py vault --vault-ca-cert "$(git rev-parse --show-toplevel)/environments/xxx/ca/root/ca.pem"
+./upgrade.py vault \
+    --consul-addr https://consul.x.y \
+    --vault-ca-cert /path/to/environments/xxx/ca.pem"
 ```
 
 For more information, run
