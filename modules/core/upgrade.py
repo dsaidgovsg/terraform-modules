@@ -57,10 +57,16 @@ CMDS = [
 #
 
 
-def assert_n_quorum(n):
-    if n == 0:
+def assert_instance_count(instances):
+    if len(instances) < 3:
         sys.exit(
-            'This process can only be run when there are 3 or more servers to maintain quorum.')
+            'This process can only be run when there are >= 3 servers to maintain quorum.')
+
+
+def assert_kill_count(kill_count):
+    if kill_count == 0:
+        sys.exit(
+            'Kill count cannot be 0.')
 
 
 def assert_arg(flag, arg):
@@ -123,12 +129,10 @@ def unique(seq):
     return [x for x in seq if not (x in seen or seen.add(x))]
 
 
-def find_n_to_kill_in_quorum(instances):
+def calc_max_kill_count(instances):
     # The number of instances left must be simple majority to maintain quorum
     # https://www.consul.io/docs/internals/consensus.html#deployment-table
-    # Be careful with numeric operations in Python, since they are by default
-    # interpreted as floating points operations
-    return int(max(math.floor((len(instances) + 1) / 2) - 1, 0))
+    return max((len(instances) + 1) // 2 - 1, 0)
 
 
 def invoke_shell(cmd):
@@ -212,14 +216,14 @@ def try_until_timeout(check_fn, prev_aws_instances, killing_idx, check_interval,
         elapsed_time += check_interval
 
 
-def check_service_up(prev_aws_instances, killing_idx, n, tag_pattern, get_service_nodes_fn):
+def check_service_up(prev_aws_instances, killing_idx, kill_count, tag_pattern, get_service_nodes_fn):
     # We assume that prev_aws_instances contain the same number of entries as
     # the original
     instance_count = len(prev_aws_instances)
     curr_aws_instances = get_instance_ids_from_tag(tag_pattern)
 
     # Cater for remaining instances when the count is less than N
-    wait_n = min(instance_count - killing_idx, n)
+    wait_n = min(instance_count - killing_idx, kill_count)
 
     return \
         len(curr_aws_instances) == instance_count and \
@@ -227,8 +231,8 @@ def check_service_up(prev_aws_instances, killing_idx, n, tag_pattern, get_servic
         curr_aws_instances == get_service_nodes_fn()
 
 
-def kill_check_post(kill_fn, check_fn, post_fn, tag_pattern, n, check_interval, timeout, get_new_instances_fn=get_new_instances_from_prev):
-    print("Killing {} instance(s) in one go...".format(n))
+def kill_check_post(kill_fn, check_fn, post_fn, tag_pattern, kill_count, check_interval, timeout, get_new_instances_fn=get_new_instances_from_prev):
+    print("Killing {} instance(s) in one go...".format(kill_count))
 
     orig_aws_instances = get_instance_ids_from_tag(tag_pattern)
     instance_count = len(orig_aws_instances)
@@ -241,7 +245,7 @@ def kill_check_post(kill_fn, check_fn, post_fn, tag_pattern, n, check_interval, 
         kill_fn(orig_aws_instance)
 
         # Check only after every N kills
-        if (idx + 1) % n == 0 or (idx + 1) == instance_count:
+        if (idx + 1) % kill_count == 0 or (idx + 1) == instance_count:
             print('KILL okay! Waiting for new instance(s) to spin up...')
 
             # Check for new instances to be up
@@ -364,21 +368,23 @@ def unseal_vault(username, ip_addr, vault_local_addr, unseal_key):
 #
 
 
-def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
+def upgrade_consul(consul_tag_pattern, address, check_interval, timeout, fast_mode):
     print("Upgrading Consul instances...")
 
     # Sanity check
     aws_instances = get_instance_ids_from_tag(consul_tag_pattern)
+    assert_instance_count(aws_instances)
+
     consul_nodes = list_consul_peers(address)
     print('AWS instances: {}'.format(aws_instances))
     print(' Consul nodes: {}'.format(consul_nodes))
     assert_same_instances(aws_instances, consul_nodes)
-
-    n = find_n_to_kill_in_quorum(aws_instances)
-    assert_n_quorum(n)
+    
+    kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
+    assert_kill_count(kill_count)
 
     def check_fn(prev_aws_instances, idx):
-        return check_service_up(prev_aws_instances, idx, n,
+        return check_service_up(prev_aws_instances, idx, kill_count,
                                 consul_tag_pattern, lambda: list_consul_peers(address))
 
     def post_fn(new_instances):
@@ -390,26 +396,28 @@ def upgrade_consul(consul_tag_pattern, address, check_interval, timeout):
         check_fn,
         post_fn,
         consul_tag_pattern,
-        n,
+        kill_count,
         check_interval,
         timeout)
 
 
-def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, timeout):
+def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, timeout, fast_mode):
     print("Upgrading Nomad Servers instances...")
 
     # Sanity check
     aws_instances = get_instance_ids_from_tag(nomad_server_tag_pattern)
+    assert_instance_count(aws_instances)
+
     nomad_servers = list_nomad_server_members(address)
     print('AWS instances: {}'.format(aws_instances))
     print('Nomad servers: {}'.format(nomad_servers))
     assert_same_instances(aws_instances, nomad_servers)
 
-    n = find_n_to_kill_in_quorum(aws_instances)
-    assert_n_quorum(n)
+    kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
+    assert_kill_count(kill_count)
 
     def check_fn(prev_aws_instances, idx):
-        return check_service_up(prev_aws_instances, idx, n, nomad_server_tag_pattern,
+        return check_service_up(prev_aws_instances, idx, kill_count, nomad_server_tag_pattern,
                                 lambda: list_nomad_server_members(address))
 
     def post_fn(new_instances):
@@ -421,18 +429,30 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
         check_fn,
         post_fn,
         nomad_server_tag_pattern,
-        n,
+        kill_count,
         check_interval,
         timeout)
 
 
 # TODO - Need to figure out how to properly wait for all upgraded allocs get
 #        reallocated first synchronously
-# def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout):
+# def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout, fast_mode):
 #     pass
 
 
-def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, vault_local_addr, unseal_count, check_interval, timeout):
+def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cert_dir, consul_addr, vault_local_addr, unseal_count, check_interval, timeout, fast_mode):
+    aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
+    assert_instance_count(aws_instances)
+
+    vault_servers = list_vault_members(consul_addr)
+    print('AWS instances: {}'.format(aws_instances))
+    print('Vault servers: {}'.format(vault_servers))
+    assert_same_instances(aws_instances, vault_servers)
+
+    kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
+    assert_kill_count(kill_count)
+
+    # Prompt for unseal key only after all the instance assertion
     print('Enter any {} Vault unseal key(s):'.format(unseal_count))
 
     unseal_keys = set()
@@ -441,17 +461,8 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
 
     assert_collection_len(unseal_keys, unseal_count)
 
-    aws_instances = get_instance_ids_from_tag(vault_tag_pattern)
-    vault_servers = list_vault_members(consul_addr)
-    print('AWS instances: {}'.format(aws_instances))
-    print('Vault servers: {}'.format(vault_servers))
-    assert_same_instances(aws_instances, vault_servers)
-
-    n = find_n_to_kill_in_quorum(aws_instances)
-    assert_n_quorum(n)
-
     def check_fn(prev_aws_instances, idx):
-        return check_service_up(prev_aws_instances, idx, n, vault_tag_pattern,
+        return check_service_up(prev_aws_instances, idx, kill_count, vault_tag_pattern,
                                 lambda: list_vault_members(consul_addr))
 
     def post_fn(new_instances):
@@ -463,7 +474,7 @@ def upgrade_vault(vault_tag_pattern, username, local_ca_cert_path, remote_ca_cer
         check_fn,
         post_fn,
         vault_tag_pattern,
-        n,
+        kill_count,
         check_interval,
         timeout)
 
@@ -508,12 +519,15 @@ if __name__ == '__main__':
                         help='Interval of checking success for every upgrade step. Defaults to "{}" seconds.'.format(CHECK_INTERVAL_SECS))
     parser.add_argument('--timeout', type=int, default=TIMEOUT_SECS,
                         help='Max time value to allow for ensuring consistency in upgrade after killing. Defaults to "{}" seconds.'.format(TIMEOUT_SECS))
+    parser.add_argument('--fast', action='store_true',
+                        help='Activates the FAST and FURIOUS (but DANGEROUS) mode. Kill max allowable instances within quorum each time to reduce total time taken.')
 
     args = parser.parse_args()
 
     services = unique(args.service)
     check_interval = timedelta(seconds=args.check_interval)
     timeout = timedelta(seconds=args.timeout)
+    fast_mode = args.fast
 
     print('Services to upgrade (in order): {}'.format(services))
 
@@ -524,15 +538,15 @@ if __name__ == '__main__':
         # e.g. http://consul.x.y OR https://consul.x.y
         if service == 'consul':
             upgrade_consul(args.consul_tag, args.consul_addr,
-                           check_interval, timeout)
+                           check_interval, timeout, fast_mode)
             print('DONE Consul upgrading!')
         elif service == 'nomad-server':
             upgrade_nomad_server(args.nomad_server_tag,
-                                 args.nomad_addr, check_interval, timeout)
+                                 args.nomad_addr, check_interval, timeout, fast_mode)
             print('DONE Nomad Server upgrading!')
         elif service == 'nomad-client':
             # TODO
-            # upgrade_nomad_client(args.nomad_client_tag, args.nomad_addr, check_interval, timeout)
+            # upgrade_nomad_client(args.nomad_client_tag, args.nomad_addr, check_interval, timeout, fast_mode)
             print('DONE Nomad Client upgrading!')
         elif service == 'vault':
             vault_ca_cert = args.vault_ca_cert
@@ -543,7 +557,7 @@ if __name__ == '__main__':
                           vault_ca_cert, args.vault_remote_ca_cert,
                           args.consul_addr,
                           args.vault_local_addr, args.vault_unseal_count,
-                          check_interval, timeout)
+                          check_interval, timeout, fast_mode)
             print('DONE Vault upgrading!')
         else:
             print('Ignoring unknown command "{}"'.format(service))
