@@ -11,7 +11,7 @@ locals {
 }
 
 module "vault" {
-  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.7.1"
+  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.11.1"
 
   cluster_name  = "${var.vault_cluster_name}"
   cluster_size  = "${var.vault_cluster_size}"
