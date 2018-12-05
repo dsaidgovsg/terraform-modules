@@ -322,6 +322,26 @@ variable "vault_s3_bucket_name" {
   default     = ""
 }
 
+variable "vault_enable_auto_unseal" {
+  description = "Enable auto unseal of the Vault cluster"
+  default     = false
+}
+
+variable "vault_auto_unseal_kms_key_arn" {
+  description = "The ARN of the KMS key used for unsealing the Vault cluster"
+  default     = ""
+}
+
+variable "vault_auto_usneal_kms_key_region" {
+  description = "The AWS region where the encryption key lives. If unset, defaults to the current region"
+  default     = ""
+}
+
+variable "vault_auto_unseal_kms_endpoint" {
+  description = "A custom VPC endpoint for Vault to use for KMS as part of auto-unseal"
+  default     = ""
+}
+
 variable "vault_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-consul-server.sh

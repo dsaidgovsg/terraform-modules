@@ -8,6 +8,15 @@ locals {
 
   # Port for connection between the ELB and Vault
   vault_lb_port = 8300
+
+  auto_unseal_region = "${coalesce(var.vault_auto_usneal_kms_key_region, data.aws_region.current.name)}"
+
+  auto_unseal_flags = <<EOF
+--enable-auto-unseal \
+--auto-unseal-kms-key-id ${jsonencode(var.vault_auto_unseal_kms_key_arn)} \
+--auto-unseal-kms-key-region ${jsonencode(local.auto_unseal_region)} \
+--auto-unseal-endpoint ${jsonencode(var.vault_auto_unseal_kms_endpoint)}
+EOF
 }
 
 module "vault" {
@@ -36,6 +45,9 @@ module "vault" {
 
   enable_s3_backend = "${var.vault_enable_s3_backend}"
   s3_bucket_name    = "${var.vault_s3_bucket_name}"
+
+  enable_auto_unseal      = "${var.vault_enable_auto_unseal}"
+  auto_unseal_kms_key_arn = "${var.vault_auto_unseal_kms_key_arn}"
 
   termination_policies = "${var.vault_termination_policies}"
 }
@@ -83,6 +95,8 @@ data "template_file" "user_data_vault_cluster" {
 
     lb_listener_port = "${local.vault_lb_port}"
     lb_cidr          = "${join(",", data.aws_subnet.internal_lb_subnets.*.cidr_block)}"
+
+    auto_unseal = "${var.vault_enable_auto_unseal ? local.auto_unseal_flags : ""}"
   }
 }
 
