@@ -584,8 +584,12 @@ Replace `xxx` with the instance ID.
 | vault_allowed_inbound_security_group_ids | A list of security group IDs that will be allowed to connect to Vault | list | `<list>` | no |
 | vault_ami_id | AMI ID for Vault servers | string | - | yes |
 | vault_api_domain | Domain to access Vault HTTP API | string | - | yes |
+| vault_auto_unseal_kms_endpoint | A custom VPC endpoint for Vault to use for KMS as part of auto-unseal | string | `` | no |
+| vault_auto_unseal_kms_key_arn | The ARN of the KMS key used for unsealing the Vault cluster | string | `` | no |
+| vault_auto_usneal_kms_key_region | The AWS region where the encryption key lives. If unset, defaults to the current region | string | `` | no |
 | vault_cluster_name | The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module. | string | `vault` | no |
 | vault_cluster_size | The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5. | string | `3` | no |
+| vault_enable_auto_unseal | Enable auto unseal of the Vault cluster | string | `false` | no |
 | vault_enable_s3_backend | Whether to configure an S3 storage backend for Vault in addition to Consul. | string | `false` | no |
 | vault_instance_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | string | `t2.medium` | no |
 | vault_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
