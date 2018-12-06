@@ -41,6 +41,6 @@ resource "aws_security_group_rule" "kms_vpce_ingress" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
-  protocol          = "-1"
+  protocol          = "all"
   cidr_blocks       = ["${matchkeys(data.aws_subnet.kms_vpce_subnet.*.cidr_block, data.aws_subnet.kms_vpce_subnet.*.availability_zone, data.aws_vpc_endpoint_service.kms.availability_zones)}"]
 }
