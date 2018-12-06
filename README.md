@@ -114,6 +114,12 @@ This module is an addon for adding application service policies to access key / 
 
 This module runs Fluentd on Nomad to forward logs to Elasticsearch and (optionally) S3.
 
+## [Vault Auto Unseal](modules/vault-auto-unseal)
+
+Provisions additional resources to enable
+[Vault Auto Unseal](https://www.vaultproject.io/docs/concepts/seal.html#auto-unseal) when used
+with the Core module.
+
 ## Roles
 
 Contains Ansible roles for installation of various services. For more details, check out the README
