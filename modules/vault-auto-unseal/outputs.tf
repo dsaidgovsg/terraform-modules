@@ -1,6 +1,6 @@
 output "kms_key_arn" {
   description = "ARN of the KMS CMK provisioned"
-  value       = "${aws_kms_alias.vault_unseal.arn}"
+  value       = "${aws_kms_key.vault_unseal.arn}"
 }
 
 locals {
