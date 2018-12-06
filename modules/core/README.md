@@ -242,6 +242,27 @@ To generate an inventory for the playbooks, you can run
 ./vault-helper.sh -i > inventory
 ```
 
+#### Vault Auto-unseal
+
+Vault 1.0 and above now supports
+[auto unseal](https://www.vaultproject.io/docs/concepts/seal.html#auto-unseal) and this module
+supports its use.
+
+In general, the steps for initialisation are the same. The only difference is that any operation
+(such as upgrading the servers) that requires the restarting of Vault will no longer require manual
+unsealing. The unseal keys are then only used for operations like recovery or generating root
+tokens, for example.
+
+There are additional steps to perform when configuring for auto-unseal that is not automated for
+you by this module:
+
+- Provisioning a KMS Customer Managed Key (CMK)
+- Attaching an appropriate policy to the CMK so that the IAM policies provisioned by this module can provide Vault servers access to the key
+- (Optional) Provisioning a VPC endpoint for KMS in the appropriate subnets
+
+You might want to consider using the [`vault-auto-unseal`](../vault-auto-unseal) helper module in
+combination with the `core` module.
+
 ### Vault Integration with Nomad
 
 Nomad can be [integrated](https://www.nomadproject.io/docs/vault-integration/index.html) with Vault
