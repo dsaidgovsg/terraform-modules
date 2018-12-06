@@ -53,4 +53,5 @@ If you have enabled the VPC Endpoint:
 |------|-------------|
 | kms_key_arn | ARN of the KMS CMK provisioned |
 | vpce_kms_dns_name | DNS name for the KMS VPC Endpoint |
+| vpce_kms_security_group | ID of the security group created for the VPC endpoint |
 | vpce_kms_subnets | List of subnets where the KMS VPC Endpoint was provisioned |
