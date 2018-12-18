@@ -178,7 +178,7 @@ def get_instance_ip_addr_from_id(id):
         return invoke_shell("""
         aws ec2 describe-instances --filter \
             "Name=instance-state-name,Values=running" | \
-            jq --raw-output '.Reservations[].Instances[] | 
+            jq --raw-output '.Reservations[].Instances[] |
                 select(.InstanceId == "{}") |
                 .PrivateIpAddress'
         """.format(id)).strip()
@@ -452,8 +452,9 @@ def upgrade_vault(tag_pattern, consul_addr, service_name, vault_port, tls_server
     kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
     assert_kill_count(kill_count)
 
-    # Prompt for unseal key only after all the instance assertion
-    print('Enter any {} Vault unseal key(s):'.format(unseal_count))
+    if unseal_count > 0:
+        # Prompt for unseal key only after all the instance assertion
+        print('Enter any {} Vault unseal key(s):'.format(unseal_count))
 
     unseal_keys = set()
     for _ in range(0, unseal_count):
@@ -513,7 +514,7 @@ if __name__ == '__main__':
     parser.add_argument('--vault-consul-service-name', default=VAULT_CONSUL_SERVICE_NAME,
                         help='Vault consul service name to perform API calls on. Defaults to "{}".'.format(VAULT_CONSUL_SERVICE_NAME))
     parser.add_argument('--vault-unseal-count', type=int, default=VAULT_UNSEAL_COUNT,
-                        help='Number of unseal keys required to fully unseal a new Vault server. Defaults to {}.'.format(VAULT_UNSEAL_COUNT))
+                        help='Number of unseal keys required to fully unseal a new Vault server. Set to 0 if you are using auto unseal. Defaults to {}.'.format(VAULT_UNSEAL_COUNT))
 
     parser.add_argument('--check-interval', type=int, default=CHECK_INTERVAL_SECS,
                         help='Interval of checking success for every upgrade step. Defaults to "{}" seconds.'.format(CHECK_INTERVAL_SECS))
@@ -558,8 +559,9 @@ if __name__ == '__main__':
             print('DONE Nomad Client upgrading!')
         elif service == 'vault':
             vault_ca_cert = args.vault_ca_cert
-            assert_arg('--vault-ca-cert', vault_ca_cert)
-            assert_file_exists(vault_ca_cert)
+            if args.vault_unseal_count > 0:
+                assert_arg('--vault-ca-cert', vault_ca_cert)
+                assert_file_exists(vault_ca_cert)
 
             upgrade_vault(args.vault_tag, args.consul_addr, args.vault_consul_service_name,
                           args.vault_port, args.vault_tls_server, vault_ca_cert,
