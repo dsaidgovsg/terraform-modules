@@ -1,4 +1,4 @@
 ---
-vault_version: "1.0.0"
+vault_version: "1.0.1"
 vault_module_version: "auto-unseal"
 vault_module_url: "https://github.com/lawliet89/terraform-aws-vault.git"

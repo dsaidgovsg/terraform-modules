@@ -8,7 +8,7 @@
     consul_module_version: "v0.3.5"
     consul_version: "1.4.0"
     docker_version: "17.11.0~ce-0~ubuntu"
-    vault_version: "1.0.0"
+    vault_version: "1.0.1"
     vault_module_url: "https://github.com/lawliet89/terraform-aws-vault.git"
     vault_module_version: "auto-unseal"
     consul_enable_syslog: true

@@ -3,7 +3,7 @@
   hosts: all
   vars:
     additional_ntp_servers: ["169.254.169.123"]
-    vault_version: "1.0.0"
+    vault_version: "1.0.1"
     vault_ui_enable: "true"
     vault_module_url: "https://github.com/lawliet89/terraform-aws-vault.git"
     vault_module_version: "auto-unseal"
