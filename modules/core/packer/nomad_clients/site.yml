@@ -10,7 +10,7 @@
     docker_version: "17.11.0~ce-0~ubuntu"
     vault_version: "1.0.1"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
-    vault_module_version: "v.11.2"
+    vault_module_version: "v0.11.3"
     consul_enable_syslog: true
     nomad_enable_syslog: true
     td_agent_config_file: ""
