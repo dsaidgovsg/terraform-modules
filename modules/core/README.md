@@ -648,6 +648,7 @@ Replace `xxx` with the instance ID.
 | internal_lb_dns_name | DNS name of the internal LB |
 | internal_lb_https_listener_arn | ARN of the HTTPS listener for the internal LB |
 | internal_lb_id | ARN of the internal LB that exposes Nomad, Consul and Vault RPC |
+| internal_lb_security_group_id | Security Group ID for the Internal LB |
 | internal_lb_zone_id | The canonical hosted zone ID of the internal load balancer |
 | launch_config_name_consul_servers | Name of the Launch Configuration for Consul servers |
 | launch_config_name_nomad_clients | Name of the Launch Configuration for Nomad Clients |

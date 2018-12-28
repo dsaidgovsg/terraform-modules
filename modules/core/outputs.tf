@@ -195,6 +195,11 @@ output "internal_lb_https_listener_arn" {
   value = "${aws_lb_listener.internal_https.arn}"
 }
 
+output "internal_lb_security_group_id" {
+  description = "Security Group ID for the Internal LB"
+  value       = "${aws_security_group.internal_lb.id}"
+}
+
 output "consul_server_default_user_data" {
   description = "Default launch configuration user data for Consul Server"
   value       = "${data.template_file.user_data_consul_server.rendered}"
