@@ -1,4 +1,6 @@
 provider "template" {
+  # See: https://github.com/terraform-providers/terraform-provider-template/blob/v2.0.0/CHANGELOG.md#200-january-14-2019
+  # Need to pin the minimum version for templates/fluent.conf
   version = "~> 2.0"
 }
 
