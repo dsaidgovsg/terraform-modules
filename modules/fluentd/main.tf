@@ -1,3 +1,7 @@
+provider "template" {
+  version = "~> 2.0"
+}
+
 data "template_file" "fluentd_tf_rendered_conf" {
   template = "${file("${path.module}/templates/fluent.conf")}"
 
