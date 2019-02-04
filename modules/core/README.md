@@ -576,6 +576,7 @@ Replace `xxx` with the instance ID.
 | nomad_clients_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage | list | - | yes |
 | nomad_clients_ami_id | AMI ID for Nomad clients | string | - | yes |
 | nomad_clients_desired | The desired number of Nomad client nodes to deploy. | string | `6` | no |
+| nomad_clients_docker_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `false` | no |
 | nomad_clients_max | The max number of Nomad client nodes to deploy. | string | `8` | no |
 | nomad_clients_min | The minimum number of Nomad client nodes to deploy. | string | `3` | no |
 | nomad_clients_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
