@@ -209,6 +209,11 @@ variable "nomad_servers_user_data" {
   default = ""
 }
 
+variable "nomad_clients_docker_privileged" {
+  description = "Flag to enable privileged mode for Docker agent on Nomad client"
+  default     = false
+}
+
 variable "nomad_clients_user_data" {
   # See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
   # The default is at user_data/user-data-nomad-client.sh
