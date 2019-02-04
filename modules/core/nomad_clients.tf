@@ -31,6 +31,8 @@ module "nomad_clients" {
   cluster_tag_key     = "${var.cluster_tag_key}"
   consul_cluster_name = "${var.consul_cluster_name}"
 
+  docker_privileged = "${var.nomad_clients_docker_privileged}"
+
   integration_consul_prefix = "${var.integration_consul_prefix}"
   integration_service_type  = "nomad_client"
 
