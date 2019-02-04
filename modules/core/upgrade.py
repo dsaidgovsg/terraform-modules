@@ -294,10 +294,25 @@ def list_consul_peers(address):
 def list_nomad_server_members(address):
     try:
         return set(invoke_shell(r"""
-        nomad server members -address {} | grep alive | sed -E 's/^(i-[0-9a-f]+)\..+$/\1/'
+        nomad server members -address {} | grep alive | grep -oE 'i-[0-9a-f]+'
         """.format(address)).split())
     except:
         raise AssertionError('Unable to obtain Nomad Server members from "{}"!'
+                             .format(address))
+
+
+#
+# Nomad Client specifics
+#
+
+
+def list_nomad_client_members(address, tag_value):
+    try:
+        return set(invoke_shell(r"""
+        nomad node status -address {} | grep ready | grep {} | grep -oE 'i-[0-9a-f]+'
+        """.format(address, tag_value)).split())
+    except:
+        raise AssertionError('Unable to obtain Nomad Client members from "{}"!'
                              .format(address))
 
 #
@@ -434,10 +449,39 @@ def upgrade_nomad_server(nomad_server_tag_pattern, address, check_interval, time
         timeout)
 
 
-# TODO - Need to figure out how to properly wait for all upgraded allocs get
-#        reallocated first synchronously
-# def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout, fast_mode):
-#     pass
+# Now that Nomad client can auto-reschedule jobs just before termination
+# We can just terminate the instance like a Nomad Server
+def upgrade_nomad_client(nomad_client_tag_pattern, address, check_interval, timeout, fast_mode):
+    print("Upgrading Nomad Clients instances...")
+
+    # Sanity check
+    aws_instances = get_instance_ids_from_tag(nomad_client_tag_pattern)
+    assert_instance_count(aws_instances)
+
+    nomad_clients = list_nomad_client_members(address, nomad_client_tag_pattern)
+    print('AWS instances: {}'.format(aws_instances))
+    print('Nomad clients: {}'.format(nomad_clients))
+    assert_same_instances(aws_instances, nomad_clients)
+
+    kill_count = 1 if not fast_mode else calc_max_kill_count(aws_instances)
+    assert_kill_count(kill_count)
+
+    def check_fn(prev_aws_instances, idx):
+        return check_service_up(prev_aws_instances, idx, kill_count, nomad_client_tag_pattern,
+                                lambda: list_nomad_client_members(address, nomad_client_tag_pattern))
+
+    def post_fn(new_instances):
+        # Do nothing
+        pass
+
+    kill_check_post(
+        kill_fn,
+        check_fn,
+        post_fn,
+        nomad_client_tag_pattern,
+        kill_count,
+        check_interval,
+        timeout)
 
 
 def upgrade_vault(tag_pattern, consul_addr, service_name, vault_port, tls_server, ca_cert_path, unseal_count, check_interval, timeout, fast_mode):
@@ -554,8 +598,8 @@ if __name__ == '__main__':
                                  args.nomad_addr, check_interval, timeout, fast_mode)
             print('DONE Nomad Server upgrading!')
         elif service == 'nomad-client':
-            # TODO
-            # upgrade_nomad_client(args.nomad_client_tag, args.nomad_addr, check_interval, timeout, fast_mode)
+            upgrade_nomad_client(args.nomad_client_tag,
+                                 args.nomad_addr, check_interval, timeout, fast_mode)
             print('DONE Nomad Client upgrading!')
         elif service == 'vault':
             vault_ca_cert = args.vault_ca_cert
