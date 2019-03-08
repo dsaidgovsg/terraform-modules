@@ -9,10 +9,12 @@ variable "add_route53_record" {
 
 variable "route53_zone_id" {
   description = "Zone ID to use for Route53 record. Only applicable if `add_route53_record` is `true`"
+  default     = ""
 }
 
 variable "route53_domain" {
   description = "Domain to set as A record for Route53. Only applicable if `add_route53_record` is `true`"
+  default     = ""
 }
 
 variable "lb_cname" {
