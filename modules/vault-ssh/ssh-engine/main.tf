@@ -7,8 +7,8 @@ resource "vault_mount" "ssh" {
 }
 
 resource "vault_ssh_secret_backend_ca" "ssh" {
-  count                = "${var.enabled ? 1 : 0}"
-  backend              = "${vault_mount.ssh.path}"
+  count   = "${var.enabled ? 1 : 0}"
+  backend = "${vault_mount.ssh.path}"
 }
 
 data "template_file" "role" {
