@@ -6,22 +6,9 @@ resource "vault_mount" "ssh" {
   description = "SSH Key signer for ${var.description}"
 }
 
-resource "vault_generic_secret" "ssh_ca" {
-  count      = "${var.enabled ? 1 : 0}"
-  depends_on = ["vault_mount.ssh"]
-
-  lifecycle {
-    # This is a hack. Reconfiguring this will overwrite the CA
-    ignore_changes = ["*"]
-  }
-
-  path = "${var.path}/config/ca"
-
-  data_json = <<EOF
-{
-    "generate_signing_key": true
-}
-EOF
+resource "vault_ssh_secret_backend_ca" "ssh" {
+  count                = "${var.enabled ? 1 : 0}"
+  backend              = "${vault_mount.ssh.path}"
 }
 
 data "template_file" "role" {
