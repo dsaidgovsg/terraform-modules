@@ -539,145 +539,148 @@ Replace `xxx` with the instance ID.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| allowed_ssh_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | list | `<list>` | no |
-| associate_public_ip_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | string | `true` | no |
-| client_node_class | Nomad Client Node Class name for cluster identification | string | `nomad-client` | no |
-| cluster_tag_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `consul-servers` | no |
-| consul_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | list | - | yes |
-| consul_ami_id | AMI ID for Consul servers | string | - | yes |
-| consul_api_domain | Domain to access Consul HTTP API | string | - | yes |
-| consul_cluster_name | Name of the Consul cluster to deploy | string | `consul` | no |
-| consul_cluster_size | The number of Consul server nodes to deploy. We strongly recommend using 3 or 5. | string | `3` | no |
-| consul_instance_type | Type of instances to deploy Consul servers and clients to | string | `t2.medium` | no |
-| consul_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
-| consul_lb_healthy_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `2` | no |
-| consul_lb_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `30` | no |
-| consul_lb_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `5` | no |
-| consul_lb_unhealthy_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `2` | no |
-| consul_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
-| consul_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
-| consul_subnets | List of subnets to launch Connsul servers in | list | - | yes |
-| consul_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `NewestInstance` | no |
-| consul_user_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
-| elb_access_log | Log Internal LB access to a S3 bucket | string | `false` | no |
-| elb_access_log_bucket | S3 bucket to log access to the internal LB to | string | - | yes |
-| elb_access_log_prefix | Prefix in the S3 bucket to log internal LB access | string | `` | no |
-| elb_idle_timeout | The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that. | string | `660` | no |
-| elb_ssl_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `ELBSecurityPolicy-TLS-1-2-2017-01` | no |
-| integration_consul_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `terraform/` | no |
-| internal_lb_certificate_arn | ARN of the certificate to use for the internal LB | string | - | yes |
-| internal_lb_incoming_cidr | A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to | list | - | yes |
-| internal_lb_name | Name of the internal load balancer | string | `internal` | no |
-| internal_lb_subnets | List of subnets to deploy the internal LB to | list | - | yes |
-| nomad_api_domain | Domain to access Nomad REST API | string | - | yes |
-| nomad_client_instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
-| nomad_client_subnets | List of subnets to launch Nomad clients in | list | - | yes |
-| nomad_client_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `Default` | no |
-| nomad_clients_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage | list | - | yes |
-| nomad_clients_ami_id | AMI ID for Nomad clients | string | - | yes |
-| nomad_clients_desired | The desired number of Nomad client nodes to deploy. | string | `6` | no |
-| nomad_clients_docker_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `false` | no |
-| nomad_clients_max | The max number of Nomad client nodes to deploy. | string | `8` | no |
-| nomad_clients_min | The minimum number of Nomad client nodes to deploy. | string | `3` | no |
-| nomad_clients_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
-| nomad_clients_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
-| nomad_clients_services_inbound_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | list | `<list>` | no |
-| nomad_clients_user_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | string | `` | no |
-| nomad_cluster_name | The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module. | string | `nomad` | no |
-| nomad_server_instance_type | Type of instances to deploy Nomad servers to | string | `t2.medium` | no |
-| nomad_server_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
-| nomad_server_lb_healthy_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `2` | no |
-| nomad_server_lb_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `30` | no |
-| nomad_server_lb_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `5` | no |
-| nomad_server_lb_unhealthy_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `2` | no |
-| nomad_server_subnets | List of subnets to launch Nomad servers in | list | - | yes |
-| nomad_server_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `NewestInstance` | no |
-| nomad_servers_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Servers servers for API usage | list | - | yes |
-| nomad_servers_ami_id | AMI ID for Nomad servers | string | - | yes |
-| nomad_servers_num | The number of Nomad server nodes to deploy. We strongly recommend using 3 or 5. | string | `3` | no |
-| nomad_servers_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
-| nomad_servers_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
-| nomad_servers_user_data | The user data for the Nomad servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
-| route53_zone | Zone for Route 53 records | string | - | yes |
-| ssh_key_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | string | `` | no |
-| tags | A map of tags to add to all resources | string | `<map>` | no |
-| vault_allowed_inbound_cidr_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Vault servers for API usage | list | - | yes |
-| vault_allowed_inbound_security_group_count | The number of entries in var.allowed_inbound_security_group_ids.   Ideally, this value could be computed dynamically,   but we pass this variable to a Terraform resource's 'count' property and   Terraform requires that 'count' be computed with literals or data sources only. | string | `0` | no |
-| vault_allowed_inbound_security_group_ids | A list of security group IDs that will be allowed to connect to Vault | list | `<list>` | no |
-| vault_ami_id | AMI ID for Vault servers | string | - | yes |
-| vault_api_domain | Domain to access Vault HTTP API | string | - | yes |
-| vault_auto_unseal_kms_endpoint | A custom VPC endpoint for Vault to use for KMS as part of auto-unseal | string | `` | no |
-| vault_auto_unseal_kms_key_arn | The ARN of the KMS key used for unsealing the Vault cluster | string | `` | no |
-| vault_auto_usneal_kms_key_region | The AWS region where the encryption key lives. If unset, defaults to the current region | string | `` | no |
-| vault_cluster_name | The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module. | string | `vault` | no |
-| vault_cluster_size | The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5. | string | `3` | no |
-| vault_enable_auto_unseal | Enable auto unseal of the Vault cluster | string | `false` | no |
-| vault_enable_s3_backend | Whether to configure an S3 storage backend for Vault in addition to Consul. | string | `false` | no |
-| vault_instance_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | string | `t2.medium` | no |
-| vault_lb_deregistration_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `30` | no |
-| vault_lb_healthy_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `2` | no |
-| vault_lb_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `30` | no |
-| vault_lb_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `5` | no |
-| vault_lb_unhealthy_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `2` | no |
-| vault_root_volume_size | The size, in GB, of the root EBS volume. | string | `50` | no |
-| vault_root_volume_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `gp2` | no |
-| vault_s3_bucket_name | The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault_enable_s3_backend' is set to true. | string | `` | no |
-| vault_subnets | List of subnets to launch Vault servers in | list | - | yes |
-| vault_termination_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `NewestInstance` | no |
-| vault_tls_key_policy_arn | ARN of the IAM policy to allow the Vault EC2 instances to decrypt the encrypted TLS private key baked into the AMI. See README for more information. | string | - | yes |
-| vault_user_data | The user data for the Vault servers EC2 instances. If set to empty, the default template will be used | string | `` | no |
-| vpc_id | ID of the VPC to launch the module in | string | - | yes |
+| allowed\_ssh\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | list | `<list>` | no |
+| associate\_public\_ip\_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | string | `"true"` | no |
+| client\_node\_class | Nomad Client Node Class name for cluster identification | string | `"nomad-client"` | no |
+| cluster\_tag\_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | string | `"consul-servers"` | no |
+| consul\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | list | n/a | yes |
+| consul\_ami\_id | AMI ID for Consul servers | string | n/a | yes |
+| consul\_api\_domain | Domain to access Consul HTTP API | string | n/a | yes |
+| consul\_cluster\_name | Name of the Consul cluster to deploy | string | `"consul"` | no |
+| consul\_cluster\_size | The number of Consul server nodes to deploy. We strongly recommend using 3 or 5. | string | `"3"` | no |
+| consul\_instance\_type | Type of instances to deploy Consul servers and clients to | string | `"t2.medium"` | no |
+| consul\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `"30"` | no |
+| consul\_lb\_healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `"2"` | no |
+| consul\_lb\_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `"30"` | no |
+| consul\_lb\_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `"5"` | no |
+| consul\_lb\_unhealthy\_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `"2"` | no |
+| consul\_root\_volume\_size | The size, in GB, of the root EBS volume. | string | `"50"` | no |
+| consul\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `"gp2"` | no |
+| consul\_subnets | List of subnets to launch Connsul servers in | list | n/a | yes |
+| consul\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `"NewestInstance"` | no |
+| consul\_user\_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | string | `""` | no |
+| elb\_access\_log | Log Internal LB access to a S3 bucket | string | `"false"` | no |
+| elb\_access\_log\_bucket | S3 bucket to log access to the internal LB to | string | n/a | yes |
+| elb\_access\_log\_prefix | Prefix in the S3 bucket to log internal LB access | string | `""` | no |
+| elb\_idle\_timeout | The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that. | string | `"660"` | no |
+| elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | string | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
+| integration\_consul\_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | string | `"terraform/"` | no |
+| internal\_lb\_certificate\_arn | ARN of the certificate to use for the internal LB | string | n/a | yes |
+| internal\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to | list | n/a | yes |
+| internal\_lb\_name | Name of the internal load balancer | string | `"internal"` | no |
+| internal\_lb\_subnets | List of subnets to deploy the internal LB to | list | n/a | yes |
+| nomad\_api\_domain | Domain to access Nomad REST API | string | n/a | yes |
+| nomad\_client\_instance\_type | Type of instances to deploy Nomad servers to | string | `"t2.medium"` | no |
+| nomad\_client\_subnets | List of subnets to launch Nomad clients in | list | n/a | yes |
+| nomad\_client\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `"Default"` | no |
+| nomad\_clients\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage | list | n/a | yes |
+| nomad\_clients\_ami\_id | AMI ID for Nomad clients | string | n/a | yes |
+| nomad\_clients\_desired | The desired number of Nomad client nodes to deploy. | string | `"6"` | no |
+| nomad\_clients\_docker\_privileged | Flag to enable privileged mode for Docker agent on Nomad client | string | `"false"` | no |
+| nomad\_clients\_max | The max number of Nomad client nodes to deploy. | string | `"8"` | no |
+| nomad\_clients\_min | The minimum number of Nomad client nodes to deploy. | string | `"3"` | no |
+| nomad\_clients\_root\_volume\_size | The size, in GB, of the root EBS volume. | string | `"50"` | no |
+| nomad\_clients\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `"gp2"` | no |
+| nomad\_clients\_services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | list | `<list>` | no |
+| nomad\_clients\_user\_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | string | `""` | no |
+| nomad\_cluster\_name | The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module. | string | `"nomad"` | no |
+| nomad\_server\_instance\_type | Type of instances to deploy Nomad servers to | string | `"t2.medium"` | no |
+| nomad\_server\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `"30"` | no |
+| nomad\_server\_lb\_healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `"2"` | no |
+| nomad\_server\_lb\_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `"30"` | no |
+| nomad\_server\_lb\_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `"5"` | no |
+| nomad\_server\_lb\_unhealthy\_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `"2"` | no |
+| nomad\_server\_subnets | List of subnets to launch Nomad servers in | list | n/a | yes |
+| nomad\_server\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `"NewestInstance"` | no |
+| nomad\_servers\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Servers servers for API usage | list | n/a | yes |
+| nomad\_servers\_ami\_id | AMI ID for Nomad servers | string | n/a | yes |
+| nomad\_servers\_num | The number of Nomad server nodes to deploy. We strongly recommend using 3 or 5. | string | `"3"` | no |
+| nomad\_servers\_root\_volume\_size | The size, in GB, of the root EBS volume. | string | `"50"` | no |
+| nomad\_servers\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `"gp2"` | no |
+| nomad\_servers\_user\_data | The user data for the Nomad servers EC2 instances. If set to empty, the default template will be used | string | `""` | no |
+| route53\_zone | Zone for Route 53 records | string | n/a | yes |
+| ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | string | `""` | no |
+| tags | A map of tags to add to all resources | map | `<map>` | no |
+| use\_private\_zone | Add additional private zone on top of the default public one. Setting to true causes the DNS names of the services here to be registered under the private zone only. | string | `"false"` | no |
+| vault\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Vault servers for API usage | list | n/a | yes |
+| vault\_allowed\_inbound\_security\_group\_count | The number of entries in var.allowed_inbound_security_group_ids.   Ideally, this value could be computed dynamically,   but we pass this variable to a Terraform resource's 'count' property and   Terraform requires that 'count' be computed with literals or data sources only. | string | `"0"` | no |
+| vault\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Vault | list | `<list>` | no |
+| vault\_ami\_id | AMI ID for Vault servers | string | n/a | yes |
+| vault\_api\_domain | Domain to access Vault HTTP API | string | n/a | yes |
+| vault\_auto\_unseal\_kms\_endpoint | A custom VPC endpoint for Vault to use for KMS as part of auto-unseal | string | `""` | no |
+| vault\_auto\_unseal\_kms\_key\_arn | The ARN of the KMS key used for unsealing the Vault cluster | string | `""` | no |
+| vault\_auto\_usneal\_kms\_key\_region | The AWS region where the encryption key lives. If unset, defaults to the current region | string | `""` | no |
+| vault\_cluster\_name | The name of the Vault cluster (e.g. vault-stage). This variable is used to namespace all resources created by this module. | string | `"vault"` | no |
+| vault\_cluster\_size | The number of nodes to have in the cluster. We strongly recommend setting this to 3 or 5. | string | `"3"` | no |
+| vault\_enable\_auto\_unseal | Enable auto unseal of the Vault cluster | string | `"false"` | no |
+| vault\_enable\_s3\_backend | Whether to configure an S3 storage backend for Vault in addition to Consul. | string | `"false"` | no |
+| vault\_instance\_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | string | `"t2.medium"` | no |
+| vault\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | string | `"30"` | no |
+| vault\_lb\_healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | string | `"2"` | no |
+| vault\_lb\_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | string | `"30"` | no |
+| vault\_lb\_timeout | The amount of time, in seconds, during which no response means a failed health check (2-60 seconds). | string | `"5"` | no |
+| vault\_lb\_unhealthy\_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | string | `"2"` | no |
+| vault\_root\_volume\_size | The size, in GB, of the root EBS volume. | string | `"50"` | no |
+| vault\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | string | `"gp2"` | no |
+| vault\_s3\_bucket\_name | The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault_enable_s3_backend' is set to true. | string | `""` | no |
+| vault\_subnets | List of subnets to launch Vault servers in | list | n/a | yes |
+| vault\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | string | `"NewestInstance"` | no |
+| vault\_tls\_key\_policy\_arn | ARN of the IAM policy to allow the Vault EC2 instances to decrypt the encrypted TLS private key baked into the AMI. See README for more information. | string | n/a | yes |
+| vault\_user\_data | The user data for the Vault servers EC2 instances. If set to empty, the default template will be used | string | `""` | no |
+| vpc\_id | ID of the VPC to launch the module in | string | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| asg_name_consul_servers | Name of Consul Server Autoscaling group |
-| asg_name_nomad_clients | Name of the Autoscaling group for Nomad Clients |
-| asg_name_nomad_servers | Name of Nomad Server Autoscaling group |
-| consul_api_address | Address to access consul API |
-| consul_cluster_tag_key | Key that Consul Server Instances are tagged with for discovery |
-| consul_cluster_tag_value | Value that Consul Server Instances are tagged with for discovery |
-| consul_server_default_user_data | Default launch configuration user data for Consul Server |
-| consul_server_user_data | Default launch configuration user data for Consul Server |
-| iam_role_arn_consul_servers | IAM Role ARN for Consul servers |
-| iam_role_arn_nomad_clients | IAM Role ARN for Nomad Clients |
-| iam_role_arn_nomad_servers | IAM Role ARN for Nomad servers |
-| iam_role_id_consul_servers | IAM Role ID for Consul servers |
-| iam_role_id_nomad_clients | IAM Role ID for Nomad Clients |
-| iam_role_id_nomad_servers | IAM Role ID for Nomad servers |
-| internal_lb_dns_name | DNS name of the internal LB |
-| internal_lb_https_listener_arn | ARN of the HTTPS listener for the internal LB |
-| internal_lb_id | ARN of the internal LB that exposes Nomad, Consul and Vault RPC |
-| internal_lb_security_group_id | Security Group ID for the Internal LB |
-| internal_lb_zone_id | The canonical hosted zone ID of the internal load balancer |
-| launch_config_name_consul_servers | Name of the Launch Configuration for Consul servers |
-| launch_config_name_nomad_clients | Name of the Launch Configuration for Nomad Clients |
-| launch_config_name_nomad_servers | Name of Launch Configuration for Nomad servers |
-| node_class_nomad_clients | Nomad Client Node Class name applied |
-| nomad_api_address | Address to access nomad API |
-| nomad_client_default_user_data | Default launch configuration user data for Nomad Client |
-| nomad_client_user_data | User data used by Nomad Client |
-| nomad_server_default_user_data | Default launch configuration user data for Nomad Server |
-| nomad_server_user_data | User data used by Nomad Server |
-| nomad_servers_cluster_tag_key | Key that Nomad Server Instances are tagged with for discovery |
-| nomad_servers_cluster_tag_value | Value that Nomad servers are tagged with for discovery |
-| num_consul_servers | Number of Consul servers in cluster |
-| num_nomad_clients | The desired number of Nomad clients in cluster |
-| num_nomad_servers | Number of Nomad servers in the cluster |
-| security_group_id_consul_servers | Security Group ID for Consul servers |
-| security_group_id_nomad_clients | Security Group ID for Nomad Clients |
-| security_group_id_nomad_servers | Security Group ID for Nomad servers |
-| ssh_key_name | The name of the SSH key that all instances are launched with |
-| vault_api_address | Address to access Vault API |
-| vault_asg_name | Name of the Autoscaling group for Vault cluster |
-| vault_cluster_default_user_data | Default launch configuration user data for Vault Cluster |
-| vault_cluster_size | Number of instances in the Vault cluster |
-| vault_cluster_user_data | User data used by Vault Cluster |
-| vault_iam_role_arn | IAM Role ARN for Vault |
-| vault_iam_role_id | IAM Role ID for Vault |
-| vault_launch_config_name | Name of the Launch Configuration for Vault cluster |
-| vault_s3_bucket_arn | ARN of the S3 bucket that Vault's state is stored |
-| vault_security_group_id | ID of the Security Group for Vault |
-| vault_servers_cluster_tag_key | Key that Vault instances are tagged with |
-| vault_servers_cluster_tag_value | Value that Vault instances are tagged with |
+| asg\_name\_consul\_servers | Name of Consul Server Autoscaling group |
+| asg\_name\_nomad\_clients | Name of the Autoscaling group for Nomad Clients |
+| asg\_name\_nomad\_servers | Name of Nomad Server Autoscaling group |
+| consul\_api\_address | Address to access consul API |
+| consul\_cluster\_tag\_key | Key that Consul Server Instances are tagged with for discovery |
+| consul\_cluster\_tag\_value | Value that Consul Server Instances are tagged with for discovery |
+| consul\_server\_default\_user\_data | Default launch configuration user data for Consul Server |
+| consul\_server\_user\_data | Default launch configuration user data for Consul Server |
+| iam\_role\_arn\_consul\_servers | IAM Role ARN for Consul servers |
+| iam\_role\_arn\_nomad\_clients | IAM Role ARN for Nomad Clients |
+| iam\_role\_arn\_nomad\_servers | IAM Role ARN for Nomad servers |
+| iam\_role\_id\_consul\_servers | IAM Role ID for Consul servers |
+| iam\_role\_id\_nomad\_clients | IAM Role ID for Nomad Clients |
+| iam\_role\_id\_nomad\_servers | IAM Role ID for Nomad servers |
+| internal\_lb\_dns\_name | DNS name of the internal LB |
+| internal\_lb\_https\_listener\_arn | ARN of the HTTPS listener for the internal LB |
+| internal\_lb\_id | ARN of the internal LB that exposes Nomad, Consul and Vault RPC |
+| internal\_lb\_security\_group\_id | Security Group ID for the Internal LB |
+| internal\_lb\_zone\_id | The canonical hosted zone ID of the internal load balancer |
+| launch\_config\_name\_consul\_servers | Name of the Launch Configuration for Consul servers |
+| launch\_config\_name\_nomad\_clients | Name of the Launch Configuration for Nomad Clients |
+| launch\_config\_name\_nomad\_servers | Name of Launch Configuration for Nomad servers |
+| node\_class\_nomad\_clients | Nomad Client Node Class name applied |
+| nomad\_api\_address | Address to access nomad API |
+| nomad\_client\_default\_user\_data | Default launch configuration user data for Nomad Client |
+| nomad\_client\_user\_data | User data used by Nomad Client |
+| nomad\_server\_default\_user\_data | Default launch configuration user data for Nomad Server |
+| nomad\_server\_user\_data | User data used by Nomad Server |
+| nomad\_servers\_cluster\_tag\_key | Key that Nomad Server Instances are tagged with for discovery |
+| nomad\_servers\_cluster\_tag\_value | Value that Nomad servers are tagged with for discovery |
+| num\_consul\_servers | Number of Consul servers in cluster |
+| num\_nomad\_clients | The desired number of Nomad clients in cluster |
+| num\_nomad\_servers | Number of Nomad servers in the cluster |
+| private\_zone\_id | Private zone ID, only applicable when `use_private_zone` is set to true |
+| security\_group\_id\_consul\_servers | Security Group ID for Consul servers |
+| security\_group\_id\_nomad\_clients | Security Group ID for Nomad Clients |
+| security\_group\_id\_nomad\_servers | Security Group ID for Nomad servers |
+| ssh\_key\_name | The name of the SSH key that all instances are launched with |
+| use\_private\_zone | Indicates if there is private zone used for the core setup |
+| vault\_api\_address | Address to access Vault API |
+| vault\_asg\_name | Name of the Autoscaling group for Vault cluster |
+| vault\_cluster\_default\_user\_data | Default launch configuration user data for Vault Cluster |
+| vault\_cluster\_size | Number of instances in the Vault cluster |
+| vault\_cluster\_user\_data | User data used by Vault Cluster |
+| vault\_iam\_role\_arn | IAM Role ARN for Vault |
+| vault\_iam\_role\_id | IAM Role ID for Vault |
+| vault\_launch\_config\_name | Name of the Launch Configuration for Vault cluster |
+| vault\_s3\_bucket\_arn | ARN of the S3 bucket that Vault's state is stored |
+| vault\_security\_group\_id | ID of the Security Group for Vault |
+| vault\_servers\_cluster\_tag\_key | Key that Vault instances are tagged with |
+| vault\_servers\_cluster\_tag\_value | Value that Vault instances are tagged with |

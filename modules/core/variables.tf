@@ -76,6 +76,11 @@ variable "route53_zone" {
   description = "Zone for Route 53 records"
 }
 
+variable "use_private_zone" {
+  description = "Add additional private zone on top of the default public one. Setting to true causes the DNS names of the services here to be registered under the private zone only."
+  default     = false
+}
+
 variable "internal_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to"
   type        = "list"

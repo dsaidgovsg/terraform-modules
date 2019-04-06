@@ -244,3 +244,13 @@ output "ssh_key_name" {
   description = "The name of the SSH key that all instances are launched with"
   value       = "${var.ssh_key_name}"
 }
+
+output "use_private_zone" {
+  description = "Indicates if there is private zone used for the core setup"
+  value       = "${var.use_private_zone}"
+}
+
+output "private_zone_id" {
+  description = "Private zone ID, only applicable when `use_private_zone` is set to true"
+  value       = "${local.private_zone_id}"
+}
