@@ -1,6 +1,5 @@
 locals {
   private_zone_id = "${join("", aws_route53_zone.private.*.zone_id)}"
-  zone_id         = "${var.use_private_zone ? local.private_zone_id : data.aws_route53_zone.default.zone_id}"
 }
 
 ##############################
@@ -172,7 +171,21 @@ resource "aws_security_group_rule" "nomad_http" {
 
 # A Record for nomad API endpoint to point to Internal Load balancer
 resource "aws_route53_record" "nomad_rpc" {
-  zone_id = "${local.zone_id}"
+  zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.nomad_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "private_zone_nomad_rpc" {
+  count = "${var.use_private_zone ? 1 : 0}"
+
+  zone_id = "${local.private_zone_id}"
   name    = "${var.nomad_api_domain}"
   type    = "A"
 
@@ -256,7 +269,19 @@ resource "aws_security_group_rule" "consul_http" {
 }
 
 resource "aws_route53_record" "consul" {
-  zone_id = "${local.zone_id}"
+  zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.consul_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "private_zone_consul" {
+  zone_id = "${local.private_zone_id}"
   name    = "${var.consul_api_domain}"
   type    = "A"
 
@@ -341,7 +366,19 @@ resource "aws_security_group_rule" "vault_https" {
 }
 
 resource "aws_route53_record" "vault" {
-  zone_id = "${local.zone_id}"
+  zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.vault_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "private_zone_vault" {
+  zone_id = "${local.private_zone_id}"
   name    = "${var.vault_api_domain}"
   type    = "A"
 
