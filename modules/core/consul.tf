@@ -52,3 +52,68 @@ data "template_file" "user_data_consul_server" {
     consul_prefix = "${var.integration_consul_prefix}"
   }
 }
+
+resource "aws_eip" "consul_private" {
+  count = "${var.use_private_zone ? length(var.internal_lb_subnets) : 0}"
+  vpc   = true
+  tags  = "${var.tags}"
+
+  # tags = "${merge(var.tags, map("Name", format("%s-%d", var.public_eip_name, count.index)))}"
+}
+
+resource "aws_lb" "consul_private" {
+  count = "${var.use_private_zone ? 1 : 0}"
+
+  name = "consul-private-lb"
+
+  # name               = "${var.public_lb_name}"
+  load_balancer_type = "network"
+  internal           = true
+
+  subnet_mapping {
+    subnet_id     = "${var.internal_lb_subnets[0]}"
+    allocation_id = "${element(aws_eip.consul_private.*.id, 0)}"
+  }
+
+  subnet_mapping {
+    subnet_id     = "${var.internal_lb_subnets[1]}"
+    allocation_id = "${element(aws_eip.consul_private.*.id, 1)}"
+  }
+
+  subnet_mapping {
+    subnet_id     = "${var.internal_lb_subnets[2]}"
+    allocation_id = "${element(aws_eip.consul_private.*.id, 2)}"
+  }
+
+  tags = "${var.tags}"
+}
+
+resource "aws_lb_listener" "consul_private" {
+  count = "${var.use_private_zone ? 1 : 0}"
+
+  load_balancer_arn = "${aws_lb.consul_private.arn}"
+  port              = "53"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.consul_private.arn}"
+  }
+}
+
+resource "aws_lb_target_group" "consul_private" {
+  count = "${var.use_private_zone ? 1 : 0}"
+
+  name = "consul-private-lb-target"
+
+  # name     = "${var.public_lb_name}-sftp-${count.index}"
+
+  port     = "8600"
+  protocol = "TCP"
+  vpc_id   = "${var.vpc_id}"
+  health_check {
+    port     = "8600"
+    protocol = "TCP"
+  }
+  tags = "${var.tags}"
+}
