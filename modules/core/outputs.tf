@@ -254,3 +254,8 @@ output "private_zone_id" {
   description = "Private zone ID, only applicable when `use_private_zone` is set to true"
   value       = "${local.private_zone_id}"
 }
+
+output "private_consul_lb_dns_name" {
+  description = "Private Consul LB DNS name, only applicable when `use_private_zone` is set to true"
+  value       = "${aws_lb.consul_private.dns_name}"
+}
