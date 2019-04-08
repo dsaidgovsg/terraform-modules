@@ -77,10 +77,12 @@ resource "aws_lb" "consul_private" {
   #   allocation_id = "${element(aws_eip.consul_private.*.id, 0)}"
   # }
 
+
   # subnet_mapping {
   #   subnet_id     = "${var.internal_lb_subnets[1]}"
   #   allocation_id = "${element(aws_eip.consul_private.*.id, 1)}"
   # }
+
 
   # subnet_mapping {
   #   subnet_id     = "${var.internal_lb_subnets[2]}"
@@ -113,13 +115,18 @@ resource "aws_lb_target_group" "consul_private" {
   port     = "8600"
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"
-
   health_check {
     port     = "8600"
     protocol = "TCP"
   }
-
   tags = "${var.tags}"
+}
+
+resource "aws_autoscaling_attachment" "consul_private" {
+  count = "${var.use_private_zone ? 1 : 0}"
+
+  autoscaling_group_name = "${module.consul_servers.asg_name}"
+  alb_target_group_arn   = "${element(aws_lb_target_group.consul_private.*.arn, 0)}"
 }
 
 resource "aws_security_group_rule" "consul_lb_dns" {
