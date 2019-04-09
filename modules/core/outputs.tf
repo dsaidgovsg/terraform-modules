@@ -244,3 +244,13 @@ output "ssh_key_name" {
   description = "The name of the SSH key that all instances are launched with"
   value       = "${var.ssh_key_name}"
 }
+
+output "add_private_route53_zone" {
+  description = "Indicates if there is private zone used for the core setup"
+  value       = "${var.add_private_route53_zone}"
+}
+
+output "private_zone_id" {
+  description = "Private zone ID, only applicable when `add_private_route53_zone` is set to true"
+  value       = "${local.private_zone_id}"
+}

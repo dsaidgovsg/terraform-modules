@@ -1,3 +1,7 @@
+locals {
+  private_zone_id = "${join("", aws_route53_zone.private.*.zone_id)}"
+}
+
 ##############################
 # Define an internal load balancer for API access to Nomad and Consul
 ##############################
@@ -178,6 +182,20 @@ resource "aws_route53_record" "nomad_rpc" {
   }
 }
 
+resource "aws_route53_record" "private_zone_nomad_rpc" {
+  count = "${var.add_private_route53_zone ? 1 : 0}"
+
+  zone_id = "${local.private_zone_id}"
+  name    = "${var.nomad_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
 ##############################
 # Consul Server Access
 ##############################
@@ -252,6 +270,20 @@ resource "aws_security_group_rule" "consul_http" {
 
 resource "aws_route53_record" "consul" {
   zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.consul_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "private_zone_consul" {
+  count = "${var.add_private_route53_zone ? 1 : 0}"
+
+  zone_id = "${local.private_zone_id}"
   name    = "${var.consul_api_domain}"
   type    = "A"
 
@@ -337,6 +369,20 @@ resource "aws_security_group_rule" "vault_https" {
 
 resource "aws_route53_record" "vault" {
   zone_id = "${data.aws_route53_zone.default.zone_id}"
+  name    = "${var.vault_api_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.internal.dns_name}"
+    zone_id                = "${aws_lb.internal.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "private_zone_vault" {
+  count = "${var.add_private_route53_zone ? 1 : 0}"
+
+  zone_id = "${local.private_zone_id}"
   name    = "${var.vault_api_domain}"
   type    = "A"
 
