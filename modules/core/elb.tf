@@ -183,7 +183,7 @@ resource "aws_route53_record" "nomad_rpc" {
 }
 
 resource "aws_route53_record" "private_zone_nomad_rpc" {
-  count = "${var.use_private_zone ? 1 : 0}"
+  count = "${var.add_private_zone_route53 ? 1 : 0}"
 
   zone_id = "${local.private_zone_id}"
   name    = "${var.nomad_api_domain}"
@@ -281,7 +281,7 @@ resource "aws_route53_record" "consul" {
 }
 
 resource "aws_route53_record" "private_zone_consul" {
-  count = "${var.use_private_zone ? 1 : 0}"
+  count = "${var.add_private_zone_route53 ? 1 : 0}"
 
   zone_id = "${local.private_zone_id}"
   name    = "${var.consul_api_domain}"
@@ -380,7 +380,7 @@ resource "aws_route53_record" "vault" {
 }
 
 resource "aws_route53_record" "private_zone_vault" {
-  count = "${var.use_private_zone ? 1 : 0}"
+  count = "${var.add_private_zone_route53 ? 1 : 0}"
 
   zone_id = "${local.private_zone_id}"
   name    = "${var.vault_api_domain}"
