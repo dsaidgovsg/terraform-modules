@@ -539,6 +539,7 @@ Replace `xxx` with the instance ID.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| add\_private\_zone\_route53 | Setting to true adds a new Route53 zone under the same domain name as `route53_zone`, but in a private zone, on top of the default public one | string | `"false"` | no |
 | allowed\_ssh\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | list | `<list>` | no |
 | associate\_public\_ip\_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | string | `"true"` | no |
 | client\_node\_class | Nomad Client Node Class name for cluster identification | string | `"nomad-client"` | no |
@@ -601,7 +602,6 @@ Replace `xxx` with the instance ID.
 | route53\_zone | Zone for Route 53 records | string | n/a | yes |
 | ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | string | `""` | no |
 | tags | A map of tags to add to all resources | map | `<map>` | no |
-| use\_private\_zone | Add additional private zone on top of the default public one. Setting to true causes the DNS names of the services here to be registered under the private zone only. | string | `"false"` | no |
 | vault\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Vault servers for API usage | list | n/a | yes |
 | vault\_allowed\_inbound\_security\_group\_count | The number of entries in var.allowed_inbound_security_group_ids.   Ideally, this value could be computed dynamically,   but we pass this variable to a Terraform resource's 'count' property and   Terraform requires that 'count' be computed with literals or data sources only. | string | `"0"` | no |
 | vault\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Vault | list | `<list>` | no |
@@ -633,6 +633,7 @@ Replace `xxx` with the instance ID.
 
 | Name | Description |
 |------|-------------|
+| add\_private\_zone\_route53 | Indicates if there is private zone used for the core setup |
 | asg\_name\_consul\_servers | Name of Consul Server Autoscaling group |
 | asg\_name\_nomad\_clients | Name of the Autoscaling group for Nomad Clients |
 | asg\_name\_nomad\_servers | Name of Nomad Server Autoscaling group |
@@ -666,12 +667,11 @@ Replace `xxx` with the instance ID.
 | num\_consul\_servers | Number of Consul servers in cluster |
 | num\_nomad\_clients | The desired number of Nomad clients in cluster |
 | num\_nomad\_servers | Number of Nomad servers in the cluster |
-| private\_zone\_id | Private zone ID, only applicable when `use_private_zone` is set to true |
+| private\_zone\_id | Private zone ID, only applicable when `add_private_zone_route53` is set to true |
 | security\_group\_id\_consul\_servers | Security Group ID for Consul servers |
 | security\_group\_id\_nomad\_clients | Security Group ID for Nomad Clients |
 | security\_group\_id\_nomad\_servers | Security Group ID for Nomad servers |
 | ssh\_key\_name | The name of the SSH key that all instances are launched with |
-| use\_private\_zone | Indicates if there is private zone used for the core setup |
 | vault\_api\_address | Address to access Vault API |
 | vault\_asg\_name | Name of the Autoscaling group for Vault cluster |
 | vault\_cluster\_default\_user\_data | Default launch configuration user data for Vault Cluster |

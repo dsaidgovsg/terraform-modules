@@ -76,8 +76,8 @@ variable "route53_zone" {
   description = "Zone for Route 53 records"
 }
 
-variable "add_private_zone_route53" {
-  description = "Add additional private zone on top of the default public one. Setting to true causes the DNS names of the services here to be registered under the private zone only."
+variable "add_private_route53_zone" {
+  description = "Setting to true adds a new Route53 zone under the same domain name as `route53_zone`, but in a private zone, on top of the default public one"
   default     = false
 }
 

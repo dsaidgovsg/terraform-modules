@@ -245,12 +245,12 @@ output "ssh_key_name" {
   value       = "${var.ssh_key_name}"
 }
 
-output "add_private_zone_route53" {
+output "add_private_route53_zone" {
   description = "Indicates if there is private zone used for the core setup"
-  value       = "${var.add_private_zone_route53}"
+  value       = "${var.add_private_route53_zone}"
 }
 
 output "private_zone_id" {
-  description = "Private zone ID, only applicable when `add_private_zone_route53` is set to true"
+  description = "Private zone ID, only applicable when `add_private_route53_zone` is set to true"
   value       = "${local.private_zone_id}"
 }
