@@ -22,7 +22,7 @@ configuration. They are documented briefly below, and in more detail in their ow
 ## Requirements
 
 - AWS account with an access key and secret for programmatic access
-- [Ansible >= 2.6](https://github.com/ansible/ansible/releases)
+- [Ansible >= 2.7](https://github.com/ansible/ansible/releases)
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [terraform](https://www.terraform.io/)
 - [nomad](https://www.nomadproject.io/)
