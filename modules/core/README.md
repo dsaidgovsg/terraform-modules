@@ -85,7 +85,7 @@ as part of _all_ your Packer AMI building. -->
 ## Building AMIs
 
 We first need to use [packer](https://www.packer.io/) to build several AMIs. You will also need to
-have Ansible 2.6 installed.
+have Ansible 2.7 installed.
 
 The list below will link to example packer scripts that we have provided. If you have additional
 requirements, you are encouraged to extend from these examples.
