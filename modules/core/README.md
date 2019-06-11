@@ -22,7 +22,7 @@ configuration. They are documented briefly below, and in more detail in their ow
 ## Requirements
 
 - AWS account with an access key and secret for programmatic access
-- [Ansible >= 2.6](https://github.com/ansible/ansible/releases)
+- [Ansible >= 2.7](https://github.com/ansible/ansible/releases)
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [terraform](https://www.terraform.io/)
 - [nomad](https://www.nomadproject.io/)
@@ -85,7 +85,7 @@ as part of _all_ your Packer AMI building. -->
 ## Building AMIs
 
 We first need to use [packer](https://www.packer.io/) to build several AMIs. You will also need to
-have Ansible 2.6 installed.
+have Ansible 2.7 installed.
 
 The list below will link to example packer scripts that we have provided. If you have additional
 requirements, you are encouraged to extend from these examples.
