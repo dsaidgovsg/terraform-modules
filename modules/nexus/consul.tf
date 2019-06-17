@@ -10,14 +10,6 @@ resource "consul_keys" "service_name" {
   }
 }
 
-resource "consul_keys" "client_service" {
-  key {
-    path   = "${local.consul_prefix}client_service"
-    value  = "${var.nexus_client_service}"
-    delete = true
-  }
-}
-
 resource "consul_keys" "db_dir" {
   key {
     path   = "${local.consul_prefix}db_dir"

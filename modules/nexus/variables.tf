@@ -44,11 +44,6 @@ variable "nexus_service" {
   default     = "nexus"
 }
 
-variable "nexus_client_service" {
-  description = "Name of the Nexus Client services to scrape"
-  default     = "nexus-client"
-}
-
 variable "nexus_db_dir" {
   description = "Path where the data for Nexus will be stored. This will be where the EBS volume where data is persisted will be mounted."
   default     = "/opt/sonatype/sonatype-work"

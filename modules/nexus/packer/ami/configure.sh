@@ -137,11 +137,11 @@ function generate_consul_config {
     "traefik.frontend.headers.SSLRedirect=true",
     "traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https",
     "traefik.frontend.headers.STSSeconds=315360000",
-    "traefik.frontend.headers.frameDeny=true",
+    "traefik.frontend.headers.customFrameOptionsValue=sameorigin",
     "traefik.frontend.headers.browserXSSFilter=true",
     "traefik.frontend.headers.contentTypeNosniff=true",
     "traefik.frontend.headers.referrerPolicy=strict-origin",
-    "traefik.frontend.headers.contentSecurityPolicy=default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * 'self' data:; font-src * 'self' data:;",
+    "traefik.frontend.headers.contentSecurityPolicy=default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * 'self' data:; font-src * 'self' data:; frame-src 'self' www.surveymonkey.com www.googletagmanager.com; script-src-elem 'self' fontawesome.com;",
 EOF
 )
   fi
