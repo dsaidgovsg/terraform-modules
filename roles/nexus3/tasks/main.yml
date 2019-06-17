@@ -35,6 +35,14 @@
     createhome: false
   become: yes
 
+- name: create nexus base directory
+  file:
+    path: "{{ nexus_base_dir }}"
+    state: "directory"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_user }}"
+  become: yes
+
 - name: get nexus 3 package
   get_url:
     url: "http://download.sonatype.com/nexus/3/nexus-{{nexus_version}}-unix.tar.gz"
@@ -46,18 +54,17 @@
 - name: unarchive nexus 3 package
   unarchive:
     src: "/tmp/nexus-{{nexus_version}}-unix.tar.gz"
-    dest: "/opt"
+    dest: "{{ nexus_base_dir }}"
     remote_src: yes
-  become: yes
-
-- name: change ownership of nexus data directory
-  file:
-    path: "/opt/sonatype-work"
     owner: "{{ nexus_user }}"
     group: "{{ nexus_user }}"
-    recurse: yes
   become: yes
 
+- name: clean nexus working directory sonatype-work
+  file:
+    path: "{{ nexus_base_dir }}/sonatype-work"
+    state: absent
+  become: yes
 - name: render nexus service template
   template:
     src: nexus.service.j2
@@ -74,9 +81,3 @@
   with_items:
     - "{{java_package_name}}"
     - "nexus-{{nexus_version}}-unix.tar.gz"
-
-- name: start nexus service
-  service:
-    name: nexus
-    state: started
-  become: yes
