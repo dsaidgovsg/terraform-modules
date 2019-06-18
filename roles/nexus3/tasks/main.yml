@@ -32,7 +32,7 @@
     system: true
     shell: "/sbin/nologin"
     group: "{{ nexus_user }}"
-    createhome: false
+    createhome: true
   become: yes
 
 - name: create nexus base directory
