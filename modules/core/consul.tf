@@ -8,7 +8,7 @@ locals {
 }
 
 module "consul_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.6.1"
 
   cluster_name  = "${var.consul_cluster_name}"
   cluster_size  = "${var.consul_cluster_size}"
@@ -27,8 +27,8 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.consul_cluster_name}"
 
-  ami_id    = "${var.consul_ami_id}"
-  user_data = "${local.consul_user_data}"
+  ami_id           = "${var.consul_ami_id}"
+  user_data        = "${local.consul_user_data}"
 
   root_volume_type = "${var.consul_root_volume_type}"
   root_volume_size = "${var.consul_root_volume_size}"

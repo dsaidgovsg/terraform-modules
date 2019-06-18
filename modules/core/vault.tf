@@ -20,7 +20,7 @@ EOF
 }
 
 module "vault" {
-  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.11.3"
+  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.12.2"
 
   cluster_name  = "${var.vault_cluster_name}"
   cluster_size  = "${var.vault_cluster_size}"
@@ -59,7 +59,7 @@ module "vault" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vault_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.6.1"
 
   iam_role_id = "${module.vault.iam_role_id}"
 }

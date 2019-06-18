@@ -394,6 +394,11 @@ variable "nomad_server_lb_interval" {
   default     = 30
 }
 
+variable "consul_enable_iam_setup" {
+  description = "If true, create the IAM Role, IAM Instance Profile, and IAM Policies. If false, these will not be created, and you can pass in your own IAM Instance Profile via var.iam_instance_profile_name."
+  default     = false
+}
+
 variable "consul_lb_deregistration_delay" {
   description = "The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining."
   default     = 30
