@@ -1,4 +1,4 @@
-# Prometheus Server
+# Nexus Server
 
 This module sets up a Nexus server with tight integrations with the other modules in this
 repository.
@@ -19,7 +19,7 @@ Ansible will be used to provision the AMI.
 
 ### Data Volume Snapshot
 
-You will need to use Packer to build a __one off__ data volume to hold your Prometheus data. You
+You will need to use Packer to build a __one off__ data volume to hold your Nexus data. You
 will then need to provide the EBS volume ID to the Terraform module.
 
 **Make sure you create the volume in the same availability zone as the instance you are going to run.**
@@ -34,7 +34,7 @@ packer build \
 
 By default, Nexus will be configured to write to `/opt/sonatype/sonatype-work`, which the Terraform module will
 create as a separate EBS volume that will be mounted onto the Nexus EC2 instance. This will
-ensure that the data from Prometheus is never lost when respawning the EC2 instance.
+ensure that the data from Nexus is never lost when respawning the EC2 instance.
 
 ## Integration with other modules
 
