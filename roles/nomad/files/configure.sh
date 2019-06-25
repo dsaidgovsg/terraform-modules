@@ -507,7 +507,7 @@ function main {
     log_info "Docker authentication is not enabled or this is a Nomad server."
   else
     generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}" "${docker_privileged}"
-    supervisorctl signal SIGHUP consul-template
+    systemctl kill -s SIGHUP consul-template
   fi
 
   local readonly telegraf_enabled

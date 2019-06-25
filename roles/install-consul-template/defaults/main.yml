@@ -1,11 +1,11 @@
 ---
 # Version of Consul template to install
-consul_template_version: "0.19.5"
+consul_template_version: "0.20.0"
 # User to run consul_template under
 consul_template_user: root
 # Base path to install
 base_path: "/opt/consul-template"
-# Path to supervisorctl binary for Debian
-supervisorctl: "/usr/bin/supervisorctl"
+# Path to systemd for Debian
+systemctl: "/bin/systemctl"
 # Path to Upstart binary for RedHat
 initctl: "/sbin/initctl"

@@ -15,7 +15,7 @@ readonly SCRIPT_NAME="$(basename "$0")"
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
-readonly SUPERVISORCTL="supervisorctl"
+readonly SYSTEMCTL="systemctl"
 readonly INITCTL="initctl"
 
 function print_usage {
@@ -76,6 +76,15 @@ function join_by {
   echo "$*"
 }
 
+function split_by_lines {
+  local prefix="$1"
+  shift
+
+  for var in "$@"; do
+    echo "${prefix}${var}"
+  done
+}
+
 # Based on code from: http://stackoverflow.com/a/16623897/483528
 function strip_prefix {
   local readonly str="$1"
@@ -109,8 +118,8 @@ function assert_os_get_ctl {
   local readonly is_amazon_linux=$(cat /etc/issue | grep "Amazon Linux")
 
   if [[ "${is_ubuntu}" ]]; then
-    assert_is_installed "$SUPERVISORCTL"
-    echo "$SUPERVISORCTL"
+    assert_is_installed "$SYSTEMCTL"
+    echo "$SYSTEMCTL"
   elif [[ "${is_amazon_linux}" ]]; then
     assert_is_installed "$INITCTL"
     echo "$INITCTL"
@@ -246,16 +255,16 @@ EOF
   chown "$user:$user" "$config_path"
 }
 
-function generate_supervisor_config {
-  local readonly supervisor_config_path="$1"
+function generate_systemd_config {
+  local readonly systemd_config_path="$1"
   local readonly consul_template_config_dir="$2"
   local readonly consul_template_log_dir="$3"
   local readonly consul_template_bin_dir="$4"
   local readonly consul_template_user="$5"
-  local readonly consul_template_environment="$6"
+  local readonly consul_template_environment="${@:6}"
 
-  log_info "Creating Supervisor config file to run Consul Template in $supervisor_config_path"
-  cat > "$supervisor_config_path" <<EOF
+  log_info "Creating Systemd config file to run Consul Template in $systemd_config_path"
+  cat > "$systemd_config_path" <<EOF
 [program:consul-template]
 command=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
 stdout_logfile=$consul_template_log_dir/consul-template-stdout.log
@@ -267,6 +276,45 @@ stopsignal=INT
 user=$consul_template_user
 environment=$consul_template_environment
 EOF
+
+  local -r unit_config=$(cat <<EOF
+[Unit]
+Description="Consul-Template - A daemon tool for populating values from Consul/Vault into the file system"
+Documentation=https://github.com/hashicorp/consul-template
+Requires=network-online.target
+After=network-online.target
+ConditionDirectoryNotEmpty=$consul_template_config_dir
+EOF
+)
+  
+  local -r system_config=$(cat <<EOF
+[Service]
+User=$consul_template_user
+Group=$consul_template_user
+ExecStart=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
+ExecReload=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+$(split_by_lines "Environment=" $consul_template_environment)
+StandardOutput=$consul_template_log_dir/consul-template-stdout.log
+StandardError=$consul_template_log_dir/consul-template-error.log
+EOF
+)
+
+  local -r install_config=$(cat <<EOF
+[Install]
+WantedBy=multi-user.target
+EOF
+)
+
+  echo -e "$unit_config" > "$systemd_config_path"
+  echo -e "$service_config" >> "$systemd_config_path"
+  echo -e "$install_config" >> "$systemd_config_path"
+
+  cat > "$systemd_config_path" <<EOF
+
+EOF
 }
 
 function generate_upstart_config {
@@ -275,7 +323,7 @@ function generate_upstart_config {
   local readonly consul_template_log_dir="$3"
   local readonly consul_template_bin_dir="$4"
   local readonly consul_template_user="$5"
-  local readonly consul_template_environment="$6"
+  local readonly consul_template_environment="$(join_by "," ${@:6})"
 
   log_info "Creating Upstart config file to run Consul Template in $upstart_config_path"
   cat > "$upstart_config_path" <<EOF
@@ -306,9 +354,9 @@ function generate_ctl_config {
   if [[ "${ctl}" == "$INITCTL" ]]; then
     shift
     generate_upstart_config "$@"
-  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
+  elif [[ "${ctl}" == "$SYSTEMCTL" ]]; then
     shift
-    generate_supervisor_config "$@"
+    generate_systemd_config "$@"
   fi
 }
 
@@ -352,10 +400,10 @@ function get_vault_token {
   echo -n "${vault_token}"
 }
 
-function start_consul_template_for_supervisor {
-  log_info "Reloading Supervisor config and starting Consul Template"
-  supervisorctl reread
-  supervisorctl update
+function start_consul_template_for_systemd {
+  log_info "Reloading Systemd config and starting Consul Template"
+  systemctl daemon-reload
+  systemctl restart consul-template
 }
 
 function start_consul_template_for_upstart {
@@ -368,8 +416,8 @@ function start_consul_template {
 
   if [[ "${ctl}" == "$INITCTL" ]]; then
     start_consul_template_for_upstart
-  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
-    start_consul_template_for_supervisor
+  elif [[ "${ctl}" == "$SYSTEMCTL" ]]; then
+    start_consul_template_for_systemd
   fi
 }
 
@@ -481,13 +529,13 @@ function run {
     shift
   done
 
-  # For initctl and supervisorctl switching
+  # For initctl and systemctl switching
   local readonly ctl="$(assert_os_get_ctl)"
 
   if [[ "${ctl}" == "$INITCTL" ]]; then
     readonly config_ctl_path="/etc/init/run-consul-template.conf"
-  elif [[ "${ctl}" == "$SUPERVISORCTL" ]]; then
-    readonly config_ctl_path="/etc/supervisor/conf.d/run-consul-template.conf"
+  elif [[ "${ctl}" == "$SYSTEMCTL" ]]; then
+    readonly config_ctl_path="/etc/systemd/system/consul-template.service"
   fi
 
   assert_is_installed "consul"
@@ -548,7 +596,7 @@ function run {
     fi
   fi
 
-  generate_ctl_config "$ctl" "$config_ctl_path" "$config_dir" "$log_dir" "$bin_dir" "$user" "$(join_by "," "${environment[@]}")"
+  generate_ctl_config "$ctl" "$config_ctl_path" "$config_dir" "$log_dir" "$bin_dir" "$user" "${environment[@]}"
   start_consul_template "$ctl"
 }
 

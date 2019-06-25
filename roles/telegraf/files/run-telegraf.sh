@@ -370,7 +370,7 @@ function main {
     fi
 
     systemctl kill -s SIGHUP consul
-    supervisorctl signal SIGHUP consul-template
+    systemctl kill -s SIGHUP consul-template
   fi
 }
 
