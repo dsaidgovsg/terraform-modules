@@ -8,6 +8,7 @@ variable "vpc_id" {
 
 variable "vpc_subnets" {
   description = "IDs of VPC subnets to add the mount targets in"
+  type        = "list"
 }
 
 #
@@ -26,7 +27,7 @@ Must prefix with alias/.
 kms_key_alias is used instead if specified.
 EOF
 
-  default     = "alias/efs-default-"
+  default = "alias/efs-default-"
 }
 
 variable "kms_key_alias" {
@@ -35,7 +36,7 @@ Alias for the KMS key for EFS. Must prefix with alias/.
 Overrides kms_key_alias_prefix if this is specified.
 EOF
 
-  default     = ""
+  default = ""
 }
 
 variable "efs_ports" {

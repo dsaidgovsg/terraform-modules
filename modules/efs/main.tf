@@ -1,5 +1,7 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_region" "current" {}
+
 data "aws_vpc" "efs" {
   id = "${var.vpc_id}"
 }
@@ -56,7 +58,7 @@ resource "aws_security_group_rule" "efs" {
 }
 
 locals {
-  efs_filesystem_root_resource = "arn:aws:elasticfilesystem:${var.aws_region}:${data.aws_caller_identity.current.account_id}:file-system"
+  efs_filesystem_root_resource = "arn:aws:elasticfilesystem:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:file-system"
 
   kms_key_alias = "${var.kms_key_alias != "" ? var.kms_key_alias : format("%s%s", var.kms_key_alias_prefix, timestamp())}"
 }
