@@ -3,6 +3,8 @@
 This module creates AWS EFS to be available for services that require persistent
 storage.
 
+Currently this assumes that the EFS is always custom KMS encrypted.
+
 ## Nomad job instruction on mounting
 
 To mount EFS into one of the Nomad job running Docker, the Nomad jobspec should
@@ -50,13 +52,21 @@ job "xxx" {
 | security\_group\_name | Name of security group for EFS. Empty string to use a random name. | string | `""` | no |
 | tags | Tags to apply to resources that allow it | map | `<map>` | no |
 | vpc\_id | ID of VPC to add the security group for the EFS setup | string | n/a | yes |
-| vpc\_subnets | IDs of VPC subnets to add the mount targets in | string | n/a | yes |
+| vpc\_subnets | IDs of VPC subnets to add the mount targets in | list | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| arn | ARN of EFS |
 | dns\_name | DNS name of EFS |
-| id | ID of the setup EFS |
-| kms\_key\_alias | KMS key alias used for encryption |
+| id | ID of EFS |
+| kms\_key\_alias | KMS key alias used for EFS encryption |
+| kms\_key\_arn | ARN of KMS key used for EFS encryption |
+| kms\_key\_key\_id | Key ID of KMS key used for EFS encryption |
+| mount\_target\_dns\_names | Mount target DNS names of EFS. The order of elements is the same as the order of the given vpc_subnets. |
+| mount\_target\_ids | Mount target IDs of EFS. The order of elements is the same as the order of the given vpc_subnets. |
 | root\_resource | ARN of EFS resource at root |
+| security\_group\_arn | ARN of the EFS security group |
+| security\_group\_id | ID of the EFS security group |
+| security\_group\_name | Name of the EFS security group |
