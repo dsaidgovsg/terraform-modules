@@ -45,6 +45,7 @@ job "xxx" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| allowed\_cidr\_blocks | CIDR blocks to allow EFS port access into the security group | list | n/a | yes |
 | efs\_ports | Ports to allow access to EFS | map | `<map>` | no |
 | kms\_additional\_tags | KMS key additional tags for EFS | map | `<map>` | no |
 | kms\_key\_alias | Alias for the KMS key for EFS. Must prefix with alias/. Overrides kms_key_alias_prefix if this is specified. | string | `""` | no |

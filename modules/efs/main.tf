@@ -2,10 +2,6 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-data "aws_vpc" "efs" {
-  id = "${var.vpc_id}"
-}
-
 resource "aws_kms_key" "encryption" {
   description         = "Encryption key for EFS"
   enable_key_rotation = true
@@ -54,7 +50,7 @@ resource "aws_security_group_rule" "efs" {
   to_port           = "${var.efs_ports["to"]}"
   protocol          = "${var.efs_ports["protocol"]}"
 
-  cidr_blocks = ["${data.aws_vpc.efs.cidr_block}"]
+  cidr_blocks = ["${var.allowed_cidr_blocks}"]
 }
 
 locals {

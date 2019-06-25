@@ -1,5 +1,5 @@
 #
-# VPC related
+# Security and VPC related
 #
 
 variable "vpc_id" {
@@ -9,6 +9,16 @@ variable "vpc_id" {
 variable "vpc_subnets" {
   description = "IDs of VPC subnets to add the mount targets in"
   type        = "list"
+}
+
+variable "allowed_cidr_blocks" {
+  description = "CIDR blocks to allow EFS port access into the security group"
+  type        = "list"
+}
+
+variable "security_group_name" {
+  description = "Name of security group for EFS. Empty string to use a random name."
+  default     = ""
 }
 
 #
@@ -47,11 +57,6 @@ variable "efs_ports" {
     to       = 2049
     protocol = "tcp"
   }
-}
-
-variable "security_group_name" {
-  description = "Name of security group for EFS. Empty string to use a random name."
-  default     = ""
 }
 
 #
