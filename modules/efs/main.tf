@@ -2,10 +2,24 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
+data "aws_iam_policy_document" "default" {
+  statement {
+    actions   = ["kms:*"]
+    resources = ["*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+}
+
 resource "aws_kms_key" "encryption" {
-  description         = "Encryption key for EFS"
-  enable_key_rotation = true
-  tags                = "${merge(var.kms_additional_tags, var.tags)}"
+  description             = "Encryption key for EFS"
+  deletion_window_in_days = "${var.kms_key_deletion_window_in_days}"
+  enable_key_rotation     = "${var.kms_key_enable_rotation}"
+  policy                  = "${local.kms_key_policy_json}"
+  tags                    = "${merge(var.kms_additional_tags, var.tags)}"
 
   lifecycle {
     prevent_destroy = true
@@ -60,5 +74,6 @@ locals {
   formatted_timestamp = "${replace(timestamp(), ":", "-")}"
 
   # 2018-01-02T23:12:01Z
-  kms_key_alias = "${var.kms_key_alias != "" ? var.kms_key_alias : format("%s%s", var.kms_key_alias_prefix, local.formatted_timestamp)}"
+  kms_key_alias       = "${var.kms_key_alias != "" ? var.kms_key_alias : format("%s%s", var.kms_key_alias_prefix, local.formatted_timestamp)}"
+  kms_key_policy_json = "${var.kms_key_policy_json != "" ? var.kms_key_policy_json : data.aws_iam_policy_document.default.json}"
 }

@@ -49,6 +49,25 @@ EOF
   default = ""
 }
 
+variable "kms_key_deletion_window_in_days" {
+  description = <<EOF
+Duration in days after which the key is deleted after destruction of the resource,
+must be between 7 and 30 days
+EOF
+
+  default = 30
+}
+
+variable "kms_key_enable_rotation" {
+  description = "Specifies whether key rotation is enabled"
+  default     = true
+}
+
+variable "kms_key_policy_json" {
+  description = "JSON content of IAM policy to attach to the KMS key. Empty string to use root identifier as principal for all KMS actions."
+  default     = ""
+}
+
 variable "efs_ports" {
   description = "Ports to allow access to EFS"
 
