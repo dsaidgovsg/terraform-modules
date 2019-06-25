@@ -73,7 +73,6 @@ locals {
   # timestamp() returns 2018-01-02T23:12:01Z, and colon is not allowed for KMS key alias
   formatted_timestamp = "${replace(timestamp(), ":", "-")}"
 
-  # 2018-01-02T23:12:01Z
   kms_key_alias       = "${var.kms_key_alias != "" ? var.kms_key_alias : format("%s%s", var.kms_key_alias_prefix, local.formatted_timestamp)}"
   kms_key_policy_json = "${var.kms_key_policy_json != "" ? var.kms_key_policy_json : data.aws_iam_policy_document.default.json}"
 }
