@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "default" {
 }
 
 resource "aws_kms_key" "encryption" {
-  description             = "Encryption key for EFS"
+  description             = "${var.kms_key_description}"
   deletion_window_in_days = "${var.kms_key_deletion_window_in_days}"
   enable_key_rotation     = "${var.kms_key_enable_rotation}"
   policy                  = "${local.kms_key_policy_json}"
@@ -50,7 +50,7 @@ resource "aws_efs_mount_target" "mounts" {
 
 resource "aws_security_group" "efs" {
   name        = "${var.security_group_name}"
-  description = "Security group for EFS"
+  description = "${var.security_group_description}"
   vpc_id      = "${var.vpc_id}"
 
   tags = "${var.tags}"
