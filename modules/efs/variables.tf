@@ -21,13 +21,28 @@ variable "security_group_name" {
   default     = ""
 }
 
+variable "security_group_description" {
+  description = "Description of security group for EFS"
+  default     = "Security group for EFS"
+}
+
 #
 # EFS related
 #
 
+variable "enable_encryption" {
+  description = "Boolean to specify whether to enable KMS encryption for EFS"
+  default     = true
+}
+
 variable "kms_additional_tags" {
   description = "KMS key additional tags for EFS"
   default     = {}
+}
+
+variable "kms_key_description" {
+  description = "Description to use for KMS key"
+  default     = "Encryption key for EFS"
 }
 
 variable "kms_key_alias_prefix" {
