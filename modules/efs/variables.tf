@@ -30,6 +30,11 @@ variable "security_group_description" {
 # EFS related
 #
 
+variable "enable_encryption" {
+  description = "Boolean to specify whether to enable KMS encryption for EFS"
+  default     = true
+}
+
 variable "kms_additional_tags" {
   description = "KMS key additional tags for EFS"
   default     = {}

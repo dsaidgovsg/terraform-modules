@@ -50,10 +50,10 @@ output "kms_key_alias" {
 
 output "kms_key_arn" {
   description = "ARN of KMS key used for EFS encryption"
-  value       = "${aws_kms_key.encryption.arn}"
+  value       = "${local.kms_key_arn}"
 }
 
 output "kms_key_key_id" {
   description = "Key ID of KMS key used for EFS encryption"
-  value       = "${aws_kms_key.encryption.key_id}"
+  value       = "${local.kms_key_id}"
 }

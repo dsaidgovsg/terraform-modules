@@ -15,30 +15,26 @@ data "aws_iam_policy_document" "default" {
 }
 
 resource "aws_kms_key" "encryption" {
+  count = "${var.enable_encryption ? 1 : 0}"
+
   description             = "${var.kms_key_description}"
   deletion_window_in_days = "${var.kms_key_deletion_window_in_days}"
   enable_key_rotation     = "${var.kms_key_enable_rotation}"
   policy                  = "${local.kms_key_policy_json}"
   tags                    = "${merge(var.kms_additional_tags, var.tags)}"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_kms_alias" "encryption" {
+  count = "${var.enable_encryption ? 1 : 0}"
+
   name          = "${local.kms_key_alias}"
-  target_key_id = "${aws_kms_key.encryption.key_id}"
+  target_key_id = "${local.kms_key_id}"
 }
 
 resource "aws_efs_file_system" "default" {
-  encrypted  = true
-  kms_key_id = "${aws_kms_key.encryption.arn}"
+  encrypted  = "${var.enable_encryption}"
+  kms_key_id = "${local.kms_key_arn}"
   tags       = "${var.tags}"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_efs_mount_target" "mounts" {
@@ -72,6 +68,10 @@ locals {
 
   # timestamp() returns 2018-01-02T23:12:01Z, and colon is not allowed for KMS key alias
   formatted_timestamp = "${replace(timestamp(), ":", "-")}"
+
+  # Empty strings if enable_encryption is false
+  kms_key_id  = "${element(concat(aws_kms_key.encryption.*.key_id, list("")), 0)}"
+  kms_key_arn = "${element(concat(aws_kms_key.encryption.*.arn, list("")), 0)}"
 
   kms_key_alias       = "${coalesce(var.kms_key_alias, format("%s%s", var.kms_key_alias_prefix, local.formatted_timestamp))}"
   kms_key_policy_json = "${coalesce(var.kms_key_policy_json, data.aws_iam_policy_document.default.json)}"
