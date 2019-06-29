@@ -76,6 +76,14 @@ function join_by {
   echo "$*"
 }
 
+# Based on https://unix.stackexchange.com/a/23213
+function append_paths {
+  if [ $# -eq 0 ]; then return 1; fi
+  printf "${1%/}"
+  shift
+  if [ $# -gt 0 ]; then printf '/%s' "${@%/}"; fi
+}
+
 # Based on code from: http://stackoverflow.com/a/16623897/483528
 function strip_prefix {
   local readonly str="$1"
@@ -133,7 +141,7 @@ function wait_for_consul {
 
   for (( i=1; i<="$MAX_RETRIES"; i++ )); do
     consul_leader=$(
-      curl -sS "${consul_agent}/v1/status/leader" 2> /dev/null || echo "failed"
+      curl -sS "$(append_paths ${consul_agent} v1/status/leader)" 2> /dev/null || echo "failed"
     )
 
     if [[ "${consul_leader}" = "failed" ]]; then
@@ -182,7 +190,7 @@ function request_vault_token {
   local token
   token=$(
     curl -Ss -XPOST --retry 5 \
-      "${address}/v1/auth/${auth_path}login" \
+      "$(append_paths ${address} v1/auth ${auth_path} login)" \
       -d '{ "role": "'"${token_role}"'", "pkcs7": "'"${ec2_identity}"'" }'
   ) || exit $?
 
@@ -340,11 +348,11 @@ function get_vault_token {
 
   # Get the authentication path
   local auth_path
-  auth_path=$(consul_kv "${consul_prefix}path")
+  auth_path=$(consul_kv "$(append_paths ${consul_prefix} path)")
 
   # Get the role. If the server_type is invalid, this will fail
   local token_role
-  token_role=$(consul_kv "${consul_prefix}roles/${server_type}")
+  token_role=$(consul_kv "$(append_paths ${consul_prefix} roles ${server_type})")
 
   local vault_token
   vault_token=$(request_vault_token "${auth_path}" "${token_role}" "${vault_address}") || exit $?
@@ -528,13 +536,13 @@ function run {
     wait_for_consul "http://${agent_address}" # XXX: What about TLS in future?
 
     local aws_auth_enabled
-    aws_auth_enabled=$(consul_kv_with_default "${consul_prefix}aws-auth/enabled" "no")
+    aws_auth_enabled=$(consul_kv_with_default "$(append_paths ${consul_prefix} aws-auth/enabled) " "no")
     if [[ "${aws_auth_enabled}" != "yes" ]]; then
       log_info "AWS Authentication is not enabled"
     else
 
       local vault_token
-      vault_token=$(get_vault_token "${vault_address}" "${consul_prefix}aws-auth/" "${server_type}") || exit $?
+      vault_token=$(get_vault_token "${vault_address}" "$(append_paths ${consul_prefix} aws-auth)" "${server_type}") || exit $?
       environment+=("VAULT_TOKEN=\"${vault_token}\"")
 
       generate_vault_config "${vault_address}" "$config_dir" "$user"
