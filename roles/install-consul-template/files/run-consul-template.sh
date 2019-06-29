@@ -536,7 +536,7 @@ function run {
     wait_for_consul "http://${agent_address}" # XXX: What about TLS in future?
 
     local aws_auth_enabled
-    aws_auth_enabled=$(consul_kv_with_default "$(append_paths ${consul_prefix} aws-auth/enabled) " "no")
+    aws_auth_enabled=$(consul_kv_with_default "$(append_paths ${consul_prefix} aws-auth/enabled)" "no")
     if [[ "${aws_auth_enabled}" != "yes" ]]; then
       log_info "AWS Authentication is not enabled"
     else
