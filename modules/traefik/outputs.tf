@@ -52,3 +52,13 @@ output "traefik_lb_external_security_group_id" {
   description = "Security group ID for Traefik external LB"
   value       = "${aws_security_group.external_lb.id}"
 }
+
+output "traefik_lb_internal_arn" {
+  description = "ARN of the internal load balancer"
+  value       = "${aws_lb.internal.arn}"
+}
+
+output "traefik_lb_external_arn" {
+  description = "ARN of the external load balancer"
+  value       = "${aws_lb.external.arn}"
+}
