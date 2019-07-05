@@ -1,7 +1,4 @@
 ---
-- name: Get Ubuntu release name
-  shell: lsb_release -cs
-  register: release_name
 - name: Install dependencies
   apt:
     name:
@@ -9,14 +6,9 @@
       - "software-properties-common"
     state: latest
   become: yes
-- name: Add Ansible PPA
-  apt_repository:
-    repo: "ppa:ansible/ansible"
-    state: present
-    update_cache: yes
-  become: yes
-- name: Install Ansible
-  apt:
-    name: "ansible={{ ansible_install_version }}-1ppa~{{ release_name.stdout }}"
+- name: Install Ansible via Pip
+  pip:
+    name: ansible
+    version: "{{ ansible_install_version }}"
     state: present
   become: yes
