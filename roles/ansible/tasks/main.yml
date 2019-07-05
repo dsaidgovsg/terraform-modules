@@ -6,9 +6,11 @@
       - "software-properties-common"
     state: latest
   become: yes
+# Ansible needs cryptography>=2.5 and it does not naturally resolve
 - name: Install Ansible via Pip
   pip:
-    name: ansible
-    version: "{{ ansible_install_version }}"
+    name:
+      - "ansible=={{ ansible_install_version }}"
+      - "cryptography~=2.5.0"
     state: present
   become: yes
