@@ -272,18 +272,6 @@ function generate_systemd_config {
   local readonly consul_template_environment="${@:6}"
 
   log_info "Creating Systemd config file to run Consul Template in $systemd_config_path"
-  cat > "$systemd_config_path" <<EOF
-[program:consul-template]
-command=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
-stdout_logfile=$consul_template_log_dir/consul-template-stdout.log
-stderr_logfile=$consul_template_log_dir/consul-template-error.log
-numprocs=1
-autostart=true
-autorestart=true
-stopsignal=INT
-user=$consul_template_user
-environment=$consul_template_environment
-EOF
 
   local -r unit_config=$(cat <<EOF
 [Unit]
@@ -295,18 +283,19 @@ ConditionDirectoryNotEmpty=$consul_template_config_dir
 EOF
 )
   
-  local -r system_config=$(cat <<EOF
+  local -r service_config=$(cat <<EOF
 [Service]
 User=$consul_template_user
 Group=$consul_template_user
 ExecStart=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
-ExecReload=$consul_template_bin_dir/consul-template -config $consul_template_config_dir
+ExecStop=/bin/kill -s SIGINT \$MAINPID
+ExecReload=/bin/kill -s SIGHUP \$MAINPID
 KillMode=process
 Restart=on-failure
 LimitNOFILE=65536
 $(split_by_lines "Environment=" $consul_template_environment)
-StandardOutput=$consul_template_log_dir/consul-template-stdout.log
-StandardError=$consul_template_log_dir/consul-template-error.log
+StandardOutput=syslog
+StandardError=syslog
 EOF
 )
 
@@ -319,10 +308,6 @@ EOF
   echo -e "$unit_config" > "$systemd_config_path"
   echo -e "$service_config" >> "$systemd_config_path"
   echo -e "$install_config" >> "$systemd_config_path"
-
-  cat > "$systemd_config_path" <<EOF
-
-EOF
 }
 
 function generate_upstart_config {

@@ -1,6 +1,6 @@
 ---
 # Version of Consul template to install
-consul_template_version: "0.20.0"
+consul_template_version: "0.19.5"
 # User to run consul_template under
 consul_template_user: root
 # Base path to install
