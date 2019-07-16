@@ -10,7 +10,7 @@ This is based on this
 
 All the following commands to run are assumed to run in this `vault/` directory.
 
-In addition to Ansible and Packer, you will need to install the following on your machine:
+In addition to Ansible (2.7) and Packer, you will need to install the following on your machine:
 
 - [`python_consul`](https://github.com/cablehead/python-consul)
 

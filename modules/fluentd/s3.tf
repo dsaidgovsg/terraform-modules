@@ -56,6 +56,7 @@ data "aws_iam_policy_document" "logs_s3" {
     effect = "Allow"
 
     actions = [
+      "s3:GetObject",
       "s3:PutObject",
     ]
 
