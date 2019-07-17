@@ -76,15 +76,6 @@ function join_by {
   echo "$*"
 }
 
-function split_by_lines {
-  local prefix="$1"
-  shift
-
-  for var in "$@"; do
-    echo "${prefix}${var}"
-  done
-}
-
 # Based on https://unix.stackexchange.com/a/23213
 function append_paths {
   if [ $# -eq 0 ]; then return 1; fi
@@ -269,7 +260,7 @@ function generate_systemd_config {
   local readonly consul_template_log_dir="$3"
   local readonly consul_template_bin_dir="$4"
   local readonly consul_template_user="$5"
-  local readonly consul_template_environment="${@:6}"
+  local readonly consul_template_environment="$(join_by " " ${@:6})"
 
   log_info "Creating Systemd config file to run Consul Template in $systemd_config_path"
 
@@ -293,7 +284,7 @@ ExecReload=/bin/kill -s SIGHUP \$MAINPID
 KillMode=process
 Restart=on-failure
 LimitNOFILE=65536
-$(split_by_lines "Environment=" $consul_template_environment)
+Environment=$consul_template_environment
 StandardOutput=syslog
 StandardError=syslog
 EOF
@@ -576,7 +567,7 @@ function run {
 
       local vault_token
       vault_token=$(get_vault_token "${vault_address}" "$(append_paths "${consul_prefix}" "aws-auth")" "${server_type}") || exit $?
-      environment+=("VAULT_TOKEN=\"${vault_token}\"")
+      environment+=("VAULT_TOKEN=${vault_token}")
 
       generate_vault_config "${vault_address}" "$config_dir" "$user"
 
