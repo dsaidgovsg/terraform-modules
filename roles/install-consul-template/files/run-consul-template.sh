@@ -282,7 +282,7 @@ ExecStart=$consul_template_bin_dir/consul-template -config $consul_template_conf
 ExecStop=/bin/kill -s SIGINT \$MAINPID
 ExecReload=/bin/kill -s SIGHUP \$MAINPID
 KillMode=process
-Restart=on-failure
+Restart=always
 LimitNOFILE=65536
 Environment=$consul_template_environment
 StandardOutput=syslog
@@ -387,6 +387,7 @@ function get_vault_token {
 function start_consul_template_for_systemd {
   log_info "Reloading Systemd config and starting Consul Template"
   systemctl daemon-reload
+  systemctl enable consul-template
   systemctl restart consul-template
 }
 
