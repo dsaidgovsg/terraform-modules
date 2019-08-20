@@ -10,7 +10,7 @@ This is based on this
 
 All the following commands to run are assumed to run in this `vault/` directory.
 
-In addition to Ansible and Packer, you will need to install the following on your machine:
+In addition to Ansible (2.7) and Packer, you will need to install the following on your machine:
 
 - [`python_consul`](https://github.com/cablehead/python-consul)
 
@@ -188,4 +188,4 @@ This Packer image will the following:
 You can use `consul-template` to template files using data from Consul and Vault. Simply define
 the template using a new configuration file (in HCL, with the `template` stanza) and write the
 configuration file to `/opt/consul-template/config`.  You can send the `SIGHUP` signal using
-`supervisorctl signal SIGHUP consul-template` to ask `consul-template` to reload its configuration.
+`systemctl kill -s signal SIGHUP consul-template` to ask `consul-template` to reload its configuration.

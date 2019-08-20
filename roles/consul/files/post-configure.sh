@@ -196,7 +196,7 @@ function restart_service {
   local readonly service="${1}"
 
   log_info "Restarting service $service..."
-  supervisorctl restart $service
+  systemctl restart $service
   log_info "Service $service restarted!"
 }
 

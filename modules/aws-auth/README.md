@@ -63,12 +63,11 @@ The [`install-consul-template`](../core/packer/roles/install-consul-template) An
 included by default in the Packer templates for the AMIs in the core module can help automate
 the process of acquiring a token with Vault and the continued renewal of the token. During the
 initial startup of an instance, a bootstrap script is invoked to acquire the Vault Token and then
-have [supervisord](http://supervisord.org/) run and maintain the Consul Template process.
+have [systemd](https://wiki.debian.org/systemd) run and maintain the Consul Template process.
 
 In order to use the bootstrap script and role in your AMIs, you must make sure the following
 requirements are met:
 
-- Install [supervisord](http://supervisord.org/).
 - Provision the AMI using the [`install-consul-template`](../core/packer/roles/install-consul-template) Ansible role.
 - Run the `run-consul-template` script to bootstrap the instance.
 - Define the key under the path `${prefix}aws-auth/roles/${server_type}` in Consul KV store with the name of the role for the server type (see below).
@@ -80,7 +79,7 @@ is the Core integration prefix and defaults to `terraform/`.
 
 Then, it will use the instance metadata document of the instance to attempt to authenticate with
 Vault using the role it has found. The script will then configure Consul Template and then
-setup supervisord to start Consul Template. Consul Template will now take care of managing the
+setup systemd to start Consul Template. Consul Template will now take care of managing the
 lifecycle of the Vault token.
 
 #### Example with `nomad-clients`
