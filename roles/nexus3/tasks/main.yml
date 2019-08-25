@@ -1,0 +1,83 @@
+---
+- name: get java 8 package
+  get_url:
+    url: "{{ java_package_url }}"
+    dest: "/tmp"
+    checksum: "md5:e7a6b33deb17c66d46beb42f1b8cf3bc"
+
+- name: unpack java 8 package
+  unarchive:
+    src: "/tmp/{{ java_package_name }}"
+    dest: "/usr/local"
+    remote_src: yes
+  become: yes
+
+- name: symbolic link java binary file to /usr/bin
+  alternatives:
+    name: java
+    path: "/usr/local/jre{{ java_version }}/bin/java"
+    link: "/usr/bin/java"
+  become: yes
+
+- name: create nexus system group
+  group:
+    name: "{{ nexus_user }}"
+    system: true
+    state: present
+  become: yes
+
+- name: create nexus system user
+  user:
+    name: "{{ nexus_user }}"
+    system: true
+    shell: "/sbin/nologin"
+    group: "{{ nexus_user }}"
+    createhome: true
+  become: yes
+
+- name: create nexus base directory
+  file:
+    path: "{{ nexus_base_dir }}"
+    state: "directory"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_user }}"
+  become: yes
+
+- name: get nexus 3 package
+  get_url:
+    url: "http://download.sonatype.com/nexus/3/nexus-{{nexus_version}}-unix.tar.gz"
+    dest: "/tmp"
+    checksum: "sha1:71446a361583c095eb60194b2a50b6d7e097f030"
+    timeout: 20
+
+
+- name: unarchive nexus 3 package
+  unarchive:
+    src: "/tmp/nexus-{{nexus_version}}-unix.tar.gz"
+    dest: "{{ nexus_base_dir }}"
+    remote_src: yes
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_user }}"
+  become: yes
+
+- name: clean nexus working directory sonatype-work
+  file:
+    path: "{{ nexus_base_dir }}/sonatype-work"
+    state: absent
+  become: yes
+- name: render nexus service template
+  template:
+    src: nexus.service.j2
+    dest: "/etc/systemd/system/nexus.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: yes
+
+- name: clean installed packages
+  file:
+    path: "/tmp/{{ item }}"
+    state: "absent"
+  with_items:
+    - "{{java_package_name}}"
+    - "nexus-{{nexus_version}}-unix.tar.gz"

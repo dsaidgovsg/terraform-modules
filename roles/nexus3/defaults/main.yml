@@ -1,0 +1,7 @@
+---
+java_package_url: "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=238719_478a62b7d4e34b78b671c754eaaf38ab"
+java_version: "1.8.0_211"
+java_package_name: "jre-8u211-linux-x64.tar.gz"
+nexus_version: "3.16.0-01"
+nexus_user: "nexus"
+nexus_base_dir: "/opt/sonatype"
