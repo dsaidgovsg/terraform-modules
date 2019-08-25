@@ -171,7 +171,7 @@ EOF
   local readonly consul_owner=$(get_owner_of_path "${consul_config}")
   chown "${consul_owner}:${consul_owner}" "${consul_destination}"
 
-  supervisorctl signal SIGHUP consul
+  systemctl kill -s SIGHUP consul
 }
 
 function mount_ebs {

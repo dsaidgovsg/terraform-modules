@@ -13,7 +13,7 @@ data "aws_vpc" "selected" {
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.2"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.5"
 
   asg_name          = "${var.cluster_name}"
   cluster_name      = "${var.cluster_name}"
@@ -48,7 +48,7 @@ module "nomad_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.6.1"
 
   iam_role_id = "${module.nomad_clients.iam_role_id}"
 }

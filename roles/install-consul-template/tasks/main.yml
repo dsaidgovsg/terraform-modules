@@ -8,9 +8,9 @@
     that: is_debian or is_redhat
     msg: "Only Debian and Redhat OS families are supported"
 
-- name: Check supervisor is installed
+- name: Check systemd is installed
   apt:
-    name: supervisor
+    name: systemd
     state: present
   become: yes
   when: is_debian
@@ -70,12 +70,12 @@
   become: yes
 
 # Allows Consul template to send signals to tasks or restart tasks
-- name: "Allow {{ consul_template_user }} to use sudo with supervisorctl"
+- name: "Allow {{ consul_template_user }} to use sudo with systemctl"
   lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: '^{{ consul_template_user }}'
-    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ supervisorctl }}'
+    line: '{{ consul_template_user }} ALL=(ALL) NOPASSWD: {{ systemctl }}'
     validate: 'visudo -cf %s'
   become: yes
   when: is_debian and consul_template_user != "root"

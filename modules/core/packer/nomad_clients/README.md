@@ -115,4 +115,4 @@ This Packer image will the following:
 You can use `consul-template` to template files using data from Consul and Vault. Simply define
 the template using a new configuration file (in HCL, with the `template` stanza) and write the
 configuration file to `/opt/consul-template/config`.  You can send the `SIGHUP` signal using
-`supervisorctl signal SIGHUP consul-template` to ask `consul-template` to reload its configuration.
+`systemctl kill -s signal SIGHUP consul-template` to ask `consul-template` to reload its configuration.

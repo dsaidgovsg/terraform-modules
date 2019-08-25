@@ -12,7 +12,7 @@
     remote_src: yes
   become: yes
 
-- name: symblic link java binary file to /usr/bin
+- name: symbolic link java binary file to /usr/bin
   alternatives:
     name: java
     path: "/usr/local/jre{{ java_version }}/bin/java"

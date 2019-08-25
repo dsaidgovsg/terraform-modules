@@ -8,7 +8,7 @@ locals {
 }
 
 module "nomad_servers" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.1"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.4.5"
 
   asg_name          = "${var.nomad_cluster_name}-server"
   cluster_name      = "${var.nomad_cluster_name}-server"
@@ -47,7 +47,7 @@ module "nomad_servers" {
 # --------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.6.1"
 
   iam_role_id = "${module.nomad_servers.iam_role_id}"
 }

@@ -1,16 +1,16 @@
 {
-    "min_packer_version": "1.1.2",
+    "min_packer_version": "1.4.0",
     "variables": {
         "additional_ntp_servers": "[\"169.254.169.123\"]",
         "ami_base_name": "nexus",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
-        "temporary_security_group_source_cidr": "0.0.0.0/0",
+        "temporary_security_group_source_cidrs": "0.0.0.0/0",
         "associate_public_ip_address": "true",
         "ssh_interface": "",
         "consul_module_repo": "https://github.com/hashicorp/terraform-aws-consul.git",
-        "consul_module_version": "v0.3.5",
-        "consul_version": "1.4.0",
+        "consul_module_version": "v0.6.1",
+        "consul_version": "1.5.2",
         "consul_enable_syslog": "true",
         "td_agent_config_file": "",
         "td_agent_config_vars_file": "",
@@ -35,7 +35,7 @@
             "subnet_id": "{{user `subnet_id`}}",
             "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
             "ssh_interface": "{{user `ssh_interface`}}",
-            "temporary_security_group_source_cidr": "{{user `temporary_security_group_source_cidr`}}",
+            "temporary_security_group_source_cidrs": "{{user `temporary_security_group_source_cidrs`}}",
             "source_ami_filter": {
                 "filters": {
                     "virtualization-type": "hvm",
@@ -105,7 +105,7 @@
                 "-e",
                 "timezone={{user `timezone`}}",
                 "-e",
-                "ansible_python_interpreter=/usr/bin/python3"
+                "ansible_python_interpreter=\"$(command -v python3)\""
             ]
         }
     ]

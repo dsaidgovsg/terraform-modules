@@ -369,8 +369,8 @@ function main {
       write_prometheus "${consul_prefix}" "${type}" "${consul_template_config}" "${consul_config}" "${config_override_dir}"
     fi
 
-    supervisorctl signal SIGHUP consul
-    supervisorctl signal SIGHUP consul-template
+    systemctl kill -s SIGHUP consul
+    systemctl kill -s SIGHUP consul-template
   fi
 }
 
