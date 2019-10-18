@@ -31,7 +31,7 @@ variable "vpce_sg_name" {
 variable "tags" {
   description = "Tags to apply to resources that support it"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }

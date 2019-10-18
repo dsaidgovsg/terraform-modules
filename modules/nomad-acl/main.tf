@@ -9,20 +9,20 @@ data "consul_keys" "enabled" {
 }
 
 locals {
-  enabled = "${data.consul_keys.enabled.var.enabled == "yes" ? 1 : 0}"
+  enabled = data.consul_keys.enabled.var.enabled == "yes" ? 1 : 0
 }
 
 resource "nomad_acl_token" "management" {
-  count = "${local.enabled}"
+  count = local.enabled
 
   name = "Vault Management Token at path `${var.path}`"
   type = "management"
 }
 
 resource "vault_mount" "nomad" {
-  count = "${local.enabled}"
+  count = local.enabled
 
-  path = "${var.path}"
+  path = var.path
   type = "nomad"
 
   description = "Nomad ACL token"
@@ -36,15 +36,15 @@ data "template_file" "vault_configuration" {
 }
 EOF
 
-  vars {
-    token   = "${nomad_acl_token.management.secret_id}"
-    address = "${var.nomad_address}"
+  vars = {
+    token   = nomad_acl_token.management.*.secret_id[0]
+    address = var.nomad_address
   }
 }
 
 resource "vault_generic_secret" "nomad_configuration" {
-  count = "${local.enabled}"
+  count = local.enabled
 
   path      = "${var.path}/config/access"
-  data_json = "${data.template_file.vault_configuration.rendered}"
+  data_json = data.template_file.vault_configuration.rendered
 }

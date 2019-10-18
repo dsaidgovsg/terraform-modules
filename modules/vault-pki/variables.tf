@@ -18,6 +18,7 @@ variable "vault_base_url" {
   Base URL where your Vault cluster can be accessed. This is used to configure the CRL and CA
   endpoints. Do not include a trailing slash.
 EOF
+  type        = list(string)
 
   default = ["https://vault.service.consul:8200"]
 }
@@ -78,6 +79,7 @@ variable "country" {
 Specifies the C (Country) values in the subject field of the resulting certificate.
 This is a comma-separated string or JSON array.
 EOF
+  type        = list(string)
 
   default = []
 }
@@ -87,6 +89,7 @@ variable "locality" {
 Specifies the L (Locality) values in the subject field of the resulting certificate.
 This is a comma-separated string or JSON array.
 EOF
+  type        = list(string)
 
   default = []
 }
@@ -96,6 +99,7 @@ variable "province" {
 Specifies the ST (Province) values in the subject field of the resulting certificate.
 This is a comma-separated string or JSON array.
 EOF
+  type        = list(string)
 
   default = []
 }
@@ -105,6 +109,7 @@ variable "street_address" {
 Specifies the Street Address values in the subject field of the resulting certificate.
 This is a comma-separated string or JSON array.
 EOF
+  type        = list(string)
 
   default = []
 }
@@ -114,6 +119,7 @@ variable "postal_code" {
 Specifies the Postal Code values in the subject field of the resulting certificate.
 This is a comma-separated string or JSON array.
 EOF
+  type        = list(string)
 
   default = []
 }

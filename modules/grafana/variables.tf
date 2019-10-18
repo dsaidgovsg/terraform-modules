@@ -1,6 +1,6 @@
 variable "grafana_fqdns" {
   description = "List of FQDNs to for Grafana to listen to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "grafana_domain" {
@@ -10,7 +10,7 @@ variable "grafana_domain" {
 
 variable "grafana_vault_policies" {
   description = "List of Vault Policies for Grafana to retrieve the relevant secrets"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "aws_region" {
@@ -19,7 +19,9 @@ variable "aws_region" {
 
 variable "nomad_azs" {
   description = "AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "grafana_count" {
@@ -39,7 +41,7 @@ variable "grafana_tag" {
 
 variable "grafana_force_pull" {
   description = "Force pull an image. Useful if the tag is mutable."
-  default     = "true"
+  default     = true
 }
 
 variable "grafana_bind_addr" {
@@ -63,12 +65,14 @@ variable "nomad_clients_node_class" {
 
 variable "grafana_entrypoints" {
   description = "List of Traefik entrypoints for the Grafana job"
-  default     = ["internal"]
+  type        = list(string)
+
+  default = ["internal"]
 }
 
 variable "grafana_router_logging" {
   description = "Set to true for Grafana to log all HTTP requests (not just errors). These are logged as Info level events to grafana log."
-  default     = "true"
+  default     = true
 }
 
 #

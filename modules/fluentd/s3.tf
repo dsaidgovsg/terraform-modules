@@ -1,9 +1,9 @@
 # S3 bucket for logs long term retention
 resource "aws_s3_bucket" "logs" {
-  count = "${var.logs_s3_enabled ? 1 : 0}"
+  count = var.logs_s3_enabled ? 1 : 0
 
-  bucket = "${var.logs_s3_bucket_name}"
-  tags   = "${var.tags}"
+  bucket = var.logs_s3_bucket_name
+  tags   = var.tags
 
   force_destroy = false
 
@@ -19,15 +19,15 @@ resource "aws_s3_bucket" "logs" {
     id      = "LogArchivalTransition"
     enabled = true
 
-    abort_incomplete_multipart_upload_days = "${var.logs_s3_abort_incomplete_days}"
+    abort_incomplete_multipart_upload_days = var.logs_s3_abort_incomplete_days
 
     transition {
-      days          = "${var.logs_s3_ia_transition_days}"
+      days          = var.logs_s3_ia_transition_days
       storage_class = "STANDARD_IA"
     }
 
     transition {
-      days          = "${var.logs_s3_glacier_transition_days}"
+      days          = var.logs_s3_glacier_transition_days
       storage_class = "GLACIER"
     }
   }
@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "logs" {
 }
 
 data "aws_iam_policy_document" "logs_s3" {
-  count = "${var.logs_s3_enabled ? 1 : 0}"
+  count = var.logs_s3_enabled ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -47,9 +47,7 @@ data "aws_iam_policy_document" "logs_s3" {
       "s3:ListBucket",
     ]
 
-    resources = [
-      "${aws_s3_bucket.logs.arn}",
-    ]
+    resources = aws_s3_bucket.logs.*.arn
   }
 
   statement {
@@ -60,18 +58,16 @@ data "aws_iam_policy_document" "logs_s3" {
       "s3:PutObject",
     ]
 
-    resources = [
-      "${aws_s3_bucket.logs.arn}/*",
-    ]
+    resources = formatlist("%s/*", aws_s3_bucket.logs.*.arn)
   }
 }
 
 resource "aws_iam_policy" "logs_s3" {
-  count = "${var.logs_s3_enabled ? 1 : 0}"
+  count = var.logs_s3_enabled ? 1 : 0
 
-  name        = "${var.logs_s3_policy}"
+  name        = var.logs_s3_policy
   path        = "/"
   description = "IAM Policy to store logs in the archival S3 bucket"
 
-  policy = "${data.aws_iam_policy_document.logs_s3.json}"
+  policy = data.aws_iam_policy_document.logs_s3.*.json[0]
 }

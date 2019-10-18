@@ -16,7 +16,7 @@ variable "runtime" {
 }
 
 variable "s3_key" {
-  description = "Directory of the zip file inside the S3 bucket e.g. SomePath/${var.app_version}/function.zip"
+  description = "Directory of the zip file inside the S3 bucket e.g. SomePath/{app_version}/function.zip"
 }
 
 variable "s3_bucket" {

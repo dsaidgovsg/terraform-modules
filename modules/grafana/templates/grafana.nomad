@@ -20,7 +20,7 @@ job "${job_name}" {
   }
 
   group "${job_name}" {
-    count = ${count}
+    count = ${job_count}
 
     task "${job_name}" {
       driver = "docker"

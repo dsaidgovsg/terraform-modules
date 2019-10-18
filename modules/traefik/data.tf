@@ -3,11 +3,9 @@ data "aws_route53_zone" "default" {
 }
 
 data "aws_vpc" "traefik" {
-  id = "${var.vpc_id}"
+  id = var.vpc_id
 }
 
-data "aws_region" "current" {
-  current = true
-}
+data "aws_region" "current" {}
 
 data "aws_availability_zones" "available" {}

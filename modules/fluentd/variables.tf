@@ -21,7 +21,9 @@ variable "es6_support" {
 
 variable "nomad_azs" {
   description = "AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "node_class_operator" {
@@ -56,7 +58,7 @@ variable "fluentd_conf_file" {
 
 variable "fluentd_force_pull" {
   description = "Force pull an image. Useful if the tag is mutable."
-  default     = "false"
+  default     = false
 }
 
 variable "fluentd_count" {
@@ -143,8 +145,9 @@ variable "source_hostname_key" {
 
 variable "tags" {
   description = "Tags to apply to resources"
+  type        = map(string)
 
-  default {
+  default = {
     Terraform = "true"
   }
 }
@@ -164,7 +167,7 @@ EOF
 
 variable "enable_file_logging" {
   description = "Enable logging to file on the Nomad jobs. Useful for debugging, but not really needed for production"
-  default     = "false"
+  default     = false
 }
 
 variable "fluentd_match" {

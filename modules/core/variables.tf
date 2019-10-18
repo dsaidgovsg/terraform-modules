@@ -25,47 +25,47 @@ variable "vault_ami_id" {
 
 variable "consul_subnets" {
   description = "List of subnets to launch Connsul servers in"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "nomad_server_subnets" {
   description = "List of subnets to launch Nomad servers in"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "nomad_client_subnets" {
   description = "List of subnets to launch Nomad clients in"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "vault_subnets" {
   description = "List of subnets to launch Vault servers in"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "internal_lb_subnets" {
   description = "List of subnets to deploy the internal LB to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "consul_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "nomad_servers_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Servers servers for API usage"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "nomad_clients_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "vault_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Vault servers for API usage"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "vault_tls_key_policy_arn" {
@@ -83,7 +83,7 @@ variable "add_private_route53_zone" {
 
 variable "internal_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to"
-  type        = "list"
+  type        = list(string)
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -112,6 +112,7 @@ variable "vault_api_domain" {
 # --------------------------------------------------------------------------------------------------
 variable "tags" {
   description = "A map of tags to add to all resources"
+  type        = map(string)
 
   default = {
     Terraform   = "true"
@@ -126,8 +127,9 @@ variable "ssh_key_name" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections"
-  type        = "list"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "associate_public_ip_address" {
@@ -182,8 +184,9 @@ variable "nomad_clients_max" {
 
 variable "nomad_clients_services_inbound_cidr" {
   description = "A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from."
-  type        = "list"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "nomad_servers_root_volume_type" {
@@ -292,8 +295,9 @@ variable "vault_termination_policies" {
 
 variable "vault_allowed_inbound_security_group_ids" {
   description = "A list of security group IDs that will be allowed to connect to Vault"
-  type        = "list"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "vault_allowed_inbound_security_group_count" {

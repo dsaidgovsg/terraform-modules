@@ -20,12 +20,12 @@ variable "es_base_domain" {
 
 variable "es_access_cidr_block" {
   description = "Elasticsearch access CIDR block to allow access"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "es_vpc_subnet_ids" {
   description = "Subnet IDs for Elasticsearch cluster"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "es_master_type" {
@@ -52,12 +52,14 @@ variable "es_ebs_volume_type" {
 
 variable "security_group_additional_tags" {
   description = "Additional tags to apply on the security group"
-  default     = {}
+  type        = map(string)
+
+  default = {}
 }
 
 variable "es_default_access" {
   description = "Rest API / Web UI access"
-  type        = "map"
+  type        = map(string)
 
   default = {
     type     = "ingress"
@@ -87,13 +89,13 @@ List of IAM role ARNs from which to permit Elasticsearch HTTP traffic (default [
 Note that a client must match both the IP address and the IAM role patterns in order to be permitted access.
 EOF
 
-  type    = "list"
+  type    = list(string)
   default = ["*"]
 }
 
 variable "es_zone_awareness" {
   description = "Enable zone awareness for Elasticsearch cluster"
-  default     = "true"
+  default     = true
 }
 
 variable "es_snapshot_start_hour" {
@@ -113,7 +115,9 @@ variable "es_kms_key_id" {
 
 variable "es_additional_tags" {
   description = "Additional tags to apply on Elasticsearch"
-  default     = {}
+  type        = map(string)
+
+  default = {}
 }
 
 #
@@ -132,12 +136,14 @@ variable "slow_index_log_name" {
 
 variable "slow_index_additional_tags" {
   description = "Additional tags to apply on Cloudwatch log group"
-  default     = {}
+  type        = map(string)
+
+  default = {}
 }
 
 variable "slow_index_log_retention" {
   description = "Number of days to retain logs for."
-  default     = "120"
+  default     = 120
 }
 
 #
@@ -185,14 +191,16 @@ variable "redirect_rule_priority" {
 
 variable "alarm_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
-  type        = "list"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "ok_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
-  type        = "list"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 #
@@ -211,17 +219,17 @@ variable "cluster_status_red_alarm_name" {
 
 variable "cluster_status_red_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "cluster_status_red_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 variable "cluster_status_red_threshold" {
   description = "Threshold for the number of primary shard not allocated to a node"
-  default     = "1"
+  default     = 1
 }
 
 #
@@ -240,17 +248,17 @@ variable "cluster_status_yellow_alarm_name" {
 
 variable "cluster_status_yellow_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "cluster_status_yellow_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 variable "cluster_status_yellow_threshold" {
   description = "Threshold for the number of replicas shard not allocated to a node"
-  default     = "1"
+  default     = 1
 }
 
 #
@@ -269,12 +277,12 @@ variable "low_storage_space_name" {
 
 variable "low_storage_space_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "low_storage_space_yellow_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 #
@@ -293,17 +301,17 @@ variable "cluster_index_writes_blocked_alarm_name" {
 
 variable "cluster_index_writes_blocked_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "cluster_index_writes_blocked_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "300"
+  default     = 300
 }
 
 variable "cluster_index_writes_blocked_threshold" {
   description = "Threshold for the number of write request blocked"
-  default     = "1"
+  default     = 1
 }
 
 #
@@ -322,12 +330,12 @@ variable "node_unreachable_alarm_name" {
 
 variable "node_unreachable_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "node_unreachable_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "86400"
+  default     = 86400
 }
 
 #
@@ -346,17 +354,17 @@ variable "snapshot_failed_alarm_name" {
 
 variable "snapshot_failed_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "snapshot_failed_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 variable "snapshot_failed_threshold" {
   description = "Threshold for the number of snapshot failed"
-  default     = "1"
+  default     = 1
 }
 
 #
@@ -375,17 +383,17 @@ variable "high_cpu_utilization_data_node_alarm_name" {
 
 variable "high_cpu_utilization_data_node_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "3"
+  default     = 3
 }
 
 variable "high_cpu_utilization_data_node_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "900"
+  default     = 900
 }
 
 variable "high_cpu_utilization_data_node_threshold" {
   description = "Threshold % of cpu utilization for data node"
-  default     = "80"
+  default     = 80
 }
 
 #
@@ -404,17 +412,17 @@ variable "high_jvm_memory_utilization_data_node_alarm_name" {
 
 variable "high_jvm_memory_utilization_data_node_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "high_jvm_memory_utilization_data_node_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "900"
+  default     = 900
 }
 
 variable "high_jvm_memory_utilization_data_node_threshold" {
   description = "Threshold % of jvm memory utilization for data node"
-  default     = "80"
+  default     = 80
 }
 
 #
@@ -433,17 +441,17 @@ variable "high_cpu_utilization_master_node_alarm_name" {
 
 variable "high_cpu_utilization_master_node_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "3"
+  default     = 3
 }
 
 variable "high_cpu_utilization_master_node_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "900"
+  default     = 900
 }
 
 variable "high_cpu_utilization_master_node_threshold" {
   description = "Threshold % of cpu utilization for master node"
-  default     = "50"
+  default     = 50
 }
 
 #
@@ -462,17 +470,17 @@ variable "high_jvm_memory_utilization_master_node_alarm_name" {
 
 variable "high_jvm_memory_utilization_master_node_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "high_jvm_memory_utilization_master_node_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "900"
+  default     = 900
 }
 
 variable "high_jvm_memory_utilization_master_node_threshold" {
   description = "Threshold % of jvm memory utilization for master node"
-  default     = "80"
+  default     = 80
 }
 
 #
@@ -491,17 +499,17 @@ variable "kms_key_error_alarm_name" {
 
 variable "kms_key_error_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "kms_key_error_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 variable "kms_key_error_threshold" {
   description = "Threshold for the number of kms key error"
-  default     = "1"
+  default     = 1
 }
 
 #
@@ -520,17 +528,17 @@ variable "kms_key_inaccessible_alarm_name" {
 
 variable "kms_key_inaccessible_evaluation_periods" {
   description = "Number of periods to evaluate for the alarm."
-  default     = "1"
+  default     = 1
 }
 
 variable "kms_key_inaccessible_period" {
   description = "Duration in seconds to evaluate for the alarm."
-  default     = "60"
+  default     = 60
 }
 
 variable "kms_key_inaccessible_threshold" {
   description = "Threshold for the number of kms key inaccessible error"
-  default     = "1"
+  default     = 1
 }
 
 #

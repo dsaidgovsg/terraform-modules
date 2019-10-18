@@ -29,7 +29,9 @@ variable "nomad_cluster_suffix" {
 
 variable "nomad_cluster_disallowed_policies" {
   description = "Additional policies that tokens created by Nomad servers are not allowed to have"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -61,5 +63,5 @@ variable "allow_unauthenticated" {
         This option should be disabled in an untrusted environment.
 EOF
 
-  default = "false"
+  default = false
 }

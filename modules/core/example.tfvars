@@ -17,5 +17,5 @@ traefik_ui_domain = "traefik-ui.example.com"
 vault_allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
 vault_ami_id = "xxx"
 vault_subnets = ["0.0.0.0/0"]
-vault_tls_key_policy_arn = "xxx"
+vault_tls_key_policy_arn = "xxxxxxxxxxxxxxxxxxxxx"
 vpc_id = "xxx"

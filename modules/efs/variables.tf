@@ -8,12 +8,12 @@ variable "vpc_id" {
 
 variable "vpc_subnets" {
   description = "IDs of VPC subnets to add the mount targets in"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "allowed_cidr_blocks" {
   description = "CIDR blocks to allow EFS port access into the security group"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "security_group_name" {
@@ -100,7 +100,7 @@ variable "efs_ports" {
 variable "tags" {
   description = "Tags to apply to resources that allow it"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }

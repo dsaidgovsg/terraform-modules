@@ -38,7 +38,7 @@ job "traefik" {
           "--consul.prefix=${traefik_consul_prefix}",
         ]
 
-        ${additional_docker_config}
+        ${indent(8, additional_docker_config)}
       }
 
       service {

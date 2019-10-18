@@ -60,18 +60,23 @@ variable "data_device_name" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "List of allowed CIDR blocks to allow SSH access"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "additional_cidr_blocks" {
   description = "Additional CIDR blocks other than the VPC CIDR block thatn can access the Prometheus server"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "tags" {
   description = "Tags to apply to resources"
+  type        = map(string)
 
-  default {
+  default = {
     Terraform = "true"
   }
 }
@@ -107,6 +112,7 @@ variable "traefik_enabled" {
 
 variable "traefik_entrypoints" {
   description = "List of entrypoints for Traefik"
+  type        = list(string)
 
   # Default "internal" entrypoint
   default = ["internal"]
@@ -114,7 +120,9 @@ variable "traefik_entrypoints" {
 
 variable "traefik_fqdns" {
   description = "List of FQDNs for Traefik to listen to. You have to create the DNS records separately."
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -137,12 +145,14 @@ variable "aws_auth_vault_role" {
 
 variable "aws_auth_policies" {
   description = "List of Vault policies to assign to the tokens issued by the AWS authentication backend"
-  default     = []
+  type        = list(string)
+
+  default = []
 }
 
 variable "aws_auth_period_minutes" {
   description = "Period, in minutes, that the Vault token issued will live for"
-  default     = "60"
+  default     = 60
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -198,7 +208,7 @@ variable "curator_enable" {
 
 variable "curator_age" {
   description = "Age in days to retain indices"
-  default     = "90"
+  default     = 90
 }
 
 variable "curator_prefix" {
