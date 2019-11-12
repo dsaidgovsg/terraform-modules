@@ -102,8 +102,8 @@ EOH
       }
 
       resources {
-        cpu    = 3000
-        memory = 1024
+        cpu    = 4000
+        memory = 2048
 
         network {
           mbits = 100
