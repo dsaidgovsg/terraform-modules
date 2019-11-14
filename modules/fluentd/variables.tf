@@ -66,6 +66,16 @@ variable "fluentd_count" {
   default     = 3
 }
 
+variable "cpu" {
+  description = "CPU in MHz allocated for the nomad job"
+  default     = 3000
+}
+
+variable "memory" {
+  description = "Memory in MB allocated for the nomad job"
+  default     = 512
+}
+
 variable "additional_blocks" {
   description = "Additional blocks to be added to the Jobspec"
   default     = ""

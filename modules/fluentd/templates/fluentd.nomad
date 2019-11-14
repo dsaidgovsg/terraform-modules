@@ -102,8 +102,8 @@ EOH
       }
 
       resources {
-        cpu    = 4000
-        memory = 2048
+        cpu    = ${cpu}
+        memory = ${memory}
 
         network {
           mbits = 100
