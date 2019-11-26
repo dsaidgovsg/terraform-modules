@@ -3,14 +3,14 @@
   hosts: all
   vars:
     additional_ntp_servers: ["169.254.169.123"]
-    nomad_version: "0.8.6"
-    nomad_module_version: "v0.1.1"
-    consul_module_version: "v0.3.5"
-    consul_version: "1.4.0"
-    docker_version: "17.11.0~ce-0~ubuntu"
-    vault_version: "1.0.1"
+    nomad_version: "0.10.0"
+    nomad_module_version: "v0.5.0"
+    consul_module_version: "v0.7.3"
+    consul_version: "1.6.1"
+    docker_version: "18.06.0~ce~3-0~ubuntu"
+    vault_version: "1.2.3"
     vault_module_url: "https://github.com/hashicorp/terraform-aws-vault.git"
-    vault_module_version: "v0.11.3"
+    vault_module_version: "v0.13.3"
     consul_enable_syslog: true
     nomad_enable_syslog: true
     td_agent_config_file: ""
