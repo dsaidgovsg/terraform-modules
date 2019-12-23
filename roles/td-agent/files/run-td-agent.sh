@@ -143,7 +143,7 @@ function main {
   local conf_template="/etc/td-agent/td-agent.conf.template"
   local conf_out="/etc/td-agent/td-agent.conf"
   local rotate_age="5"
-  local rotate_size="104857600"
+  local rotate_size="1048576000"
 
   local readonly service_override_dir="/etc/systemd/system/td-agent.service.d"
 
