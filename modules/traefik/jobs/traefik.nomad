@@ -20,7 +20,7 @@ job "traefik" {
     task "traefik" {
       driver = "docker"
 
-      config {
+      config = {
         image = "traefik:${version}"
 
         port_map {

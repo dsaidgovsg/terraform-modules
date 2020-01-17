@@ -81,11 +81,11 @@ job "job" {
       # ...
       driver = "docker"
 
-      config {
+      config = {
         logging {
           type = "fluentd"
 
-          config {
+          config = {
             fluentd-address = "fluentd.service.consul:4224"
             tag             = "docker.job"
           }

@@ -26,7 +26,7 @@ be automatically configured.
 
 ```hcl
 module "telegraf" {
-  source = "github.com/GovTechSG/terraform-modules.git//terraform-modules/modules/telegraf"
+  source = "github.com/dsaidgovsg/terraform-modules.git//terraform-modules/modules/telegraf"
 
   # Optional, default is true
   core_integration = true

@@ -39,7 +39,7 @@ job "fluentd" {
       # Give it time to flush. This is the max on agents
       kill_timeout = "30s"
 
-      config {
+      config = {
         image      = "${fluentd_image}:${fluentd_tag}"
         force_pull = ${fluentd_force_pull}
 

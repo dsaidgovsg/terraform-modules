@@ -28,12 +28,12 @@ variable "vpc_id" {
 
 variable "lb_external_subnets" {
   description = "List of subnets to deploy the external LB to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "lb_internal_subnets" {
   description = "List of subnets to deploy the internal LB to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "nomad_clients_node_class" {
@@ -81,13 +81,13 @@ variable "tags" {
 
 variable "external_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the external Load balancer is allowed to listen to"
-  type        = "list"
+  type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
 variable "internal_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 

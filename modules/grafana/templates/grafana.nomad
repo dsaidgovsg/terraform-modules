@@ -25,7 +25,7 @@ job "${job_name}" {
     task "${job_name}" {
       driver = "docker"
 
-      config {
+      config = {
         image      = "${grafana_image}:${grafana_tag}"
         force_pull = ${grafana_force_pull}
 

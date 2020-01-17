@@ -17,25 +17,25 @@ EOF
 module "consul" {
   source = "./ssh-engine"
 
-  enabled     = "${var.consul_enable}"
-  path        = "${var.consul_path}"
+  enabled     = var.consul_enable
+  path        = var.consul_path
   description = "Consul Server"
 
-  ssh_user  = "${var.ssh_user}"
-  ttl       = "${var.ttl}"
-  max_ttl   = "${var.max_ttl}"
-  role_name = "${var.role_name}"
+  ssh_user  = var.ssh_user
+  ttl       = var.ttl
+  max_ttl   = var.max_ttl
+  role_name = var.role_name
 }
 
 resource "consul_key_prefix" "consul" {
-  count      = "${var.consul_enable ? 1 : 0}"
-  depends_on = ["module.consul"]
+  count      = var.consul_enable ? 1 : 0
+  depends_on = [module.consul]
 
   path_prefix = "${var.consul_key_prefix}vault-ssh/consul/"
 
-  subkeys {
+  subkeys = {
     enabled = "yes"
-    path    = "${var.consul_path}"
+    path    = var.consul_path
   }
 }
 
@@ -45,25 +45,25 @@ resource "consul_key_prefix" "consul" {
 module "vault" {
   source = "./ssh-engine"
 
-  enabled     = "${var.vault_enable}"
-  path        = "${var.vault_path}"
+  enabled     = var.vault_enable
+  path        = var.vault_path
   description = "Vault Server"
 
-  ssh_user  = "${var.ssh_user}"
-  ttl       = "${var.ttl}"
-  max_ttl   = "${var.max_ttl}"
-  role_name = "${var.role_name}"
+  ssh_user  = var.ssh_user
+  ttl       = var.ttl
+  max_ttl   = var.max_ttl
+  role_name = var.role_name
 }
 
 resource "consul_key_prefix" "vault" {
-  count      = "${var.vault_enable ? 1 : 0}"
-  depends_on = ["module.vault"]
+  count      = var.vault_enable ? 1 : 0
+  depends_on = [module.vault]
 
   path_prefix = "${var.consul_key_prefix}vault-ssh/vault/"
 
-  subkeys {
+  subkeys = {
     enabled = "yes"
-    path    = "${var.vault_path}"
+    path    = var.vault_path
   }
 }
 
@@ -73,25 +73,25 @@ resource "consul_key_prefix" "vault" {
 module "nomad_server" {
   source = "./ssh-engine"
 
-  enabled     = "${var.nomad_server_enable}"
-  path        = "${var.nomad_server_path}"
+  enabled     = var.nomad_server_enable
+  path        = var.nomad_server_path
   description = "Nomad Server"
 
-  ssh_user  = "${var.ssh_user}"
-  ttl       = "${var.ttl}"
-  max_ttl   = "${var.max_ttl}"
-  role_name = "${var.role_name}"
+  ssh_user  = var.ssh_user
+  ttl       = var.ttl
+  max_ttl   = var.max_ttl
+  role_name = var.role_name
 }
 
 resource "consul_key_prefix" "nomad_server" {
-  count      = "${var.nomad_server_enable ? 1 : 0}"
-  depends_on = ["module.nomad_server"]
+  count      = var.nomad_server_enable ? 1 : 0
+  depends_on = [module.nomad_server]
 
   path_prefix = "${var.consul_key_prefix}vault-ssh/nomad_server/"
 
-  subkeys {
+  subkeys = {
     enabled = "yes"
-    path    = "${var.nomad_server_path}"
+    path    = var.nomad_server_path
   }
 }
 
@@ -101,24 +101,24 @@ resource "consul_key_prefix" "nomad_server" {
 module "nomad_client" {
   source = "./ssh-engine"
 
-  enabled     = "${var.nomad_client_enable}"
-  path        = "${var.nomad_client_path}"
+  enabled     = var.nomad_client_enable
+  path        = var.nomad_client_path
   description = "Nomad Client"
 
-  ssh_user  = "${var.ssh_user}"
-  ttl       = "${var.ttl}"
-  max_ttl   = "${var.max_ttl}"
-  role_name = "${var.role_name}"
+  ssh_user  = var.ssh_user
+  ttl       = var.ttl
+  max_ttl   = var.max_ttl
+  role_name = var.role_name
 }
 
 resource "consul_key_prefix" "nomad_client" {
-  count      = "${var.nomad_client_enable ? 1 : 0}"
-  depends_on = ["module.nomad_client"]
+  count      = var.nomad_client_enable ? 1 : 0
+  depends_on = [module.nomad_client]
 
   path_prefix = "${var.consul_key_prefix}vault-ssh/nomad_client/"
 
-  subkeys {
+  subkeys = {
     enabled = "yes"
-    path    = "${var.nomad_client_path}"
+    path    = var.nomad_client_path
   }
 }
