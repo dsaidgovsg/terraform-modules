@@ -142,11 +142,11 @@ module "additional_nomad_clients" {
 }
 
 resource "consul_key_prefix" "nomad_client" {
-  depends_on = ["module.additional_nomad_clients"]
+  depends_on = [module.additional_nomad_clients]
 
   path_prefix = "${var.consul_key_prefix}vault-ssh/additional_nomad_clients/"
 
-  subkeys {
+  subkeys = {
     enabled = "yes"
     path    = "additional_nomad_clients"
   }

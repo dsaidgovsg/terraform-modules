@@ -19,6 +19,7 @@ variable "vault_base_url" {
   endpoints. Do not include a trailing slash.
 EOF
 
+  type    = list(string)
   default = ["https://vault.service.consul:8200"]
 }
 
@@ -79,6 +80,7 @@ Specifies the C (Country) values in the subject field of the resulting certifica
 This is a comma-separated string or JSON array.
 EOF
 
+  type    = list(string)
   default = []
 }
 
@@ -88,6 +90,7 @@ Specifies the L (Locality) values in the subject field of the resulting certific
 This is a comma-separated string or JSON array.
 EOF
 
+  type    = list(string)
   default = []
 }
 
@@ -97,6 +100,7 @@ Specifies the ST (Province) values in the subject field of the resulting certifi
 This is a comma-separated string or JSON array.
 EOF
 
+  type    = list(string)
   default = []
 }
 
@@ -106,6 +110,7 @@ Specifies the Street Address values in the subject field of the resulting certif
 This is a comma-separated string or JSON array.
 EOF
 
+  type    = list(string)
   default = []
 }
 
@@ -115,6 +120,7 @@ Specifies the Postal Code values in the subject field of the resulting certifica
 This is a comma-separated string or JSON array.
 EOF
 
+  type    = list(string)
   default = []
 }
 

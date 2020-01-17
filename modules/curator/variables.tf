@@ -9,6 +9,7 @@ variable "job_name" {
 
 variable "nomad_azs" {
   description = "AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used"
+  type        = list(string)
   default     = []
 }
 

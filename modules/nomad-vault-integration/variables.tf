@@ -29,6 +29,7 @@ variable "nomad_cluster_suffix" {
 
 variable "nomad_cluster_disallowed_policies" {
   description = "Additional policies that tokens created by Nomad servers are not allowed to have"
+  type        = list(string)
   default     = []
 }
 

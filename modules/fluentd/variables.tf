@@ -21,6 +21,7 @@ variable "es6_support" {
 
 variable "nomad_azs" {
   description = "AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used"
+  type        = list(string)
   default     = []
 }
 
@@ -144,7 +145,7 @@ variable "source_hostname_key" {
 variable "tags" {
   description = "Tags to apply to resources"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }

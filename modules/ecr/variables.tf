@@ -40,7 +40,7 @@ variable "redirect_rule_priority" {
 variable "tags" {
   description = "A map of tags to add to all resources"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }

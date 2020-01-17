@@ -13,12 +13,12 @@ variable "vpc_id" {
 
 variable "vpc_subnet_ids" {
   description = "List of Subnet IDs to deploy to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients for API usage"
-  type        = "list"
+  type        = list(string)
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ variable "clients_max" {
 
 variable "nomad_clients_services_inbound_cidr" {
   description = "A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -87,7 +87,7 @@ variable "associate_public_ip_address" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 

@@ -15,7 +15,7 @@ look something like the following:
 job "xxx" {
   group "xxx" {
     task "xxx" {
-      config {
+      config = {
         image = "xxx"
 
         mounts = [

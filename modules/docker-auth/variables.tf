@@ -7,7 +7,7 @@ For example, on the shell, you can use the command `echo -n '<username>:<passwor
 to get the output required
 EOF
 
-  type = "map"
+  type = map(string)
 }
 
 # --------------------------------------------------------------------------------------------------

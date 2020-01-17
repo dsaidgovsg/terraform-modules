@@ -1,6 +1,6 @@
 variable "grafana_fqdns" {
   description = "List of FQDNs to for Grafana to listen to"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "grafana_domain" {
@@ -10,7 +10,7 @@ variable "grafana_domain" {
 
 variable "grafana_vault_policies" {
   description = "List of Vault Policies for Grafana to retrieve the relevant secrets"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "aws_region" {
@@ -19,6 +19,7 @@ variable "aws_region" {
 
 variable "nomad_azs" {
   description = "AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used"
+  type        = list(string)
   default     = []
 }
 

@@ -40,18 +40,18 @@ variable "vpc_id" {
 }
 
 variable "subnet_id" {
-  type        = "list"
   description = "List of subnets to run your function in"
+  type        = list(string)
 }
 
 variable "security_group" {
-  type        = "list"
   description = "List of security group to add to your function"
+  type        = list(string)
 }
 
 variable "environment" {
   description = "Environment variables passed into function when executing"
-  type        = "map"
+  type        = map(string)
 }
 
 variable "lambda_timeout" {
