@@ -31,7 +31,7 @@
     "builders": [
         {
             "name": "ubuntu-1604-nomad-server-ami",
-            "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+            "ami_name": "{{ user `ami_base_name` }}-{{isotime | clean_resource_name}}",
             "ami_description": "An Ubuntu 16.04 AMI that has Nomad and Consul installed.",
             "instance_type": "t3.micro",
             "region": "{{user `aws_region`}}",
@@ -55,7 +55,7 @@
             },
             "ssh_username": "ubuntu",
             "run_tags": {
-                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
                 "Packer": "yes",
@@ -64,7 +64,7 @@
                 "Vault Version": "{{user `vault_version` }}"
             },
             "tags": {
-                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
                 "Packer": "yes",
@@ -73,7 +73,7 @@
                 "Vault Version": "{{user `vault_version` }}"
             },
             "snapshot_tags": {
-                "Name": "{{user `ami_base_name` }}-{{isotime | clean_ami_name}}",
+                "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
                 "Base Name": "{{user `ami_base_name` }}",
                 "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
                 "Packer": "yes",
