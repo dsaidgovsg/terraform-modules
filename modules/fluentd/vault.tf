@@ -1,7 +1,3 @@
-locals {
-  aws_creds_path = "${var.vault_sts_path}/creds/${vault_aws_secret_backend_role.logs[0].name}"
-}
-
 resource "vault_aws_secret_backend_role" "logs" {
   count = var.logs_s3_enabled ? 1 : 0
 
