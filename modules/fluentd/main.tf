@@ -66,3 +66,7 @@ resource "nomad_job" "fluentd" {
 
   jobspec = data.template_file.fluentd_jobspec.rendered
 }
+
+locals {
+  aws_creds_path = "${var.vault_sts_path}/creds/${var.log_vault_role}"
+}
