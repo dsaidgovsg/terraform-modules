@@ -25,7 +25,7 @@ native_exec_in_tf_dirs () {
         -not -path '*/\.*' \
         -not -path './vendor/*' \
         -type f -iname '*.tf' \
-        -exec dirname {} \; | uniq | sort | \
+        -exec dirname {} \; | sort | uniq | \
         xargs -I{} sh -c "${cmd}"
     return $?
 }
@@ -44,7 +44,7 @@ docker_exec_in_tf_dirs () {
             -not -path '*/\.*' \
             -not -path './vendor/*' \
             -type f -iname '*.tf' \
-            -exec dirname {} \; | uniq | sort | \
+            -exec dirname {} \; | sort | uniq | \
             xargs -I{} sh -c \"${cmd}\""
     return $?
 }
