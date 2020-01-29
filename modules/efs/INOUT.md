@@ -2,16 +2,16 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
+| aws | >= 2.7 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
-| allowed\_cidr\_blocks | CIDR blocks to allow EFS port access into the security group | `list` | n/a | yes |
+| allowed\_cidr\_blocks | CIDR blocks to allow EFS port access into the security group | `list(string)` | n/a | yes |
 | efs\_ports | Ports to allow access to EFS | `map` | <pre>{<br>  "from": 2049,<br>  "protocol": "tcp",<br>  "to": 2049<br>}<br></pre> | no |
 | enable\_encryption | Boolean to specify whether to enable KMS encryption for EFS | `bool` | `true` | no |
-| kms\_additional\_tags | KMS key additional tags for EFS | `map` | `{}` | no |
+| kms\_additional\_tags | KMS key additional tags for EFS | `map(string)` | `{}` | no |
 | kms\_key\_alias | Alias for the KMS key for EFS. Must prefix with alias/.<br>Overrides kms\_key\_alias\_prefix if this is specified. | `string` | `""` | no |
 | kms\_key\_alias\_prefix | Alias prefix for the KMS key for EFS. Current timestamp is used as the suffix.<br>Must prefix with alias/.<br>kms\_key\_alias is used instead if specified. | `string` | `"alias/efs-default-"` | no |
 | kms\_key\_deletion\_window\_in\_days | Duration in days after which the key is deleted after destruction of the resource,<br>must be between 7 and 30 days | `number` | `30` | no |
@@ -20,9 +20,9 @@
 | kms\_key\_policy\_json | JSON content of IAM policy to attach to the KMS key. Empty string to use root identifier as principal for all KMS actions. | `string` | `""` | no |
 | security\_group\_description | Description of security group for EFS | `string` | `"Security group for EFS"` | no |
 | security\_group\_name | Name of security group for EFS. Empty string to use a random name. | `string` | `""` | no |
-| tags | Tags to apply to resources that allow it | `any` | n/a | yes |
+| tags | Tags to apply to resources that allow it | `map` | <pre>{<br>  "Terraform": "true"<br>}<br></pre> | no |
 | vpc\_id | ID of VPC to add the security group for the EFS setup | `any` | n/a | yes |
-| vpc\_subnets | IDs of VPC subnets to add the mount targets in | `list` | n/a | yes |
+| vpc\_subnets | IDs of VPC subnets to add the mount targets in | `list(string)` | n/a | yes |
 
 ## Outputs
 

@@ -2,10 +2,10 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| consul | n/a |
-| nomad | n/a |
-| template | n/a |
+| aws | >= 2.7 |
+| consul | >= 2.5 |
+| nomad | >= 1.4 |
+| template | >= 2.0 |
 
 ## Inputs
 
@@ -17,23 +17,23 @@
 | deregistration\_delay | Time before an unhealthy Elastic Load Balancer target becomes removed | `number` | `60` | no |
 | elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | external\_certificate\_arn | ARN for the certificate to use for the external LB | `any` | n/a | yes |
-| external\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the external Load balancer is allowed to listen to | `list` | <pre>[<br>  "0.0.0.0/0"<br>]<br></pre> | no |
+| external\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the external Load balancer is allowed to listen to | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]<br></pre> | no |
 | external\_lb\_name | Name of the external Nomad load balancer | `string` | `"traefik-external"` | no |
 | external\_nomad\_clients\_asg | The Nomad Clients Autoscaling group to attach the external load balancer to | `any` | n/a | yes |
 | healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | `number` | `2` | no |
 | internal\_certificate\_arn | ARN for the certificate to use for the internal LB | `any` | n/a | yes |
-| internal\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to | `list` | `[]` | no |
+| internal\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to | `list(string)` | `[]` | no |
 | internal\_lb\_name | Name of the external Nomad load balancer | `string` | `"traefik-internal"` | no |
 | internal\_nomad\_clients\_asg | The Nomad Clients Autoscaling group to attach the internal load balancer to | `any` | n/a | yes |
 | interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | `number` | `30` | no |
 | lb\_external\_access\_log | Log External Traefik LB access to a S3 bucket | `bool` | `false` | no |
 | lb\_external\_access\_log\_bucket | S3 bucket to log access to the External Traefik LB to | `any` | n/a | yes |
 | lb\_external\_access\_log\_prefix | Prefix in the S3 bucket to log External Traefik LB access | `string` | `""` | no |
-| lb\_external\_subnets | List of subnets to deploy the external LB to | `list` | n/a | yes |
+| lb\_external\_subnets | List of subnets to deploy the external LB to | `list(string)` | n/a | yes |
 | lb\_internal\_access\_log | Log internal Traefik LB access to a S3 bucket | `bool` | `false` | no |
 | lb\_internal\_access\_log\_bucket | S3 bucket to log access to the internal Traefik LB to | `any` | n/a | yes |
 | lb\_internal\_access\_log\_prefix | Prefix in the S3 bucket to log internal Traefik LB access | `string` | `""` | no |
-| lb\_internal\_subnets | List of subnets to deploy the internal LB to | `list` | n/a | yes |
+| lb\_internal\_subnets | List of subnets to deploy the internal LB to | `list(string)` | n/a | yes |
 | log\_json | Log in JSON format | `bool` | `false` | no |
 | nomad\_clients\_external\_security\_group | The security group of the nomad clients that the external LB will be able to connect to | `any` | n/a | yes |
 | nomad\_clients\_internal\_security\_group | The security group of the nomad clients that the internal LB will be able to connect to | `any` | n/a | yes |

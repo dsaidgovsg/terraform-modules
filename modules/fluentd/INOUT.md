@@ -2,11 +2,11 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| consul | n/a |
-| nomad | n/a |
+| aws | >= 2.7 |
+| consul | >= 2.5 |
+| nomad | >= 1.4 |
 | template | ~> 2.0 |
-| vault | n/a |
+| vault | >= 2.0 |
 
 ## Inputs
 
@@ -38,10 +38,10 @@
 | logs\_s3\_storage\_class | Default storage class to store logs in S3. Choose from `STANDARD`, `REDUCED_REDUNDANCY` or `STANDARD_IA` | `string` | `"STANDARD"` | no |
 | node\_class | Node class for Nomad clients to constraint the jobs to. Use this with `node_class_operator`. The default matches everything. | `string` | `".?"` | no |
 | node\_class\_operator | Nomad constrant operator (https://www.nomadproject.io/docs/job-specification/constraint.html#operator) to use for restricting Nomad clients node class. Use this with `node_class`. The default matches everything. | `string` | `"regexp"` | no |
-| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list` | `[]` | no |
+| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list(string)` | `[]` | no |
 | source\_address\_key | Key to inject the source address to | `string` | `"host"` | no |
 | source\_hostname\_key | Key to inject the source hostname to | `string` | `"hostname"` | no |
-| tags | Tags to apply to resources | `any` | n/a | yes |
+| tags | Tags to apply to resources | `map` | <pre>{<br>  "Terraform": "true"<br>}<br></pre> | no |
 | vault\_sts\_path | If logging to S3 is enabled, provide to the path in Vault in which the AWS Secrets Engine is mounted | `string` | `""` | no |
 
 ## Outputs

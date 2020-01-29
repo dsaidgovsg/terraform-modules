@@ -2,8 +2,8 @@
 
 | Name | Version |
 |------|---------|
-| template | n/a |
-| vault | n/a |
+| template | >= 2.0 |
+| vault | >= 2.0 |
 
 ## Inputs
 

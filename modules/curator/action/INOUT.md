@@ -2,7 +2,7 @@
 
 | Name | Version |
 |------|---------|
-| consul | n/a |
+| consul | >= 2.5 |
 
 ## Inputs
 
