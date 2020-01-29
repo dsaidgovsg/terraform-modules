@@ -1,0 +1,125 @@
+name-template: 'v$NEXT_MAJOR_VERSION' # defaults to patch version
+tag-template: 'v$NEXT_MAJOR_VERSION'
+
+branches:
+  - master
+
+categories:
+  - title: 💥 Breaking Changes
+    label: 'BREAKING CHANGE'
+
+  - title: ✨ Features
+    label: 'feat'
+
+  - title: 🐛 Bug Fixes
+    label: 'fix'
+
+  - title: 🚀 Improvements
+    label: 'perf'
+
+  - title: 🔧 Code Improvements
+    label: 'refactor'
+
+  - title: 🚧 Maintenance
+    label: 'chore'
+
+  - title: 👷 CI/CD
+    label: 'ci'
+
+  - title: 🔩 Build
+    label: 'build'
+
+  - title: 💯 Tests
+    label: 'test'
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  ## Changes
+  $CHANGES
+
+replacers:
+  # e.g. chore: change xxx -> change xxx
+  - search: '/(?:feat:|fix:|perf:|refactor:|chore:|ci:|build:|test:)\s*/g'
+    replace: ''
+  # e.g. feat(web): add xxx -> web: add xxx
+  - search: '/(?:feat|fix|perf|refactor|chore|ci|build|test)\((\w+)\):\s*/g'
+    replace: '$1: '
+
+  # For capitalizing the first letter in every bullet point
+  - search: '/^(\W\s+)a/gm'
+    replace: '$1A'
+
+  - search: '/^(\W\s+)b/gm'
+    replace: '$1B'
+
+  - search: '/^(\W\s+)c/gm'
+    replace: '$1C'
+
+  - search: '/^(\W\s+)d/gm'
+    replace: '$1D'
+
+  - search: '/^(\W\s+)e/gm'
+    replace: '$1E'
+
+  - search: '/^(\W\s+)f/gm'
+    replace: '$1F'
+
+  - search: '/^(\W\s+)g/gm'
+    replace: '$1G'
+
+  - search: '/^(\W\s+)h/gm'
+    replace: '$1H'
+
+  - search: '/^(\W\s+)i/gm'
+    replace: '$1I'
+
+  - search: '/^(\W\s+)j/gm'
+    replace: '$1J'
+
+  - search: '/^(\W\s+)k/gm'
+    replace: '$1K'
+
+  - search: '/^(\W\s+)l/gm'
+    replace: '$1L'
+
+  - search: '/^(\W\s+)m/gm'
+    replace: '$1M'
+
+  - search: '/^(\W\s+)n/gm'
+    replace: '$1N'
+
+  - search: '/^(\W\s+)o/gm'
+    replace: '$1O'
+
+  - search: '/^(\W\s+)p/gm'
+    replace: '$1P'
+
+  - search: '/^(\W\s+)q/gm'
+    replace: '$1Q'
+
+  - search: '/^(\W\s+)r/gm'
+    replace: '$1R'
+
+  - search: '/^(\W\s+)s/gm'
+    replace: '$1S'
+
+  - search: '/^(\W\s+)t/gm'
+    replace: '$1T'
+
+  - search: '/^(\W\s+)u/gm'
+    replace: '$1U'
+
+  - search: '/^(\W\s+)v/gm'
+    replace: '$1V'
+
+  - search: '/^(\W\s+)w/gm'
+    replace: '$1W'
+
+  - search: '/^(\W\s+)x/gm'
+    replace: '$1X'
+
+  - search: '/^(\W\s+)y/gm'
+    replace: '$1Y'
+
+  - search: '/^(\W\s+)z/gm'
+    replace: '$1Z'

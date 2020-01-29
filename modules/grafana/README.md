@@ -100,44 +100,6 @@ Write any provisioned datasource as individual `yaml` files to `secrets/provisio
 
 Write any additional dashboard as individual `json` files to `alloc/dashboards/`.
 
-## Inputs
+## Inputs and Outputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| additional_driver_config | Additional HCL config for the Task docker driver. | string | `` | no |
-| additional_task_config | Additional HCL configuration for the task. See the README for more. | string | `` | no |
-| aws_billing_dashboard | If the Cloudwatch data source is enabled, set this to automatically import a billing dashboard | string | `true` | no |
-| aws_cloudwatch_dashboard | If the Cloudwatch data source is enabled, set this to automatically import a Cloudwatch dashboard | string | `true` | no |
-| aws_region |  | string | `ap-southeast-1` | no |
-| cloudwatch_datasource_aws_path | Path in Vault AWS Secrets engine to retrieve AWS credentials. Set to empty to disable. | string | `` | no |
-| cloudwatch_datasource_name | Name of the AWS Cloudwatch data source | string | `Cloudwatch` | no |
-| grafana_additional_config | Additional configuration. You can place Go templates in this variable to read secrets from Vault. See http://docs.grafana.org/auth/overview/ | string | `` | no |
-| grafana_bind_addr | IP address to bind the service to | string | `0.0.0.0` | no |
-| grafana_count | Number of copies of Grafana to run | string | `3` | no |
-| grafana_database_host | Host name of the database | string | - | yes |
-| grafana_database_name | Name of database for Grafana | string | `grafana` | no |
-| grafana_database_port | Port of the database | string | - | yes |
-| grafana_database_ssl_mode | For Postgres, use either disable, require or verify-full. For MySQL, use either true, false, or skip-verify. | string | - | yes |
-| grafana_database_type | Type of database for Grafana. `mysql` or `postgres` is supported | string | - | yes |
-| grafana_domain | Domain for Github/Google Oauth redirection. If not set, will use the first from `grafana_fqdns` | string | `` | no |
-| grafana_entrypoints | List of Traefik entrypoints for the Grafana job | string | `<list>` | no |
-| grafana_force_pull | Force pull an image. Useful if the tag is mutable. | string | `true` | no |
-| grafana_fqdns | List of FQDNs to for Grafana to listen to | list | - | yes |
-| grafana_image | Docker image for Grafana | string | `grafana/grafana` | no |
-| grafana_job_name | Nomad job name for service Grafana | string | `grafana` | no |
-| grafana_port | Port on the Docker image in which the HTTP interface is exposed. This is INTERNAL to the container. | string | `3000` | no |
-| grafana_router_logging | Set to true for Grafana to log all HTTP requests (not just errors). These are logged as Info level events to grafana log. | string | `true` | no |
-| grafana_tag | Tag for Grafana Docker image | string | `5.3.4` | no |
-| grafana_vault_policies | List of Vault Policies for Grafana to retrieve the relevant secrets | list | - | yes |
-| nomad_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | string | `<list>` | no |
-| nomad_clients_node_class | Job constraint Nomad Client Node Class name | string | - | yes |
-| prometheus_datasource_name | Name of the Prometheus data source | string | `Prometheus` | no |
-| prometheus_service | If set, will query Consul for the Prometheus service and retrieve the host and port of a Prometheus server | string | `` | no |
-| session_config | A Go template string to template out the session provider configuration. Depends on the type of provider | string | `` | no |
-| session_provider | Type of session store | string | `memory` | no |
-| vault_admin_password_path | Path for the Go template to read the admin password | string | `.Data.password` | no |
-| vault_admin_path | Path in Vault to retrieve the admin credentials | string | - | yes |
-| vault_admin_username_path | Path for the Go template to read the admin username | string | `.Data.username` | no |
-| vault_database_password_path | Path for the Go template to read the database password | string | `.Data.password` | no |
-| vault_database_path | Path in Vault to retrieve the database credentials | string | - | yes |
-| vault_database_username_path | Path for the Go template to read the database username | string | `.Data.username` | no |
+Refer to [INOUT.md](INOUT.md)

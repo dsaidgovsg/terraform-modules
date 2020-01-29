@@ -23,19 +23,6 @@ Otherwise, without prefix:
 
 __Be sure not to use same app name across all your application services!__
 
-## Inputs
+## Inputs and Outputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| app | App name to set policy | string | - | yes |
-| kv_path | Vault Key/value prefix path to the secrets | string | - | yes |
-| prefix | Prefix to prepend to the policy name | string | - | yes |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| app_policy | Name of Application level policy |
-| app_rendered_content | Vault policy content at Application level |
-| dev_policy | Name of Developer level policy |
-| dev_rendered_content | Vault policy content at Developer level |
+Refer to [INOUT.md](INOUT.md)
