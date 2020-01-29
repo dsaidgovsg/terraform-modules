@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_IMAGE: hashicorp/terraform:0.12.20
+      TFLINT_IMAGE: wata727/tflint:0.13.4
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
@@ -28,6 +29,17 @@ jobs:
               -exec dirname {} \; \
               | sort | uniq | \
               xargs -I{} sh -c \"echo Checking {}... && (cd {} && terraform init -backend=false -lock=false && terraform validate)\""
+    - name: Run tflint check over entire repo
+      run: |-
+        docker run --rm -t -v "${PWD}:/data:ro" \
+          --entrypoint sh \
+          "${TFLINT_IMAGE}" \
+          -c "find . \
+              -not -path '*/\.*' \
+              -type f -iname '*.tf' \
+              -exec dirname {} \; \
+              | sort | uniq | \
+              xargs -I{} sh -c \"echo Checking {}... && (cd {} && tflint)\""
     - name: Run terraform fmt check over entire repo
       run: docker run --rm -t -v "${PWD}:/tf:ro" "${TF_IMAGE}" fmt -check=true -recursive /tf/modules/
     - name: Run terraform-docs check over entire repo
