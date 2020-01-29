@@ -16,6 +16,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
+    - name: Run terraform init + validate check over entire repo
+      run: |-
+        docker run --rm -t -v "${PWD}:/tf" \
+          -e AWS_DEFAULT_REGION="xxx" -e NOMAD_ADDR="xxx" -e VAULT_ADDR="xxx" \
+          --entrypoint sh \
+          "${TF_IMAGE}" \
+          -c "find . \
+              -not -path '*/\.*' \
+              -type f -iname '*.tf' \
+              -exec dirname {} \; \
+              | sort | uniq | \
+              xargs -I{} sh -c \"echo '> {}' && cd {} && terraform init -backend=false -lock=false && terraform validate\""
     - name: Run terraform fmt check over entire repo
       run: docker run --rm -t -v "${PWD}:/tf:ro" "${TF_IMAGE}" fmt -check=true -recursive /tf/modules/
     - name: Run terraform-docs check over entire repo
