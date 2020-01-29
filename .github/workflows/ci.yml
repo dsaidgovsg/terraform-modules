@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TF_IMAGE: hashicorp/terraform:0.12.20
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Run terraform fmt check over entire repo
+      run: docker run --rm -t -v "${PWD}:/tf:ro" "${TF_IMAGE}" fmt -check=true -recursive /tf/modules/
+    - name: Run terraform-docs check over entire repo
+      run: ./inout.sh check

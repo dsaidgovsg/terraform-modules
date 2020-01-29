@@ -154,20 +154,6 @@ resource "consul_key_prefix" "nomad_client" {
 
 ```
 
-## Inputs
+## Inputs and Outputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| consul_enable | Enable SSH Certificate signing on Consul servers. The Consul servers will also install the CA     from Vault automatically. | string | `true` | no |
-| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `nomad_vault_integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
-| consul_path | Path for Consul servers SSH access | string | `ssh_consul` | no |
-| max_ttl | Max TTL for certificate renewal | string | `86400` | no |
-| nomad_client_enable | Enable SSH Certificate signing on Nomad clients. The Nomad clients will also install the CA     from Vault automatically. | string | `true` | no |
-| nomad_client_path | Path for Nomad clients SSH access | string | `ssh_nomad_client` | no |
-| nomad_server_enable | Enable SSH Certificate signing on Nomad servers. The Nomad servers will also install the CA     from Vault automatically. | string | `true` | no |
-| nomad_server_path | Path for Nomad servers SSH access | string | `ssh_nomad_server` | no |
-| role_name | Name of role for each of the types of instances. | string | `default` | no |
-| ssh_user | SSH user to allow SSH access | string | `ubuntu` | no |
-| ttl | TTL for the certificate in seconds | string | `300` | no |
-| vault_enable | Enable SSH Certificate signing on Vault servers. The Vault servers will also install the CA     from Vault automatically. | string | `true` | no |
-| vault_path | Path for Vault servers SSH access | string | `ssh_vault` | no |
+Refer to [INOUT.md](INOUT.md)

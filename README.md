@@ -14,6 +14,10 @@ their applications and services.
 To get started, see the [Core](modules/core) module. Some of the modules are optional and
 add additional features after you have provisioned the Core module.
 
+## Contributing
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for more details.
+
 ## Submodules
 
 This repository has various submodules. When you are cloning it for the first time, make sure to

@@ -84,27 +84,6 @@ After you have applied this module, a key will be set in Consul's KV store. The 
 key in Consul to configure themselves accordingly. Refer to the Core module's documentation on how
 to update your Nomad cluster.
 
-## Inputs
+## Inputs and Outputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| allow_unauthenticated | Specifies if users submitting jobs to the Nomad server should be required to provide         their own Vault token, proving they have access to the policies listed in the job.         This option should be disabled in an untrusted environment. | string | `false` | no |
-| consul_key_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has         been applied. If you change this, you have to update the         `integration_consul_prefix` variable in the core module as well. | string | `terraform/` | no |
-| core_integration | Enable integration with the `core` module by setting some values in Consul so         that the user_data scripts in core know that this module has been applied | string | `true` | no |
-| nomad_cluster_disallowed_policies | Additional policies that tokens created by Nomad servers are not allowed to have | string | `<list>` | no |
-| nomad_cluster_policy | Name of the policy for tokens passed to Nomad servers | string | `nomad-cluster` | no |
-| nomad_cluster_role | Name for the Token role that is used by the Nomad server to create tokens | string | `nomad-cluster` | no |
-| nomad_cluster_suffix | Suffix to create tokens with. See https://www.vaultproject.io/api/auth/token/index.html#path_suffix for more information | string | `nomad-cluster` | no |
-| nomad_server_policy | Name of the policy to allow for the creation of the token to pass to Nomad servers | string | `nomad-server` | no |
-| nomad_server_role | Name of the token role that is used to create Tokens to pass to Nomad | string | `nomad-server` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| nomad_cluster_policy | Policy that allows Nomad servers to create child tokens for jobs |
-| nomad_cluster_policy_name | Name of policy that allows Nomad servers to create child tokens for jobs |
-| nomad_cluster_token_role | Token role configuration to allow Nomad servers to create child tokens |
-| nomad_server_policy | Policy that allows the creation of a token to pass to the Nomad cluster servers |
-| nomad_server_policy_name | Name of policy that allows the creation of a token to pass to the Nomad cluster servers |
-| nomad_server_token_role | Token role configuration to create a token with the nomad_cluster policy |
+Refer to [INOUT.md](INOUT.md)
