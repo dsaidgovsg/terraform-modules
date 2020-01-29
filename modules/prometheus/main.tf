@@ -1,9 +1,3 @@
-terraform {
-  required_providers {
-    vault = ">= 1.2"
-  }
-}
-
 data "aws_subnet" "selected" {
   id = var.subnet_id
 }
