@@ -22,6 +22,12 @@ See Angular's
 [Commit Message Guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-guidelines)
 to see some practical examples in action.
 
+For the generation of `INOUT.md`, which are basically files containing the value
+of `terraform-docs md .` for every Terraform module, you can simply run
+`./inout generate` at the root directory. Note that it requires `docker` CLI.
+These files are also checked in the CI process to ensure that the inputs and
+outputs in the description always tally with the Terraform configuration files.
+
 ## Rationale
 
 Enforcing the branch prefix allows every PR to be labeled automatically
