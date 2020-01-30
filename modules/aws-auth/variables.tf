@@ -38,7 +38,7 @@ variable "iam_policy_name" {
 
 variable "base_policies" {
   description = "List of policies to assign to all tokens created via the AWS authentication method"
-  type        = list(string)
+  type        = set(string)
   default     = []
 }
 
@@ -49,7 +49,7 @@ variable "consul_role" {
 
 variable "consul_policies" {
   description = "Policies to attach to Consul servers role"
-  type        = list(string)
+  type        = set(string)
   default     = []
 }
 
@@ -60,7 +60,7 @@ variable "nomad_server_role" {
 
 variable "nomad_server_policies" {
   description = "Policies to attach to Nomad servers role"
-  type        = list(string)
+  type        = set(string)
   default     = []
 }
 
@@ -71,7 +71,7 @@ variable "nomad_client_role" {
 
 variable "nomad_client_policies" {
   description = "Policies to attach to Nomad clients role"
-  type        = list(string)
+  type        = set(string)
   default     = []
 }
 
@@ -82,7 +82,7 @@ variable "vault_role" {
 
 variable "vault_policies" {
   description = "Policies to attach to Vault servers role"
-  type        = list(string)
+  type        = set(string)
   default     = []
 }
 
