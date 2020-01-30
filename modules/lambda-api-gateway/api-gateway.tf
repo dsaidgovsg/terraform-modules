@@ -71,7 +71,7 @@ resource "aws_api_gateway_deployment" "api-gateway-deployment" {
   ]
 
   description       = "Deployed at ${timestamp()}"
-  stage_description = timestamp() // forces to 'create' a new deployment each run
+  stage_description = timestamp() # forces to 'create' a new deployment each run
   rest_api_id       = aws_api_gateway_rest_api.api-gateway.id
   stage_name        = "api"
 }
