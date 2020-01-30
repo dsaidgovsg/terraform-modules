@@ -6,5 +6,5 @@ resource "aws_ecr_repository" "default" {
 }
 
 locals {
-  service_url = element(split("/", aws_ecr_repository.default.repository_url), 0)
+  service_url = split("/", aws_ecr_repository.default.repository_url)[0]
 }
