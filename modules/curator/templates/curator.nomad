@@ -27,7 +27,7 @@ job "${job_name}" {
     task "${job_name}" {
       driver = "docker"
 
-      config {
+      config = {
         image      = "${docker_image}:${docker_tag}"
         force_pull = ${force_pull}
 

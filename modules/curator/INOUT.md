@@ -2,9 +2,9 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| nomad | n/a |
-| template | n/a |
+| aws | >= 2.7 |
+| nomad | >= 1.4 |
+| template | >= 2.0 |
 
 ## Inputs
 
@@ -36,7 +36,7 @@
 | force\_pull | Force Nomad Clients to always force pull | `string` | `"false"` | no |
 | job\_name | Name of the Nomad Job | `string` | `"curator"` | no |
 | nomad\_age | Age in days to clear nomad log indices | `number` | `90` | no |
-| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list` | `[]` | no |
+| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list(string)` | `[]` | no |
 | nomad\_clients\_node\_class | Job constraint Nomad Client Node Class name | `any` | n/a | yes |
 | nomad\_disable | Disable clearing nomad log indices | `bool` | `false` | no |
 | nomad\_prefix | Prefix for nomad logs | `string` | `"services.nomad."` | no |

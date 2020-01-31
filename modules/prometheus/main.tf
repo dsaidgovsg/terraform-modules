@@ -1,59 +1,59 @@
 data "aws_subnet" "selected" {
-  id = "${var.subnet_id}"
+  id = var.subnet_id
 }
 
 data "aws_vpc" "selected" {
-  id = "${data.aws_subnet.selected.vpc_id}"
+  id = data.aws_subnet.selected.vpc_id
 }
 
 resource "aws_instance" "prometheus" {
-  ami           = "${var.ami_id}"
-  instance_type = "${var.instance_type}"
-  key_name      = "${var.ssh_key_name}"
-  subnet_id     = "${var.subnet_id}"
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  key_name      = var.ssh_key_name
+  subnet_id     = var.subnet_id
 
-  user_data = "${data.template_file.user_data.rendered}"
+  user_data = data.template_file.user_data.rendered
 
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-  vpc_security_group_ids      = ["${aws_security_group.prometheus.id}"]
-  iam_instance_profile        = "${aws_iam_instance_profile.prometheus.name}"
-  tags                        = "${merge(var.tags, map("Name", "${var.name}"))}"
-  volume_tags                 = "${merge(var.tags, map("Name", "${var.name}"))}"
+  associate_public_ip_address = var.associate_public_ip_address
+  vpc_security_group_ids      = [aws_security_group.prometheus.id]
+  iam_instance_profile        = aws_iam_instance_profile.prometheus.name
+  tags                        = merge(var.tags, { Name = var.name })
+  volume_tags                 = merge(var.tags, { Name = var.name })
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = "${var.root_volume_size}"
+    volume_size = var.root_volume_size
   }
 }
 
 resource "aws_volume_attachment" "data" {
-  device_name = "${var.data_volume_mount}"
-  volume_id   = "${var.data_volume_id}"
-  instance_id = "${aws_instance.prometheus.id}"
+  device_name = var.data_volume_mount
+  volume_id   = var.data_volume_id
+  instance_id = aws_instance.prometheus.id
 
   skip_destroy = true
 }
 
 data "template_file" "user_data" {
-  template = "${file("${path.module}/files/user_data.sh")}"
+  template = file("${path.module}/files/user_data.sh")
 
-  vars {
-    service_type = "${var.server_type}"
+  vars = {
+    service_type = var.server_type
 
-    cluster_tag_key   = "${var.consul_cluster_tag_key}"
-    cluster_tag_value = "${var.consul_cluster_tag_value}"
-    consul_prefix     = "${var.consul_key_prefix}"
+    cluster_tag_key   = var.consul_cluster_tag_key
+    cluster_tag_value = var.consul_cluster_tag_value
+    consul_prefix     = var.consul_key_prefix
   }
 }
 
 resource "aws_iam_instance_profile" "prometheus" {
-  name = "${var.name}"
-  role = "${aws_iam_role.prometheus.name}"
+  name = var.name
+  role = aws_iam_role.prometheus.name
 }
 
 resource "aws_iam_role" "prometheus" {
-  name               = "${var.name}"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  name               = var.name
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
   description        = "IAM Role for Prometheus server"
 }
 
@@ -75,17 +75,17 @@ data "aws_iam_policy_document" "assume_role" {
 # the Consul AWS Module's consul-iam-policies module.
 # ---------------------------------------------------------------------------------------------------------------------
 module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.7.4"
 
-  iam_role_id = "${aws_iam_role.prometheus.id}"
+  iam_role_id = aws_iam_role.prometheus.id
 }
 
 resource "aws_security_group" "prometheus" {
-  name        = "${var.name}"
+  name        = var.name
   description = "Security group for Prometheus server"
-  vpc_id      = "${data.aws_subnet.selected.vpc_id}"
+  vpc_id      = data.aws_subnet.selected.vpc_id
 
-  tags = "${merge(var.tags, map("Name", "${var.name}"))}"
+  tags = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_security_group_rule" "ssh_ingress" {
@@ -93,21 +93,21 @@ resource "aws_security_group_rule" "ssh_ingress" {
   from_port   = 22
   to_port     = 22
   protocol    = "tcp"
-  cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
+  cidr_blocks = var.allowed_ssh_cidr_blocks
   description = "SSH access to Prometheus server"
 
-  security_group_id = "${aws_security_group.prometheus.id}"
+  security_group_id = aws_security_group.prometheus.id
 }
 
 resource "aws_security_group_rule" "prometheus" {
   type        = "ingress"
-  from_port   = "${var.prometheus_port}"
-  to_port     = "${var.prometheus_port}"
+  from_port   = var.prometheus_port
+  to_port     = var.prometheus_port
   protocol    = "tcp"
-  cidr_blocks = ["${concat(var.additional_cidr_blocks, list(data.aws_vpc.selected.cidr_block))}"]
+  cidr_blocks = concat(var.additional_cidr_blocks, [data.aws_vpc.selected.cidr_block])
   description = "Access to Prometheus server"
 
-  security_group_id = "${aws_security_group.prometheus.id}"
+  security_group_id = aws_security_group.prometheus.id
 }
 
 resource "aws_security_group_rule" "egress" {
@@ -117,7 +117,7 @@ resource "aws_security_group_rule" "egress" {
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.prometheus.id}"
+  security_group_id = aws_security_group.prometheus.id
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -127,9 +127,9 @@ resource "aws_security_group_rule" "egress" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_gossip" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.3.5"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-client-security-group-rules?ref=v0.7.4"
 
-  security_group_id                  = "${aws_security_group.prometheus.id}"
-  allowed_inbound_cidr_blocks        = ["${data.aws_vpc.selected.cidr_block}"]
-  allowed_inbound_security_group_ids = ["${var.consul_security_group_id}"]
+  security_group_id                  = aws_security_group.prometheus.id
+  allowed_inbound_cidr_blocks        = [data.aws_vpc.selected.cidr_block]
+  allowed_inbound_security_group_ids = [var.consul_security_group_id]
 }

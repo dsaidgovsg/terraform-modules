@@ -2,9 +2,9 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| nomad | n/a |
-| template | n/a |
+| aws | >= 2.7 |
+| nomad | >= 1.4 |
+| template | >= 2.0 |
 
 ## Inputs
 
@@ -28,14 +28,14 @@
 | grafana\_domain | Domain for Github/Google Oauth redirection. If not set, will use the first from `grafana_fqdns` | `string` | `""` | no |
 | grafana\_entrypoints | List of Traefik entrypoints for the Grafana job | `list` | <pre>[<br>  "internal"<br>]<br></pre> | no |
 | grafana\_force\_pull | Force pull an image. Useful if the tag is mutable. | `string` | `"true"` | no |
-| grafana\_fqdns | List of FQDNs to for Grafana to listen to | `list` | n/a | yes |
+| grafana\_fqdns | List of FQDNs to for Grafana to listen to | `list(string)` | n/a | yes |
 | grafana\_image | Docker image for Grafana | `string` | `"grafana/grafana"` | no |
 | grafana\_job\_name | Nomad job name for service Grafana | `string` | `"grafana"` | no |
 | grafana\_port | Port on the Docker image in which the HTTP interface is exposed. This is INTERNAL to the container. | `number` | `3000` | no |
 | grafana\_router\_logging | Set to true for Grafana to log all HTTP requests (not just errors). These are logged as Info level events to grafana log. | `string` | `"true"` | no |
 | grafana\_tag | Tag for Grafana Docker image | `string` | `"5.3.4"` | no |
-| grafana\_vault\_policies | List of Vault Policies for Grafana to retrieve the relevant secrets | `list` | n/a | yes |
-| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list` | `[]` | no |
+| grafana\_vault\_policies | List of Vault Policies for Grafana to retrieve the relevant secrets | `list(string)` | n/a | yes |
+| nomad\_azs | AZs which Nomad is deployed to. If left empty, the list of AZs from this region will be used | `list(string)` | `[]` | no |
 | nomad\_clients\_node\_class | Job constraint Nomad Client Node Class name | `any` | n/a | yes |
 | prometheus\_datasource\_name | Name of the Prometheus data source | `string` | `"Prometheus"` | no |
 | prometheus\_service | If set, will query Consul for the Prometheus service and retrieve the host and port of a Prometheus server | `string` | `""` | no |

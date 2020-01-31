@@ -38,7 +38,7 @@ resource "consul_keys" "entrypoints_api" {
 resource "consul_keys" "consulcatalog_endpoint" {
   key {
     path   = "${var.traefik_consul_prefix}/consulcatalog/endpoint"
-    value  = "${local.consul_service}"
+    value  = local.consul_service
     delete = true
   }
 }
@@ -62,7 +62,7 @@ resource "consul_keys" "consulcatalog_exposedbydefault" {
 resource "consul_keys" "consulcatalog_prefix" {
   key {
     path   = "${var.traefik_consul_prefix}/consulcatalog/prefix"
-    value  = "${var.traefik_consul_catalog_prefix}"
+    value  = var.traefik_consul_catalog_prefix
     delete = true
   }
 }
@@ -71,7 +71,7 @@ resource "consul_keys" "consulcatalog_prefix" {
 resource "consul_keys" "api_entrypoint" {
   key {
     path   = "${var.traefik_consul_prefix}/api/entrypoint"
-    value  = "${local.api_entrypoint}"
+    value  = local.api_entrypoint
     delete = true
   }
 }
@@ -89,7 +89,7 @@ resource "consul_keys" "api_dashboard" {
 resource "consul_keys" "ping_entrypoint" {
   key {
     path   = "${var.traefik_consul_prefix}/ping/entrypoint"
-    value  = "${local.api_entrypoint}"
+    value  = local.api_entrypoint
     delete = true
   }
 }
@@ -104,7 +104,7 @@ resource "consul_keys" "traefiklog_filepath" {
 }
 
 resource "consul_keys" "traefiklog_format" {
-  count = "${var.log_json ? 1 : 0}"
+  count = var.log_json ? 1 : 0
 
   key {
     path   = "${var.traefik_consul_prefix}/traefiklog/format"
@@ -115,7 +115,7 @@ resource "consul_keys" "traefiklog_format" {
 
 # [accessLog] section
 resource "consul_keys" "accesslog_filepath" {
-  count = "${var.access_log_enable ? 1 : 0}"
+  count = var.access_log_enable ? 1 : 0
 
   key {
     path   = "${var.traefik_consul_prefix}/accesslog/filepath"
@@ -125,7 +125,7 @@ resource "consul_keys" "accesslog_filepath" {
 }
 
 resource "consul_keys" "accesslog_format" {
-  count = "${var.access_log_enable && var.access_log_json ? 1 : 0}"
+  count = var.access_log_enable && var.access_log_json ? 1 : 0
 
   key {
     path   = "${var.traefik_consul_prefix}/accesslog/format"

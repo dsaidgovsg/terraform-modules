@@ -10,6 +10,7 @@ variable "enable_kms_vpce" {
 
 variable "vpce_subnets" {
   description = "List of subnets to provision the VPC Endpoint in. The Autoscaling group for Vault must be configured to use the same subnets that the VPC Endpoint are provisioned in. Note that because the KMS VPCE might not be supported in all the Availability Zones, you should use the output from the module to provide the list of subnets for your Vault ASG."
+  type        = list(string)
   default     = []
 }
 
@@ -31,7 +32,7 @@ variable "vpce_sg_name" {
 variable "tags" {
   description = "Tags to apply to resources that support it"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }

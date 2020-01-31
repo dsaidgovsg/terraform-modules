@@ -1,7 +1,7 @@
 resource "consul_key_prefix" "action" {
   path_prefix = "${var.consul_key_prefix}curator/${var.key}/"
 
-  subkeys {
+  subkeys = {
     disable = "${var.disable}"
     age     = "${var.age}"
     prefix  = "${var.prefix}"

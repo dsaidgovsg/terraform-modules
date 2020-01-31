@@ -2,9 +2,9 @@
 
 | Name | Version |
 |------|---------|
-| consul | n/a |
-| template | n/a |
-| vault | n/a |
+| consul | >= 2.5 |
+| template | >= 2.0 |
+| vault | >= 2.0 |
 
 ## Inputs
 
@@ -16,7 +16,7 @@
 | kv\_subpath | Subpath inside the KV store to store the authentication | `string` | `"terraform/docker-auth"` | no |
 | policy\_name | Name of the policy to allow for access to Docker registries | `string` | `"docker-auth"` | no |
 | provision\_kv\_store | If you have not enabled a KV store for Vault, set this to `true` to provision one | `bool` | `false` | no |
-| registries | A map of registries where the key is the URL of the registry and the value is of the form<br>`<username>:<password>` base64 encoded.<br><br>For example, on the shell, you can use the command `echo -n '<username>:<password>' \| base64 -w0`<br>to get the output required | `map` | n/a | yes |
+| registries | A map of registries where the key is the URL of the registry and the value is of the form<br>`<username>:<password>` base64 encoded.<br><br>For example, on the shell, you can use the command `echo -n '<username>:<password>' \| base64 -w0`<br>to get the output required | `map(string)` | n/a | yes |
 
 ## Outputs
 

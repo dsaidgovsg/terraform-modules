@@ -2,7 +2,7 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
+| aws | >= 2.7 |
 
 ## Inputs
 
@@ -16,7 +16,7 @@
 | redirect\_rule\_priority | Rule priority for redirect. Only applicable if `add_route53_record` is `true` | `number` | `100` | no |
 | route53\_domain | Domain to set as A record for Route53. Only applicable if `add_route53_record` is `true` | `string` | `""` | no |
 | route53\_zone\_id | Zone ID to use for Route53 record. Only applicable if `add_route53_record` is `true` | `string` | `""` | no |
-| tags | A map of tags to add to all resources | `any` | n/a | yes |
+| tags | A map of tags to add to all resources | `map` | <pre>{<br>  "Terraform": "true"<br>}<br></pre> | no |
 
 ## Outputs
 

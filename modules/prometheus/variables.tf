@@ -60,18 +60,20 @@ variable "data_device_name" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "List of allowed CIDR blocks to allow SSH access"
+  type        = list(string)
   default     = []
 }
 
 variable "additional_cidr_blocks" {
   description = "Additional CIDR blocks other than the VPC CIDR block thatn can access the Prometheus server"
+  type        = list(string)
   default     = []
 }
 
 variable "tags" {
   description = "Tags to apply to resources"
 
-  default {
+  default = {
     Terraform = "true"
   }
 }
@@ -114,6 +116,7 @@ variable "traefik_entrypoints" {
 
 variable "traefik_fqdns" {
   description = "List of FQDNs for Traefik to listen to. You have to create the DNS records separately."
+  type        = list(string)
   default     = []
 }
 
@@ -137,6 +140,7 @@ variable "aws_auth_vault_role" {
 
 variable "aws_auth_policies" {
   description = "List of Vault policies to assign to the tokens issued by the AWS authentication backend"
+  type        = list(string)
   default     = []
 }
 

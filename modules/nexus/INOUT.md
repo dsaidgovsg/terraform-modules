@@ -2,23 +2,23 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| consul | n/a |
-| template | n/a |
-| vault | n/a |
+| aws | >= 2.7 |
+| consul | >= 2.5 |
+| template | >= 2.0 |
+| vault | >= 2.0 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
-| additional\_cidr\_blocks | Additional CIDR blocks other than the VPC CIDR block thatn can access the Nexus server | `list` | `[]` | no |
+| additional\_cidr\_blocks | Additional CIDR blocks other than the VPC CIDR block thatn can access the Nexus server | `list(string)` | `[]` | no |
 | allowed\_ssh\_cidr\_blocks | List of allowed CIDR blocks to allow SSH access | `list` | `[]` | no |
 | ami\_id | AMI ID for Nexus Server | `string` | `""` | no |
 | associate\_public\_ip\_address | Associate a public IP address for instance | `bool` | `false` | no |
 | aws\_auth\_enabled | Enable AWS Authentication | `bool` | `false` | no |
 | aws\_auth\_path | Path to the Vault AWS Authentication backend | `string` | `"aws"` | no |
 | aws\_auth\_period\_minutes | Period, in minutes, that the Vault token issued will live for | `string` | `"60"` | no |
-| aws\_auth\_policies | List of Vault policies to assign to the tokens issued by the AWS authentication backend | `list` | `[]` | no |
+| aws\_auth\_policies | List of Vault policies to assign to the tokens issued by the AWS authentication backend | `list(string)` | `[]` | no |
 | aws\_auth\_vault\_role | Name of the role in the AWS Authentication backend to create | `string` | `"nexus"` | no |
 | consul\_cluster\_tag\_key | Key that Consul Server Instances are tagged with for discovery | `string` | `"consul-servers"` | no |
 | consul\_cluster\_tag\_value | Value that Consul Server Instances are tagged with for discovery | `string` | `"consul"` | no |
@@ -41,11 +41,11 @@
 | ssh\_key\_name | Name of SSH key to assign to the instance | `any` | n/a | yes |
 | subdomain | Subdomain for Nexus server | `string` | `"nexus"` | no |
 | subnet\_id | Subnet ID to deploy the instance to | `any` | n/a | yes |
-| tags | Tags to apply to resources | `any` | n/a | yes |
+| tags | Tags to apply to resources | `map` | <pre>{<br>  "Terraform": "true"<br>}<br></pre> | no |
 | td\_agent\_enabled | Enable td-agent integration. You will still need to provide the appropriate configuration file for td-agent during the AMI building process. | `bool` | `false` | no |
 | traefik\_enabled | Enable Traefik Integration | `bool` | `false` | no |
-| traefik\_entrypoints | List of entrypoints for Traefik | `list` | <pre>[<br>  "internal"<br>]<br></pre> | no |
-| traefik\_fqdns | List of FQDNs for Traefik to listen to. You have to create the DNS records separately. | `list` | `[]` | no |
+| traefik\_entrypoints | List of entrypoints for Traefik | `list(string)` | <pre>[<br>  "internal"<br>]<br></pre> | no |
+| traefik\_fqdns | List of FQDNs for Traefik to listen to. You have to create the DNS records separately. | `list(string)` | `[]` | no |
 | vault\_ssh\_enabled | Enable Vault SSH integration | `bool` | `false` | no |
 | vault\_ssh\_max\_ttl | Max TTL for certificate renewal | `number` | `86400` | no |
 | vault\_ssh\_path | Path to mount the SSH secrets engine | `string` | `"ssh_nexus"` | no |

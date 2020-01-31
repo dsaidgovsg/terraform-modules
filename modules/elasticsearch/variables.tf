@@ -20,12 +20,12 @@ variable "es_base_domain" {
 
 variable "es_access_cidr_block" {
   description = "Elasticsearch access CIDR block to allow access"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "es_vpc_subnet_ids" {
   description = "Subnet IDs for Elasticsearch cluster"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "es_master_type" {
@@ -52,12 +52,13 @@ variable "es_ebs_volume_type" {
 
 variable "security_group_additional_tags" {
   description = "Additional tags to apply on the security group"
+  type        = map(string)
   default     = {}
 }
 
 variable "es_default_access" {
   description = "Rest API / Web UI access"
-  type        = "map"
+  type        = map(any)
 
   default = {
     type     = "ingress"
@@ -87,7 +88,7 @@ List of IAM role ARNs from which to permit Elasticsearch HTTP traffic (default [
 Note that a client must match both the IP address and the IAM role patterns in order to be permitted access.
 EOF
 
-  type    = "list"
+  type    = list(string)
   default = ["*"]
 }
 
@@ -113,6 +114,7 @@ variable "es_kms_key_id" {
 
 variable "es_additional_tags" {
   description = "Additional tags to apply on Elasticsearch"
+  type        = map(string)
   default     = {}
 }
 
@@ -132,6 +134,7 @@ variable "slow_index_log_name" {
 
 variable "slow_index_additional_tags" {
   description = "Additional tags to apply on Cloudwatch log group"
+  type        = map(string)
   default     = {}
 }
 
@@ -185,13 +188,13 @@ variable "redirect_rule_priority" {
 
 variable "alarm_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "ok_actions" {
   description = "A list of ARNs (i.e. SNS Topic ARN) to notify for ok action"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 

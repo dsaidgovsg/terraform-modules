@@ -2,10 +2,10 @@
 
 | Name | Version |
 |------|---------|
-| consul | n/a |
-| nomad | n/a |
-| template | n/a |
-| vault | n/a |
+| consul | >= 2.5 |
+| nomad | >= 1.4 |
+| template | >= 2.0 |
+| vault | >= 2.0 |
 
 ## Inputs
 
