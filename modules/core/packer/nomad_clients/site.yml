@@ -38,7 +38,6 @@
       role: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
       certificate: "{{ ca_certificate }}"
       certificate_rename: "ca.crt"
-    become: yes
     when: ca_certificate != ""
   - name: Install Vault PKI CA Certificate
     include_role:
