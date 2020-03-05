@@ -1,0 +1,57 @@
+---
+- name: Provision AMI
+  hosts: all
+  vars:
+    additional_ntp_servers: ["169.254.169.123"]
+    docker_version: "17.11.0~ce-0~ubuntu"
+    ca_certificate: ""
+    netshare_version: 0.36
+    docker_enable_efs: false
+    timezone: "Asia/Singapore"
+  tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install CA Certificate
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
+    vars:
+      role: "{{ playbook_dir }}/../../../../roles/ansible-ca-store"
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate != ""
+  - name: Install Vault PKI CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/vault-pki"
+  - name: Install chrony
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/chrony"
+  - name: Install Telegraf
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/telegraf"
+  - name: Install pip3
+    apt:
+      name: python3-pip
+    become: yes
+  - name: Install Docker Volume Netshare
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/docker-volume-netshare"
+    when: docker_enable_efs
+  - name: Install Docker and Docker Compose
+    include_tasks: "{{ playbook_dir }}/../../../../tasks/include_role_checked.yml"
+    vars:
+      role: "{{ playbook_dir }}/../../../../roles/ansible-docker-ubuntu"
+  - name: Use DNSMasq as default Docker Daemon DNS server
+    copy:
+      content: '{ "dns": ["169.254.1.1"] }'
+      dest: /etc/docker/daemon.json
+      owner: root
+    become: yes
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/install-ssh-script"
+  - name: Set default timezone
+    include_role:
+      name: "{{ playbook_dir }}/../../../../roles/timezone"
