@@ -8,12 +8,9 @@
     "temporary_security_group_source_cidrs": "0.0.0.0/0",
     "associate_public_ip_address": "true",
     "ssh_interface": "",
-    "docker_version": "18.06.0~ce~3-0~ubuntu",
     "td_agent_config_file": "",
     "td_agent_config_vars_file": "",
     "ca_certificate": "",
-    "netshare_version": "0.36",
-    "docker_enable_efs": "false",
     "timezone": "Asia/Singapore"
   },
   "builders": [
@@ -46,22 +43,19 @@
         "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
         "Base Name": "{{user `ami_base_name` }}",
         "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-        "Packer": "yes",
-        "Docker Version": "{{user `docker_version` }}"
+        "Packer": "yes"
       },
       "tags": {
         "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
         "Base Name": "{{user `ami_base_name` }}",
         "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-        "Packer": "yes",
-        "Docker Version": "{{user `docker_version` }}"
+        "Packer": "yes"
       },
       "snapshot_tags": {
         "Name": "{{user `ami_base_name` }}-{{isotime | clean_resource_name}}",
         "Base Name": "{{user `ami_base_name` }}",
         "Timestamp": "{{isotime \"2006-01-02 03:04:05\"}}",
-        "Packer": "yes",
-        "Docker Version": "{{user `docker_version` }}"
+        "Packer": "yes"
       }
     }
   ],
@@ -83,8 +77,6 @@
         "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
         "-e",
         "ca_certificate={{user `ca_certificate`}}",
-        "-e",
-        "netshare_version={{user `netshare_version`}} docker_enable_efs={{user `docker_enable_efs`}}",
         "-e",
         "timezone={{user `timezone`}}",
         "-e",
