@@ -13,7 +13,7 @@ resource "aws_lb" "fluentd" {
   internal           = true
   load_balancer_type = "network"
 
-  idle_timeout               = var.elb_idle_timeout
+  idle_timeout               = var.lb_idle_timeout
   enable_deletion_protection = true
 
   access_logs {
@@ -27,7 +27,7 @@ resource "aws_lb" "fluentd" {
 
 resource "aws_lb_listener" "fluentd_tcp" {
   load_balancer_arn = aws_lb.fluentd.arn
-  port              = "80"
+  port              = local.fluentd_lb_port
   protocol          = "TCP"
 
   # Redirect to HTTPS
@@ -63,10 +63,10 @@ resource "aws_security_group" "fluentd_lb" {
 resource "aws_security_group_rule" "fluentd_lb_incoming" {
   type              = "ingress"
   security_group_id = aws_security_group.fluentd_lb.id
-  from_port         = 80
-  to_port           = 80
+  from_port         = local.fluentd_lb_port
+  to_port           = local.fluentd_lb_port
   protocol          = "tcp"
-  cidr_blocks       = concat([data.aws_vpc.this.cidr_block], var.fluentd_lb_incoming_cidr)
+  cidr_blocks       = concat([data.aws_vpc.this.cidr_block], var.lb_incoming_cidr)
 }
 
 resource "aws_lb_target_group" "fluentd_server" {
@@ -83,7 +83,7 @@ resource "aws_lb_target_group" "fluentd_server" {
     interval            = var.lb_health_check_interval
   }
 
-  tags = merge(var.tags, { Name = `${var.b_name}-fluentd-server` })
+  tags = merge(var.tags, { Name = "${var.b_name}-fluentd-server" })
 
   lifecycle {
     create_before_destroy = true
@@ -116,28 +116,28 @@ resource "aws_security_group_rule" "fluentd_to_lb" {
 }
 
 # A Record for nomad API endpoint to point to Internal Load balancer
-// resource "aws_route53_record" "nomad_rpc" {
-//   zone_id = data.aws_route53_zone.default.zone_id
-//   name    = var.nomad_api_domain
-//   type    = "A"
+resource "aws_route53_record" "fluentd_rpc" {
+  zone_id = data.aws_route53_zone.default.zone_id
+  name    = var.fluentd_api_domain
+  type    = "A"
 
-//   alias {
-//     name                   = aws_lb.internal.dns_name
-//     zone_id                = aws_lb.internal.zone_id
-//     evaluate_target_health = false
-//   }
-// }
+  alias {
+    name                   = aws_lb.internal.dns_name
+    zone_id                = aws_lb.internal.zone_id
+    evaluate_target_health = false
+  }
+}
 
-// resource "aws_route53_record" "private_zone_nomad_rpc" {
-//   count = var.add_private_route53_zone ? 1 : 0
+resource "aws_route53_record" "private_zone_fluentd_rpc" {
+  count = var.add_private_route53_zone ? 1 : 0
 
-//   zone_id = local.private_zone_id
-//   name    = var.nomad_api_domain
-//   type    = "A"
+  zone_id = local.private_zone_id
+  name    = var.fluentd_api_domain
+  type    = "A"
 
-//   alias {
-//     name                   = aws_lb.internal.dns_name
-//     zone_id                = aws_lb.internal.zone_id
-//     evaluate_target_health = false
-//   }
-// }
+  alias {
+    name                   = aws_lb.internal.dns_name
+    zone_id                = aws_lb.internal.zone_id
+    evaluate_target_health = false
+  }
+}
