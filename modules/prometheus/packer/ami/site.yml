@@ -23,6 +23,7 @@
     prometheus_client_service: "prometheus-client"
     prometheus_consul_job_name: "consul"
     prometheus_port: 9090
+    for_fluentd_server: "no"
   tasks:
   - name: Upgrade all packages to the latest version
     apt:

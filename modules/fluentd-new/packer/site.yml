@@ -8,6 +8,7 @@
     td_agent_config_file: ""
     td_agent_config_vars_file: ""
     td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
+    for_fluentd_server: "yes"
     timezone: "Asia/Singapore"
   tasks:
   - name: Upgrade all packages to the latest version
