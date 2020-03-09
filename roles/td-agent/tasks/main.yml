@@ -25,17 +25,25 @@
     groups: systemd-journal
     append: yes
   become: yes
+# Add configuration file
 - name: Include configuration variables
   include_vars:
     file: "{{ config_vars_file }}"
     name: config_vars
-  when: config_vars_file != ""
+  when: config_vars_file != "" and for_fluentd_server == "no"
 - name: Change td-agent configuration
   template:
     src: "{{ config_file }}"
     dest: "{{ config_dest_file }}"
     mode: 0644
-  when: config_file != ""
+  when: config_file != "" and for_fluentd_server == "no"
+  become: yes
+- name: Add td-agent configuration
+  copy:
+    src: "{{ role_path }}/files/fluentd.conf"
+    dest: "{{ config_dest_file }}"
+    mode: 0644
+  when: for_fluentd_server == "yes"
   become: yes
 # Use a different configuration script depending on if this is a log aggregator
 - name: Install configuration script
