@@ -16,11 +16,11 @@ data "template_file" "fluentd_tf_rendered_conf" {
     s3_bucket     = aws_s3_bucket.logs[0].id
     s3_region     = "ap-southeast-1"
     s3_prefix     = "logs/"
-    storage_class = "STANDARD"
+    storage_class = var.logs_s3_storage_class
   }
 }
 
 resource "local_file" "fluentd_rendered_conf" {
-  content = data.template_file.fluentd_rendered_conf.rendered
+  content = data.template_file.fluentd_tf_rendered_conf.rendered
   filename = "${path.module}/rendered_fluentd.conf" 
 }
