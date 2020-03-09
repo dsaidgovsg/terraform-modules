@@ -40,11 +40,11 @@
   when: config_file != "" and for_fluentd_server == "no"
   become: yes
 - name: Change td-agent configuration
-  template:
+  copy:
     src: "{{ config_file_fluentd_server }}"
     dest: "{{ config_dest_file }}"
     mode: 0644
-  when: config_file != "" and for_fluentd_server == "yes"
+  when: config_file_fluentd_server != "" and for_fluentd_server == "yes"
   become: yes
 # Use a different configuration script depending on if this is the aggregator
 - name: Install configuration script
