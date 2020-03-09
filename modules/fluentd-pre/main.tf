@@ -16,7 +16,7 @@ data "template_file" "fluentd_tf_rendered_conf" {
     s3_bucket     = aws_s3_bucket.logs[0].id
     s3_region     = "ap-southeast-1"
     s3_prefix     = "logs/"
-    storage_class = var.logs_s3_storage_class
+    storage_class = "STANDARD"
   }
 }
 
