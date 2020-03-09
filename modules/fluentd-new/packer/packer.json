@@ -11,6 +11,8 @@
     "td_agent_config_file": "",
     "td_agent_config_vars_file": "",
     "ca_certificate": "",
+    "for_fluentd_server": "yes",
+    "td_agent_config_file_fluentd_server": "",
     "timezone": "Asia/Singapore"
   },
   "builders": [

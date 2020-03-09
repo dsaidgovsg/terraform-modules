@@ -1,0 +1,14 @@
+---
+elasticsearch:
+  hostname:
+  port:
+  es6_support:
+
+fluentd:
+  port: 4224
+
+s3:
+  bucket:
+  region:
+  prefix:
+  storage_class:
