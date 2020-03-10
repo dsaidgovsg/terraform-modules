@@ -22,6 +22,7 @@
     consul_token: ""
     consul_integration_prefix: "terraform/"
     nomad_additional_config: []
+    for_fluentd_server: "no"
     timezone: "Asia/Singapore"
   pre_tasks:
   - name: Upgrade all packages to the latest version

@@ -24,6 +24,8 @@ function print_usage {
   echo -e "  --skip-template\t\tEnable consul-template apply on configuration file. Optional. Defaults to false."
   echo -e "  --conf-template\t\tFile path to configuration consul-template file. Optional. Defaults to /etc/td-agent/td-agent.conf.template"
   echo -e "  --conf-out\t\tFile path to configuration destination. Optional. Defaults to /etc/td-agent/td-agent.conf"
+  echo -e "  --rotate-age\t\tLog rotation age. Optional. Defaults to 5"
+  echo -e "  --rotate-size\t\tLog rotation size. Optional. Defaults to 104857600"
   echo
   echo "Example:"
   echo
