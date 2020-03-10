@@ -23,7 +23,7 @@ resource "aws_lb_listener_rule" "redirect" {
     type = "redirect"
 
     redirect {
-      host        = local.endpoint
+      host        = var.es_endpoint
       path        = "/_plugin/kibana/#{path}"
       port        = 443
       protocol    = "HTTPS"
