@@ -1,17 +1,8 @@
 # AWS Elasticsearch module
 
-This modules creates an Elasticsearch cluster in a domain, with (optional) redirection
-service to allow easy access to Kibana web interface.
-
-## Registered `consul` service name
-
-The registered `consul` service name is `elasticsearch`, and the default port
-used is `443`.
-
-The actual VPC service and port are registered in `consul`. Any other services
-that require Elasticsearch service should always use the actual VPC service
-name, since the service is hosted under SSL and the SSL certificate to accept is
-registered under the VPC name (and not the `consul` service name).
+This modules creates an Elasticsearch cluster in a domain without Consul service discovery
+or redirection to Kibana. This module should be run before Core and Fluentd so that
+Fluentd can send logs to Elasticsearch.
 
 ## Default Access Policy
 
@@ -33,19 +24,6 @@ the Terraform module, you will have to manually configure Elasticsearch to log s
 See the
 [instructions](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-slow-logs-indices)
 for how to do so.
-
-## Redirection
-
-The module can optionally setup an ELB listener rule to redirect users to the Kibana interface
-using a much friendlier URL.
-
-We recommend that you use the internal ELB that was created by the `Core` module. For example, the
-list below will list the pairs of variables in this module that can use the output from the `Core`
-module:
-
-- `var.lb_cname`: `module.core.internal_lb_dns_name`
-- `var.lb_zone_id`: `module.core.internal_lb_zone_id`
-- `var.redirect_listener_arn`: `module.core.internal_lb_https_listener_arn`
 
 ## Service Linked Role
 
@@ -92,15 +70,6 @@ module "es" {
 
   enable_slow_index_log = true
   slow_index_log_name   = "my-cloud-es-slow-index"
-
-  # Optional section for redirecting users to the unfriendly Kibana URL
-
-  use_redirect             = true
-  redirect_route53_zone_id = "xxx"
-  redirect_domain          = "kibana.xxx.xxx"
-  lb_cname                 = "${module.core.internal_lb_dns_name}"
-  lb_zone_id               = "${module.core.internal_lb_zone_id}"
-  redirect_listener_arn    = "${module.core.internal_lb_https_listener_arn}"
 }
 ```
 

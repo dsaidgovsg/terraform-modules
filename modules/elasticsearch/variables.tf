@@ -86,11 +86,6 @@ variable "es_default_access" {
   }
 }
 
-variable "es_consul_service" {
-  description = "Name to register in consul to identify Elasticsearch service"
-  default     = "elasticsearch"
-}
-
 variable "es_version" {
   # Available versions: https://aws.amazon.com/elasticsearch-service/faqs/
   # Currently cannot use 6.X due to fluentd elasticsearch plugin output multiple type issue
@@ -160,45 +155,6 @@ variable "slow_index_additional_tags" {
 variable "slow_index_log_retention" {
   description = "Number of days to retain logs for."
   default     = "120"
-}
-
-#
-# Redirect related
-#
-
-variable "use_redirect" {
-  description = "Indicates whether to use redirect users "
-  default     = false
-}
-
-variable "redirect_route53_zone_id" {
-  description = "Route53 Zone ID to create the Redirect Record in"
-  default     = ""
-}
-
-variable "redirect_domain" {
-  description = "Domain name to redirect"
-  default     = ""
-}
-
-variable "lb_cname" {
-  description = "DNS CNAME for the Load balancer"
-  default     = ""
-}
-
-variable "lb_zone_id" {
-  description = "Zone ID for the Load balancer DNS CNAME"
-  default     = ""
-}
-
-variable "redirect_listener_arn" {
-  description = "LB listener ARN to attach the rule to"
-  default     = ""
-}
-
-variable "redirect_rule_priority" {
-  description = "Rule priority for redirect"
-  default     = 100
 }
 
 #
