@@ -28,9 +28,17 @@ variable "es_vpc_subnet_ids" {
   type        = list(string)
 }
 
+variable "es_dedicated_master_enabled" {
+  description = "Enable dedicated master nodes for Elasticsearch"
+}
+
 variable "es_master_type" {
   # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
   description = "Elasticsearch instance type for dedicated master node"
+}
+
+variable "es_master_count" {
+  description = "Number of dedicated master nodes in Elasticsearch"
 }
 
 variable "es_instance_type" {

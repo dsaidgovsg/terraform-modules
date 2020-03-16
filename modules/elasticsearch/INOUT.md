@@ -31,6 +31,7 @@
 | es\_additional\_tags | Additional tags to apply on Elasticsearch | `map(string)` | `{}` | no |
 | es\_base\_domain | Base domain for Elasticsearch cluster | `any` | n/a | yes |
 | es\_consul\_service | Name to register in consul to identify Elasticsearch service | `string` | `"elasticsearch"` | no |
+| es\_dedicated\_master\_enabled | Enable dedicated master nodes for Elasticsearch | `any` | n/a | yes |
 | es\_default\_access | Rest API / Web UI access | `map(any)` | <pre>{<br>  "port": 443,<br>  "protocol": "tcp",<br>  "type": "ingress"<br>}<br></pre> | no |
 | es\_domain\_name | Elasticsearch domain name | `any` | n/a | yes |
 | es\_ebs\_volume\_size | Volume capacity for attached EBS in GB for each node | `any` | n/a | yes |
@@ -40,6 +41,7 @@
 | es\_instance\_count | Number of nodes to be deployed in Elasticsearch | `any` | n/a | yes |
 | es\_instance\_type | Elasticsearch instance type for non-master node | `any` | n/a | yes |
 | es\_kms\_key\_id | kms Key ID for encryption at rest. Defaults to AWS service key. | `string` | `"aws/es"` | no |
+| es\_master\_count | Number of dedicated master nodes in Elasticsearch | `any` | n/a | yes |
 | es\_master\_type | Elasticsearch instance type for dedicated master node | `any` | n/a | yes |
 | es\_snapshot\_start\_hour | Hour at which automated snapshots are taken, in UTC (default 0) | `number` | `19` | no |
 | es\_version | Elasticsearch version to deploy | `string` | `"5.5"` | no |
