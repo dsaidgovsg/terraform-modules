@@ -29,18 +29,20 @@
 | enable\_slow\_index\_log | Enable slow log indexing | `bool` | `false` | no |
 | es\_access\_cidr\_block | Elasticsearch access CIDR block to allow access | `list(string)` | n/a | yes |
 | es\_additional\_tags | Additional tags to apply on Elasticsearch | `map(string)` | `{}` | no |
-| es\_base\_domain | Base domain for Elasticsearch cluster | `any` | n/a | yes |
+| es\_base\_domain | Base domain for Elasticsearch cluster | `string` | n/a | yes |
 | es\_consul\_service | Name to register in consul to identify Elasticsearch service | `string` | `"elasticsearch"` | no |
+| es\_dedicated\_master\_enabled | Enable dedicated master nodes for Elasticsearch | `bool` | n/a | yes |
 | es\_default\_access | Rest API / Web UI access | `map(any)` | <pre>{<br>  "port": 443,<br>  "protocol": "tcp",<br>  "type": "ingress"<br>}<br></pre> | no |
-| es\_domain\_name | Elasticsearch domain name | `any` | n/a | yes |
-| es\_ebs\_volume\_size | Volume capacity for attached EBS in GB for each node | `any` | n/a | yes |
-| es\_ebs\_volume\_type | Storage type of EBS volumes, if used (default gp2) | `any` | n/a | yes |
+| es\_domain\_name | Elasticsearch domain name | `string` | n/a | yes |
+| es\_ebs\_volume\_size | Volume capacity for attached EBS in GB for each node | `number` | n/a | yes |
+| es\_ebs\_volume\_type | Storage type of EBS volumes, if used (default gp2) | `string` | n/a | yes |
 | es\_encrypt\_at\_rest | Encrypts the data stored by Elasticsearch at rest | `bool` | `false` | no |
 | es\_http\_iam\_roles | List of IAM role ARNs from which to permit Elasticsearch HTTP traffic (default ['\*']).<br>Note that a client must match both the IP address and the IAM role patterns in order to be permitted access. | `list(string)` | <pre>[<br>  "*"<br>]<br></pre> | no |
-| es\_instance\_count | Number of nodes to be deployed in Elasticsearch | `any` | n/a | yes |
-| es\_instance\_type | Elasticsearch instance type for non-master node | `any` | n/a | yes |
+| es\_instance\_count | Number of nodes to be deployed in Elasticsearch | `number` | n/a | yes |
+| es\_instance\_type | Elasticsearch instance type for non-master node | `string` | n/a | yes |
 | es\_kms\_key\_id | kms Key ID for encryption at rest. Defaults to AWS service key. | `string` | `"aws/es"` | no |
-| es\_master\_type | Elasticsearch instance type for dedicated master node | `any` | n/a | yes |
+| es\_master\_count | Number of dedicated master nodes in Elasticsearch | `number` | n/a | yes |
+| es\_master\_type | Elasticsearch instance type for dedicated master node | `string` | n/a | yes |
 | es\_snapshot\_start\_hour | Hour at which automated snapshots are taken, in UTC (default 0) | `number` | `19` | no |
 | es\_version | Elasticsearch version to deploy | `string` | `"5.5"` | no |
 | es\_vpc\_subnet\_ids | Subnet IDs for Elasticsearch cluster | `list(string)` | n/a | yes |
@@ -91,8 +93,8 @@
 | redirect\_route53\_zone\_id | Route53 Zone ID to create the Redirect Record in | `string` | `""` | no |
 | redirect\_rule\_priority | Rule priority for redirect | `number` | `100` | no |
 | security\_group\_additional\_tags | Additional tags to apply on the security group | `map(string)` | `{}` | no |
-| security\_group\_name | Name of security group, leaving this empty generates a group name | `any` | n/a | yes |
-| security\_group\_vpc\_id | VPC ID to apply on the security group | `any` | n/a | yes |
+| security\_group\_name | Name of security group, leaving this empty generates a group name | `string` | n/a | yes |
+| security\_group\_vpc\_id | VPC ID to apply on the security group | `string` | n/a | yes |
 | slow\_index\_additional\_tags | Additional tags to apply on Cloudwatch log group | `map(string)` | `{}` | no |
 | slow\_index\_log\_name | Name of the Cloudwatch log group for slow index | `string` | `"es-slow-index"` | no |
 | slow\_index\_log\_retention | Number of days to retain logs for. | `string` | `"120"` | no |

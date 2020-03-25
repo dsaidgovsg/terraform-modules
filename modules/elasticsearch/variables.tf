@@ -4,18 +4,22 @@
 
 variable "security_group_name" {
   description = "Name of security group, leaving this empty generates a group name"
+  type        = string
 }
 
 variable "security_group_vpc_id" {
   description = "VPC ID to apply on the security group"
+  type        = string
 }
 
 variable "es_domain_name" {
   description = "Elasticsearch domain name"
+  type        = string
 }
 
 variable "es_base_domain" {
   description = "Base domain for Elasticsearch cluster"
+  type        = string
 }
 
 variable "es_access_cidr_block" {
@@ -28,26 +32,41 @@ variable "es_vpc_subnet_ids" {
   type        = list(string)
 }
 
+variable "es_dedicated_master_enabled" {
+  description = "Enable dedicated master nodes for Elasticsearch"
+  type        = bool
+}
+
 variable "es_master_type" {
   # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
   description = "Elasticsearch instance type for dedicated master node"
+  type        = string
+}
+
+variable "es_master_count" {
+  description = "Number of dedicated master nodes in Elasticsearch"
+  type        = number
 }
 
 variable "es_instance_type" {
   description = "Elasticsearch instance type for non-master node"
+  type        = string
 }
 
 variable "es_instance_count" {
   # Available types: https://aws.amazon.com/elasticsearch-service/pricing/
   description = "Number of nodes to be deployed in Elasticsearch"
+  type        = number
 }
 
 variable "es_ebs_volume_size" {
   description = "Volume capacity for attached EBS in GB for each node"
+  type        = number
 }
 
 variable "es_ebs_volume_type" {
   description = "Storage type of EBS volumes, if used (default gp2)"
+  type        = string
 }
 
 variable "security_group_additional_tags" {
