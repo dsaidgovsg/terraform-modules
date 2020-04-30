@@ -7,6 +7,11 @@ variable "vpc_id" {
   description = "ID of the VPC to launch the module in"
 }
 
+variable "base_domain" {
+  description = "Base domain for all services"
+  type        = string
+}
+
 variable "nomad_clients_ami_id" {
   description = "AMI ID for Nomad clients"
 }

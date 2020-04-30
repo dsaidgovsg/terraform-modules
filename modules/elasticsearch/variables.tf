@@ -17,7 +17,7 @@ variable "es_domain_name" {
   type        = string
 }
 
-variable "es_base_domain" {
+variable "base_domain" {
   description = "Base domain for Elasticsearch cluster"
   type        = string
 }

@@ -12,6 +12,7 @@
 | add\_private\_route53\_zone | Setting to true adds a new Route53 zone under the same domain name as `route53_zone`, but in a private zone, on top of the default public one | `bool` | `false` | no |
 | allowed\_ssh\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | `list(string)` | `[]` | no |
 | associate\_public\_ip\_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | `bool` | `true` | no |
+| base\_domain | Base domain for all services | `string` | n/a | yes |
 | client\_node\_class | Nomad Client Node Class name for cluster identification | `string` | `"nomad-client"` | no |
 | cluster\_tag\_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | `string` | `"consul-servers"` | no |
 | consul\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | `list(string)` | n/a | yes |

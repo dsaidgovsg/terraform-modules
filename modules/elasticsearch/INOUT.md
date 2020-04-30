@@ -9,6 +9,7 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
 | alarm\_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for alarm action | `list(string)` | `[]` | no |
+| base\_domain | Base domain for Elasticsearch cluster | `string` | n/a | yes |
 | cluster\_index\_writes\_blocked\_alarm\_name | Name of the alarm | `string` | `"cluster_index_writes_blocked_alarm"` | no |
 | cluster\_index\_writes\_blocked\_enable | Whether to enable alarm | `bool` | `false` | no |
 | cluster\_index\_writes\_blocked\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
@@ -28,7 +29,6 @@
 | enable\_slow\_index\_log | Enable slow log indexing | `bool` | `false` | no |
 | es\_access\_cidr\_block | Elasticsearch access CIDR block to allow access | `list(string)` | n/a | yes |
 | es\_additional\_tags | Additional tags to apply on Elasticsearch | `map(string)` | `{}` | no |
-| es\_base\_domain | Base domain for Elasticsearch cluster | `string` | n/a | yes |
 | es\_dedicated\_master\_enabled | Enable dedicated master nodes for Elasticsearch | `bool` | n/a | yes |
 | es\_default\_access | Rest API / Web UI access | `map(any)` | <pre>{<br>  "port": 443,<br>  "protocol": "tcp",<br>  "type": "ingress"<br>}<br></pre> | no |
 | es\_domain\_name | Elasticsearch domain name | `string` | n/a | yes |
