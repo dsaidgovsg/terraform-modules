@@ -1,6 +1,6 @@
 resource "consul_node" "es" {
   name    = var.es_consul_service
-  address = local.endpoint
+  address = var.es_endpoint
 }
 
 resource "consul_service" "es" {
