@@ -10,10 +10,10 @@ locals {
 
 # Internal Load balancer
 resource "aws_lb" "fluentd" {
-  name               = var.lb_name
-  subnets            = var.lb_subnets
-  internal           = true
-  load_balancer_type = "network"
+  name            = var.lb_name
+  security_groups = [aws_security_group.fluentd_lb.id]
+  subnets         = var.lb_subnets
+  internal        = true
 
   idle_timeout               = var.lb_idle_timeout
   enable_deletion_protection = true
@@ -27,12 +27,13 @@ resource "aws_lb" "fluentd" {
   tags = merge(var.lb_tags, { Name = var.lb_name })
 }
 
-resource "aws_lb_listener" "fluentd_tcp" {
+resource "aws_lb_listener" "fluentd_https" {
   load_balancer_arn = aws_lb.fluentd.arn
   port              = local.fluentd_lb_port
-  protocol          = "TCP"
+  protocol          = "HTTPS"
+  ssl_policy        = var.elb_ssl_policy
+  certificate_arn   = var.lb_certificate_arn
 
-  # Redirect to HTTPS
   default_action {
     target_group_arn = aws_lb_target_group.fluentd_server.arn
     type             = "forward"
@@ -54,13 +55,13 @@ resource "aws_security_group_rule" "fluentd_lb_incoming" {
   from_port         = local.fluentd_lb_port
   to_port           = local.fluentd_lb_port
   protocol          = "tcp"
-  cidr_blocks       = concat(var.allowed_inbound_cidr_blocks, var.lb_incoming_cidr)
+  cidr_blocks       = concat([data.aws_vpc.this.cidr_block], var.lb_incoming_cidr)
 }
 
 resource "aws_lb_target_group" "fluentd_server" {
   name_prefix          = "fluent"
   port                 = local.fluentd_server_port
-  protocol             = "TCP"
+  protocol             = "HTTP"
   vpc_id               = var.vpc_id
   deregistration_delay = var.fluentd_server_lb_deregistration_delay
 
@@ -80,7 +81,7 @@ resource "aws_lb_target_group" "fluentd_server" {
 
 # Attach target group to the Fluentd servers ASG
 resource "aws_autoscaling_attachment" "fluentd_server_internal" {
-  autoscaling_group_name = var.asg_name
+  autoscaling_group_name = var.cluster_name
   alb_target_group_arn   = aws_lb_target_group.fluentd_server.arn
 }
 

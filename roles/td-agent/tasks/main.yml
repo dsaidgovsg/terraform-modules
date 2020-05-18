@@ -52,14 +52,6 @@
     src: "{{ role_path }}/files/run-td-agent.sh"
     dest: "/opt/run-td-agent"
     mode: 0755
-  when: for_fluentd_server == "no"
-  become: yes
-- name: Install configuration script (Fluentd service)
-  copy:
-    src: "{{ role_path }}/files/run-td-agent-fluentd-server.sh"
-    dest: "/opt/run-td-agent"
-    mode: 0755
-  when: for_fluentd_server == "yes"
   become: yes
 # See `use: service` issue: https://github.com/ansible/ansible-modules-core/issues/3764#issuecomment-284331673
 - name: Disable the td-agent service for next configuration set-up
