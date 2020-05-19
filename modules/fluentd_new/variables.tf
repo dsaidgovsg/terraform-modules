@@ -49,7 +49,7 @@ variable "lb_name" {
 
 variable "tg_group_name" {
   description = "Name of the Fluentd server target group"
-  default     = "fluentd-server-target-group"
+  default     = "fluentd-server"
 }
 
 variable "fluentd_server_lb_deregistration_delay" {

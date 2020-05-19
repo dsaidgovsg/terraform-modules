@@ -41,7 +41,7 @@
 | services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the Fluentd server on ports 20000 to 32000 will accept connections from. | `list(string)` | `[]` | no |
 | ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | `string` | `""` | no |
 | termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"Default"` | no |
-| tg\_group\_name | Name of the Fluentd server target group | `string` | `"fluentd-server-target-group"` | no |
+| tg\_group\_name | Name of the Fluentd server target group | `string` | `"fluentd-server"` | no |
 | user\_data | The user data for the Fluentd server EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
 | vpc\_id | ID of the VPC to deploy to | `any` | n/a | yes |
 | vpc\_subnet\_ids | List of Subnet IDs to deploy to | `list(string)` | n/a | yes |

@@ -59,7 +59,7 @@ resource "aws_security_group_rule" "fluentd_lb_incoming" {
 }
 
 resource "aws_lb_target_group" "fluentd_server" {
-  name_prefix          = "fluent"
+  name                 = "fluentd-server"
   port                 = local.fluentd_server_port
   protocol             = "HTTP"
   vpc_id               = var.vpc_id

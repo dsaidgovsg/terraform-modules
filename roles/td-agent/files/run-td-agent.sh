@@ -205,7 +205,7 @@ function main {
     exit 1
   fi
 
-  if [[ "$type" == "fluentd-server" ]]; then
+  if [[ "${type}" == "fluentd-server" ]]; then
     enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
   
   else 
