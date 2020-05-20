@@ -4,15 +4,6 @@ provider "template" {
   version = "~> 2.0"
 }
 
-locals {
-  file_logging_consul_key  = "${var.consul_key_prefix}fluentd/log_to_file"
-  fluentd_match_consul_key = "${var.consul_key_prefix}fluentd/match"
-  s3_consul_key            = "${var.consul_key_prefix}fluentd/log_to_s3"
-  inject_source_host       = "${var.consul_key_prefix}fluentd/inject_source_host"
-  source_address_key       = "${var.consul_key_prefix}fluentd/source_address_key"
-  source_hostname_key      = "${var.consul_key_prefix}fluentd/source_hostname_key"
-}
-
 data "template_file" "fluentd_conf" {
   template = file("${path.module}/templates/fluent.conf")
 
@@ -27,14 +18,6 @@ data "template_file" "fluentd_conf" {
     s3_region     = "ap-southeast-1"
     s3_prefix     = "logs/"
     storage_class = var.logs_s3_storage_class
-
-    file_logging_consul_key  = local.file_logging_consul_key
-    fluentd_match_consul_key = local.fluentd_match_consul_key
-    s3_consul_key            = local.s3_consul_key
-
-    inject_source_host  = local.inject_source_host
-    source_address_key  = local.source_address_key
-    source_hostname_key = local.source_hostname_key
   }
 }
 

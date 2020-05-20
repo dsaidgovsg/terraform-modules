@@ -11,7 +11,6 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
 | artifacts\_base\_path | Base path to output file artifacts. Use `get_terragrunt_dir()` with an `extra_argument` to provide this value | `string` | `"./"` | no |
-| consul\_key\_prefix | Path prefix to the key in Consul to set for the `core` module to know that this module has<br>        been applied. If you change this, you have to update the<br>        `integration_consul_prefix` variable in the core module as well. | `string` | `"terraform/"` | no |
 | elasticsearch\_host | Elasticsearch endpoint used to submit index, search, and data upload requests | `any` | n/a | yes |
 | elasticsearch\_port | Elasticsearch service port | `any` | n/a | yes |
 | logs\_s3\_abort\_incomplete\_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | `number` | `7` | no |
