@@ -5,11 +5,9 @@
     additional_ntp_servers: ["169.254.169.123"]
     docker_version: "17.11.0~ce-0~ubuntu"
     ca_certificate: ""
-    td_agent_config_file: ""
+    fluentd_server_config_file: ""
     td_agent_config_vars_file: ""
     td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
-    for_fluentd_server: "yes"
-    fluentd_server_config_file: ""
     timezone: "Asia/Singapore"
   tasks:
   - name: Upgrade all packages to the latest version
@@ -29,7 +27,7 @@
     include_role:
       name: "{{ playbook_dir }}/../../../roles/td-agent"
     vars:
-      config_file: "{{ td_agent_config_file }}"
+      config_file: "{{ fluentd_server_config_file }}"
       config_vars_file: "{{ td_agent_config_vars_file }}"
       config_dest_file: "{{ td_agent_config_dest_file }}"
   - name: Install Vault PKI CA Certificate

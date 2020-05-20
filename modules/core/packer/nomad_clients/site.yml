@@ -25,7 +25,6 @@
     nomad_additional_config: []
     netshare_version: 0.36
     docker_enable_efs: false
-    for_fluentd_server: "no"
     timezone: "Asia/Singapore"
   tasks:
   - name: Upgrade all packages to the latest version

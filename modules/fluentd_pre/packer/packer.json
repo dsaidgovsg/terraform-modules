@@ -8,11 +8,9 @@
     "temporary_security_group_source_cidrs": "0.0.0.0/0",
     "associate_public_ip_address": "true",
     "ssh_interface": "",
-    "td_agent_config_file": "",
+    "fluentd_server_config_file": "",
     "td_agent_config_vars_file": "",
     "ca_certificate": "",
-    "for_fluentd_server": "yes",
-    "fluentd_server_config_file": "",
     "timezone": "Asia/Singapore"
   },
   "builders": [
@@ -76,7 +74,7 @@
         "-e",
         "{ \"additional_ntp_servers\": {{user `additional_ntp_servers`}} }",
         "-e",
-        "td_agent_config_file={{user `td_agent_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
+        "fluentd_server_config_file={{user `fluentd_server_config_file`}} td_agent_config_vars_file={{user `td_agent_config_vars_file`}}",
         "-e",
         "ca_certificate={{user `ca_certificate`}}",
         "-e",
