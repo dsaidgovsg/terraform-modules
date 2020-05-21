@@ -30,6 +30,14 @@
       config_file: "{{ fluentd_server_config_file }}"
       config_vars_file: "{{ td_agent_config_vars_file }}"
       config_dest_file: "{{ td_agent_config_dest_file }}"
+  - name: Add Fluentd logs dir
+    file:
+      path: /td-agent/logs
+      owner: td-agent
+      group: root
+      mode: 0775
+      state: directory
+    become: yes
   - name: Install Vault PKI CA Certificate
     include_role:
       name: "{{ playbook_dir }}/../../../roles/vault-pki"
