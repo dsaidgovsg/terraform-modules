@@ -18,14 +18,14 @@ variable "artifacts_base_path" {
 #############################
 # S3 Logging related
 #############################
-variable "logs_s3_enabled" {
-  description = "Enable to log to S3"
-  default     = true
-}
 
 variable "logs_s3_bucket_name" {
   description = "Name of S3 bucket to store logs for long term archival"
-  default     = ""
+}
+
+variable "logs_s3_enabled" {
+  description = "Enable to log to S3"
+  default     = true
 }
 
 variable "logs_s3_abort_incomplete_days" {
@@ -45,7 +45,7 @@ variable "logs_s3_glacier_transition_days" {
 
 variable "logs_s3_policy" {
   description = "Name of the IAM policy to provision for write access to the bucket"
-  default     = "LogsS3Write_New"
+  default     = "LogsS3WriteNew"
 }
 
 variable "logs_s3_storage_class" {

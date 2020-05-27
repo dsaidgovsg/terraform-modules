@@ -76,3 +76,9 @@ resource "aws_security_group_rule" "fluentd_server_services" {
   protocol          = "tcp"
   cidr_blocks       = local.services_inbound_cidr
 }
+
+# Attach IAM policy
+resource "aws_iam_role_policy_attachment" "fluentd_server_iam" {
+  role       = module.fluentd_new.iam_role_id
+  policy_arn = var.s3_logging_arn
+}

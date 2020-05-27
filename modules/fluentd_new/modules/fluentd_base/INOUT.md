@@ -46,5 +46,8 @@
 
 ## Outputs
 
-No output.
+| Name | Description |
+|------|-------------|
+| iam\_role\_arn | n/a |
+| iam\_role\_id | n/a |
 

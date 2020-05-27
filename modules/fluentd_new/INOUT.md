@@ -38,6 +38,7 @@
 | root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | route53\_zone | Zone for Route 53 records | `any` | n/a | yes |
+| s3\_logging\_arn | Policy ARN to write into S3 logs | `any` | n/a | yes |
 | services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the Fluentd server on ports 20000 to 32000 will accept connections from. | `list(string)` | `[]` | no |
 | ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | `string` | `""` | no |
 | termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"Default"` | no |

@@ -128,6 +128,10 @@ variable "allowed_inbound_cidr_blocks" {
   type        = list(string)
 }
 
+variable "s3_logging_arn" {
+  description = "Policy ARN to write into S3 logs"
+}
+
 # --------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
