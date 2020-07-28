@@ -14,6 +14,9 @@ variable "artifacts_base_path" {
   default     = "./"
 }
 
+variable "fluentd_match" {
+  description = "Tags that fluentd should output to S3 and Elasticsearch"
+}
 
 #############################
 # S3 Logging related

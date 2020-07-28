@@ -74,7 +74,7 @@ variable "lb_health_check_interval" {
 
 variable "lb_access_log" {
   description = "Log Internal LB access to a S3 bucket"
-  default     = false
+  default     = true
 }
 
 variable "lb_access_log_bucket" {

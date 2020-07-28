@@ -21,7 +21,7 @@
 | fluentd\_port | Port on the Docker image in which the HTTP interface is exposed | `number` | `4224` | no |
 | fluentd\_server\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | `number` | `30` | no |
 | instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
-| lb\_access\_log | Log Internal LB access to a S3 bucket | `bool` | `false` | no |
+| lb\_access\_log | Log Internal LB access to a S3 bucket | `bool` | `true` | no |
 | lb\_access\_log\_bucket | S3 bucket to log access to the internal LB to | `any` | n/a | yes |
 | lb\_access\_log\_prefix | Prefix in the S3 bucket to log internal LB access | `string` | `""` | no |
 | lb\_certificate\_arn | ARN of the certificate to use for the internal LB | `any` | n/a | yes |

@@ -11,8 +11,8 @@ data "template_file" "fluentd_conf" {
     elasticsearch_host = var.elasticsearch_host
     elasticsearch_port = var.elasticsearch_port
 
-    fluentd_port = 4224
-    es6_support  = false
+    fluentd_port  = 4224
+    fluentd_match = var.fluentd_match
 
     s3_bucket     = aws_s3_bucket.logs[0].id
     s3_region     = "ap-southeast-1"
