@@ -71,8 +71,8 @@ resource "aws_security_group" "lc_security_group" {
 resource "aws_security_group_rule" "fluentd_server_services" {
   type              = "ingress"
   security_group_id = local.security_group_id
-  from_port         = 20000
-  to_port           = 32000
+  from_port         = 4224
+  to_port           = 4224
   protocol          = "tcp"
   cidr_blocks       = local.services_inbound_cidr
 }

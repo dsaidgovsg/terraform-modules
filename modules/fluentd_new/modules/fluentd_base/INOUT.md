@@ -18,10 +18,9 @@
 | cluster\_tag\_key | Add a tag with this key and the value var.cluster\_tag\_value to each Instance in the ASG. | `string` | `"fluentd-servers"` | no |
 | cluster\_tag\_value | Add a tag with key var.cluster\_tag\_key and this value to each Instance in the ASG. This can be used to automatically find other Consul nodes and form a cluster. | `string` | `"auto-join"` | no |
 | desired\_capacity | The desired number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |
-| ebs\_block\_devices | List of ebs volume definitions for those ebs\_volumes that should be added to the instances created with the EC2 launch-configuration. Each element in the list is a map containing keys defined for ebs\_block\_device (see: https://www.terraform.io/docs/providers/aws/r/launch_configuration.html#ebs_block_device. | `list` | `[]` | no |
+| ebs\_block\_devices | List of ebs volume definitions for those ebs\_volumes that should be added to the instances created with the EC2 launch-configuration. | `list` | `[]` | no |
 | health\_check\_grace\_period | Time, in seconds, after instance comes into service before checking health. | `number` | `300` | no |
 | health\_check\_type | Controls how health checking is done. Must be one of EC2 or ELB. | `string` | `"EC2"` | no |
-| http\_port | The port to use for HTTP | `number` | `4646` | no |
 | instance\_profile\_path | Path in which to create the IAM instance profile. | `string` | `"/"` | no |
 | instance\_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | `string` | n/a | yes |
 | max\_size | The maximum number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |
@@ -30,10 +29,8 @@
 | root\_volume\_ebs\_optimized | If true, the launched EC2 instance will be EBS-optimized. | `bool` | `false` | no |
 | root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"standard"` | no |
-| rpc\_port | The port to use for RPC | `number` | `4647` | no |
 | security\_group\_id | The ID of the security group to which we should add the security group rules | `string` | n/a | yes |
 | security\_groups | Additional security groups to attach to the EC2 instances | `list(string)` | `[]` | no |
-| serf\_port | The port to use for Serf | `number` | `4648` | no |
 | ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | `string` | `""` | no |
 | ssh\_port | The port used for SSH connections | `number` | `22` | no |
 | subnet\_ids | The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster\_size variable. At least one of var.subnet\_ids or var.availability\_zones must be non-empty. | `list(string)` | `[]` | no |
