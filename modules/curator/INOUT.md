@@ -2,7 +2,7 @@
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.7 |
+| aws | >= 2.42 |
 | nomad | >= 1.4 |
 | template | >= 2.0 |
 

@@ -2,7 +2,7 @@
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.7 |
+| aws | >= 2.42 |
 | template | >= 2.0 |
 
 ## Inputs

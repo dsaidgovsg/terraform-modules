@@ -94,7 +94,8 @@ resource "aws_lb_listener_rule" "traefik_ui" {
   }
 
   condition {
-    field  = "host-header"
-    values = [var.traefik_ui_domain]
+    host_header {
+      values = [var.traefik_ui_domain]
+    }
   }
 }
