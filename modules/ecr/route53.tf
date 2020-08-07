@@ -29,7 +29,8 @@ resource "aws_lb_listener_rule" "redirect" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.redirect[0].fqdn]
+    host_header {
+      values = [aws_route53_record.redirect[0].fqdn]
+    }
   }
 }

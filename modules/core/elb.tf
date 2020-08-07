@@ -110,8 +110,9 @@ resource "aws_lb_listener_rule" "nomad_server" {
   }
 
   condition {
-    field  = "host-header"
-    values = [var.nomad_api_domain]
+    host_header {
+      values = [var.nomad_api_domain]
+    }
   }
 }
 
@@ -209,8 +210,9 @@ resource "aws_lb_listener_rule" "consul_server" {
   }
 
   condition {
-    field  = "host-header"
-    values = [var.consul_api_domain]
+    host_header {
+      values = [var.consul_api_domain]
+    }
   }
 }
 
@@ -307,8 +309,9 @@ resource "aws_lb_listener_rule" "vault" {
   }
 
   condition {
-    field  = "host-header"
-    values = [var.vault_api_domain]
+    host_header {
+      values = [var.vault_api_domain]
+    }
   }
 }
 

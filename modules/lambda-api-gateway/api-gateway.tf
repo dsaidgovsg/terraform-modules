@@ -1,9 +1,13 @@
 resource "aws_api_gateway_api_key" "ApiKey" {
   name = var.api_key_name
+}
 
-  stage_key {
-    rest_api_id = aws_api_gateway_rest_api.api-gateway.id
-    stage_name  = aws_api_gateway_deployment.api-gateway-deployment.stage_name
+resource "aws_api_gateway_usage_plan" "ApiKey" {
+  name = var.api_key_name
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api-gateway.id
+    stage  = aws_api_gateway_deployment.api-gateway-deployment.stage_name
   }
 }
 
