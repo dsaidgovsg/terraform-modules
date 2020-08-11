@@ -39,7 +39,7 @@ resource "aws_lb_listener" "fluentd_tcp" {
 }
 
 resource "aws_lb_target_group" "fluentd_server" {
-  name                 = "fluentd-server-5"
+  name                 = "fluentd-server"
   port                 = local.fluentd_server_port
   protocol             = "TCP"
   vpc_id               = var.vpc_id
