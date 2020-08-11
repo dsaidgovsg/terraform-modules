@@ -18,12 +18,6 @@ resource "aws_lb" "fluentd" {
   idle_timeout               = var.lb_idle_timeout
   enable_deletion_protection = true
 
-  access_logs {
-    enabled = var.lb_access_log
-    bucket  = var.lb_access_log_bucket
-    prefix  = var.lb_access_log_prefix
-  }
-
   tags = merge(var.lb_tags, { Name = var.lb_name })
 }
 

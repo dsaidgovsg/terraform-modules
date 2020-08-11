@@ -20,10 +20,6 @@ variable "lb_subnets" {
   type        = list(string)
 }
 
-variable "lb_certificate_arn" {
-  description = "ARN of the certificate to use for the internal LB"
-}
-
 variable "route53_zone" {
   description = "Zone for Route 53 records"
 }
@@ -72,20 +68,6 @@ variable "lb_health_check_interval" {
   default     = 30
 }
 
-variable "lb_access_log" {
-  description = "Log Internal LB access to a S3 bucket"
-  default     = true
-}
-
-variable "lb_access_log_bucket" {
-  description = "S3 bucket to log access to the internal LB to"
-}
-
-variable "lb_access_log_prefix" {
-  description = "Prefix in the S3 bucket to log internal LB access"
-  default     = ""
-}
-
 variable "lb_idle_timeout" {
   description = "The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that."
   default     = 660
@@ -98,11 +80,6 @@ variable "lb_tags" {
     Terraform   = "true"
     Environment = "development"
   }
-}
-
-variable "elb_ssl_policy" {
-  description = "ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html"
-  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
 # --------------------------------------------------------------------------------------------------

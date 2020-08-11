@@ -16,15 +16,10 @@
 | associate\_public\_ip\_address | If set to true, associate a public IP address with each EC2 Instance in the cluster. | `bool` | `true` | no |
 | cluster\_name | Name of the Fluentd Server cluster | `string` | `"fluentd-server"` | no |
 | desired\_size | The desired number of Fluentd server nodes to deploy. | `number` | `2` | no |
-| elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | fluentd\_api\_domain | Domain to access Fluentd REST API | `any` | n/a | yes |
 | fluentd\_port | Port on the Docker image in which the HTTP interface is exposed | `number` | `4224` | no |
 | fluentd\_server\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | `number` | `30` | no |
 | instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
-| lb\_access\_log | Log Internal LB access to a S3 bucket | `bool` | `true` | no |
-| lb\_access\_log\_bucket | S3 bucket to log access to the internal LB to | `any` | n/a | yes |
-| lb\_access\_log\_prefix | Prefix in the S3 bucket to log internal LB access | `string` | `""` | no |
-| lb\_certificate\_arn | ARN of the certificate to use for the internal LB | `any` | n/a | yes |
 | lb\_health\_check\_interval | The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds. | `number` | `30` | no |
 | lb\_healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | `number` | `2` | no |
 | lb\_idle\_timeout | The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that. | `number` | `660` | no |
