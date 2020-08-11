@@ -30,6 +30,11 @@
     file: "{{ config_vars_file }}"
     name: config_vars
   when: config_vars_file != ""
+- name: Include application-specific configuration variables
+  include_vars:
+    file: "{{ config_app_vars_file }}"
+    name: config_app_vars
+  when: config_app_vars_file != ""
 - name: Change td-agent configuration
   template:
     src: "{{ config_file }}"

@@ -15,6 +15,7 @@
     nomad_enable_syslog: true
     td_agent_config_file: ""
     td_agent_config_vars_file: ""
+    td_agent_config_app_vars_file: ""
     td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
     ca_certificate: ""
     consul_host: ""
@@ -52,6 +53,7 @@
     vars:
       config_file: "{{ td_agent_config_file }}"
       config_vars_file: "{{ td_agent_config_vars_file }}"
+      config_app_vars_file: "{{ td_agent_config_app_vars_file }}"
       config_dest_file: "{{ td_agent_config_dest_file }}"
   - name: Install Telegraf
     include_role:
