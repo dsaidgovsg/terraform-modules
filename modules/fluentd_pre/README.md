@@ -1,7 +1,16 @@
-# Fluentd Server
+# Fluentd Server Pre
 
-This module sets up a Fluentd server which forwards logs from other modules to S3 and 
+This module sets up a Fluentd server which forwards logs from other modules to S3 and
 Elasticsearch.
+
+## Requirements
+
+- [Elasticsearch module](../elasticsearch)
+
+### Elasticsearch Address and Port
+
+We take the Elasticsearch host address and port from the already provisioned Elasticsearch
+module output.
 
 ## Packer Template
 
