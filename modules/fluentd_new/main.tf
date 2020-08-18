@@ -9,10 +9,6 @@ data "aws_vpc" "selected" {
   id = var.vpc_id
 }
 
-# --------------------------------------------------------------------------------------------------
-# DEPLOY THE NOMAD CLIENT NODES
-# --------------------------------------------------------------------------------------------------
-
 module "fluentd_new" {
   source = "./modules/fluentd_base"
 
@@ -44,7 +40,7 @@ module "fluentd_new" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CLIENT NODE WHEN IT'S BOOTING
+# THE USER DATA SCRIPT THAT WILL RUN WHEN BOOTING
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_fluentd_server" {
@@ -71,8 +67,8 @@ resource "aws_security_group" "lc_security_group" {
 resource "aws_security_group_rule" "fluentd_server_services" {
   type              = "ingress"
   security_group_id = local.security_group_id
-  from_port         = 4224
-  to_port           = 4224
+  from_port         = var.fluentd_port
+  to_port           = var.fluentd_port
   protocol          = "tcp"
   cidr_blocks       = local.services_inbound_cidr
 }

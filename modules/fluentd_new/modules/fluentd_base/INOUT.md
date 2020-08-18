@@ -18,7 +18,7 @@
 | cluster\_tag\_key | Add a tag with this key and the value var.cluster\_tag\_value to each Instance in the ASG. | `string` | `"fluentd-servers"` | no |
 | cluster\_tag\_value | Add a tag with key var.cluster\_tag\_key and this value to each Instance in the ASG. This can be used to automatically find other Consul nodes and form a cluster. | `string` | `"auto-join"` | no |
 | desired\_capacity | The desired number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |
-| ebs\_block\_devices | List of ebs volume definitions for those ebs\_volumes that should be added to the instances created with the EC2 launch-configuration. | `list` | `[]` | no |
+| ebs\_block\_devices | List of ebs volume definitions for those ebs\_volumes that should be added to the instances created with the EC2 launch-configuration. | `list(any)` | `[]` | no |
 | health\_check\_grace\_period | Time, in seconds, after instance comes into service before checking health. | `number` | `300` | no |
 | health\_check\_type | Controls how health checking is done. Must be one of EC2 or ELB. | `string` | `"EC2"` | no |
 | instance\_profile\_path | Path in which to create the IAM instance profile. | `string` | `"/"` | no |

@@ -14,8 +14,17 @@ variable "artifacts_base_path" {
   default     = "./"
 }
 
+#############################
+# Fluentd related
+#############################
+
 variable "fluentd_match" {
   description = "Tags that fluentd should output to S3 and Elasticsearch"
+}
+
+variable "fluentd_port" {
+  description = "Port on the Docker image in which the HTTP interface is exposed"
+  default     = 4224
 }
 
 #############################

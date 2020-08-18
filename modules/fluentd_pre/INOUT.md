@@ -14,6 +14,7 @@
 | elasticsearch\_host | Elasticsearch endpoint used to submit index, search, and data upload requests | `any` | n/a | yes |
 | elasticsearch\_port | Elasticsearch service port | `any` | n/a | yes |
 | fluentd\_match | Tags that fluentd should output to S3 and Elasticsearch | `any` | n/a | yes |
+| fluentd\_port | Port on the Docker image in which the HTTP interface is exposed | `number` | `4224` | no |
 | logs\_s3\_abort\_incomplete\_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | `number` | `7` | no |
 | logs\_s3\_bucket\_name | Name of S3 bucket to store logs for long term archival | `any` | n/a | yes |
 | logs\_s3\_enabled | Enable to log to S3 | `bool` | `true` | no |
