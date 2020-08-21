@@ -24,6 +24,8 @@ function print_usage {
   echo -e "  --skip-template\t\tEnable consul-template apply on configuration file. Optional. Defaults to false."
   echo -e "  --conf-template\t\tFile path to configuration consul-template file. Optional. Defaults to /etc/td-agent/td-agent.conf.template"
   echo -e "  --conf-out\t\tFile path to configuration destination. Optional. Defaults to /etc/td-agent/td-agent.conf"
+  echo -e "  --rotate-age\t\tLog rotation age. Optional. Defaults to 5"
+  echo -e "  --rotate-size\t\tLog rotation size. Optional. Defaults to 104857600"
   echo
   echo "Example:"
   echo
@@ -203,23 +205,28 @@ function main {
     exit 1
   fi
 
-  assert_is_installed "consul"
-  assert_is_installed "consul-template"
-
-  wait_for_consul
-
-  local readonly enabled=$(consul_kv_with_default "${consul_prefix}td-agent/${type}/enabled" "no")
-
-  if [[ "$enabled" != "yes" ]]; then
-    log_info "td-agent is not enabled for ${type}"
-  else
-    if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
-      log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-      consul-template -template "$conf_template:$conf_out" -once
-      log_info "consul-template applied successfully!"
-    fi
-
+  if [[ "${type}" == "fluentd-server" ]]; then
     enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
+  
+  else 
+    assert_is_installed "consul"
+    assert_is_installed "consul-template"
+
+    wait_for_consul
+
+    local readonly enabled=$(consul_kv_with_default "${consul_prefix}td-agent/${type}/enabled" "no")
+
+    if [[ "$enabled" != "yes" ]]; then
+      log_info "td-agent is not enabled for ${type}"
+    else
+      if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
+        log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
+        consul-template -template "$conf_template:$conf_out" -once
+        log_info "consul-template applied successfully!"
+      fi
+
+      enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
+    fi
   fi
 }
 

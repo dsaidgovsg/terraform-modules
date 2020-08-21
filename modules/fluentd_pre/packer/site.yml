@@ -1,0 +1,55 @@
+---
+- name: Provision AMI
+  hosts: all
+  vars:
+    additional_ntp_servers: ["169.254.169.123"]
+    docker_version: "17.11.0~ce-0~ubuntu"
+    ca_certificate: ""
+    fluentd_server_config_file: ""
+    td_agent_config_vars_file: ""
+    td_agent_config_dest_file: "/etc/td-agent/td-agent.conf"
+    timezone: "Asia/Singapore"
+  tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install CA Certificate
+    include_tasks: "{{ playbook_dir }}/../../../tasks/include_role_checked.yml"
+    vars:
+      role: "{{ playbook_dir }}/../../../roles/ansible-ca-store"
+      certificate: "{{ ca_certificate }}"
+      certificate_rename: "ca.crt"
+    become: yes
+    when: ca_certificate != ""
+  - name: Install td-agent
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/td-agent"
+    vars:
+      config_file: "{{ fluentd_server_config_file }}"
+      config_vars_file: "{{ td_agent_config_vars_file }}"
+      config_dest_file: "{{ td_agent_config_dest_file }}"
+  - name: Add Fluentd logs dir
+    file:
+      path: /td-agent/logs
+      owner: td-agent
+      group: root
+      mode: 0775
+      state: directory
+    become: yes
+  - name: Install Vault PKI CA Certificate
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/vault-pki"
+  - name: Install chrony
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/chrony"
+  - name: Install Telegraf
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/telegraf"
+  - name: Install Vault SSH Configuration Script
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/install-ssh-script"
+  - name: Set default timezone
+    include_role:
+      name: "{{ playbook_dir }}/../../../roles/timezone"
