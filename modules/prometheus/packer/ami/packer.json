@@ -5,7 +5,7 @@
         "ami_base_name": "prometheus",
         "aws_region": "ap-southeast-1",
         "subnet_id": "",
-        "temporary_security_group_source_cidr": "0.0.0.0/0",
+        "temporary_security_group_source_cidrs": "0.0.0.0/0",
         "associate_public_ip_address": "true",
         "ssh_interface": "",
         "consul_module_repo": "https://github.com/hashicorp/terraform-aws-consul.git",
@@ -39,7 +39,7 @@
             "subnet_id": "{{user `subnet_id`}}",
             "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
             "ssh_interface": "{{user `ssh_interface`}}",
-            "temporary_security_group_source_cidr": "{{user `temporary_security_group_source_cidr`}}",
+            "temporary_security_group_source_cidrs": "{{user `temporary_security_group_source_cidrs`}}",
             "source_ami_filter": {
                 "filters": {
                     "virtualization-type": "hvm",
@@ -109,7 +109,7 @@
                 "-e",
                 "timezone={{user `timezone`}}",
                 "-e",
-                "ansible_python_interpreter=/usr/bin/python3"
+                "ansible_python_interpreter=\"$(command -v python3)\""
             ]
         }
     ]

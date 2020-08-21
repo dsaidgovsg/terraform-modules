@@ -7,7 +7,9 @@ repository.
 
 ### Instance AMI
 
-You will have to build an AMI with the [Packer template](packer/packer.json) provided.
+You will have to build an AMI with the [Packer template](packer/packer.json) provided. 
+See https://github.com/cloudalchemy/ansible-prometheus/blob/3b866fd50d4b13c7ee4d7f45f7308354acbe3036/README.md for build instructions. 
+If you are using Mac as the deployer host, you may encounter the following issue: https://github.com/rbenv/ruby-build/issues/1385
 
 ```bash
 packer build \
