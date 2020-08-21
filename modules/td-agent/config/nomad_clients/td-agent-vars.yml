@@ -32,9 +32,4 @@ additionals:
     identifier: sudo
     position_file: /etc/td-agent/positions/sudo.pos
 
-server:
-  name: fluentd-consul
-  host: fluentd.service.consul
-  port: 4224
-
 user_data_path: /var/log/user-data.log
