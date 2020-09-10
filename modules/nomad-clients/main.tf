@@ -13,7 +13,7 @@ data "aws_vpc" "selected" {
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0"
+  source = "../nomad-cluster"
 
   asg_name          = var.cluster_name
   cluster_name      = var.cluster_name
@@ -23,6 +23,7 @@ module "nomad_clients" {
   min_size         = var.clients_min
   max_size         = var.clients_max
   desired_capacity = var.clients_desired
+  spot_price       = var.spot_price
 
   ami_id    = var.ami_id
   user_data = local.user_data
