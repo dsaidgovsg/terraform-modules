@@ -13,6 +13,8 @@ data "aws_vpc" "selected" {
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
+  # Original repo and version
+  # source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0"
   source = "../nomad-cluster"
 
   asg_name          = var.cluster_name
