@@ -51,6 +51,11 @@ variable "clients_max" {
   default     = 8
 }
 
+variable "spot_price" {
+  description = "Spot price of EC2 instance"
+  default     = ""
+}
+
 variable "nomad_clients_services_inbound_cidr" {
   description = "A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from."
   type        = list(string)
