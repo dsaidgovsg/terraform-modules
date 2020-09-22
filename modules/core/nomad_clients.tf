@@ -37,4 +37,6 @@ module "nomad_clients" {
   integration_service_type  = "nomad_client"
 
   termination_policies = var.nomad_client_termination_policies
+
+  iam_permissions_boundary = var.iam_permissions_boundary
 }
