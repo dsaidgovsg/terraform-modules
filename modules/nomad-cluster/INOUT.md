@@ -22,6 +22,7 @@
 | health\_check\_grace\_period | Time, in seconds, after instance comes into service before checking health. | `number` | `300` | no |
 | health\_check\_type | Controls how health checking is done. Must be one of EC2 or ELB. | `string` | `"EC2"` | no |
 | http\_port | The port to use for HTTP | `number` | `4646` | no |
+| iam\_permissions\_boundary | If set, restricts the created IAM role to the given permissions boundary | `string` | n/a | yes |
 | instance\_profile\_path | Path in which to create the IAM instance profile. | `string` | `"/"` | no |
 | instance\_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | `string` | n/a | yes |
 | max\_size | The maximum number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |

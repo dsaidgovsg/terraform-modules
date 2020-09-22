@@ -41,6 +41,8 @@ module "nomad_clients" {
   associate_public_ip_address = var.associate_public_ip_address
 
   termination_policies = var.termination_policies
+
+  iam_permissions_boundary = var.iam_permissions_boundary
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

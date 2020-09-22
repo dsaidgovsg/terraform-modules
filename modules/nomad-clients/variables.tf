@@ -126,6 +126,12 @@ variable "termination_policies" {
   default     = "Default"
 }
 
+variable "iam_permissions_boundary" {
+  description = "If set, restricts the created IAM role to the given permissions boundary"
+  type        = string
+  default     = null
+}
+
 # --------------------------------------------------------------------------------------------------
 # Post Bootstrap Integration Parameters
 # These parameters are used in conjunction with the other modules in this repository.
