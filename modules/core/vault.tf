@@ -20,7 +20,7 @@ EOF
 }
 
 module "vault" {
-  source = "github.com/hashicorp/terraform-aws-vault.git//modules/vault-cluster?ref=v0.13.4"
+  source = "github.com/dsaidgovsg/terraform-aws-vault.git//modules/vault-cluster?ref=v0.13.4-extras"
 
   cluster_name  = var.vault_cluster_name
   cluster_size  = var.vault_cluster_size
@@ -50,6 +50,8 @@ module "vault" {
   auto_unseal_kms_key_arn = var.vault_auto_unseal_kms_key_arn
 
   termination_policies = var.vault_termination_policies
+
+  iam_permissions_boundary = var.iam_permissions_boundary
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

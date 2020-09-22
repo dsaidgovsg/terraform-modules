@@ -8,7 +8,7 @@ locals {
 }
 
 module "consul_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.7.4"
+  source = "github.com/dsaidgovsg/terraform-aws-consul//modules/consul-cluster?ref=v0.7.4-extras"
 
   cluster_name  = var.consul_cluster_name
   cluster_size  = var.consul_cluster_size
@@ -35,6 +35,8 @@ module "consul_servers" {
 
   health_check_type    = "ELB"
   termination_policies = var.consul_termination_policies
+
+  iam_permissions_boundary = var.iam_permissions_boundary
 }
 
 # --------------------------------------------------------------------------------------------------

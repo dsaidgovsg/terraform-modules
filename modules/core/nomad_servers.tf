@@ -8,7 +8,7 @@ locals {
 }
 
 module "nomad_servers" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0"
+  source = "github.com/dsaidgovsg/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0-extras"
 
   asg_name          = "${var.nomad_cluster_name}-server"
   cluster_name      = "${var.nomad_cluster_name}-server"
@@ -37,6 +37,8 @@ module "nomad_servers" {
 
   health_check_type    = "ELB"
   termination_policies = var.nomad_server_termination_policies
+
+  iam_permissions_boundary = var.iam_permissions_boundary
 }
 
 # --------------------------------------------------------------------------------------------------
