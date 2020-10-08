@@ -13,7 +13,7 @@ module "nomad_clients" {
   allowed_inbound_cidr_blocks         = var.nomad_clients_allowed_inbound_cidr_blocks
   nomad_clients_services_inbound_cidr = var.nomad_clients_services_inbound_cidr
 
-  cluster_name  = "${var.nomad_cluster_name}-client"
+  cluster_name  = "${var.nomad_cluster_name}c"
   instance_type = var.nomad_client_instance_type
 
   clients_min     = var.nomad_clients_min
