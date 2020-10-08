@@ -10,9 +10,9 @@ locals {
 module "nomad_servers" {
   source = "github.com/dsaidgovsg/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0-extras"
 
-  asg_name          = "${var.nomad_cluster_name}-server"
-  cluster_name      = "${var.nomad_cluster_name}-server"
-  cluster_tag_value = "${var.nomad_cluster_name}-server"
+  asg_name          = "${var.nomad_cluster_name}s"
+  cluster_name      = "${var.nomad_cluster_name}s"
+  cluster_tag_value = "${var.nomad_cluster_name}s"
   instance_type     = var.nomad_server_instance_type
 
   # You should typically use a fixed size of 3 or 5 for your Nomad server cluster
