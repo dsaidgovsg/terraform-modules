@@ -43,6 +43,7 @@
 | internal\_lb\_name | Name of the internal load balancer | `string` | `"internal"` | no |
 | internal\_lb\_subnets | List of subnets to deploy the internal LB to | `list(string)` | n/a | yes |
 | nomad\_api\_domain | Domain to access Nomad REST API | `any` | n/a | yes |
+| nomad\_client\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad client cluster. | `string` | n/a | yes |
 | nomad\_client\_instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | nomad\_client\_subnets | List of subnets to launch Nomad clients in | `list(string)` | n/a | yes |
 | nomad\_client\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"Default"` | no |
@@ -57,7 +58,8 @@
 | nomad\_clients\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | nomad\_clients\_services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | `list(string)` | `[]` | no |
 | nomad\_clients\_user\_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
-| nomad\_cluster\_name | The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module. | `string` | `"nomad"` | no |
+| nomad\_cluster\_name | The name of the Nomad cluster. Only used if `nomad_server_cluster_name` or `nomad_client_cluster_name` is unused. `-server` is appended for server cluster and `-client` is append for client cluster | `string` | `"nomad"` | no |
+| nomad\_server\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad server cluster. | `string` | n/a | yes |
 | nomad\_server\_instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | nomad\_server\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | `number` | `30` | no |
 | nomad\_server\_lb\_healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | `number` | `2` | no |

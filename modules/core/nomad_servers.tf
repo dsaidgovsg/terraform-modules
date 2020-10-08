@@ -3,17 +3,18 @@
 # --------------------------------------------------------------------------------------------------
 
 locals {
-  nomad_server_http_port = 4646
-  nomad_server_user_data = coalesce(var.nomad_servers_user_data, data.template_file.user_data_nomad_server.rendered)
+  nomad_server_http_port    = 4646
+  nomad_server_user_data    = coalesce(var.nomad_servers_user_data, data.template_file.user_data_nomad_server.rendered)
+  nomad_server_cluster_name = var.nomad_server_cluster_name != null ? var.nomad_server_cluster_name : "${var.nomad_cluster_name}-server"
 }
 
 module "nomad_servers" {
   source  = "hashicorp/nomad/aws//modules/nomad-cluster"
   version = "0.7.1"
 
-  asg_name          = "${var.nomad_cluster_name}-server"
-  cluster_name      = "${var.nomad_cluster_name}-server"
-  cluster_tag_value = "${var.nomad_cluster_name}-server"
+  asg_name          = local.nomad_server_cluster_name
+  cluster_name      = local.nomad_server_cluster_name
+  cluster_tag_value = local.nomad_server_cluster_name
   instance_type     = var.nomad_server_instance_type
 
   # You should typically use a fixed size of 3 or 5 for your Nomad server cluster
