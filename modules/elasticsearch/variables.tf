@@ -111,6 +111,11 @@ variable "es_zone_awareness" {
   default     = "true"
 }
 
+variable "es_availability_zone_count" {
+  description = "Number of available zone count"
+  default     = 3
+}
+
 variable "es_snapshot_start_hour" {
   description = "Hour at which automated snapshots are taken, in UTC (default 0)"
   default     = 19
