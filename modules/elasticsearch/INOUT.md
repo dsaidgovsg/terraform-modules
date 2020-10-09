@@ -29,6 +29,7 @@
 | enable\_slow\_index\_log | Enable slow log indexing | `bool` | `false` | no |
 | es\_access\_cidr\_block | Elasticsearch access CIDR block to allow access | `list(string)` | n/a | yes |
 | es\_additional\_tags | Additional tags to apply on Elasticsearch | `map(string)` | `{}` | no |
+| es\_availability\_zone\_count | Number of available zone count | `number` | `3` | no |
 | es\_dedicated\_master\_enabled | Enable dedicated master nodes for Elasticsearch | `bool` | n/a | yes |
 | es\_default\_access | Rest API / Web UI access | `map(any)` | <pre>{<br>  "port": 443,<br>  "protocol": "tcp",<br>  "type": "ingress"<br>}<br></pre> | no |
 | es\_domain\_name | Elasticsearch domain name | `string` | n/a | yes |
