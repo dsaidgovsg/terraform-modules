@@ -51,6 +51,10 @@ resource "aws_elasticsearch_domain" "es" {
     dedicated_master_count   = var.es_master_count
     dedicated_master_type    = var.es_master_type
     zone_awareness_enabled   = var.es_zone_awareness
+
+    zone_awareness_config {
+      availability_zone_count = var.es_availability_zone_count
+    }
   }
 
   vpc_options {
