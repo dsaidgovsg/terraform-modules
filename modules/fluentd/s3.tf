@@ -50,6 +50,20 @@ data "aws_iam_policy_document" "logs_s3" {
     resources = [
       "${aws_s3_bucket.logs[0].arn}",
     ]
+
+    dynamic "condition" {
+      # Splat returns empty list if the value is null
+      for_each = var.logs_s3_iam_permissions_boundary[*]
+
+      content {
+        test     = "StringEquals"
+        variable = "iam:PermissionsBoundary"
+
+        values = [
+          var.logs_s3_iam_permissions_boundary
+        ]
+      }
+    }
   }
 
   statement {
@@ -63,6 +77,20 @@ data "aws_iam_policy_document" "logs_s3" {
     resources = [
       "${aws_s3_bucket.logs[0].arn}/*",
     ]
+
+    dynamic "condition" {
+      # Splat returns empty list if the value is null
+      for_each = var.logs_s3_iam_permissions_boundary[*]
+
+      content {
+        test     = "StringEquals"
+        variable = "iam:PermissionsBoundary"
+
+        values = [
+          var.logs_s3_iam_permissions_boundary
+        ]
+      }
+    }
   }
 }
 

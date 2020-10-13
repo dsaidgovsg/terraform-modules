@@ -127,6 +127,12 @@ variable "logs_s3_storage_class" {
   default     = "STANDARD"
 }
 
+variable "logs_s3_iam_permissions_boundary" {
+  description = "IAM policy ARN as permissions boundary for the Vault generate IAM user"
+  type        = string
+  default     = null
+}
+
 variable "inject_source_host" {
   description = "Inject the log source host name and address into the logs"
   default     = true

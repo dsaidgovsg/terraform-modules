@@ -34,6 +34,7 @@
 | logs\_s3\_enabled | Enable to log to S3 | `bool` | `true` | no |
 | logs\_s3\_glacier\_transition\_days | Number of days before logs are transitioned to IA. Must be > var.logs\_s3\_ia\_transition\_days + 30 days | `number` | `365` | no |
 | logs\_s3\_ia\_transition\_days | Number of days before logs are transitioned to IA. Must be > 30 days | `number` | `90` | no |
+| logs\_s3\_iam\_permissions\_boundary | IAM policy ARN as permissions boundary for the Vault generate IAM user | `string` | n/a | yes |
 | logs\_s3\_policy | Name of the IAM policy to provision for write access to the bucket | `string` | `"LogsS3Write"` | no |
 | logs\_s3\_storage\_class | Default storage class to store logs in S3. Choose from `STANDARD`, `REDUCED_REDUNDANCY` or `STANDARD_IA` | `string` | `"STANDARD"` | no |
 | node\_class | Node class for Nomad clients to constraint the jobs to. Use this with `node_class_operator`. The default matches everything. | `string` | `".?"` | no |
