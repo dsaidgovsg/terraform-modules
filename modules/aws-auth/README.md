@@ -110,8 +110,8 @@ resource "vault_aws_auth_backend_role" "additional_nomad_clients" {
   role               = "${local.server_type}"
   auth_type          = "ec2"
   bound_iam_role_arn = "${module.additional_nomad_clients.iam_role_arn_nomad_clients}"
-  policies           = ["..."]
-  period             = "120" # in minutes
+  token_policies     = ["..."]
+  token_period       = "120" # in minutes
 }
 
 # Define value in Consul KV store to enable Consul Template script to work
