@@ -5,6 +5,7 @@
 | aws | >= 2.42 |
 | consul | >= 2.5 |
 | nomad | >= 1.4 |
+| null | n/a |
 | template | ~> 2.0 |
 | vault | >= 2.0 |
 
@@ -42,6 +43,8 @@
 | source\_address\_key | Key to inject the source address to | `string` | `"host"` | no |
 | source\_hostname\_key | Key to inject the source hostname to | `string` | `"hostname"` | no |
 | tags | Tags to apply to resources | `map` | <pre>{<br>  "Terraform": "true"<br>}<br></pre> | no |
+| vault\_address | Vault server address for custom execution of commands, required if `vault_sts_iam_permissions_boundary` is set | `string` | `""` | no |
+| vault\_sts\_iam\_permissions\_boundary | Optional IAM policy as permissions boundary for STS generated IAM user | `string` | `""` | no |
 | vault\_sts\_path | If logging to S3 is enabled, provide to the path in Vault in which the AWS Secrets Engine is mounted | `string` | `""` | no |
 
 ## Outputs

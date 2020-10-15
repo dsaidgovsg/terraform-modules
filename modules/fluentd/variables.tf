@@ -74,8 +74,19 @@ variable "additional_blocks" {
 # Vault related
 #############################
 
+variable "vault_address" {
+  description = "Vault server address for custom execution of commands, required if `vault_sts_iam_permissions_boundary` is set"
+  default     = ""
+}
+
 variable "vault_sts_path" {
   description = "If logging to S3 is enabled, provide to the path in Vault in which the AWS Secrets Engine is mounted"
+  default     = ""
+}
+
+variable "vault_sts_iam_permissions_boundary" {
+  description = "Optional IAM policy as permissions boundary for STS generated IAM user"
+  type        = string
   default     = ""
 }
 
