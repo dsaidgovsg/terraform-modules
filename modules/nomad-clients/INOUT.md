@@ -22,11 +22,11 @@
 | consul\_cluster\_name | Name of the Consul cluster to deploy | `string` | `"consul-nomad-prototype"` | no |
 | docker\_privileged | Flag to enable privileged mode for Docker driver on Nomad client | `bool` | `false` | no |
 | docker\_volumes\_mounting | Flag to enable volume mounting for Docker driver on Nomad client | `bool` | `false` | no |
+| dynamic\_ports\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | `list(string)` | n/a | yes |
 | iam\_permissions\_boundary | If set, restricts the created IAM role to the given permissions boundary | `string` | n/a | yes |
 | instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | integration\_consul\_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | `string` | `"terraform/"` | no |
 | integration\_service\_type | The 'server type' for this Nomad cluster. This is used in several integration.<br>If empty, this defaults to the `cluster_name` variable | `string` | `""` | no |
-| nomad\_clients\_services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | `list(string)` | `[]` | no |
 | root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | spot\_price | Spot price of EC2 instance | `string` | `""` | no |

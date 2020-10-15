@@ -52,11 +52,11 @@
 | nomad\_clients\_desired | The desired number of Nomad client nodes to deploy. | `number` | `6` | no |
 | nomad\_clients\_docker\_privileged | Flag to enable privileged mode for Docker driver on Nomad client | `bool` | `false` | no |
 | nomad\_clients\_docker\_volumes\_mounting | Flag to enable volume mounting for Docker driver on Nomad client | `bool` | `false` | no |
+| nomad\_clients\_dynamic\_ports\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | `list(string)` | n/a | yes |
 | nomad\_clients\_max | The max number of Nomad client nodes to deploy. | `number` | `8` | no |
 | nomad\_clients\_min | The minimum number of Nomad client nodes to deploy. | `number` | `3` | no |
 | nomad\_clients\_root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | nomad\_clients\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
-| nomad\_clients\_services\_inbound\_cidr | A list of CIDR-formatted IP address ranges (in addition to the VPC range) from which the services hosted on Nomad clients on ports 20000 to 32000 will accept connections from. | `list(string)` | `[]` | no |
 | nomad\_clients\_user\_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
 | nomad\_cluster\_name | The name of the Nomad cluster. Only used if `nomad_server_cluster_name` or `nomad_client_cluster_name` is unused. `-server` is appended for server cluster and `-client` is append for client cluster | `string` | `"nomad"` | no |
 | nomad\_server\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad server cluster. | `string` | n/a | yes |
