@@ -1,11 +1,5 @@
 locals {
-  allowed_inbound_cidr_blocks = concat(list(data.aws_vpc.selected.cidr_block), var.allowed_inbound_cidr_blocks)
-  services_inbound_cidr       = concat(list(data.aws_vpc.selected.cidr_block), var.nomad_clients_services_inbound_cidr)
-  user_data                   = coalesce(var.user_data, data.template_file.user_data_nomad_client.rendered)
-}
-
-data "aws_vpc" "selected" {
-  id = var.vpc_id
+  user_data = coalesce(var.user_data, data.template_file.user_data_nomad_client.rendered)
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -37,7 +31,7 @@ module "nomad_clients" {
   subnet_ids = var.vpc_subnet_ids
 
   ssh_key_name                = var.ssh_key_name
-  allowed_inbound_cidr_blocks = local.allowed_inbound_cidr_blocks
+  allowed_inbound_cidr_blocks = var.dynamic_ports_inbound_cidr_blocks
   allowed_ssh_cidr_blocks     = var.allowed_ssh_cidr_blocks
   associate_public_ip_address = var.associate_public_ip_address
 
@@ -83,5 +77,5 @@ resource "aws_security_group_rule" "nomad_client_services" {
   from_port         = 20000
   to_port           = 32000
   protocol          = "tcp"
-  cidr_blocks       = local.services_inbound_cidr
+  cidr_blocks       = var.dynamic_ports_inbound_cidr_blocks
 }

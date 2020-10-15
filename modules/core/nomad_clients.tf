@@ -10,8 +10,8 @@ module "nomad_clients" {
   vpc_id         = var.vpc_id
   vpc_subnet_ids = var.nomad_client_subnets
 
-  allowed_inbound_cidr_blocks         = var.nomad_clients_allowed_inbound_cidr_blocks
-  nomad_clients_services_inbound_cidr = var.nomad_clients_services_inbound_cidr
+  allowed_inbound_cidr_blocks       = var.nomad_clients_allowed_inbound_cidr_blocks
+  dynamic_ports_inbound_cidr_blocks = var.nomad_clients_dynamic_ports_inbound_cidr_blocks
 
   cluster_name  = "${var.nomad_cluster_name}c"
   instance_type = var.nomad_client_instance_type
