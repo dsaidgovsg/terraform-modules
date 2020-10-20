@@ -14,11 +14,12 @@ data "template_file" "fluentd_conf" {
     fluentd_port  = var.fluentd_port
     fluentd_match = var.fluentd_match
 
-    s3_bucket       = aws_s3_bucket.logs[0].id
-    s3_region       = "ap-southeast-1"
-    s3_prefix       = "logs/"
-    storage_class   = var.logs_s3_storage_class
-    logs_s3_enabled = var.logs_s3_enabled
+    s3_bucket                = aws_s3_bucket.logs[0].id
+    s3_region                = "ap-southeast-1"
+    s3_prefix                = "logs/"
+    storage_class            = var.logs_s3_storage_class
+    logs_s3_enabled          = var.logs_s3_enabled
+    logs_local_store_enabled = var.logs_local_store_enabled
   }
 }
 

@@ -27,6 +27,11 @@ variable "fluentd_port" {
   default     = 4224
 }
 
+variable "logs_local_store_enabled" {
+  description = "Enable to store copy of logs on the local machine"
+  default     = false
+}
+
 #############################
 # S3 Logging related
 #############################
