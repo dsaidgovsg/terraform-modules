@@ -53,7 +53,7 @@ job "job" {
           type = "fluentd"
 
           config = {
-            fluentd-address = "fluentd.locus.rocks:4224"
+            fluentd-address = "<fluentd-hostname>:4224"
             tag             = "docker.job"
           }
         }
