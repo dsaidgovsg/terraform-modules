@@ -35,7 +35,7 @@ resource "aws_security_group_rule" "internal_lb_http_incoming" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = concat([data.aws_vpc.traefik.cidr_block], var.internal_lb_incoming_cidr)
+  cidr_blocks       = var.internal_lb_incoming_cidr
   security_group_id = aws_security_group.internal_lb.id
 }
 
@@ -45,7 +45,7 @@ resource "aws_security_group_rule" "internal_lb_https_incoming" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = concat([data.aws_vpc.traefik.cidr_block], var.internal_lb_incoming_cidr)
+  cidr_blocks       = var.internal_lb_incoming_cidr
   security_group_id = aws_security_group.internal_lb.id
 }
 
