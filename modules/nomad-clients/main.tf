@@ -80,6 +80,6 @@ resource "aws_security_group_rule" "nomad_client_services" {
   security_group_id = module.nomad_clients.security_group_id
   from_port         = 20000
   to_port           = 32000
-  protocol          = "tcp"
+  protocol          = "all"
   cidr_blocks       = local.services_inbound_cidr
 }
