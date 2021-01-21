@@ -24,9 +24,10 @@ job "traefik" {
         image = "traefik:${version}"
 
         port_map {
-          http     = 80
-          internal = 81
-          api      = 8080
+          http       = 80
+          internal   = 81
+          api        = 8080
+          prometheus = 8082
         }
 
         dns_servers = ["169.254.1.1"]
@@ -36,6 +37,9 @@ job "traefik" {
           "--consul.watch",
           "--consul.endpoint=169.254.1.1:${consul_port}",
           "--consul.prefix=${traefik_consul_prefix}",
+          "--metrics",
+          "--metrics.prometheus",
+          "--metrics.prometheus.entryPoint=prometheus",
         ]
 
         ${additional_docker_config}
@@ -59,6 +63,15 @@ job "traefik" {
         }
       }
 
+      service {
+        name = "prometheus-client"
+        port = "prometheus"
+
+        tags = [
+          "prometheus_tag_service_name=traefik"
+        ]
+      }
+
       resources {
         cpu    = 500
         memory = 512
@@ -77,6 +90,8 @@ job "traefik" {
           port "api" {
             static = 8080
           }
+
+          port "prometheus" {}
         }
       }
     }
