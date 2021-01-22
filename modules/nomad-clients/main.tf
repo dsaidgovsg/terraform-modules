@@ -75,11 +75,20 @@ data "template_file" "user_data_nomad_client" {
 }
 
 # Security rules to allow services on Nomad clients to talk to each other
-resource "aws_security_group_rule" "nomad_client_services" {
+resource "aws_security_group_rule" "nomad_client_services_tcp" {
   type              = "ingress"
   security_group_id = module.nomad_clients.security_group_id
   from_port         = 20000
   to_port           = 32000
-  protocol          = "all"
+  protocol          = "tcp"
+  cidr_blocks       = local.services_inbound_cidr
+}
+
+resource "aws_security_group_rule" "nomad_client_services_udp" {
+  type              = "ingress"
+  security_group_id = module.nomad_clients.security_group_id
+  from_port         = 20000
+  to_port           = 32000
+  protocol          = "udp"
   cidr_blocks       = local.services_inbound_cidr
 }
