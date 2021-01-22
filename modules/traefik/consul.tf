@@ -33,6 +33,14 @@ resource "consul_keys" "entrypoints_api" {
   }
 }
 
+resource "consul_keys" "entrypoints_metrics" {
+  key {
+    path   = "${var.traefik_consul_prefix}/entrypoints/prometheus/address"
+    value  = ":8082"
+    delete = true
+  }
+}
+
 # [consulCatalog] section
 
 resource "consul_keys" "consulcatalog_endpoint" {
