@@ -22,7 +22,7 @@
         "consul_token": "",
         "consul_integration_prefix": "terraform/",
         "timezone": "Asia/Singapore",
-        "prometheus_version": "2.4.3",
+        "prometheus_version": "2.22.0",
         "prometheus_db_dir": "/mnt/data",
         "prometheus_storage_retention": "90d",
         "prometheus_client_service": "prometheus-client",
