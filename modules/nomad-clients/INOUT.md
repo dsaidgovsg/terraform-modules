@@ -20,7 +20,8 @@
 | cluster\_name | Name of the Nomad Clients cluster | `string` | `"nomad-client"` | no |
 | cluster\_tag\_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | `string` | `"consul-servers"` | no |
 | consul\_cluster\_name | Name of the Consul cluster to deploy | `string` | `"consul-nomad-prototype"` | no |
-| docker\_privileged | Flag to enable privileged mode for Docker agent on Nomad client | `bool` | `false` | no |
+| docker\_privileged | Flag to enable privileged mode for Docker driver on Nomad client | `bool` | `false` | no |
+| docker\_volumes\_mounting | Flag to enable volume mounting for Docker driver on Nomad client | `bool` | `false` | no |
 | instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | integration\_consul\_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | `string` | `"terraform/"` | no |
 | integration\_service\_type | The 'server type' for this Nomad cluster. This is used in several integration.<br>If empty, this defaults to the `cluster_name` variable | `string` | `""` | no |

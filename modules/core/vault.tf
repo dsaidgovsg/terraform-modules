@@ -59,7 +59,7 @@ module "vault" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vault_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.7.4"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.8.3"
 
   iam_role_id = module.vault.iam_role_id
 }

@@ -102,7 +102,12 @@ variable "client_node_class" {
 }
 
 variable "docker_privileged" {
-  description = "Flag to enable privileged mode for Docker agent on Nomad client"
+  description = "Flag to enable privileged mode for Docker driver on Nomad client"
+  default     = false
+}
+
+variable "docker_volumes_mounting" {
+  description = "Flag to enable volume mounting for Docker driver on Nomad client"
   default     = false
 }
 

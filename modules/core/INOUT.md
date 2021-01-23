@@ -48,7 +48,8 @@
 | nomad\_clients\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients servers for API usage | `list(string)` | n/a | yes |
 | nomad\_clients\_ami\_id | AMI ID for Nomad clients | `any` | n/a | yes |
 | nomad\_clients\_desired | The desired number of Nomad client nodes to deploy. | `number` | `6` | no |
-| nomad\_clients\_docker\_privileged | Flag to enable privileged mode for Docker agent on Nomad client | `bool` | `false` | no |
+| nomad\_clients\_docker\_privileged | Flag to enable privileged mode for Docker driver on Nomad client | `bool` | `false` | no |
+| nomad\_clients\_docker\_volumes\_mounting | Flag to enable volume mounting for Docker driver on Nomad client | `bool` | `false` | no |
 | nomad\_clients\_max | The max number of Nomad client nodes to deploy. | `number` | `8` | no |
 | nomad\_clients\_min | The minimum number of Nomad client nodes to deploy. | `number` | `3` | no |
 | nomad\_clients\_root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |

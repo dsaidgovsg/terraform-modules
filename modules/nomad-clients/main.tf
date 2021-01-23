@@ -13,8 +13,7 @@ data "aws_vpc" "selected" {
 # --------------------------------------------------------------------------------------------------
 
 module "nomad_clients" {
-  # Original repo and version
-  # source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.5.0"
+  # Copy of "github.com/hashicorp/terraform-aws-nomad//modules/nomad-cluster?ref=v0.7.0"
   source = "../nomad-cluster"
 
   asg_name          = var.cluster_name
@@ -51,7 +50,7 @@ module "nomad_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_clients" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.7.4"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.8.3"
 
   iam_role_id = module.nomad_clients.iam_role_id
 }
@@ -65,12 +64,13 @@ data "template_file" "user_data_nomad_client" {
   template = file("${path.module}/user_data.sh")
 
   vars = {
-    client_node_class = var.client_node_class
-    cluster_tag_key   = var.cluster_tag_key
-    cluster_tag_value = var.consul_cluster_name
-    docker_privileged = var.docker_privileged ? "--docker-privileged" : ""
-    consul_prefix     = var.integration_consul_prefix
-    service_type      = coalesce(var.integration_service_type, var.cluster_name)
+    client_node_class       = var.client_node_class
+    cluster_tag_key         = var.cluster_tag_key
+    cluster_tag_value       = var.consul_cluster_name
+    docker_privileged       = var.docker_privileged ? "--docker-privileged" : ""
+    docker_volumes_mounting = var.docker_volumes_mounting ? "--docker-volumes-mounting" : ""
+    consul_prefix           = var.integration_consul_prefix
+    service_type            = coalesce(var.integration_service_type, var.cluster_name)
   }
 }
 
