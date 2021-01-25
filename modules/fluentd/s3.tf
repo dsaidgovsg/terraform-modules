@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "logs_s3" {
     ]
 
     resources = [
-      "${aws_s3_bucket.logs[0].arn}",
+      aws_s3_bucket.logs[0].arn,
     ]
   }
 
