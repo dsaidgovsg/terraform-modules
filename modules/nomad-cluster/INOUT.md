@@ -26,6 +26,7 @@
 | instance\_type | The type of EC2 Instances to run for each node in the cluster (e.g. t2.micro). | `string` | n/a | yes |
 | max\_size | The maximum number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |
 | min\_size | The minimum number of nodes to have in the cluster. If you're using this to run Nomad servers, we strongly recommend setting this to 3 or 5. | `number` | n/a | yes |
+| protect\_from\_scale\_in | (Optional) Allows setting instance protection. The autoscaling group will not select instances with this setting for termination during scale in events. | `bool` | `false` | no |
 | root\_volume\_delete\_on\_termination | Whether the volume should be destroyed on instance termination. | `bool` | `true` | no |
 | root\_volume\_ebs\_optimized | If true, the launched EC2 instance will be EBS-optimized. | `bool` | `false` | no |
 | root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
@@ -38,6 +39,7 @@
 | ssh\_port | The port used for SSH connections | `number` | `22` | no |
 | subnet\_ids | The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster\_size variable. At least one of var.subnet\_ids or var.availability\_zones must be non-empty. | `list(string)` | n/a | yes |
 | tags | List of extra tag blocks added to the autoscaling group configuration. Each element in the list is a map containing keys 'key', 'value', and 'propagate\_at\_launch' mapped to the respective values. | <pre>list(object({<br>    key                 = string<br>    value               = string<br>    propagate_at_launch = bool<br>  }))<br></pre> | `[]` | no |
+| tenancy | The tenancy of the instance. Must be one of: default or dedicated. | `string` | `"default"` | no |
 | termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"Default"` | no |
 | user\_data | A User Data script to execute while the server is booting. We remmend passing in a bash script that executes the run-nomad script, which should have been installed in the AMI by the install-nomad module. | `string` | n/a | yes |
 | vpc\_id | The ID of the VPC in which to deploy the cluster | `string` | n/a | yes |
@@ -51,6 +53,9 @@
 | cluster\_size | n/a |
 | cluster\_tag\_key | n/a |
 | cluster\_tag\_value | n/a |
+| iam\_instance\_profile\_arn | n/a |
+| iam\_instance\_profile\_id | n/a |
+| iam\_instance\_profile\_name | n/a |
 | iam\_role\_arn | n/a |
 | iam\_role\_id | n/a |
 | launch\_config\_name | n/a |

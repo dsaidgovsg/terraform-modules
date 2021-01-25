@@ -68,7 +68,7 @@ have [systemd](https://wiki.debian.org/systemd) run and maintain the Consul Temp
 In order to use the bootstrap script and role in your AMIs, you must make sure the following
 requirements are met:
 
-- Provision the AMI using the [`install-consul-template`](../core/packer/roles/install-consul-template) Ansible role.
+- Provision the AMI using the [`install-consul-template`](../../roles/install-consul-template) Ansible role.
 - Run the `run-consul-template` script to bootstrap the instance.
 - Define the key under the path `${prefix}aws-auth/roles/${server_type}` in Consul KV store with the name of the role for the server type (see below).
 

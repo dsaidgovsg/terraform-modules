@@ -22,7 +22,8 @@ function print_usage {
   echo -e "  --server\t\tIf set, configure in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, configure in client mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client-node-class\t\tClient node class name. Must be set if --client is set."
-  echo -e "  --docker-privileged\t\Enable privileged mode for Docker agent. Only applicable if --client is set."
+  echo -e "  --docker-privileged\t\Enable privileged mode for Docker driver. Only applicable if --client is set."
+  echo -e "  --docker-volumes-mounting\t\Enable volume mounting for Docker driver. Only applicable if --client is set."
   echo -e "  --config-dir\t\tThe path to write the config files to. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --vault-address\t\tAddress of Vault server. Optional. Defaults to \"https://vault.service.consul:8200\""
   echo -e "  --consul-prefix\t\tPath prefix in Consul KV store to query for integration status. Optional. Defaults to terraform/"
@@ -238,12 +239,14 @@ function generate_docker_config {
   local readonly consul_template_config="${4}"
   local readonly docker_auth_path="${5}"
   local readonly docker_privileged="${6}"
+  local readonly docker_volumes_mounting="${7}"
 
   local docker_config=$(cat <<EOF
 client {
   options {
     "docker.auth.config" = "${docker_auth_path}"
     "docker.privileged.enabled" = "${docker_privileged}"
+    "docker.volumes.enabled" = "${docker_volumes_mounting}"
   }
 }
 EOF
@@ -377,6 +380,7 @@ function main {
   local consul_template_config="/opt/consul-template/config"
   local docker_auth=""
   local docker_privileged="false"
+  local docker_volumes_mounting="false"
   local statsd_addr="127.0.0.1:8125"
   local telegraf_conf="/etc/telegraf/telegraf.d"
   local all_args=()
@@ -427,6 +431,9 @@ function main {
         ;;
       --docker-privileged)
         docker_privileged="true"
+        ;;
+      --docker-volumes-mounting)
+        docker_volumes_mounting="true"
         ;;
       --statsd-addr)
         assert_not_empty "$key" "$2"
@@ -506,7 +513,7 @@ function main {
   if [[ "${docker_auth_enabled}" != "yes" || "$server" == "true" ]]; then
     log_info "Docker authentication is not enabled or this is a Nomad server."
   else
-    generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}" "${docker_privileged}"
+    generate_docker_config "${consul_prefix}" "${config_dir}" "${user}" "${consul_template_config}" "${docker_auth}" "${docker_privileged}" "${docker_volumes_mounting}"
     systemctl kill -s SIGHUP consul-template
   fi
 

@@ -38,6 +38,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     --client \
     --client-node-class "${client_node_class}" \
     ${docker_privileged} \
+    ${docker_volumes_mounting} \
     --consul-prefix "${consul_prefix}"
 
 /opt/nomad/bin/run-nomad --client

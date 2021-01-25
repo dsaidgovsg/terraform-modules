@@ -112,6 +112,12 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
+variable "tenancy" {
+  description = "The tenancy of the instance. Must be one of: default or dedicated."
+  type        = string
+  default     = "default"
+}
+
 variable "root_volume_ebs_optimized" {
   description = "If true, the launched EC2 instance will be EBS-optimized."
   type        = bool
@@ -220,3 +226,10 @@ variable "ebs_block_devices" {
   #   }
   # ]
 }
+
+variable "protect_from_scale_in" {
+  description = "(Optional) Allows setting instance protection. The autoscaling group will not select instances with this setting for termination during scale in events."
+  type        = bool
+  default     = false
+}
+

@@ -373,7 +373,7 @@ For more information, run
 ./upgrade.py -h
 ```
 
-#### Manual upgrading Consul
+#### Manually upgrading Consul
 
 **Important**: It is important that you only terminate Consul instances one by one. Make sure the
 new servers are healthy and have joined the cluster before continuing. If you lose more than a
@@ -381,10 +381,10 @@ quorum of servers, you might have data loss and have to perform
 [outage recovery](https://www.consul.io/docs/guides/outage.html).
 
 1. Build your new AMI, and Terraform apply the new AMI.
-1. Terminate the instance that you would like to remove.
-1. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will
+2. Terminate the instance that you would like to remove.
+3. The Consul server will gracefully exit, and cause the node to become unhealthy, and AWS will
    automatically start a new instance.
-1. Make sure the new instance started by AWS is healthy before continuing. For example, use
+4. Make sure the new instance started by AWS is healthy before continuing. For example, use
    `consul operator raft list-peers`.
 
 You can use this AWS CLI command to terminate the instance:
@@ -398,7 +398,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Manual upgrading Nomad Servers
+#### Manually upgrading Nomad Servers
 
 **Important**: It is important that you only terminate Nomad server instances one by one.
 Make sure the new servers are healthy and have joined the cluster before continuing.
@@ -406,10 +406,10 @@ If you lose more than a quorum of servers, you might have data loss and have to 
 [outage recovery](https://www.nomadproject.io/guides/outage.html).
 
 1. Build your new AMI, and Terraform apply the new AMI.
-1. Terminate the instance that you would like to remove.
-1. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will
+2. Terminate the instance that you would like to remove.
+3. The nomad server will gracefully exit, and cause the node to become unhealthy, and AWS will
    automatically start a new instance.
-1. Make sure the new instance started by AWS is healthy before continuing. For example, use
+4. Make sure the new instance started by AWS is healthy before continuing. For example, use
    `nomad server members` to check whether the new instances created have joined the cluster.
 
 You can use this AWS CLI command:
@@ -423,7 +423,7 @@ aws autoscaling \
 
 Replace `xxx` with the instance ID.
 
-#### Manual upgrading Nomad Clients
+#### Manually upgrading Nomad Clients
 
 **Important**: These steps are recommended to minimise the outage your services might experience. In
 particular, if your service only has one instance of it running, you will definitely encounter
@@ -512,13 +512,13 @@ aws ec2 terminate-instances \
     --instance-ids $(cat instance-ids.txt | tr '\n' ' ')
 ```
 
-#### Manual upgrading Vault
+#### Manually upgrading Vault
 
 **Important**: It is important that you update the instances one by one. Make sure the new instance
 is healthy, has joined the cluster and is **unsealed** first before continuing.
 
 1. Terminate the instance and AWS will automatically start a new instance.
-1. **Unseal the new instance.** If you do not do so, new instances will eventually be unable to configure themselves properly. This is especially so if you have performed any post bootstrap configuration.
+2. **Unseal the new instance.** If you do not do so, new instances will eventually be unable to configure themselves properly. This is especially so if you have performed any post bootstrap configuration.
 
 You can seal the server by SSH'ing into the server and running `vault operator seal` with the
 required token. You can optionally use our

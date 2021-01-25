@@ -8,7 +8,7 @@ locals {
 }
 
 module "consul_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.7.4"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.8.3"
 
   cluster_name  = var.consul_cluster_name
   cluster_size  = var.consul_cluster_size

@@ -1,9 +1,11 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
 # ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.12"
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -26,6 +28,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   health_check_grace_period = var.health_check_grace_period
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
 
+  protect_from_scale_in = var.protect_from_scale_in
+
   tag {
     key                 = "Name"
     value               = var.cluster_name
@@ -47,6 +51,18 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       propagate_at_launch = tag.value["propagate_at_launch"]
     }
   }
+
+  lifecycle {
+    # As of AWS Provider 3.x, inline load_balancers and target_group_arns
+    # in an aws_autoscaling_group take precedence over attachment resources.
+    # Since the consul-cluster module does not define any Load Balancers,
+    # it's safe to assume that we will always want to favor an attachment
+    # over these inline properties.
+    #
+    # For further discussion and links to relevant documentation, see
+    # https://github.com/hashicorp/terraform-aws-vault/issues/210
+    ignore_changes = [load_balancers, target_group_arns]
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -67,6 +83,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     [aws_security_group.lc_security_group.id],
     var.security_groups,
   )
+  placement_tenancy           = var.tenancy
   associate_public_ip_address = var.associate_public_ip_address
 
   ebs_optimized = var.root_volume_ebs_optimized
@@ -83,6 +100,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     content {
       device_name           = ebs_block_device.value["device_name"]
       volume_size           = ebs_block_device.value["volume_size"]
+      snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
       iops                  = lookup(ebs_block_device.value, "iops", null)
       encrypted             = lookup(ebs_block_device.value, "encrypted", null)
       delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
@@ -143,7 +161,7 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "security_group_rules" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-security-group-rules?ref=v0.5.0"
+  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-security-group-rules?ref=v0.7.0"
 
   security_group_id           = aws_security_group.lc_security_group.id
   allowed_inbound_cidr_blocks = var.allowed_inbound_cidr_blocks
@@ -195,3 +213,4 @@ data "aws_iam_policy_document" "instance_role" {
     }
   }
 }
+
