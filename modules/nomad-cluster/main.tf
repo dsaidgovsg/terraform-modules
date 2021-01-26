@@ -83,7 +83,6 @@ resource "aws_launch_configuration" "launch_configuration" {
     [aws_security_group.lc_security_group.id],
     var.security_groups,
   )
-  placement_tenancy           = var.tenancy
   associate_public_ip_address = var.associate_public_ip_address
 
   ebs_optimized = var.root_volume_ebs_optimized
