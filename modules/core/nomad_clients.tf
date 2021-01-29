@@ -2,6 +2,10 @@
 # DEPLOY THE NOMAD CLIENT NODES
 # --------------------------------------------------------------------------------------------------
 
+locals {
+  nomad_client_cluster_name = var.nomad_client_cluster_name != null ? var.nomad_client_cluster_name : "${var.nomad_cluster_name}-client"
+}
+
 module "nomad_clients" {
   source = "../nomad-clients"
 
@@ -13,7 +17,7 @@ module "nomad_clients" {
   allowed_inbound_cidr_blocks       = var.nomad_clients_allowed_inbound_cidr_blocks
   dynamic_ports_inbound_cidr_blocks = var.nomad_clients_dynamic_ports_inbound_cidr_blocks
 
-  cluster_name  = "${var.nomad_cluster_name}c"
+  cluster_name  = local.nomad_client_cluster_name
   instance_type = var.nomad_client_instance_type
 
   clients_min     = var.nomad_clients_min
