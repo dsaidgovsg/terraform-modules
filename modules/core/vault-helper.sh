@@ -47,9 +47,37 @@ function assert_is_installed {
   fi
 }
 
+function get_required_terraform_data_source_output {
+  local readonly data_source_name="$1"
+  local readonly output_name="$2"
+  local output_value
+
+  output_value=$("${TERRAFORM}" show -json | jq -r "
+    .values.root_module.resources |
+    .[] |
+    select(.address==\"data.terraform_remote_state.$data_source_name\") |
+    .values.outputs.$output_name")
+
+  if [[ "$output_value" == "null" ]]; then
+    log_error "Unable to find Terraform data source $data_source_name with output $output_name"
+    exit 1
+  fi
+
+  echo "$output_value"
+}
+
 function get_optional_terraform_output {
   local readonly output_name="$1"
-  "${TERRAFORM}" output -no-color "$output_name"
+  local output_value
+
+  output_value=$("${TERRAFORM}" show -json | jq -r "
+    .values.outputs.$output_name.value")
+
+  if [[ "$output_value" == "null" ]]; then
+    output_value=""
+  fi
+
+  echo "$output_value"
 }
 
 function get_required_terraform_output {
@@ -170,7 +198,7 @@ function get_vault_server_ips {
   local cluster_tag_value
   local instances
 
-  aws_region=$(get_required_terraform_output "vpc_region")
+  aws_region=$(get_required_terraform_data_source_output "vpc" "vpc_region")
   cluster_tag_key=$(get_required_terraform_output "vault_servers_cluster_tag_key")
   cluster_tag_value=$(get_required_terraform_output "vault_servers_cluster_tag_value")
 
