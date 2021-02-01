@@ -52,7 +52,7 @@ function get_required_terraform_data_source_output {
   local readonly output_name="$2"
   local output_value
 
-  output_value=$(terragrunt show -json | jq -r "
+  output_value=$("${TERRAFORM}" show -json | jq -r "
     .values.root_module.resources |
     .[] |
     select(.address==\"data.terraform_remote_state.$data_source_name\") |
@@ -70,7 +70,7 @@ function get_optional_terraform_output {
   local readonly output_name="$1"
   local output_value
 
-  output_value=$(terragrunt show -json | jq -r "
+  output_value=$("${TERRAFORM}" show -json | jq -r "
     .values.outputs.$output_name.value")
 
   if [[ "$output_value" == "null" ]]; then
