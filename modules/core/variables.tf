@@ -141,8 +141,20 @@ variable "associate_public_ip_address" {
 }
 
 variable "nomad_cluster_name" {
-  description = "The name of the Nomad cluster (e.g. nomad-servers-stage). This variable is used to namespace all resources created by this module."
+  description = "The name of the Nomad cluster. Only used if `nomad_server_cluster_name` or `nomad_client_cluster_name` is unused. `-server` is appended for server cluster and `-client` is append for client cluster"
   default     = "nomad"
+}
+
+variable "nomad_server_cluster_name" {
+  description = "Overrides `nomad_cluster_name` if specified. The name of the Nomad server cluster."
+  type        = string
+  default     = null
+}
+
+variable "nomad_client_cluster_name" {
+  description = "Overrides `nomad_cluster_name` if specified. The name of the Nomad client cluster."
+  type        = string
+  default     = null
 }
 
 variable "nomad_server_instance_type" {
