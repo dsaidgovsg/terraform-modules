@@ -11,8 +11,8 @@ resource "vault_aws_auth_backend_role" "consul" {
   role                = var.consul_role
   auth_type           = "ec2"
   bound_iam_role_arns = [var.consul_iam_role_arn]
-  policies            = setunion(var.base_policies, var.consul_policies)
-  period              = var.period_minutes
+  token_policies      = setunion(var.base_policies, var.consul_policies)
+  token_period        = var.period_minutes
 }
 
 resource "vault_aws_auth_backend_role" "nomad_server" {
@@ -20,8 +20,8 @@ resource "vault_aws_auth_backend_role" "nomad_server" {
   role                = var.nomad_server_role
   auth_type           = "ec2"
   bound_iam_role_arns = [var.nomad_server_iam_role_arn]
-  policies            = setunion(var.base_policies, var.nomad_server_policies)
-  period              = var.period_minutes
+  token_policies      = setunion(var.base_policies, var.nomad_server_policies)
+  token_period        = var.period_minutes
 }
 
 resource "vault_aws_auth_backend_role" "nomad_client" {
@@ -29,8 +29,8 @@ resource "vault_aws_auth_backend_role" "nomad_client" {
   role                = var.nomad_client_role
   auth_type           = "ec2"
   bound_iam_role_arns = [var.nomad_client_iam_role_arn]
-  policies            = setunion(var.base_policies, var.nomad_client_policies)
-  period              = var.period_minutes
+  token_policies      = setunion(var.base_policies, var.nomad_client_policies)
+  token_period        = var.period_minutes
 }
 
 resource "vault_aws_auth_backend_role" "vault" {
@@ -38,8 +38,8 @@ resource "vault_aws_auth_backend_role" "vault" {
   role                = var.vault_role
   auth_type           = "ec2"
   bound_iam_role_arns = [var.vault_iam_role_arn]
-  policies            = setunion(var.base_policies, var.vault_policies)
-  period              = var.period_minutes
+  token_policies      = setunion(var.base_policies, var.vault_policies)
+  token_period        = var.period_minutes
 }
 
 ################################################
