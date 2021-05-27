@@ -22,9 +22,11 @@
 | es6\_support | Set to `true` if you are using Elasticsearch 6 and above to support the removal of mapping types (https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html) | `bool` | `false` | no |
 | fluentd\_conf\_file | Rendered fluentd configuration file | `string` | `"alloc/config/fluent.conf"` | no |
 | fluentd\_count | Number of copies of Fluentd to run | `number` | `3` | no |
+| fluentd\_cpu | CPU resource assigned to the fluentd job | `number` | `3000` | no |
 | fluentd\_force\_pull | Force pull an image. Useful if the tag is mutable. | `string` | `"false"` | no |
 | fluentd\_image | Docker image for fluentd | `string` | `"govtechsg/fluentd-s3-elasticsearch"` | no |
 | fluentd\_match | Tags that fluentd should output to S3 and Elasticsearch | `string` | `"@ERROR app.** docker.** services.** system.** vault**"` | no |
+| fluentd\_memory | Memory resource assigned to the fluentd job | `number` | `512` | no |
 | fluentd\_port | Port on the Docker image in which the TCP interface is exposed | `number` | `4224` | no |
 | fluentd\_tag | Tag for fluentd Docker image | `string` | `"1.2.5-latest"` | no |
 | inject\_source\_host | Inject the log source host name and address into the logs | `bool` | `true` | no |
