@@ -70,6 +70,16 @@ variable "additional_blocks" {
   default     = ""
 }
 
+variable "fluentd_cpu" {
+  description = "CPU resource assigned to the fluentd job"
+  default     = 3000
+}
+
+variable "fluentd_memory" {
+  description = "Memory resource assigned to the fluentd job"
+  default     = 512
+}
+
 #############################
 # Vault related
 #############################
