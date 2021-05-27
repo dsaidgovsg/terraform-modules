@@ -72,12 +72,12 @@ variable "additional_blocks" {
 
 variable "fluentd_cpu" {
   description = "CPU resource assigned to the fluentd job"
-  default = 3000
+  default     = 3000
 }
 
 variable "fluentd_memory" {
   description = "Memory resource assigned to the fluentd job"
-  default = 512
+  default     = 512
 }
 
 #############################
