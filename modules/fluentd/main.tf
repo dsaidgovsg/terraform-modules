@@ -46,6 +46,8 @@ data "template_file" "fluentd_jobspec" {
     fluentd_image      = var.fluentd_image
     fluentd_tag        = var.fluentd_tag
     fluentd_force_pull = var.fluentd_force_pull
+    fluentd_cpu        = var.fluentd_cpu
+    fluentd_memory     = var.fluentd_memory
 
     fluentd_conf_template = data.template_file.fluentd_tf_rendered_conf.rendered
     fluentd_conf_file     = var.fluentd_conf_file
