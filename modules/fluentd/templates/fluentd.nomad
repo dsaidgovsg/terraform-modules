@@ -102,8 +102,8 @@ EOH
       }
 
       resources {
-        cpu    = ${var.fluentd_cpu}
-        memory = ${var.fluentd_memory}
+        cpu    = ${fluentd_cpu}
+        memory = ${fluentd_memory}
 
         network {
           mbits = 100
