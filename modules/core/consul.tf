@@ -20,7 +20,7 @@ module "consul_servers" {
   http_api_port = local.consul_http_api_port
 
   ssh_key_name                = var.ssh_key_name
-  allowed_inbound_cidr_blocks = concat(list(data.aws_vpc.this.cidr_block), var.consul_allowed_inbound_cidr_blocks)
+  allowed_inbound_cidr_blocks = concat([data.aws_vpc.this.cidr_block], var.consul_allowed_inbound_cidr_blocks)
   allowed_ssh_cidr_blocks     = var.allowed_ssh_cidr_blocks
   associate_public_ip_address = var.associate_public_ip_address
 
