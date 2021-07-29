@@ -12,8 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TF_IMAGE: hashicorp/terraform:0.12.26
-      TFLINT_IMAGE: wata727/tflint:0.13.4
+      TF_IMAGE: hashicorp/terraform:1.0.3
+      TFLINT_IMAGE: wata727/tflint:0.30.0
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
