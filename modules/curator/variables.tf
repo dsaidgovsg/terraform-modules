@@ -262,7 +262,7 @@ variable "waf_age" {
 
 variable "waf_prefix" {
   description = "Prefix for waf logs"
-  default     = "system.waf"
+  default     = "services.waf"
 }
 
 variable "eks_disable" {
@@ -277,7 +277,7 @@ variable "eks_age" {
 
 variable "eks_prefix" {
   description = "Prefix for eks logs"
-  default     = "system.eks"
+  default     = "eks"
 }
 
 # --------------------------------------------------------------------------------------------------
