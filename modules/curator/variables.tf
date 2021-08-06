@@ -250,36 +250,6 @@ variable "user_data_prefix" {
   default     = "system.user_data."
 }
 
-variable "waf_disable" {
-  description = "Disable clearing waf log indices"
-  default     = false
-}
-
-variable "waf_age" {
-  description = "Age in days to clear waf log indices"
-  default     = 90
-}
-
-variable "waf_prefix" {
-  description = "Prefix for waf logs"
-  default     = "services.waf"
-}
-
-variable "eks_disable" {
-  description = "Disable clearing eks log indices"
-  default     = false
-}
-
-variable "eks_age" {
-  description = "Age in days to clear eks log indices"
-  default     = 90
-}
-
-variable "eks_prefix" {
-  description = "Prefix for eks logs"
-  default     = "eks"
-}
-
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
