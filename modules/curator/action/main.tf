@@ -10,7 +10,7 @@ resource "consul_key_prefix" "action" {
 }
 
 variable "key" {
-  description = "Name fo the action"
+  description = "Name of the action"
 }
 
 variable "disable" {

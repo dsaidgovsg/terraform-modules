@@ -14,8 +14,21 @@ By default, `curator` is configured to match tags from logs sent from the exampl
 provided in the [`td-agent`](../td-agent) module. It also matches logs tagged with `docker.*` for
 your Nomad jobs.
 
-If you have custom prefix or suffix to define, consider using the `actions` submodule in this
-module.
+If you have additional custom prefixes or suffixes to match, use the `actions` submodule in this
+module, as the matching behavior is controlled by Consul keys.
+
+For example:
+```hcl
+module "sudo" {
+  source = "github.com/dsaidgovsg/terraform-modules//modules/curator/action"
+
+  key               = "sudo"
+  disable           = var.sudo_disable
+  age               = var.sudo_age
+  prefix            = var.sudo_prefix
+  consul_key_prefix = var.consul_key_prefix
+}
+```
 
 ## Docker Image
 
