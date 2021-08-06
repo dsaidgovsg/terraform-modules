@@ -31,6 +31,9 @@
 | docker\_image | Docker Image to run the job | `any` | n/a | yes |
 | docker\_prefix | Prefix for docker logs | `string` | `"docker."` | no |
 | docker\_tag | Docker tag to run | `string` | `"latest"` | no |
+| eks\_age | Age in days to clear eks log indices | `number` | `90` | no |
+| eks\_disable | Disable clearing eks log indices | `bool` | `false` | no |
+| eks\_prefix | Prefix for eks logs | `string` | `"system.eks"` | no |
 | elasticsearch\_service | Name of the Elasticsearch service to lookup in Consul | `string` | `"elasticsearch"` | no |
 | entrypoint | Entrypoint for the Docker Image | `list` | <pre>[<br>  "/curator/curator"<br>]<br></pre> | no |
 | force\_pull | Force Nomad Clients to always force pull | `string` | `"false"` | no |
@@ -59,6 +62,9 @@
 | vault\_age | Age in days to clear vault log indices | `number` | `90` | no |
 | vault\_disable | Disable clearing vault log indices | `bool` | `false` | no |
 | vault\_prefix | Prefix for vault logs | `string` | `"services.vault."` | no |
+| waf\_age | Age in days to clear waf log indices | `number` | `90` | no |
+| waf\_disable | Disable clearing waf log indices | `bool` | `false` | no |
+| waf\_prefix | Prefix for waf logs | `string` | `"system.waf"` | no |
 
 ## Outputs
 

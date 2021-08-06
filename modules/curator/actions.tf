@@ -107,3 +107,23 @@ module "user_data" {
   prefix            = var.user_data_prefix
   consul_key_prefix = var.consul_key_prefix
 }
+
+module "waf" {
+  source = "./action"
+
+  key               = "waf"
+  disable           = var.waf_disable
+  age               = var.waf_age
+  prefix            = var.waf_prefix
+  consul_key_prefix = var.consul_key_prefix
+}
+
+module "eks" {
+  source = "./action"
+
+  key               = "eks"
+  disable           = var.eks_disable
+  age               = var.eks_age
+  prefix            = var.eks_prefix
+  consul_key_prefix = var.consul_key_prefix
+}
