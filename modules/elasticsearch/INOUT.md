@@ -3,6 +3,7 @@
 | Name | Version |
 |------|---------|
 | aws | >= 2.42 |
+| consul | n/a |
 
 ## Inputs
 
@@ -30,6 +31,7 @@
 | es\_access\_cidr\_block | Elasticsearch access CIDR block to allow access | `list(string)` | n/a | yes |
 | es\_additional\_tags | Additional tags to apply on Elasticsearch | `map(string)` | `{}` | no |
 | es\_availability\_zone\_count | Number of available zone count | `number` | `3` | no |
+| es\_consul\_service | Name to register in consul to identify Elasticsearch service | `string` | `"elasticsearch"` | no |
 | es\_dedicated\_master\_enabled | Enable dedicated master nodes for Elasticsearch | `bool` | n/a | yes |
 | es\_default\_access | Rest API / Web UI access | `map(any)` | <pre>{<br>  "port": 443,<br>  "protocol": "tcp",<br>  "type": "ingress"<br>}<br></pre> | no |
 | es\_domain\_name | Elasticsearch domain name | `string` | n/a | yes |
@@ -76,6 +78,8 @@
 | kms\_key\_inaccessible\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | kms\_key\_inaccessible\_period | Duration in seconds to evaluate for the alarm. | `string` | `"60"` | no |
 | kms\_key\_inaccessible\_threshold | Threshold for the number of kms key inaccessible error | `string` | `"1"` | no |
+| lb\_cname | DNS CNAME for the Load balancer | `string` | `""` | no |
+| lb\_zone\_id | Zone ID for the Load balancer DNS CNAME | `string` | `""` | no |
 | low\_storage\_space\_enable | Whether to enable alarm | `bool` | `false` | no |
 | low\_storage\_space\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | low\_storage\_space\_name | Name of the alarm | `string` | `"low_storage_space_alarm"` | no |
@@ -85,6 +89,10 @@
 | node\_unreachable\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | node\_unreachable\_period | Duration in seconds to evaluate for the alarm. | `string` | `"86400"` | no |
 | ok\_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | `list(string)` | `[]` | no |
+| redirect\_domain | Domain name to redirect | `string` | `""` | no |
+| redirect\_listener\_arn | LB listener ARN to attach the rule to | `string` | `""` | no |
+| redirect\_route53\_zone\_id | Route53 Zone ID to create the Redirect Record in | `string` | `""` | no |
+| redirect\_rule\_priority | Rule priority for redirect | `number` | `100` | no |
 | security\_group\_additional\_tags | Additional tags to apply on the security group | `map(string)` | `{}` | no |
 | security\_group\_name | Name of security group, leaving this empty generates a group name | `string` | n/a | yes |
 | security\_group\_vpc\_id | VPC ID to apply on the security group | `string` | n/a | yes |
@@ -96,6 +104,7 @@
 | snapshot\_failed\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | snapshot\_failed\_period | Duration in seconds to evaluate for the alarm. | `string` | `"60"` | no |
 | snapshot\_failed\_threshold | Threshold for the number of snapshot failed | `string` | `"1"` | no |
+| use\_redirect | Indicates whether to use redirect users | `bool` | `false` | no |
 
 ## Outputs
 
