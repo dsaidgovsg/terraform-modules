@@ -114,8 +114,6 @@
 | domain\_id | Unique identifier for the domain |
 | domain\_name | Elasticsearch domain name |
 | elasticsearch\_url | Elasticsearch URL |
-| endpoint | Domain-specific endpoint used to submit index, search, and data upload requests |
 | kibana\_url | Kibana URL |
-| port | Elasticsearch service port |
 | security\_group\_id | ID of the Security Group attached to Elasticsearch |
 
