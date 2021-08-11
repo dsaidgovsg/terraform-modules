@@ -78,8 +78,8 @@
 | kms\_key\_inaccessible\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | kms\_key\_inaccessible\_period | Duration in seconds to evaluate for the alarm. | `string` | `"60"` | no |
 | kms\_key\_inaccessible\_threshold | Threshold for the number of kms key inaccessible error | `string` | `"1"` | no |
-| lb\_cname | DNS CNAME for the Load balancer | `string` | `""` | no |
-| lb\_zone\_id | Zone ID for the Load balancer DNS CNAME | `string` | `""` | no |
+| lb\_cname | DNS CNAME for the Load balancer | `string` | n/a | yes |
+| lb\_zone\_id | Zone ID for the Load balancer DNS CNAME | `string` | n/a | yes |
 | low\_storage\_space\_enable | Whether to enable alarm | `bool` | `false` | no |
 | low\_storage\_space\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | low\_storage\_space\_name | Name of the alarm | `string` | `"low_storage_space_alarm"` | no |
@@ -89,9 +89,9 @@
 | node\_unreachable\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | node\_unreachable\_period | Duration in seconds to evaluate for the alarm. | `string` | `"86400"` | no |
 | ok\_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | `list(string)` | `[]` | no |
-| redirect\_domain | Domain name to redirect | `string` | `""` | no |
-| redirect\_listener\_arn | LB listener ARN to attach the rule to | `string` | `""` | no |
-| redirect\_route53\_zone\_id | Route53 Zone ID to create the Redirect Record in | `string` | `""` | no |
+| redirect\_domain | Domain name to redirect | `string` | n/a | yes |
+| redirect\_listener\_arn | LB listener ARN to attach the rule to | `string` | n/a | yes |
+| redirect\_route53\_zone\_id | Route53 Zone ID to create the Redirect Record in | `string` | n/a | yes |
 | redirect\_rule\_priority | Rule priority for redirect | `number` | `100` | no |
 | security\_group\_additional\_tags | Additional tags to apply on the security group | `map(string)` | `{}` | no |
 | security\_group\_name | Name of security group, leaving this empty generates a group name | `string` | n/a | yes |

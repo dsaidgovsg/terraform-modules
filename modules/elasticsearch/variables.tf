@@ -526,27 +526,27 @@ variable "use_redirect" {
 
 variable "redirect_route53_zone_id" {
   description = "Route53 Zone ID to create the Redirect Record in"
-  default     = ""
+  type        = string
 }
 
 variable "redirect_domain" {
   description = "Domain name to redirect"
-  default     = ""
+  type        = string
 }
 
 variable "lb_cname" {
   description = "DNS CNAME for the Load balancer"
-  default     = ""
+  type        = string
 }
 
 variable "lb_zone_id" {
   description = "Zone ID for the Load balancer DNS CNAME"
-  default     = ""
+  type        = string
 }
 
 variable "redirect_listener_arn" {
   description = "LB listener ARN to attach the rule to"
-  default     = ""
+  type        = string
 }
 
 variable "redirect_rule_priority" {
