@@ -1,6 +1,6 @@
 resource "consul_node" "es" {
   name    = var.es_consul_service
-  address = var.es_endpoint
+  address = local.endpoint
 
   meta = {
     "external-node"  = "true"
@@ -18,7 +18,7 @@ resource "consul_service" "es" {
     check_id                          = "service:elasticsearch"
     name                              = "Elasticsearch cluster health check"
     status                            = "passing"
-    http                              = "${var.es_endpoint}/_cluster/health"
+    http                              = "${local.endpoint}/_cluster/health"
     method                            = "GET"
     interval                          = "30s"
     timeout                           = "10s"

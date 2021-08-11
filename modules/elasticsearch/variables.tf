@@ -517,9 +517,52 @@ variable "kms_key_inaccessible_threshold" {
 }
 
 #
+# Redirect-related
+#
+variable "use_redirect" {
+  description = "Indicates whether to use redirect users "
+  default     = false
+}
+
+variable "redirect_route53_zone_id" {
+  description = "Route53 Zone ID to create the Redirect Record in"
+  type        = string
+}
+
+variable "redirect_domain" {
+  description = "Domain name to redirect"
+  type        = string
+}
+
+variable "lb_cname" {
+  description = "DNS CNAME for the Load balancer"
+  type        = string
+}
+
+variable "lb_zone_id" {
+  description = "Zone ID for the Load balancer DNS CNAME"
+  type        = string
+}
+
+variable "redirect_listener_arn" {
+  description = "LB listener ARN to attach the rule to"
+  type        = string
+}
+
+variable "redirect_rule_priority" {
+  description = "Rule priority for redirect"
+  default     = 100
+}
+
+#
 # Others
 #
 variable "create_service_linked_role" {
   description = "Create Elasticsearch service linked role. See README"
   default     = false
+}
+
+variable "es_consul_service" {
+  description = "Name to register in consul to identify Elasticsearch service"
+  default     = "elasticsearch"
 }
