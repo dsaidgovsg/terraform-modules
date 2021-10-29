@@ -50,7 +50,6 @@ job "fluentd" {
         volumes = [
           "${fluentd_conf_file}:/fluentd/etc/fluent.conf",
           "alloc/logs:/fluentd/logs:rw",
-          "alloc/buffer:/fluentd/buffer:rw",
           "secrets/config:/config/secrets",
           "alloc/additional:/config/additional",
         ]
