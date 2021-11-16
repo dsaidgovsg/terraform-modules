@@ -110,6 +110,10 @@ EOH
           port "forwarder" {
             static = ${fluentd_port}
           }
+
+          port "prometheus" {
+            static = ${fluentd_prometheus_port}
+          }
         }
       }
     }

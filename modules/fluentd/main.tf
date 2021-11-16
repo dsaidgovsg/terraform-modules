@@ -36,13 +36,14 @@ data "template_file" "fluentd_jobspec" {
     node_class_operator = var.node_class_operator
     node_class          = var.node_class
 
-    fluentd_count      = var.fluentd_count
-    fluentd_port       = var.fluentd_port
-    fluentd_image      = var.fluentd_image
-    fluentd_tag        = var.fluentd_tag
-    fluentd_force_pull = var.fluentd_force_pull
-    fluentd_cpu        = var.fluentd_cpu
-    fluentd_memory     = var.fluentd_memory
+    fluentd_count           = var.fluentd_count
+    fluentd_port            = var.fluentd_port
+    fluentd_prometheus_port = var.fluentd_prometheus_port
+    fluentd_image           = var.fluentd_image
+    fluentd_tag             = var.fluentd_tag
+    fluentd_force_pull      = var.fluentd_force_pull
+    fluentd_cpu             = var.fluentd_cpu
+    fluentd_memory          = var.fluentd_memory
 
     fluentd_conf_template = data.template_file.fluentd_tf_rendered_conf.rendered
     fluentd_conf_file     = var.fluentd_conf_file
