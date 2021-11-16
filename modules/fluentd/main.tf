@@ -2,9 +2,10 @@ data "template_file" "fluentd_tf_rendered_conf" {
   template = file("${path.module}/templates/fluent.conf")
 
   vars = {
-    elasticsearch_hostname = var.elasticsearch_hostname
-    elasticsearch_port     = var.elasticsearch_port
-    fluentd_port           = var.fluentd_port
+    elasticsearch_hostname  = var.elasticsearch_hostname
+    elasticsearch_port      = var.elasticsearch_port
+    fluentd_port            = var.fluentd_port
+    fluentd_prometheus_port = var.fluentd_prometheus_port
 
     es6_support = var.es6_support
 

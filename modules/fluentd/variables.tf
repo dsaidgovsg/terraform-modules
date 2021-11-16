@@ -50,6 +50,11 @@ variable "fluentd_port" {
   default     = 4224
 }
 
+variable "fluentd_prometheus_port" {
+  description = "Port on the Docker image in which the Prometheus metric is exposed"
+  default     = 24224
+}
+
 variable "fluentd_conf_file" {
   description = "Rendered fluentd configuration file"
   default     = "alloc/config/fluent.conf"
