@@ -100,6 +100,12 @@ EOH
         }
       }
 
+      service {
+        name = "$${JOB}-prometheus"
+        port = "prometheus"
+        tags = ["prometheus"]
+      }
+
       resources {
         cpu    = ${fluentd_cpu}
         memory = ${fluentd_memory}
