@@ -1,10 +1,11 @@
 locals {
-  file_logging_consul_key  = "${var.consul_key_prefix}fluentd/log_to_file"
-  fluentd_match_consul_key = "${var.consul_key_prefix}fluentd/match"
-  s3_consul_key            = "${var.consul_key_prefix}fluentd/log_to_s3"
-  inject_source_host       = "${var.consul_key_prefix}fluentd/inject_source_host"
-  source_address_key       = "${var.consul_key_prefix}fluentd/source_address_key"
-  source_hostname_key      = "${var.consul_key_prefix}fluentd/source_hostname_key"
+  weekly_index_enabled_consul_key = "${var.consul_key_prefix}fluentd/weekly_index_enabled"
+  file_logging_consul_key         = "${var.consul_key_prefix}fluentd/log_to_file"
+  fluentd_match_consul_key        = "${var.consul_key_prefix}fluentd/match"
+  s3_consul_key                   = "${var.consul_key_prefix}fluentd/log_to_s3"
+  inject_source_host              = "${var.consul_key_prefix}fluentd/inject_source_host"
+  source_address_key              = "${var.consul_key_prefix}fluentd/source_address_key"
+  source_hostname_key             = "${var.consul_key_prefix}fluentd/source_hostname_key"
 }
 
 resource "consul_keys" "readme" {
@@ -64,6 +65,14 @@ resource "consul_keys" "source_hostname_key" {
   key {
     path   = local.source_hostname_key
     value  = var.inject_source_host ? var.source_hostname_key : ""
+    delete = true
+  }
+}
+
+resource "consul_keys" "weekly_index_enabled" {
+  key {
+    path   = local.s3_consul_key
+    value  = var.weekly_index_enabled ? "true" : "false"
     delete = true
   }
 }

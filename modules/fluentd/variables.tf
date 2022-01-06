@@ -153,6 +153,11 @@ variable "inject_source_host" {
   default     = true
 }
 
+variable "weekly_index_enabled" {
+  description = "Enable weekly indexing strategy for Fluentd Elasticsearch plugin. If disabled, default indexing strategy is daily."
+  default     = true
+}
+
 variable "source_address_key" {
   description = "Key to inject the source address to"
   default     = "host"

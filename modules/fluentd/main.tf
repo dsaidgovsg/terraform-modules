@@ -13,9 +13,9 @@ data "template_file" "fluentd_tf_rendered_conf" {
     s3_prefix     = "logs/"
     storage_class = var.logs_s3_storage_class
 
-    file_logging_consul_key  = local.file_logging_consul_key
-    fluentd_match_consul_key = local.fluentd_match_consul_key
-    s3_consul_key            = local.s3_consul_key
+    file_logging_consul_key         = local.file_logging_consul_key
+    fluentd_match_consul_key        = local.fluentd_match_consul_key
+    weekly_index_enabled_consul_key = local.weekly_index_enabled_consul_key
 
     inject_source_host  = local.inject_source_host
     source_address_key  = local.source_address_key
