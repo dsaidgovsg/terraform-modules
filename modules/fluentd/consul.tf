@@ -71,7 +71,7 @@ resource "consul_keys" "source_hostname_key" {
 
 resource "consul_keys" "weekly_index_enabled" {
   key {
-    path   = local.s3_consul_key
+    path   = local.weekly_index_enabled_consul_key
     value  = var.weekly_index_enabled ? "true" : "false"
     delete = true
   }
