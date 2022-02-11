@@ -14,6 +14,8 @@ resource "aws_lb" "internal" {
     prefix  = var.lb_internal_access_log_prefix
   }
 
+  drop_invalid_header_fields = var.internal_drop_invalid_header_fields
+
   tags = merge(var.tags, { Name = var.internal_lb_name })
 }
 

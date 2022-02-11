@@ -91,6 +91,11 @@ variable "internal_lb_incoming_cidr" {
   type        = list(string)
 }
 
+variable "internal_lb_drop_invalid_header_fields" {
+  description = "Set to true for internal load balancer to drop invalid header fields"
+  default     = true
+}
+
 # --------------------------------------------------------------------------------------------------
 # Domain name variables
 # --------------------------------------------------------------------------------------------------

@@ -65,9 +65,19 @@ variable "external_lb_name" {
   default     = "traefik-external"
 }
 
+variable "external_drop_invalid_header_fields" {
+  description = "Set to true for external Nomad load balancer to drop invalid header fields"
+  default     = true
+}
+
 variable "internal_lb_name" {
   description = "Name of the external Nomad load balancer"
   default     = "traefik-internal"
+}
+
+variable "internal_drop_invalid_header_fields" {
+  description = "Set to true for internal Nomad load balancer to drop invalid header fields"
+  default     = true
 }
 
 variable "tags" {

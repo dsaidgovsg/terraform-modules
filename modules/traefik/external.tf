@@ -13,6 +13,8 @@ resource "aws_lb" "external" {
     prefix  = var.lb_external_access_log_prefix
   }
 
+  drop_invalid_header_fields = var.external_drop_invalid_header_fields
+
   tags = merge(var.tags, { Name = var.external_lb_name })
 }
 
