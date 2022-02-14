@@ -27,6 +27,8 @@ resource "aws_lb" "internal" {
 }
 
 resource "aws_lb_listener" "internal_http" {
+  count = var.enable_http ? 1 : 0
+
   load_balancer_arn = aws_lb.internal.arn
   port              = "80"
   protocol          = "HTTP"

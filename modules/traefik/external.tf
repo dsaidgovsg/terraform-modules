@@ -99,6 +99,8 @@ resource "aws_security_group_rule" "nomad_external_health_check_ingress" {
 #####################
 
 resource "aws_lb_listener" "http_external" {
+  count = var.external_enable_http ? 1 : 0
+
   load_balancer_arn = aws_lb.external.arn
   port              = "80"
   protocol          = "HTTP"

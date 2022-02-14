@@ -86,6 +86,11 @@ variable "add_private_route53_zone" {
   default     = false
 }
 
+variable "enable_http" {
+  description = "Set to true to enable HTTP listener that redirects to HTTPS. Defaults to true"
+  default     = true
+}
+
 variable "internal_lb_incoming_cidr" {
   description = "A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to"
   type        = list(string)
