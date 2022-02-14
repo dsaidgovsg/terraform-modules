@@ -81,7 +81,7 @@ resource "aws_lb_target_group" "traefik_ui" {
 
 resource "aws_autoscaling_attachment" "traefik_ui" {
   autoscaling_group_name = var.internal_nomad_clients_asg
-  lb_target_group_arn    = aws_lb_target_group.traefik_ui.arn
+  alb_target_group_arn   = aws_lb_target_group.traefik_ui.arn
 }
 
 resource "aws_lb_listener_rule" "traefik_ui" {

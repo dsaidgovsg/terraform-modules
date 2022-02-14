@@ -61,7 +61,7 @@ resource "aws_lb_target_group" "fluentd_server" {
 # Attach target group to the Fluentd servers ASG
 resource "aws_autoscaling_attachment" "fluentd_server_internal" {
   autoscaling_group_name = var.cluster_name
-  lb_target_group_arn    = aws_lb_target_group.fluentd_server.arn
+  alb_target_group_arn   = aws_lb_target_group.fluentd_server.arn
 }
 
 # A Record for endpoint to point to Internal Load balancer
