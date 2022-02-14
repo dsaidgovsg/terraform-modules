@@ -2,7 +2,7 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
+| aws | >= 2.42, < 4.0.0 |
 | local | n/a |
 | template | ~> 2.0 |
 

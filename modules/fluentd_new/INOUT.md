@@ -2,8 +2,8 @@
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
-| template | n/a |
+| aws | >= 2.42, < 4.0.0 |
+| template | ~> 2.0 |
 
 ## Inputs
 
