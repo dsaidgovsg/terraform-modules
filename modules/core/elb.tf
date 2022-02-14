@@ -148,7 +148,7 @@ resource "aws_lb_target_group" "nomad_server" {
 # Attach target group to the Nomad servers ASG
 resource "aws_autoscaling_attachment" "nomad_server_internal" {
   autoscaling_group_name = module.nomad_servers.asg_name
-  alb_target_group_arn   = aws_lb_target_group.nomad_server.arn
+  lb_target_group_arn    = aws_lb_target_group.nomad_server.arn
 }
 
 resource "aws_security_group_rule" "nomad_api_outgoing" {
@@ -248,7 +248,7 @@ resource "aws_lb_target_group" "consul_servers" {
 # Attach target group to the Consul servers ASG
 resource "aws_autoscaling_attachment" "consul_server_internal" {
   autoscaling_group_name = module.consul_servers.asg_name
-  alb_target_group_arn   = aws_lb_target_group.consul_servers.arn
+  lb_target_group_arn    = aws_lb_target_group.consul_servers.arn
 }
 
 resource "aws_security_group_rule" "consul_api_outgoing" {
@@ -348,7 +348,7 @@ resource "aws_lb_target_group" "vault" {
 # Attach target group to the Vault servers ASG
 resource "aws_autoscaling_attachment" "vault_internal" {
   autoscaling_group_name = module.vault.asg_name
-  alb_target_group_arn   = aws_lb_target_group.vault.arn
+  lb_target_group_arn    = aws_lb_target_group.vault.arn
 }
 
 resource "aws_security_group_rule" "vault_api_outgoing" {

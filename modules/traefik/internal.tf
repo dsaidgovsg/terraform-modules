@@ -128,7 +128,7 @@ resource "aws_lb_target_group" "internal" {
 
 resource "aws_autoscaling_attachment" "internal" {
   autoscaling_group_name = var.internal_nomad_clients_asg
-  alb_target_group_arn   = aws_lb_target_group.internal.arn
+  lb_target_group_arn    = aws_lb_target_group.internal.arn
 }
 
 resource "aws_lb_listener" "internal_http" {

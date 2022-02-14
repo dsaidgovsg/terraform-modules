@@ -157,7 +157,7 @@ resource "aws_lb_target_group" "external" {
 
 resource "aws_autoscaling_attachment" "external" {
   autoscaling_group_name = var.external_nomad_clients_asg
-  alb_target_group_arn   = aws_lb_target_group.external.arn
+  lb_target_group_arn    = aws_lb_target_group.external.arn
 }
 
 #############################
