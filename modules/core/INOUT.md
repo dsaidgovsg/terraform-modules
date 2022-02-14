@@ -39,6 +39,7 @@
 | iam\_permissions\_boundary | If set, restricts the created IAM role to the given permissions boundary | `string` | n/a | yes |
 | integration\_consul\_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | `string` | `"terraform/"` | no |
 | internal\_lb\_certificate\_arn | ARN of the certificate to use for the internal LB | `any` | n/a | yes |
+| internal\_lb\_drop\_invalid\_header\_fields | Set to true for internal load balancer to drop invalid header fields | `bool` | `true` | no |
 | internal\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the internal Load balancer is allowed to listen to | `list(string)` | n/a | yes |
 | internal\_lb\_name | Name of the internal load balancer | `string` | `"internal"` | no |
 | internal\_lb\_subnets | List of subnets to deploy the internal LB to | `list(string)` | n/a | yes |
