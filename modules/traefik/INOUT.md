@@ -18,12 +18,14 @@
 | elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | external\_certificate\_arn | ARN for the certificate to use for the external LB | `any` | n/a | yes |
 | external\_drop\_invalid\_header\_fields | Set to true for external Nomad load balancer to drop invalid header fields | `bool` | `true` | no |
+| external\_enable\_http | Set to true to enable external HTTP listener that redirects to HTTPS. Defaults to true | `bool` | `true` | no |
 | external\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the external Load balancer is allowed to listen to | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]<br></pre> | no |
 | external\_lb\_name | Name of the external Nomad load balancer | `string` | `"traefik-external"` | no |
 | external\_nomad\_clients\_asg | The Nomad Clients Autoscaling group to attach the external load balancer to | `any` | n/a | yes |
 | healthy\_threshold | The number of consecutive health checks successes required before considering an unhealthy target healthy (2-10). | `number` | `2` | no |
 | internal\_certificate\_arn | ARN for the certificate to use for the internal LB | `any` | n/a | yes |
 | internal\_drop\_invalid\_header\_fields | Set to true for internal Nomad load balancer to drop invalid header fields | `bool` | `true` | no |
+| internal\_enable\_http | Set to true to enable internal HTTP listener that redirects to HTTPS. Defaults to true | `bool` | `true` | no |
 | internal\_lb\_incoming\_cidr | A list of CIDR-formatted IP address ranges from which the internal load balancer is allowed to listen to | `list(string)` | `[]` | no |
 | internal\_lb\_name | Name of the external Nomad load balancer | `string` | `"traefik-internal"` | no |
 | internal\_nomad\_clients\_asg | The Nomad Clients Autoscaling group to attach the internal load balancer to | `any` | n/a | yes |

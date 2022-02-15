@@ -36,6 +36,7 @@
 | elb\_access\_log\_prefix | Prefix in the S3 bucket to log internal LB access | `string` | `""` | no |
 | elb\_idle\_timeout | The time in seconds that the connection is allowed to be idle. Consul supports blocking requests that can last up to 600 seconds. Increase this to support that. | `number` | `660` | no |
 | elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
+| enable\_http | Set to true to enable HTTP listener that redirects to HTTPS. Defaults to true | `bool` | `true` | no |
 | iam\_permissions\_boundary | If set, restricts the created IAM role to the given permissions boundary | `string` | n/a | yes |
 | integration\_consul\_prefix | The Consul prefix used by the various integration scripts during initial instance boot. | `string` | `"terraform/"` | no |
 | internal\_lb\_certificate\_arn | ARN of the certificate to use for the internal LB | `any` | n/a | yes |

@@ -60,6 +60,11 @@ variable "internal_nomad_clients_asg" {
 # Optional Variables
 #########################################
 
+variable "external_enable_http" {
+  description = "Set to true to enable external HTTP listener that redirects to HTTPS. Defaults to true"
+  default     = true
+}
+
 variable "external_lb_name" {
   description = "Name of the external Nomad load balancer"
   default     = "traefik-external"
@@ -67,6 +72,11 @@ variable "external_lb_name" {
 
 variable "external_drop_invalid_header_fields" {
   description = "Set to true for external Nomad load balancer to drop invalid header fields"
+  default     = true
+}
+
+variable "internal_enable_http" {
+  description = "Set to true to enable internal HTTP listener that redirects to HTTPS. Defaults to true"
   default     = true
 }
 
