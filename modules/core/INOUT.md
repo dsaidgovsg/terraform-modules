@@ -16,6 +16,7 @@
 | client\_node\_class | Nomad Client Node Class name for cluster identification | `string` | `"nomad-client"` | no |
 | cluster\_tag\_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | `string` | `"consul-servers"` | no |
 | consul\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | `list(string)` | n/a | yes |
+| consul\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Consul Servers | `list(string)` | `[]` | no |
 | consul\_ami\_id | AMI ID for Consul servers | `any` | n/a | yes |
 | consul\_api\_domain | Domain to access Consul HTTP API | `any` | n/a | yes |
 | consul\_cluster\_name | Name of the Consul cluster to deploy | `string` | `"consul"` | no |
@@ -45,6 +46,7 @@
 | internal\_lb\_name | Name of the internal load balancer | `string` | `"internal"` | no |
 | internal\_lb\_subnets | List of subnets to deploy the internal LB to | `list(string)` | n/a | yes |
 | nomad\_api\_domain | Domain to access Nomad REST API | `any` | n/a | yes |
+| nomad\_client\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Nomad Clients | `list(string)` | `[]` | no |
 | nomad\_client\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad client cluster. | `string` | n/a | yes |
 | nomad\_client\_instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | nomad\_client\_subnets | List of subnets to launch Nomad clients in | `list(string)` | n/a | yes |
@@ -61,6 +63,7 @@
 | nomad\_clients\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | nomad\_clients\_user\_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
 | nomad\_cluster\_name | The name of the Nomad cluster. Only used if `nomad_server_cluster_name` or `nomad_client_cluster_name` is unused. `-server` is appended for server cluster and `-client` is append for client cluster | `string` | `"nomad"` | no |
+| nomad\_server\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Nomad Server | `list(string)` | `[]` | no |
 | nomad\_server\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad server cluster. | `string` | n/a | yes |
 | nomad\_server\_instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
 | nomad\_server\_lb\_deregistration\_delay | The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. | `number` | `30` | no |

@@ -37,6 +37,9 @@ module "nomad_clients" {
   termination_policies = var.termination_policies
 
   iam_permissions_boundary = var.iam_permissions_boundary
+
+  security_groups = var.additional_security_group_ids
+
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

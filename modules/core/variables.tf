@@ -187,9 +187,21 @@ variable "nomad_server_termination_policies" {
   default     = "NewestInstance"
 }
 
+variable "nomad_server_allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Nomad Server"
+  type        = list(string)
+  default     = []
+}
+
 variable "nomad_client_termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
   default     = "Default"
+}
+
+variable "nomad_client_allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Nomad Clients"
+  type        = list(string)
+  default     = []
 }
 
 variable "nomad_clients_min" {
@@ -448,6 +460,12 @@ variable "consul_lb_unhealthy_threshold" {
 variable "consul_lb_interval" {
   description = "The approximate amount of time, in seconds, between health checks of an individual target. Minimum value 5 seconds, Maximum value 300 seconds."
   default     = 30
+}
+
+variable "consul_allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Consul Servers"
+  type        = list(string)
+  default     = []
 }
 
 variable "vault_lb_deregistration_delay" {

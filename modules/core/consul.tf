@@ -38,6 +38,8 @@ module "consul_servers" {
   termination_policies = var.consul_termination_policies
 
   iam_permissions_boundary = var.iam_permissions_boundary
+
+  additional_security_group_ids = var.allowed_inbound_security_group_ids
 }
 
 # --------------------------------------------------------------------------------------------------

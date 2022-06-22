@@ -9,6 +9,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
+| additional\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Consul Servers | `list(string)` | `[]` | no |
 | allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Clients for API usage | `list(string)` | n/a | yes |
 | allowed\_ssh\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections | `list(string)` | `[]` | no |
 | ami\_id | AMI ID for Nomad clients | `any` | n/a | yes |
