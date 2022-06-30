@@ -131,6 +131,12 @@ variable "iam_permissions_boundary" {
   default     = null
 }
 
+variable "additional_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Consul Servers"
+  type        = list(string)
+  default     = []
+}
+
 # --------------------------------------------------------------------------------------------------
 # Post Bootstrap Integration Parameters
 # These parameters are used in conjunction with the other modules in this repository.

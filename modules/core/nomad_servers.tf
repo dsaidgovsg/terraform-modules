@@ -41,6 +41,8 @@ module "nomad_servers" {
   termination_policies = var.nomad_server_termination_policies
 
   iam_permissions_boundary = var.iam_permissions_boundary
+
+  security_groups = var.nomad_server_allowed_inbound_security_group_ids
 }
 
 # --------------------------------------------------------------------------------------------------
