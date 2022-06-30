@@ -15,7 +15,7 @@
 | access\_log\_json | Log access in JSON | `bool` | `false` | no |
 | additional\_docker\_config | Additional HCL to be added to the configuration for the Docker driver. Refer to the template Jobspec for what is already defined | `string` | `""` | no |
 | deregistration\_delay | Time before an unhealthy Elastic Load Balancer target becomes removed | `number` | `60` | no |
-| elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
+| elb\_ssl\_policy | ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html | `string` | `"ELBSecurityPolicy-FS-1-2-Res-2020-10"` | no |
 | external\_certificate\_arn | ARN for the certificate to use for the external LB | `any` | n/a | yes |
 | external\_drop\_invalid\_header\_fields | Set to true for external Nomad load balancer to drop invalid header fields | `bool` | `true` | no |
 | external\_enable\_http | Set to true to enable external HTTP listener that redirects to HTTPS. Defaults to true | `bool` | `true` | no |

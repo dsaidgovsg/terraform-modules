@@ -138,7 +138,7 @@ variable "interval" {
 
 variable "elb_ssl_policy" {
   description = "ELB SSL policy for HTTPs listeners. See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html"
-  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  default     = "ELBSecurityPolicy-FS-1-2-Res-2020-10"
 }
 
 variable "traefik_version" {
