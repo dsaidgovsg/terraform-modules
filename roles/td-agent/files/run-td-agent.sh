@@ -205,28 +205,23 @@ function main {
     exit 1
   fi
 
-  if [[ "${type}" == "fluentd-server" ]]; then
-    enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
-  
-  else 
-    assert_is_installed "consul"
-    assert_is_installed "consul-template"
+  assert_is_installed "consul"
+  assert_is_installed "consul-template"
 
-    wait_for_consul
+  wait_for_consul
 
-    local readonly enabled=$(consul_kv_with_default "${consul_prefix}td-agent/${type}/enabled" "no")
+  local readonly enabled=$(consul_kv_with_default "${consul_prefix}td-agent/${type}/enabled" "no")
 
-    if [[ "$enabled" != "yes" ]]; then
-      log_info "td-agent is not enabled for ${type}"
-    else
-      if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
-        log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
-        consul-template -template "$conf_template:$conf_out" -once
-        log_info "consul-template applied successfully!"
-      fi
-
-      enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
+  if [[ "$enabled" != "yes" ]]; then
+    log_info "td-agent is not enabled for ${type}"
+  else
+    if [[ "$skip_template" == "false" && -f "$conf_template" ]]; then
+      log_info "Applying consul-template on \"$conf_template\" to generate \"$conf_out\"..."
+      consul-template -template "$conf_template:$conf_out" -once
+      log_info "consul-template applied successfully!"
     fi
+
+    enable_td_agent "${type}" "${service_override_dir}" "${rotate_age}" "${rotate_size}"
   fi
 }
 
