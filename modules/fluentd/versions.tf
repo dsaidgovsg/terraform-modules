@@ -17,7 +17,7 @@ terraform {
 
     vault = {
       source  = "hashicorp/vault"
-      version = ">= 2.0"
+      version = ">= 3.8.0"
     }
 
     # See: https://github.com/terraform-providers/terraform-provider-template/blob/v2.0.0/CHANGELOG.md#200-january-14-2019
