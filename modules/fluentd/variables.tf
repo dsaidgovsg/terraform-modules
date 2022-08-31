@@ -97,7 +97,7 @@ variable "vault_sts_path" {
 variable "vault_sts_iam_permissions_boundary" {
   description = "Optional IAM policy as permissions boundary for STS generated IAM user"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "log_vault_role" {
