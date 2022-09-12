@@ -17,11 +17,6 @@ variable "es_domain_name" {
   type        = string
 }
 
-variable "base_domain" {
-  description = "Base domain for Elasticsearch cluster"
-  type        = string
-}
-
 variable "es_access_cidr_block" {
   description = "Elasticsearch access CIDR block to allow access"
   type        = list(string)
