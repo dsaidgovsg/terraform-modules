@@ -58,6 +58,12 @@ variable "consul_allowed_inbound_cidr_blocks" {
   type        = list(string)
 }
 
+variable "consul_allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Consul"
+  type        = list(string)
+  default     = []
+}
+
 variable "nomad_servers_allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Nomad Servers servers for API usage"
   type        = list(string)
@@ -462,8 +468,8 @@ variable "consul_lb_interval" {
   default     = 30
 }
 
-variable "consul_allowed_inbound_security_group_ids" {
-  description = "A list of security group IDs that will be allowed to connect to Consul Servers"
+variable "consul_additional_security_group_ids" {
+  description = "A list of additional security group IDs that will be allowed to connect to Consul Servers"
   type        = list(string)
   default     = []
 }
