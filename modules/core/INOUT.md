@@ -15,8 +15,10 @@
 | base\_domain | Base domain for all services | `string` | n/a | yes |
 | client\_node\_class | Nomad Client Node Class name for cluster identification | `string` | `"nomad-client"` | no |
 | cluster\_tag\_key | The tag the Consul EC2 Instances will look for to automatically discover each other and form a cluster. | `string` | `"consul-servers"` | no |
+| consul\_additional\_security\_group\_ids | A list of additional security group IDs that will be allowed to connect to Consul Servers | `list(string)` | `[]` | no |
 | consul\_allowed\_inbound\_cidr\_blocks | A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul servers for API usage | `list(string)` | n/a | yes |
-| consul\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Consul Servers | `list(string)` | `[]` | no |
+| consul\_allowed\_inbound\_security\_group\_count | The number of entries in var.allowed\_inbound\_security\_group\_ids. Ideally, this value could be computed dynamically, but we pass this variable to a Terraform resource's 'count' property and Terraform requires that 'count' be computed with literals or data sources only. | `number` | n/a | yes |
+| consul\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Consul | `list(string)` | n/a | yes |
 | consul\_ami\_id | AMI ID for Consul servers | `any` | n/a | yes |
 | consul\_api\_domain | Domain to access Consul HTTP API | `any` | n/a | yes |
 | consul\_cluster\_name | Name of the Consul cluster to deploy | `string` | `"consul"` | no |
