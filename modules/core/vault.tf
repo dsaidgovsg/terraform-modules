@@ -40,8 +40,8 @@ module "vault" {
   ssh_key_name                         = var.ssh_key_name
   allowed_inbound_security_group_count = var.vault_allowed_inbound_security_group_count
   allowed_inbound_security_group_ids   = var.vault_allowed_inbound_security_group_ids
-  allowed_inbound_cidr_blocks          = concat([data.aws_vpc.this.cidr_block], var.vault_allowed_inbound_cidr_blocks)
-  allowed_ssh_cidr_blocks              = var.allowed_ssh_cidr_blocks
+  allowed_inbound_cidr_blocks          = var.vault_allowed_inbound_cidr_blocks
+  allowed_ssh_cidr_blocks              = concat([data.aws_vpc.this.cidr_block], var.allowed_ssh_cidr_blocks)
   associate_public_ip_address          = var.associate_public_ip_address
 
   enable_s3_backend = var.vault_enable_s3_backend
