@@ -28,6 +28,18 @@ variable "vault_ami_id" {
   description = "AMI ID for Vault servers"
 }
 
+variable "consul_subdomain" {
+  description = "Subdomain name of Consul API, paired with the VPC base domain as the full domain"
+}
+
+variable "nomad_subdomain" {
+  description = "Subdomain name of Nomad API, paired with the VPC base domain as the full domain"
+}
+
+variable "vault_subdomain" {
+  description = "Subdomain name of Vault API, paired with the VPC base domain as the full domain"
+}
+
 variable "consul_subnets" {
   description = "List of subnets to launch Connsul servers in"
   type        = list(string)
