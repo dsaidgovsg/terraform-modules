@@ -46,7 +46,7 @@ resource "aws_route53_record" "traefik_ui" {
   depends_on = [aws_route53_record.internal_dns_record]
 
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.traefik_ui_route53_domain
+  name    = var.traefik_ui_domain
   type    = "A"
 
   alias {

@@ -172,7 +172,7 @@ resource "aws_autoscaling_attachment" "external" {
 # Everything else deployed should alias (recommended) or CNAME this domain
 resource "aws_route53_record" "external_dns_record" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.traefik_external_route53_domain
+  name    = var.traefik_external_base_domain
   type    = "A"
 
   alias {

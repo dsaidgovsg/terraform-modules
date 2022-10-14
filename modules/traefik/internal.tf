@@ -173,7 +173,7 @@ resource "aws_lb_listener" "internal_https" {
 # Everything else deployed should alias (recommended) or CNAME this domain
 resource "aws_route53_record" "internal_dns_record" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.traefik_internal_route53_domain
+  name    = var.traefik_internal_base_domain
   type    = "A"
 
   alias {
