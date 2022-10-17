@@ -83,7 +83,6 @@
 | nomad\_servers\_root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | nomad\_servers\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | nomad\_servers\_user\_data | The user data for the Nomad servers EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
-| nomad\_subdomain | Subdomain name of Nomad API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | route53\_zone | Zone for Route 53 records | `any` | n/a | yes |
 | ssh\_key\_name | The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair. | `string` | `""` | no |
 | tags | A map of tags to add to all resources | `map` | <pre>{<br>  "Environment": "development",<br>  "Terraform": "true"<br>}<br></pre> | no |
@@ -109,7 +108,6 @@
 | vault\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | vault\_route53\_subdomain | Subdomain name of Vault API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | vault\_s3\_bucket\_name | The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault\_enable\_s3\_backend' is set to true. | `string` | `""` | no |
-| vault\_subdomain | Subdomain name of Vault API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | vault\_subnets | List of subnets to launch Vault servers in | `list(string)` | n/a | yes |
 | vault\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"NewestInstance"` | no |
 | vault\_tls\_key\_policy\_arn | ARN of the IAM policy to allow the Vault EC2 instances to decrypt the encrypted TLS private key baked into the AMI. See README for more information. | `any` | n/a | yes |
