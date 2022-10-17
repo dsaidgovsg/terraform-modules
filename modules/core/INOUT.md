@@ -31,6 +31,7 @@
 | consul\_lb\_unhealthy\_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | `number` | `2` | no |
 | consul\_root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | consul\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
+| consul\_route53\_subdomain | Subdomain name of Consul API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | consul\_subnets | List of subnets to launch Connsul servers in | `list(string)` | n/a | yes |
 | consul\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"NewestInstance"` | no |
 | consul\_user\_data | The user data for the Consul servers EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
@@ -65,6 +66,7 @@
 | nomad\_clients\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
 | nomad\_clients\_user\_data | The user data for the Nomad clients EC2 instances. If set to empty, the default template will be used | `string` | `""` | no |
 | nomad\_cluster\_name | The name of the Nomad cluster. Only used if `nomad_server_cluster_name` or `nomad_client_cluster_name` is unused. `-server` is appended for server cluster and `-client` is append for client cluster | `string` | `"nomad"` | no |
+| nomad\_route53\_subdomain | Subdomain name of Nomad API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | nomad\_server\_allowed\_inbound\_security\_group\_ids | A list of security group IDs that will be allowed to connect to Nomad Server | `list(string)` | `[]` | no |
 | nomad\_server\_cluster\_name | Overrides `nomad_cluster_name` if specified. The name of the Nomad server cluster. | `string` | n/a | yes |
 | nomad\_server\_instance\_type | Type of instances to deploy Nomad servers to | `string` | `"t2.medium"` | no |
@@ -104,6 +106,7 @@
 | vault\_lb\_unhealthy\_threshold | The number of consecutive health check failures required before considering a target unhealthy (2-10). | `number` | `2` | no |
 | vault\_root\_volume\_size | The size, in GB, of the root EBS volume. | `number` | `50` | no |
 | vault\_root\_volume\_type | The type of volume. Must be one of: standard, gp2, or io1. | `string` | `"gp2"` | no |
+| vault\_route53\_subdomain | Subdomain name of Vault API, paired with the VPC base domain as the full domain | `any` | n/a | yes |
 | vault\_s3\_bucket\_name | The name of the S3 bucket to create and use as a storage backend for Vault. Only used if 'vault\_enable\_s3\_backend' is set to true. | `string` | `""` | no |
 | vault\_subnets | List of subnets to launch Vault servers in | `list(string)` | n/a | yes |
 | vault\_termination\_policies | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default. | `string` | `"NewestInstance"` | no |

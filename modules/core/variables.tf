@@ -28,15 +28,15 @@ variable "vault_ami_id" {
   description = "AMI ID for Vault servers"
 }
 
-variable "consul_subdomain" {
+variable "consul_route53_subdomain" {
   description = "Subdomain name of Consul API, paired with the VPC base domain as the full domain"
 }
 
-variable "nomad_subdomain" {
+variable "nomad_route53_subdomain" {
   description = "Subdomain name of Nomad API, paired with the VPC base domain as the full domain"
 }
 
-variable "vault_subdomain" {
+variable "vault_route53_subdomain" {
   description = "Subdomain name of Vault API, paired with the VPC base domain as the full domain"
 }
 
