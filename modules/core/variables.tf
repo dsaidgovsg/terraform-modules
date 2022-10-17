@@ -29,15 +29,18 @@ variable "vault_ami_id" {
 }
 
 variable "consul_route53_subdomain" {
-  description = "Subdomain name of Consul API, paired with the VPC base domain as the full domain"
+  description = "Subdomain name of Consul API. This overrides consul_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
 }
 
 variable "nomad_route53_subdomain" {
-  description = "Subdomain name of Nomad API, paired with the VPC base domain as the full domain"
+  description = "Subdomain name of Nomad API. This overrides nomad_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
 }
 
 variable "vault_route53_subdomain" {
-  description = "Subdomain name of Vault API, paired with the VPC base domain as the full domain"
+  description = "Subdomain name of Vault API. This overrides vault_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
 }
 
 variable "consul_subnets" {
