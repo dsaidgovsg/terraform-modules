@@ -177,7 +177,7 @@ resource "aws_security_group_rule" "nomad_http" {
 # A Record for nomad API endpoint to point to Internal Load balancer
 resource "aws_route53_record" "nomad_rpc" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.nomad_api_domain
+  name    = var.nomad_route53_subdomain != "" ? var.nomad_route53_subdomain : var.nomad_api_domain
   type    = "A"
 
   alias {
@@ -191,7 +191,7 @@ resource "aws_route53_record" "private_zone_nomad_rpc" {
   count = var.add_private_route53_zone ? 1 : 0
 
   zone_id = local.private_zone_id
-  name    = var.nomad_api_domain
+  name    = var.nomad_route53_subdomain != "" ? var.nomad_route53_subdomain : var.nomad_api_domain
   type    = "A"
 
   alias {
@@ -276,7 +276,7 @@ resource "aws_security_group_rule" "consul_http" {
 
 resource "aws_route53_record" "consul" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.consul_api_domain
+  name    = var.consul_route53_subdomain != "" ? var.consul_route53_subdomain : var.consul_api_domain
   type    = "A"
 
   alias {
@@ -290,7 +290,7 @@ resource "aws_route53_record" "private_zone_consul" {
   count = var.add_private_route53_zone ? 1 : 0
 
   zone_id = local.private_zone_id
-  name    = var.consul_api_domain
+  name    = var.consul_route53_subdomain != "" ? var.consul_route53_subdomain : var.consul_api_domain
   type    = "A"
 
   alias {
@@ -376,7 +376,7 @@ resource "aws_security_group_rule" "vault_https" {
 
 resource "aws_route53_record" "vault" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = var.vault_api_domain
+  name    = var.vault_route53_subdomain != "" ? var.vault_route53_subdomain : var.vault_api_domain
   type    = "A"
 
   alias {
@@ -390,7 +390,7 @@ resource "aws_route53_record" "private_zone_vault" {
   count = var.add_private_route53_zone ? 1 : 0
 
   zone_id = local.private_zone_id
-  name    = var.vault_api_domain
+  name    = var.vault_route53_subdomain != "" ? var.vault_route53_subdomain : var.vault_api_domain
   type    = "A"
 
   alias {

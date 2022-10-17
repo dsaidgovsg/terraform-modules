@@ -89,10 +89,10 @@
 | node\_unreachable\_evaluation\_periods | Number of periods to evaluate for the alarm. | `string` | `"1"` | no |
 | node\_unreachable\_period | Duration in seconds to evaluate for the alarm. | `string` | `"86400"` | no |
 | ok\_actions | A list of ARNs (i.e. SNS Topic ARN) to notify for ok action | `list(string)` | `[]` | no |
-| redirect\_domain | Domain name to redirect | `string` | n/a | yes |
 | redirect\_listener\_arn | LB listener ARN to attach the rule to | `string` | n/a | yes |
 | redirect\_route53\_zone\_id | Route53 Zone ID to create the Redirect Record in | `string` | n/a | yes |
 | redirect\_rule\_priority | Rule priority for redirect | `number` | `100` | no |
+| redirect\_subdomain | Subdomain name to redirect | `string` | n/a | yes |
 | security\_group\_additional\_tags | Additional tags to apply on the security group | `map(string)` | `{}` | no |
 | security\_group\_name | Name of security group, leaving this empty generates a group name | `string` | n/a | yes |
 | security\_group\_vpc\_id | VPC ID to apply on the security group | `string` | n/a | yes |

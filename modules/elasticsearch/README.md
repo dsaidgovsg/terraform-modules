@@ -51,7 +51,6 @@ module "es" {
   source = "github.com/GovTechSG/terraform-modules//modules/elasticsearch"
 
   es_domain_name       = "my-cloud-es"
-  es_base_domain       = "${data.terraform_remote_state.core.base_domain}"
   es_access_cidr_block = ["1.3.1.4"]
 
   es_master_type     = "r5.xlarge.elasticsearch"

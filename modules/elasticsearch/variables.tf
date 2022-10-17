@@ -17,11 +17,6 @@ variable "es_domain_name" {
   type        = string
 }
 
-variable "base_domain" {
-  description = "Base domain for Elasticsearch cluster"
-  type        = string
-}
-
 variable "es_access_cidr_block" {
   description = "Elasticsearch access CIDR block to allow access"
   type        = list(string)
@@ -519,6 +514,12 @@ variable "kms_key_inaccessible_threshold" {
 #
 # Redirect-related
 #
+
+variable "base_domain" {
+  description = "Base domain for Elasticsearch cluster"
+  type        = string
+}
+
 variable "use_redirect" {
   description = "Indicates whether to use redirect users "
   default     = false
@@ -529,8 +530,8 @@ variable "redirect_route53_zone_id" {
   type        = string
 }
 
-variable "redirect_domain" {
-  description = "Domain name to redirect"
+variable "redirect_subdomain" {
+  description = "Subdomain name to redirect"
   type        = string
 }
 

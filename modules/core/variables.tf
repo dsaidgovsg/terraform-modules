@@ -28,6 +28,21 @@ variable "vault_ami_id" {
   description = "AMI ID for Vault servers"
 }
 
+variable "consul_route53_subdomain" {
+  description = "Subdomain name of Consul API. This overrides consul_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
+}
+
+variable "nomad_route53_subdomain" {
+  description = "Subdomain name of Nomad API. This overrides nomad_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
+}
+
+variable "vault_route53_subdomain" {
+  description = "Subdomain name of Vault API. This overrides vault_api_domain as the name of Route53 record resource when given a value."
+  default     = ""
+}
+
 variable "consul_subnets" {
   description = "List of subnets to launch Connsul servers in"
   type        = list(string)

@@ -3,7 +3,7 @@ resource "aws_route53_record" "redirect" {
   count = var.use_redirect ? 1 : 0
 
   zone_id = var.redirect_route53_zone_id
-  name    = var.redirect_domain
+  name    = var.redirect_subdomain
   type    = "A"
 
   alias {
@@ -33,7 +33,7 @@ resource "aws_lb_listener_rule" "redirect" {
 
   condition {
     host_header {
-      values = [aws_route53_record.redirect[0].fqdn]
+      values = ["${var.redirect_subdomain}.${var.base_domain}"]
     }
   }
 }
