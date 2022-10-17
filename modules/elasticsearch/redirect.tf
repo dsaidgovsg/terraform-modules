@@ -3,7 +3,7 @@ resource "aws_route53_record" "redirect" {
   count = var.use_redirect ? 1 : 0
 
   zone_id = var.redirect_route53_zone_id
-  name    = var.redirect_subdomain != "" ? var.redirect_subdomain : var.redirect_domain
+  name    = var.redirect_subdomain
   type    = "A"
 
   alias {
