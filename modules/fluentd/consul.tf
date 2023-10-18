@@ -3,6 +3,7 @@ locals {
   file_logging_consul_key         = "${var.consul_key_prefix}fluentd/log_to_file"
   fluentd_match_consul_key        = "${var.consul_key_prefix}fluentd/match"
   s3_consul_key                   = "${var.consul_key_prefix}fluentd/log_to_s3"
+  cloudwatch_consul_key           = "${var.consul_key_prefix}fluentd/log_to_cloudwatch"
   inject_source_host              = "${var.consul_key_prefix}fluentd/inject_source_host"
   source_address_key              = "${var.consul_key_prefix}fluentd/source_address_key"
   source_hostname_key             = "${var.consul_key_prefix}fluentd/source_hostname_key"
@@ -41,6 +42,14 @@ resource "consul_keys" "log_to_s3" {
   key {
     path   = local.s3_consul_key
     value  = var.logs_s3_enabled ? "true" : "false"
+    delete = true
+  }
+}
+
+resource "consul_keys" "log_to_cloudwatch" {
+  key {
+    path   = local.cloudwatch_consul_key
+    value  = var.logs_cloudwatch_enabled ? "true" : "false"
     delete = true
   }
 }

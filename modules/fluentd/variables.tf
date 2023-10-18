@@ -176,6 +176,25 @@ variable "tags" {
   }
 }
 
+#############################
+# CloudWatch Logging related
+#############################
+variable "logs_cloudwatch_enabled" {
+  description = "Enable to log to CloudWatch"
+  default     = false
+}
+
+variable "logs_log_group_name" {
+  description = "Name of CloudWatch Log Group to store logs"
+  default     = "/fluentd/logs"
+}
+
+variable "logs_retention_time" {
+  description = "CloudWatch Log Retention Time"
+  default     = 90
+}
+
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
@@ -195,6 +214,6 @@ variable "enable_file_logging" {
 }
 
 variable "fluentd_match" {
-  description = "Tags that fluentd should output to S3 and Elasticsearch"
+  description = "Tags that fluentd should output to S3, CloudWatch and Elasticsearch"
   default     = "@ERROR app.** docker.** services.** system.** vault**"
 }

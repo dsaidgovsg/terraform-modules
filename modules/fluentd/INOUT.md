@@ -24,13 +24,16 @@
 | fluentd\_cpu | CPU resource assigned to the fluentd job | `number` | `3000` | no |
 | fluentd\_force\_pull | Force pull an image. Useful if the tag is mutable. | `string` | `"false"` | no |
 | fluentd\_image | Docker image for fluentd | `string` | `"govtechsg/fluentd-s3-elasticsearch"` | no |
-| fluentd\_match | Tags that fluentd should output to S3 and Elasticsearch | `string` | `"@ERROR app.** docker.** services.** system.** vault**"` | no |
+| fluentd\_match | Tags that fluentd should output to S3, CloudWatch and Elasticsearch | `string` | `"@ERROR app.** docker.** services.** system.** vault**"` | no |
 | fluentd\_memory | Memory resource assigned to the fluentd job | `number` | `512` | no |
 | fluentd\_port | Port on the Docker image in which the TCP interface is exposed | `number` | `4224` | no |
 | fluentd\_tag | Tag for fluentd Docker image | `string` | `"1.2.5-latest"` | no |
 | inject\_source\_host | Inject the log source host name and address into the logs | `bool` | `true` | no |
 | log\_vault\_policy | Name of the Vault policy to allow creating AWS credentials to write to Elasticsearch and S3 | `string` | `"fluentd_logger"` | no |
 | log\_vault\_role | Name of the Vault role in the AWS secrets engine to provide credentials for fluentd to write to Elasticsearch and S3 | `string` | `"fluentd_logger"` | no |
+| logs\_cloudwatch\_enabled | Enable to log to CloudWatch | `bool` | `false` | no |
+| logs\_log\_group\_name | Name of CloudWatch Log Group to store logs | `string` | `"/fluentd/logs"` | no |
+| logs\_retention\_time | CloudWatch Log Retention Time | `number` | `90` | no |
 | logs\_s3\_abort\_incomplete\_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | `number` | `7` | no |
 | logs\_s3\_bucket\_name | Name of S3 bucket to store logs for long term archival | `string` | `""` | no |
 | logs\_s3\_enabled | Enable to log to S3 | `bool` | `true` | no |
