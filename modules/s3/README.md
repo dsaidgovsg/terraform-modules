@@ -1,12 +1,12 @@
 # AWS EC2 Container Registry Repository
 
-Provides an S3 Bucket Repository.
+Provides an EC2 Container Registry Repository.
 
 ## Example usage
 
 ```hcl
-module "s3" {
-  source = "/path/to/vendor/terraform-modules/modules/s3"
+module "ecr" {
+  source = "/path/to/vendor/terraform-modules/modules/ecr"
 
   name = "${var.ecr_name}"
   tags = "${var.tags}"
