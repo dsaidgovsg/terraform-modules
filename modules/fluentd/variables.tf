@@ -184,17 +184,6 @@ variable "logs_cloudwatch_enabled" {
   default     = false
 }
 
-variable "logs_log_group_name" {
-  description = "Name of CloudWatch Log Group to store logs"
-  default     = "/fluentd/logs"
-}
-
-variable "logs_retention_time" {
-  description = "CloudWatch Log Retention Time"
-  default     = 90
-}
-
-
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
