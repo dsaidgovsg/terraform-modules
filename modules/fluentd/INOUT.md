@@ -33,7 +33,6 @@
 | log\_vault\_role | Name of the Vault role in the AWS secrets engine to provide credentials for fluentd to write to Elasticsearch and S3 | `string` | `"fluentd_logger"` | no |
 | logs\_cloudwatch\_enabled | Enable to log to CloudWatch | `bool` | `false` | no |
 | logs\_log\_group\_name | Name of CloudWatch Log Group to store logs | `string` | `"/fluentd/logs"` | no |
-| logs\_retention\_time | CloudWatch Log Retention Time | `number` | `90` | no |
 | logs\_s3\_abort\_incomplete\_days | Specifies the number of days after initiating a multipart upload when the multipart upload must be completed. | `number` | `7` | no |
 | logs\_s3\_bucket\_name | Name of S3 bucket to store logs for long term archival | `string` | `""` | no |
 | logs\_s3\_enabled | Enable to log to S3 | `bool` | `true` | no |

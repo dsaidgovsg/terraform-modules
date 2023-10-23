@@ -69,12 +69,12 @@ data "aws_iam_policy_document" "logs_s3" {
     effect = "Allow"
 
     actions = [
-        "logs:PutLogEvents",
-        "logs:CreateLogGroup",
-        "logs:PutRetentionPolicy",
-        "logs:CreateLogStream",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams"
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:PutRetentionPolicy",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
     ]
 
     resources = ["*"]
