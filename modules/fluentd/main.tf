@@ -19,6 +19,8 @@ data "template_file" "fluentd_tf_rendered_conf" {
     cloudwatch_consul_key           = local.cloudwatch_consul_key
     weekly_index_enabled_consul_key = local.weekly_index_enabled_consul_key
 
+    log_group_name = var.logs_log_group_name
+
     inject_source_host  = local.inject_source_host
     source_address_key  = local.source_address_key
     source_hostname_key = local.source_hostname_key

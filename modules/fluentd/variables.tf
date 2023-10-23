@@ -184,6 +184,12 @@ variable "logs_cloudwatch_enabled" {
   default     = false
 }
 
+variable "logs_log_group_name" {
+  description = "Name of CloudWatch Log Group to store logs"
+  default     = "/fluentd/logs"
+}
+
+
 # --------------------------------------------------------------------------------------------------
 # CORE INTEGRATION SETTINGS
 # --------------------------------------------------------------------------------------------------
