@@ -66,6 +66,28 @@ data "aws_iam_policy_document" "logs_s3" {
   }
 
   statement {
+    sid     = "AllowSSLRequestsOnly"
+    actions = ["s3:*"]
+    effect  = "Deny"
+
+    resources = [
+      aws_s3_bucket.logs[0].arn,
+      "${aws_s3_bucket.logs[0].arn}/*",
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = [false]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+
+  statement {
     effect = "Allow"
 
     actions = [
