@@ -65,9 +65,9 @@ data "aws_iam_policy_document" "s3_logs_policy" {
 resource "aws_s3_bucket_policy" "logs" {
   count = var.logs_s3_enabled ? 1 : 0
 
-  bucket = "${aws_s3_bucket.logs[0].id}"
+  bucket = aws_s3_bucket.logs[0].id
 
-  policy = "${data.aws_iam_policy_document.s3_logs_policy[0].json}"
+  policy = data.aws_iam_policy_document.s3_logs_policy[0].json
 }
 
 data "aws_iam_policy_document" "logs_s3" {
