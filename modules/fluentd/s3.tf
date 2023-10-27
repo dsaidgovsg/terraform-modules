@@ -37,6 +37,39 @@ resource "aws_s3_bucket" "logs" {
   }
 }
 
+data "aws_iam_policy_document" "s3_logs_policy" {
+  count = var.logs_s3_enabled ? 1 : 0
+  statement {
+    sid     = "AllowSSLRequestsOnly"
+    actions = ["s3:*"]
+    effect  = "Deny"
+
+    resources = [
+      aws_s3_bucket.logs[0].arn,
+      "${aws_s3_bucket.logs[0].arn}/*",
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = [false]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "logs" {
+  count = var.logs_s3_enabled ? 1 : 0
+
+  bucket = aws_s3_bucket.logs[0].id
+
+  policy = data.aws_iam_policy_document.s3_logs_policy[0].json
+}
+
 data "aws_iam_policy_document" "logs_s3" {
   count = var.logs_s3_enabled ? 1 : 0
 
