@@ -97,6 +97,21 @@ data "aws_iam_policy_document" "logs_s3" {
       "${aws_s3_bucket.logs[0].arn}/*",
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:PutRetentionPolicy",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
+    ]
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "logs_s3" {
