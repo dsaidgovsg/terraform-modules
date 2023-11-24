@@ -76,6 +76,12 @@ resource "aws_launch_configuration" "launch_configuration" {
   spot_price    = var.spot_price
   user_data     = var.user_data
 
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 3
+  }
+
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
   key_name             = var.ssh_key_name
 
