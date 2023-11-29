@@ -20,7 +20,7 @@ module "nomad_servers" {
   min_size         = var.nomad_servers_num
   max_size         = var.nomad_servers_num
   desired_capacity = var.nomad_servers_num
-  spot_price       = var.spot_price
+  spot_price       = ""
 
   ami_id    = var.nomad_servers_ami_id
   user_data = local.nomad_server_user_data
