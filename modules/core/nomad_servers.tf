@@ -9,7 +9,7 @@ locals {
 }
 
 module "nomad_servers" {
-  source  = "../nomad-cluster"
+  source = "../nomad-cluster"
 
   asg_name          = local.nomad_server_cluster_name
   cluster_name      = local.nomad_server_cluster_name
@@ -20,6 +20,7 @@ module "nomad_servers" {
   min_size         = var.nomad_servers_num
   max_size         = var.nomad_servers_num
   desired_capacity = var.nomad_servers_num
+  spot_price       = var.spot_price
 
   ami_id    = var.nomad_servers_ami_id
   user_data = local.nomad_server_user_data
