@@ -9,8 +9,7 @@ locals {
 }
 
 module "nomad_servers" {
-  source  = "hashicorp/nomad/aws//modules/nomad-cluster"
-  version = "0.7.1"
+  source  = "../nomad-cluster"
 
   asg_name          = local.nomad_server_cluster_name
   cluster_name      = local.nomad_server_cluster_name
