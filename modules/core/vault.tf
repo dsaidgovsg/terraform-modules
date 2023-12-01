@@ -21,7 +21,7 @@ EOF
 
 module "vault" {
   # copy of https://github.com/hashicorp/terraform-aws-vault/tree/v0.14.1/modules/vault-cluster
-  source  = "../vault-cluster"
+  source = "../vault-cluster"
 
   cluster_name  = var.vault_cluster_name
   cluster_size  = var.vault_cluster_size
