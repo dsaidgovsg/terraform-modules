@@ -36,22 +36,6 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   protect_from_scale_in = var.protect_from_scale_in
 
-  tags = flatten(
-    [
-      {
-        key                 = "Name"
-        value               = var.cluster_name
-        propagate_at_launch = true
-      },
-      {
-        key                 = var.cluster_tag_key
-        value               = var.cluster_tag_value
-        propagate_at_launch = true
-      },
-      var.tags,
-    ]
-  )
-
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
     # in an aws_autoscaling_group take precedence over attachment resources.
