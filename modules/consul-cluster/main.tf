@@ -1,6 +1,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
 # ----------------------------------------------------------------------------------------------------------------------
+
 terraform {
   # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
   # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
@@ -9,48 +10,31 @@ terraform {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE AN AUTO SCALING GROUP (ASG) TO RUN NOMAD
+# CREATE AN AUTO SCALING GROUP (ASG) TO RUN CONSUL
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_autoscaling_group" "autoscaling_group" {
+  name_prefix = var.cluster_name
+
   launch_configuration = aws_launch_configuration.launch_configuration.name
 
-  name                = var.asg_name
   availability_zones  = var.availability_zones
   vpc_zone_identifier = var.subnet_ids
 
-  min_size             = var.min_size
-  max_size             = var.max_size
-  desired_capacity     = var.desired_capacity
+  # Run a fixed number of instances in the ASG
+  min_size             = var.cluster_size
+  max_size             = var.cluster_size
+  desired_capacity     = var.cluster_size
   termination_policies = [var.termination_policies]
 
   health_check_type         = var.health_check_type
   health_check_grace_period = var.health_check_grace_period
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
+  service_linked_role_arn   = var.service_linked_role_arn
+
+  enabled_metrics = var.enabled_metrics
 
   protect_from_scale_in = var.protect_from_scale_in
-
-  tag {
-    key                 = "Name"
-    value               = var.cluster_name
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = var.cluster_tag_key
-    value               = var.cluster_tag_value
-    propagate_at_launch = true
-  }
-
-  dynamic "tag" {
-    for_each = var.tags
-
-    content {
-      key                 = tag.value["key"]
-      value               = tag.value["value"]
-      propagate_at_launch = tag.value["propagate_at_launch"]
-    }
-  }
 
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
@@ -73,22 +57,27 @@ resource "aws_launch_configuration" "launch_configuration" {
   name_prefix   = "${var.cluster_name}-"
   image_id      = var.ami_id
   instance_type = var.instance_type
-  spot_price    = var.spot_price
   user_data     = var.user_data
+  spot_price    = var.spot_price
 
+  # added to https://github.com/hashicorp/terraform-aws-vault/tree/v0.14.1/modules/vault-cluster 
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
     http_put_response_hop_limit = 3
   }
 
-  iam_instance_profile = aws_iam_instance_profile.instance_profile.name
-  key_name             = var.ssh_key_name
+  iam_instance_profile = var.enable_iam_setup ? element(
+    concat(aws_iam_instance_profile.instance_profile.*.name, [""]),
+    0,
+  ) : var.iam_instance_profile_name
+  key_name = var.ssh_key_name
 
   security_groups = concat(
     [aws_security_group.lc_security_group.id],
-    var.security_groups,
+    var.additional_security_group_ids,
   )
+  placement_tenancy           = var.tenancy
   associate_public_ip_address = var.associate_public_ip_address
 
   ebs_optimized = var.root_volume_ebs_optimized
@@ -97,19 +86,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     volume_type           = var.root_volume_type
     volume_size           = var.root_volume_size
     delete_on_termination = var.root_volume_delete_on_termination
-  }
-
-  dynamic "ebs_block_device" {
-    for_each = var.ebs_block_devices
-
-    content {
-      device_name           = ebs_block_device.value["device_name"]
-      volume_size           = ebs_block_device.value["volume_size"]
-      snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
-      iops                  = lookup(ebs_block_device.value, "iops", null)
-      encrypted             = lookup(ebs_block_device.value, "encrypted", null)
-      delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-    }
+    encrypted             = var.root_volume_encrypted
   }
 
   # Important note: whenever using a launch configuration with an auto scaling group, you must set
@@ -139,14 +116,33 @@ resource "aws_security_group" "lc_security_group" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = merge(
+    {
+      "Name" = var.cluster_name
+    },
+    var.security_group_tags,
+  )
 }
 
 resource "aws_security_group_rule" "allow_ssh_inbound" {
+  count       = length(var.allowed_ssh_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.ssh_port
   to_port     = var.ssh_port
   protocol    = "tcp"
   cidr_blocks = var.allowed_ssh_cidr_blocks
+
+  security_group_id = aws_security_group.lc_security_group.id
+}
+
+resource "aws_security_group_rule" "allow_ssh_inbound_from_security_group_ids" {
+  count                    = var.allowed_ssh_security_group_count
+  type                     = "ingress"
+  from_port                = var.ssh_port
+  to_port                  = var.ssh_port
+  protocol                 = "tcp"
+  source_security_group_id = element(var.allowed_ssh_security_group_ids, count.index)
 
   security_group_id = aws_security_group.lc_security_group.id
 }
@@ -162,18 +158,26 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# THE INBOUND/OUTBOUND RULES FOR THE SECURITY GROUP COME FROM THE NOMAD-SECURITY-GROUP-RULES MODULE
+# THE CONSUL-SPECIFIC INBOUND/OUTBOUND RULES COME FROM THE CONSUL-SECURITY-GROUP-RULES MODULE
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "security_group_rules" {
-  source = "github.com/hashicorp/terraform-aws-nomad//modules/nomad-security-group-rules?ref=v0.7.0"
+  source = "../consul-security-group-rules"
 
-  security_group_id           = aws_security_group.lc_security_group.id
-  allowed_inbound_cidr_blocks = var.allowed_inbound_cidr_blocks
+  security_group_id                    = aws_security_group.lc_security_group.id
+  allowed_inbound_cidr_blocks          = var.allowed_inbound_cidr_blocks
+  allowed_inbound_security_group_ids   = var.allowed_inbound_security_group_ids
+  allowed_inbound_security_group_count = var.allowed_inbound_security_group_count
 
-  http_port = var.http_port
-  rpc_port  = var.rpc_port
-  serf_port = var.serf_port
+  server_rpc_port = var.server_rpc_port
+  cli_rpc_port    = var.cli_rpc_port
+  serf_lan_port   = var.serf_lan_port
+  serf_wan_port   = var.serf_wan_port
+  http_api_port   = var.http_api_port
+  https_api_port  = var.https_api_port
+  dns_port        = var.dns_port
+
+  enable_https_port = var.enable_https_port
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -183,9 +187,11 @@ module "security_group_rules" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_instance_profile" "instance_profile" {
+  count = var.enable_iam_setup ? 1 : 0
+
   name_prefix = var.cluster_name
   path        = var.instance_profile_path
-  role        = aws_iam_role.instance_role.name
+  role        = element(concat(aws_iam_role.instance_role.*.name, [""]), 0)
 
   # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
   # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
@@ -196,6 +202,8 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role" "instance_role" {
+  count = var.enable_iam_setup ? 1 : 0
+
   name_prefix        = var.cluster_name
   assume_role_policy = data.aws_iam_policy_document.instance_role.json
 
@@ -219,5 +227,16 @@ data "aws_iam_policy_document" "instance_role" {
       identifiers = ["ec2.amazonaws.com"]
     }
   }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# THE IAM POLICIES COME FROM THE CONSUL-IAM-POLICIES MODULE
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "iam_policies" {
+  source = "../consul-iam-policies"
+
+  enabled     = var.enable_iam_setup
+  iam_role_id = element(concat(aws_iam_role.instance_role.*.id, [""]), 0)
 }
 
