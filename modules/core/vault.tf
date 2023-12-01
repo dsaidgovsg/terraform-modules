@@ -20,8 +20,8 @@ EOF
 }
 
 module "vault" {
-  source  = "hashicorp/vault/aws//modules/vault-cluster"
-  version = "0.14.1"
+  # copy of https://github.com/hashicorp/terraform-aws-vault/tree/v0.14.1/modules/vault-cluster
+  source  = "../vault-cluster"
 
   cluster_name  = var.vault_cluster_name
   cluster_size  = var.vault_cluster_size
