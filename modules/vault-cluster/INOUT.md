@@ -29,7 +29,6 @@
 | enable\_auto\_unseal | (Vault Enterprise only) Emable auto unseal of the Vault cluster | `bool` | `false` | no |
 | enable\_dynamo\_backend | Whether to use a DynamoDB storage backend instead of Consul | `bool` | `false` | no |
 | enable\_s3\_backend | Whether to configure an S3 storage backend in addition to Consul. | `bool` | `false` | no |
-| enable\_s3\_bucket\_versioning | Whether to enable bucket versioning for the S3 bucket. | `bool` | `false` | no |
 | enabled\_metrics | List of autoscaling group metrics to enable. | `list(string)` | `[]` | no |
 | force\_destroy\_s3\_bucket | If 'configure\_s3\_backend' is enabled and you set this to true, when you run terraform destroy, this tells Terraform to delete all the objects in the S3 bucket used for backend storage. You should NOT set this to true in production or you risk losing all your data! This property is only here so automated tests of this module can clean up after themselves. Only used if 'enable\_s3\_backend' is set to true. | `bool` | `false` | no |
 | health\_check\_grace\_period | Time, in seconds, after instance comes into service before checking health. | `number` | `300` | no |
