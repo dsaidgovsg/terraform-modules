@@ -458,7 +458,7 @@ def upgrade_vault(tag_pattern, consul_addr, service_name, vault_port, tls_server
 
     unseal_keys = set()
     for _ in range(0, unseal_count):
-        unseal_keys.add(sys.stdin.readline().strip())
+        unseal_keys.add(input().strip())
 
     assert_collection_len(unseal_keys, unseal_count)
 
