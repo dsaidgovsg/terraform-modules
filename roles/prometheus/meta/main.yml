@@ -1,0 +1,34 @@
+---
+galaxy_info:
+  author: Roman Demachkovych, Pawel Krupa
+  description: Prometheus monitoring system configuration and management
+  license: MIT
+  company: none
+  min_ansible_version: 2.7
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - xenial
+    - name: Debian
+      versions:
+        - stretch
+        - buster
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Fedora
+      versions:
+        - 30
+        - 31
+  galaxy_tags:
+  - monitoring
+  - prometheus
+  - metrics
+  - alerts
+  - alerting
+  - molecule
+  - cloud
+
+dependencies: []

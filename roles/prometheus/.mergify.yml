@@ -1,0 +1,12 @@
+---
+pull_request_rules:
+  - name: automatic merge and new release from cloudalchemybot
+    conditions:
+      - "status-success=Travis CI - Pull Request"
+      - status-success=WIP
+      - head~=autoupdate|skeleton
+      - author=cloudalchemybot
+    actions:
+      merge:
+        method: squash
+        strict: true
