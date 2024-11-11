@@ -4,6 +4,4 @@
 [submodule "roles/ansible-ca-store"]
 	path = roles/ansible-ca-store
 	url = https://github.com/lawliet89/ansible-ca-store.git
-[submodule "roles/prometheus"]
-	path = roles/prometheus
-	url = https://github.com/cloudalchemy/ansible-prometheus.git
+
