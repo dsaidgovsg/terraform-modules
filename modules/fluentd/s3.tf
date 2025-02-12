@@ -15,23 +15,6 @@ resource "aws_s3_bucket" "logs" {
     }
   }
 
-  lifecycle_rule {
-    id      = "LogArchivalTransition"
-    enabled = true
-
-    abort_incomplete_multipart_upload_days = var.logs_s3_abort_incomplete_days
-
-    transition {
-      days          = var.logs_s3_ia_transition_days
-      storage_class = "STANDARD_IA"
-    }
-
-    transition {
-      days          = var.logs_s3_glacier_transition_days
-      storage_class = "GLACIER"
-    }
-  }
-
   lifecycle {
     prevent_destroy = true
   }
